@@ -176,6 +176,8 @@
                                         <!-- <ignoreClass>com.xyz.i18n.Messages</ignoreClass> -->
                                         <!-- example of ignoring with wildcards -->
                                         <!-- <ignoreClass>org.apache.commons.logging.*</ignoreClass> -->
+                                        <ignoreClass>javafx.*</ignoreClass>
+                                        <ignoreClass>com.sun.*</ignoreClass>
                                     </ignoreClasses>
                                     <findAllDuplicates>true</findAllDuplicates>
                                 </banDuplicateClasses>
@@ -554,7 +556,7 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>openjfx-monocle</artifactId>
-            <version>jdk-12.0.1+2</version> <!-- jdk-9+181 for Java 9, jdk-11+26 for Java 11 -->
+            <version>jdk-11+26</version> <!-- jdk-9+181 for Java 9, jdk-11+26 for Java 11 -->
             <scope>test</scope>
         </dependency>
 

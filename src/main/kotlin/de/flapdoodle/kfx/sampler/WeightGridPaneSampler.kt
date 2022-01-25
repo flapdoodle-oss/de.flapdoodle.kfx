@@ -11,6 +11,9 @@ class WeightGridPaneSampler : Application() {
 
     override fun start(stage: Stage) {
         stage.scene = Scene(WeightGridPane().apply {
+            verticalSpace.set(10.0)
+            horizontalSpace.set(20.0)
+            
             children.add(Button("test").apply {
                 minWidth = 20.0
                 maxWidth = 100.0

@@ -1,0 +1,9 @@
+.root {
+    -fx-border-width: 1;
+    -fx-border-color: red;
+    -fx-border-style: solid;
+}
+
+.weight-grid-pane {
+    -fx-border-style: dashed;
+}

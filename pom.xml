@@ -535,6 +535,20 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>javafx-run-graph-clone-sample</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>de.flapdoodle.kfx.sampler.GraphCloneSampler</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <properties>

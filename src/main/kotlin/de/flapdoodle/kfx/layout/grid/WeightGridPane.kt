@@ -18,6 +18,8 @@ package de.flapdoodle.kfx.layout.grid
 
 import de.flapdoodle.kfx.extensions.constraint
 import de.flapdoodle.kfx.types.AutoArray
+import javafx.beans.InvalidationListener
+import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
 import javafx.css.CssMetaData
 import javafx.css.SimpleStyleableDoubleProperty

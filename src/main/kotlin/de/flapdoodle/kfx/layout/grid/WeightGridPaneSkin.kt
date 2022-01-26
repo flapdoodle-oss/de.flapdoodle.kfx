@@ -55,8 +55,13 @@ class WeightGridPaneSkin(
         control.requestLayout()
     }
 
-    private fun verticalSpace(): Double = control.verticalSpace.value
-    private fun horizontalSpace(): Double = control.horizontalSpace.value
+    private fun verticalSpace(): Double = limit(control.verticalSpace.value)
+    private fun horizontalSpace(): Double = limit(control.horizontalSpace.value)
+
+    private fun limit(value: Double, min: Double = 0.0, max: Double = Double.MAX_VALUE): Double {
+        require(min<=max) {"min ($min) > max ($max)"}
+        return if (min>value) min else if (max<value) max else value
+    }
 
     private fun <T : Any> List<T>.sumWithSpaceBetween(space: Double, selector: (T) -> Double): Double {
         return sumByDouble(selector) + if (isEmpty()) 0.0 else (size - 1) * space

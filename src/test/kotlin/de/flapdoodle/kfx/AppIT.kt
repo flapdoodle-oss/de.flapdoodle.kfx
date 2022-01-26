@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx
 
-import javafx.scene.Scene
 import javafx.stage.Stage
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

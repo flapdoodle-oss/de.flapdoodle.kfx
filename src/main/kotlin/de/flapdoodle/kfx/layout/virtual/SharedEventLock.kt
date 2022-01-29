@@ -21,6 +21,10 @@ class SharedEventLock {
         currentState(owner, clazz)?.let(onLocked)
     }
 
+    fun ifUnlocked(onUnlocked: () -> Unit) {
+        if (current==null) onUnlocked()
+    }
+
     fun <K> release(owner: Node, clazz: Class<K>, onRelease: (K) -> Unit) {
         current?.run {
             if (first==owner) {

@@ -1,6 +1,5 @@
 package de.flapdoodle.kfx.layout.virtual
 
-import de.flapdoodle.kfx.clone.GraphInputGesture
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.Event
@@ -8,7 +7,10 @@ import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.input.MouseEvent
 
-class PanZoomHandler(val panningWindow: PanningWindow) {
+class PanZoomHandler(
+    val panningWindow: PanningWindow,
+    val sharedEventLock: SharedEventLock = SharedEventLock()
+) {
 
     private val translateX: DoubleProperty = object : SimpleDoubleProperty() {
         override fun invalidated() {
@@ -22,47 +24,43 @@ class PanZoomHandler(val panningWindow: PanningWindow) {
         }
     }
 
-    private var clickPosition: Point2D? = null
-    private var posAtClick: Point2D? = null
-    private var gesture: Gesture? = null
-
     init {
-        panningWindow.addEventHandler(MouseEvent.MOUSE_PRESSED) { event ->
-            if (gesture==null) {
-                gesture=Gesture.PAN
-                startPanning(event.screenX, event.screenY)
-            }
-        }
-
+        panningWindow.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed)
         panningWindow.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handlePanningMouseDragged)
-
         panningWindow.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handlePanningFinished)
         panningWindow.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handlePanningFinished)
     }
 
+    private fun handleMousePressed(event: MouseEvent) {
+        sharedEventLock.lock(panningWindow) {
+            panningWindow.setCursor(Cursor.MOVE)
+            State(
+                gesture = Gesture.PAN,
+                clickPosition = Point2D(event.screenX, event.screenY),
+                posAtClick = Point2D(translateX.get(), translateY.get())
+            )
+        }
+    }
+
     private fun handlePanningMouseDragged(event: MouseEvent) {
-        if (gesture==Gesture.PAN) {
-            if (Cursor.MOVE != panningWindow.getCursor()) {
-                startPanning(event.screenX, event.screenY)
+        sharedEventLock.ifLocked(panningWindow, State::class.java) { current ->
+            when (current.gesture) {
+                Gesture.PAN -> {
+                    val deltaX = event.screenX - current.clickPosition.x
+                    val deltaY = event.screenY - current.clickPosition.y
+                    val newWindowX: Double = current.posAtClick.x - deltaX
+                    val newWindowY: Double = current.posAtClick.y - deltaY
+                    panTo(newWindowX, newWindowY)
+                }
             }
-            val deltaX = event.screenX - clickPosition!!.x
-            val deltaY = event.screenY - clickPosition!!.y
-            val newWindowX: Double = posAtClick!!.x - deltaX
-            val newWindowY: Double = posAtClick!!.y - deltaY
-            panTo(newWindowX, newWindowY)
         }
     }
 
     private fun handlePanningFinished(event: Event) {
-        gesture=null
-        panningWindow.setCursor(null)
-        event.consume()
-    }
-
-    private fun startPanning(x: Double, y: Double) {
-        panningWindow.setCursor(Cursor.MOVE)
-        clickPosition = Point2D(x, y)
-        posAtClick = Point2D(translateX.get(), translateY.get())
+        sharedEventLock.release(panningWindow, State::class.java) {
+            panningWindow.setCursor(null)
+            event.consume()
+        }
     }
 
     fun panTo(x: Double, y: Double) {
@@ -72,4 +70,9 @@ class PanZoomHandler(val panningWindow: PanningWindow) {
 
     fun translateX() = translateX.get()
     fun translateY() = translateY.get()
+
+    private data class State(
+        val gesture: Gesture,
+        val clickPosition: Point2D,
+        val posAtClick: Point2D)
 }

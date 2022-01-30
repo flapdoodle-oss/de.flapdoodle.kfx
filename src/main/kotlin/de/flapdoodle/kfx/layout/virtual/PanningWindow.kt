@@ -1,5 +1,12 @@
 package de.flapdoodle.kfx.layout.virtual
 
+import de.flapdoodle.kfx.bindings.mapToDouble
+import javafx.beans.binding.Bindings
+import javafx.beans.binding.DoubleBinding
+import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -13,15 +20,28 @@ open class PanningWindow : Region() {
     private val scale = Scale()
 
     init {
-        scale.xProperty().bind(panZoomHandler.zoomProperty())
-        scale.yProperty().bind(panZoomHandler.zoomProperty())
-        wrapper.transforms.add(scale)
-        children.add(wrapper)
+        val contentBorder = Rectangle().apply {
+            fill = Color.rgb(255,255,255,0.9)
+        }
+        val inParent: ReadOnlyObjectProperty<Bounds> = wrapper.boundsInParentProperty()
+
+        contentBorder.layoutXProperty().bind(inParent.mapToDouble { it.minX })
+        contentBorder.layoutYProperty().bind(inParent.mapToDouble { it.minY })
+        contentBorder.widthProperty().bind(inParent.mapToDouble { it.width })
+        contentBorder.heightProperty().bind(inParent.mapToDouble { it.height })
+        contentBorder.isManaged = false
+
+        children.add(contentBorder)
 
         val clip = Rectangle()
         clip.widthProperty().bind(widthProperty())
         clip.heightProperty().bind(heightProperty())
         setClip(clip)
+
+        scale.xProperty().bind(panZoomHandler.zoomProperty())
+        scale.yProperty().bind(panZoomHandler.zoomProperty())
+        wrapper.transforms.add(scale)
+        children.add(wrapper)
     }
 
     fun setContent(node: Node) {
@@ -31,7 +51,7 @@ open class PanningWindow : Region() {
     override fun layoutChildren() {
         super.layoutChildren()
 
-        wrapper.relocate(-panZoomHandler.translateX(), -panZoomHandler.translateY());
+        wrapper.relocate(-panZoomHandler.translateX(), -panZoomHandler.translateY())
     }
 
     class Wrapper : Region() {

@@ -153,6 +153,9 @@ class PanZoomHandler(
     fun translateX() = translateX.get()
     fun translateY() = translateY.get()
 
+    fun translateXProperty() = translateX
+    fun translateYProperty() = translateY
+
     fun zoomProperty() = zoom
 
 

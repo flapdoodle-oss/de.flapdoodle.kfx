@@ -73,10 +73,6 @@ open class PanningWindow : Region() {
         children.add(wrapper)
     }
 
-    fun foo() {
-
-    }
-
     fun setContent(node: Node) {
         wrapper.setContent(node)
     }
@@ -89,7 +85,8 @@ open class PanningWindow : Region() {
                 windowSize = width,
                 itemSize = wrapper.boundsInParent.width,
                 itemOffset = panZoomHandler.zoom() * wrapper.boundsInLocal.minX,
-                currentItemOffset = panZoomHandler.translateX()
+                currentItemOffset = panZoomHandler.translateX(),
+                debug = false
             )
         )
 
@@ -102,7 +99,7 @@ open class PanningWindow : Region() {
             )
         )
 
-        wrapper.relocate(-panZoomHandler.translateX(), -panZoomHandler.translateY())
+        wrapper.relocate(panZoomHandler.translateX(), panZoomHandler.translateY())
 
         // scrollbars
 

@@ -19,13 +19,20 @@ data class ScrollBounds(
             windowSize: Double,
             itemSize: Double,
             itemOffset: Double,
-            currentItemOffset: Double
+            currentItemOffset: Double,
+            debug: Boolean = false
         ): ScrollBounds {
+            if (debug) println("windowSize: $windowSize, itemSize: $itemSize, itemOffset: $itemOffset, currentItemOffset: $currentItemOffset")
             val diff = itemSize - windowSize // it < 0 if item is smaller
             val fact = itemSize / windowSize // it < 1 if item is smaller
 
-            val min = itemOffset
-            val max = min + diff
+            val max = -itemOffset
+            val min = max - diff
+//            val min = itemOffset
+//            val max = min + diff
+
+            if (debug) println("diff: $diff, offset: $itemOffset, fact: $fact")
+            if (debug) println("min: $min, max: $max")
 
             var fixedMin = Math.min(min, currentItemOffset)
             var fixedMax = Math.max(max, currentItemOffset)
@@ -34,8 +41,10 @@ data class ScrollBounds(
                 fixedMax = Math.max(min, currentItemOffset)
                 fixedMin = Math.min(max, currentItemOffset)
             }
+            if (debug) println("fixed min: $fixedMin, max: $fixedMax")
 
             val visibleAmount = if (fact > 1) (diff) / fact else (diff) * fact * -1.0
+            if (debug) println("visibleAmount: $visibleAmount")
 
             return ScrollBounds(fixedMin, fixedMax, Math.abs(visibleAmount))
         }

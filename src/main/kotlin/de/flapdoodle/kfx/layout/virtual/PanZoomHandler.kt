@@ -55,8 +55,8 @@ class PanZoomHandler(
                 is Action.Pan -> {
                     val deltaX = event.screenX - current.clickPosition.x
                     val deltaY = event.screenY - current.clickPosition.y
-                    val newWindowX: Double = current.posAtClick.x - deltaX
-                    val newWindowY: Double = current.posAtClick.y - deltaY
+                    val newWindowX: Double = current.posAtClick.x + deltaX
+                    val newWindowY: Double = current.posAtClick.y + deltaY
                     panTo(newWindowX, newWindowY)
                 }
             }
@@ -110,7 +110,7 @@ class PanZoomHandler(
                 }
             } else {
                 sharedEventLock.ifUnlocked {
-                    panTo(translateX() - pEvent.deltaX, translateY() - pEvent.deltaY)
+                    panTo(translateX() + pEvent.deltaX, translateY() + pEvent.deltaY)
                     pEvent.consume()
                 }
             }

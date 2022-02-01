@@ -10,23 +10,23 @@ internal class ScrollBoundsTest {
         val result = ScrollBounds.of(100.0, 50.0, -25.0, 0.0)
 
         assertThat(result)
-            .isEqualTo(ScrollBounds(-75.0, 0.0, 25.0))
+            .isEqualTo(ScrollBounds(0.0, 75.0, 25.0))
     }
 
     @Test
     fun itemIsSmallerThanWindowAllVisible() {
-        val result = ScrollBounds.of(100.0, 50.0, -25.0, -50.0)
+        val result = ScrollBounds.of(100.0, 50.0, -25.0, 25.0)
 
         assertThat(result)
-            .isEqualTo(ScrollBounds(-75.0, -25.0, 25.0))
+            .isEqualTo(ScrollBounds(25.0, 75.0, 25.0))
     }
 
     @Test
     fun itemIsSmallerThanWindowExceedingUpperBound() {
-        val result = ScrollBounds.of(100.0, 50.0, -25.0, 50.0)
+        val result = ScrollBounds.of(100.0, 50.0, -25.0, 100.0)
 
         assertThat(result)
-            .isEqualTo(ScrollBounds(-75.0, 50.0, 25.0))
+            .isEqualTo(ScrollBounds(25.0, 100.0, 25.0))
     }
 
     @Test
@@ -34,15 +34,15 @@ internal class ScrollBoundsTest {
         val result = ScrollBounds.of(100.0, 100.0, -25.0, 0.0)
 
         assertThat(result)
-            .isEqualTo(ScrollBounds(-25.0, 0.0, 0.0))
+            .isEqualTo(ScrollBounds(0.0, 25.0, 0.0))
     }
 
     @Test
-    fun itemIsSameSizeThanWindowWithoutOffset() {
-        val result = ScrollBounds.of(100.0, 100.0, -25.0, -25.0)
+    fun itemIsSameSizeThanWindowLowerBoundsMatchs() {
+        val result = ScrollBounds.of(100.0, 100.0, -25.0, 25.0)
 
         assertThat(result)
-            .isEqualTo(ScrollBounds(-25.0, -25.0, 0.0))
+            .isEqualTo(ScrollBounds(25.0, 25.0, 0.0))
     }
 
     @Test
@@ -50,14 +50,22 @@ internal class ScrollBoundsTest {
         val result = ScrollBounds.of(100.0, 125.0, -25.0, 0.0)
 
         assertThat(result)
-            .isEqualTo(ScrollBounds(-25.0, 0.0, 20.0))
+            .isEqualTo(ScrollBounds(0.0, 25.0, 20.0))
     }
 
     @Test
     fun itemIsBiggerThanWindowExceedingLowerLimit() {
-        val result = ScrollBounds.of(100.0, 125.0, -25.0, 0.0)
+        val result = ScrollBounds.of(100.0, 125.0, -25.0, -25.0)
 
         assertThat(result)
-            .isEqualTo(ScrollBounds(-25.0, 0.0, 20.0))
+            .isEqualTo(ScrollBounds(-25.0, 25.0, 20.0))
+    }
+
+    @Test
+    fun itemIsBiggerThanWindowExceedingUpperLimit() {
+        val result = ScrollBounds.of(100.0, 125.0, -25.0, 50.0)
+
+        assertThat(result)
+            .isEqualTo(ScrollBounds(0.0, 50.0, 20.0))
     }
 }

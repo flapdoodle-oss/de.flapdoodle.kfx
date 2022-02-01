@@ -41,11 +41,11 @@ open class PanningWindow : Region() {
         scrollX.orientation = Orientation.HORIZONTAL
 //        scrollX.minProperty().bind(lowerBound)
 //        scrollX.maxProperty().bind(upperBound)
-        scrollX.valueProperty().bind(panZoomHandler.translateXProperty())
+        scrollX.valueProperty().bindBidirectional(panZoomHandler.translateXProperty())
 //        scrollX.valueProperty().bindBidirectional(panZoomHandler.translateXProperty())
 //        scrollX.styleClass.add("graph-editor-scroll-bar") //$NON-NLS-1$
         scrollY.orientation = Orientation.VERTICAL
-        scrollY.valueProperty().bind(panZoomHandler.translateYProperty())
+        scrollY.valueProperty().bindBidirectional(panZoomHandler.translateYProperty())
 
         children.addAll(scrollX,scrollY)
 
@@ -83,7 +83,24 @@ open class PanningWindow : Region() {
 
     override fun layoutChildren() {
         super.layoutChildren()
-        println("x -> ${minX.get()} ... ${panZoomHandler.translateX()} ... ${maxX.get()}")
+
+        scrollX.setBounds(
+            ScrollBounds.of(
+                windowSize = width,
+                itemSize = wrapper.boundsInParent.width,
+                itemOffset = panZoomHandler.zoom() * wrapper.boundsInLocal.minX,
+                currentItemOffset = panZoomHandler.translateX()
+            )
+        )
+
+        scrollY.setBounds(
+            ScrollBounds.of(
+                windowSize = height,
+                itemSize =  wrapper.boundsInParent.height,
+                itemOffset = panZoomHandler.zoom() * wrapper.boundsInLocal.minY,
+                currentItemOffset = panZoomHandler.translateY()
+            )
+        )
 
         wrapper.relocate(-panZoomHandler.translateX(), -panZoomHandler.translateY())
 
@@ -96,7 +113,7 @@ open class PanningWindow : Region() {
         scrollX.resizeRelocate(0.0, snapPositionY(height - h), snapSizeX(width - w), h)
         scrollY.resizeRelocate(snapPositionX(width - w), 0.0, w, snapSizeY(height - h))
 
-        println("scroll: ${scrollX.min} - ${scrollX.value} - ${scrollX.max}")
+//        println("scroll: ${scrollX.min} - ${scrollX.value} - ${scrollX.max}")
 //        val zoomFactor: Double = if (theContent == null) 1 else theContent.getLocalToSceneTransform().getMxx()
 //        scrollX.min = 0.0
 //        scrollX.max = getMaxX()

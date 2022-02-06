@@ -24,7 +24,9 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds
 import javafx.geometry.Orientation
+import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.control.ScrollBar
 import javafx.scene.layout.*
 import javafx.scene.paint.Color

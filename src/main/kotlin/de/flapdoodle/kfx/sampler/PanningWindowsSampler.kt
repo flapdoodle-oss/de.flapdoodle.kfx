@@ -7,6 +7,7 @@ import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.shape.Line
 import javafx.stage.Stage
 
 class PanningWindowsSampler : Application() {
@@ -56,6 +57,18 @@ class PanningWindowsSampler : Application() {
                     this.minHeight = 40.0
                     this.border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths(1.0)))
                 })
+
+                children.addAll(Line(-100.0, -100.0, 100.0, 100.0).apply {
+                    strokeWidth = 1.0
+                    stroke = Color.GREEN
+                    strokeDashArray.addAll(5.0, 5.0)
+                })
+                children.addAll(Line(100.0, -100.0, -100.0, 100.0).apply {
+                    strokeWidth = 1.0
+                    stroke = Color.GREEN
+                    strokeDashArray.addAll(5.0, 5.0)
+                })
+
             }
         }
     }

@@ -26,7 +26,11 @@ class PanZoomHandler(
         }
     }
 
-    private val zoom: DoubleProperty = SimpleDoubleProperty(1.0)
+    private val zoom: DoubleProperty = object : SimpleDoubleProperty(1.0) {
+        override fun invalidated() {
+            panningWindow.requestLayout()
+        }
+    }
 
     init {
         panningWindow.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed)

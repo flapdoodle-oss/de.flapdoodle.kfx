@@ -16,37 +16,39 @@ data class ScrollBounds(
 
     companion object {
         fun of(
-            windowSize: Double,
-            itemSize: Double,
-            itemOffset: Double,
-            currentItemOffset: Double,
-            debug: Boolean = false
+            windowSize: Double, // >0
+            itemSize: Double, // >=0
+            itemOffset: Double, // +-
+            currentItemOffset: Double
         ): ScrollBounds {
-            if (debug) println("windowSize: $windowSize, itemSize: $itemSize, itemOffset: $itemOffset, currentItemOffset: $currentItemOffset")
-            val diff = itemSize - windowSize // it < 0 if item is smaller
             val fact = itemSize / windowSize // it < 1 if item is smaller
 
-            val max = -itemOffset
-            val min = max - diff
-//            val min = itemOffset
-//            val max = min + diff
+            if (fact<=1) {
+                // full visible
+                val diff = windowSize - itemSize
+                val max = -itemOffset
+                val min = max + diff
 
-            if (debug) println("diff: $diff, offset: $itemOffset, fact: $fact")
-            if (debug) println("min: $min, max: $max")
+                val fixedMax = Math.max(min, currentItemOffset)
+                val fixedMin = Math.min(max, currentItemOffset)
 
-            var fixedMin = Math.min(min, currentItemOffset)
-            var fixedMax = Math.max(max, currentItemOffset)
+                val visibleAmount = diff * fact
 
-            if (fact <= 1) {
-                fixedMax = Math.max(min, currentItemOffset)
-                fixedMin = Math.min(max, currentItemOffset)
+                return ScrollBounds(fixedMin, fixedMax, visibleAmount)
+
+            } else {
+                // partial visible
+                val diff = itemSize - windowSize
+                val max = -itemOffset
+                val min = max - diff
+
+                val fixedMin = Math.min(min, currentItemOffset)
+                val fixedMax = Math.max(max, currentItemOffset)
+
+                val visibleAmount = diff / fact
+
+                return ScrollBounds(fixedMin, fixedMax, visibleAmount)
             }
-            if (debug) println("fixed min: $fixedMin, max: $fixedMax")
-
-            val visibleAmount = if (fact > 1) (diff) / fact else (diff) * fact * -1.0
-            if (debug) println("visibleAmount: $visibleAmount")
-
-            return ScrollBounds(fixedMin, fixedMax, Math.abs(visibleAmount))
         }
     }
 }

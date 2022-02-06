@@ -17,9 +17,13 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.clone.BoxFactory
+import de.flapdoodle.kfx.clone.GraphEditorView
+import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.virtual.PanningWindow
+import de.flapdoodle.kfx.layout.virtual.SharedEventLock
 import javafx.application.Application
+import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -29,34 +33,43 @@ import javafx.stage.Stage
 class PanningWindowsSampler : Application() {
 
     override fun start(stage: Stage) {
+
         val graphEditorProperties = BoxFactory.sampleProperties()
+        val sharedEventLock = SharedEventLock()
 
-        val template = object : de.flapdoodle.kfx.clone.PanningWindow() {
-            init {
-                setEditorProperties(graphEditorProperties)
-                setContent(sampleContent())
-                WeightGridPane.setPosition(this, 0, 0)
-            }
-        }
-
-        val testee = PanningWindow().apply {
-            setContent(sampleContent())
+//        val template = object : de.flapdoodle.kfx.clone.PanningWindow() {
+//            init {
+//                setEditorProperties(graphEditorProperties)
+//                setContent(sampleContent(sharedEventLock))
+//                WeightGridPane.setPosition(this, 0, 0)
+//            }
+//        }
+//
+        val testee = PanningWindow(sharedEventLock).apply {
+            setContent(sampleContent(sharedEventLock))
             WeightGridPane.setPosition(this, 1, 0)
         }
 
         stage.scene = Scene(WeightGridPane().apply {
-            children.add(template)
+//            children.add(template)
             children.add(testee)
 
             setColumnWeight(0, 1.0)
             setColumnWeight(1, 1.0)
             setRowWeight(0, 1.0)
-        }, 800.0, 400.0)
+        }, 400.0, 400.0)
+        stage.scene.stylesheets.add(getStyleResource())
         stage.show()
     }
 
-    fun sampleContent(): Region {
-        return object : Region() {
+    fun getStyleResource(): String {
+        val resource = PanningWindowsSampler::class.java.getResource("panning-windows-sampler.css") ?: throw IllegalArgumentException("stylesheet not found")
+        return resource.toExternalForm() ?: throw IllegalArgumentException("could not get external form for $resource")
+    }
+
+
+    fun sampleContent(sharedEventLock: SharedEventLock): Group {
+        return object : Group() {
             init {
                 children.addAll(Pane().apply {
                     this.layoutX = 0.0
@@ -85,6 +98,7 @@ class PanningWindowsSampler : Application() {
                     strokeDashArray.addAll(5.0, 5.0)
                 })
 
+                children.addAll(ResizablePane(sharedEventLock))
             }
         }
     }

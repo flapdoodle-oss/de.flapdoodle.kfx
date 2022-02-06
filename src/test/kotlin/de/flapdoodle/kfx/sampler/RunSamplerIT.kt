@@ -40,6 +40,6 @@ class RunSamplerIT {
     @Disabled
     fun waitSomeTime(robot: FxRobot) {
         println("running for one minute...")
-        Thread.sleep(60*1000)
+        Thread.sleep(2*60*1000)
     }
 }

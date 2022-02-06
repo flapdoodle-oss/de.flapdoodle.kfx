@@ -17,9 +17,11 @@
 package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.bindings.mapToDouble
+import javafx.beans.InvalidationListener
 import javafx.beans.binding.Bindings
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds
 import javafx.geometry.Orientation
 import javafx.scene.Node
@@ -30,9 +32,11 @@ import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
 
-open class PanningWindow : Region() {
+open class PanningWindow(
+    sharedEventLock: SharedEventLock = SharedEventLock()
+) : Region() {
     private val wrapper = Wrapper()
-    private val panZoomHandler = PanZoomHandler(this)
+    private val panZoomHandler = PanZoomHandler(this, sharedEventLock)
     private val scale = Scale()
     private val contentBorder = Rectangle()
 
@@ -48,16 +52,28 @@ open class PanningWindow : Region() {
         contentBorder.isMouseTransparent = true
         
         val wrapperBounds: ReadOnlyObjectProperty<Bounds> = wrapper.boundsInParentProperty()
+
+        wrapperBounds.addListener(InvalidationListener {
+            requestLayout()
+        })
+//        wrapperBounds.addListener(ChangeListener { observable, oldValue, newValue ->
+//            println("wrapper bounds ${newValue.minX},${newValue.minY} - ${newValue.width},${newValue.height}")
+//        })
+
         val boundsMinX = wrapperBounds.mapToDouble(Bounds::getMinX)
         val boundsMinY = wrapperBounds.mapToDouble(Bounds::getMinY)
         val boundsWidht = wrapperBounds.mapToDouble(Bounds::getWidth)
         val boundsHeight = wrapperBounds.mapToDouble(Bounds::getHeight)
+//        val boundsMaxX = wrapperBounds.mapToDouble(Bounds::getMaxX)
+//        val boundsMaxY = wrapperBounds.mapToDouble(Bounds::getMaxY)
 
         with(contentBorder) {
-            layoutXProperty().bind(boundsMinX)
-            layoutYProperty().bind(boundsMinY)
+            xProperty().bind(boundsMinX)
+            yProperty().bind(boundsMinY)
             widthProperty().bind(boundsWidht)
             heightProperty().bind(boundsHeight)
+//            widthProperty().bind(boundsMaxX.subtract(boundsMinX))
+//            heightProperty().bind(boundsMaxY.subtract(boundsMinY))
         }
         contentBorder.isManaged = false
         children.add(contentBorder)
@@ -131,7 +147,7 @@ open class PanningWindow : Region() {
 
         init {
             isManaged = false
-            isMouseTransparent = true
+//            isMouseTransparent = true
             width = 10.0
             height = 10.0
         }

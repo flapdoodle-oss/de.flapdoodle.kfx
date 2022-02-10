@@ -1,6 +1,8 @@
 package de.flapdoodle.kfx.graph.nodes
 
 import de.flapdoodle.kfx.layout.virtual.SharedEventLock
+import de.flapdoodle.kfx.types.LayoutBounds
+import de.flapdoodle.kfx.types.rawLayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
@@ -16,6 +18,7 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
         addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed)
         addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged)
         addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased)
+        addEventHandler(MouseEvent.MOUSE_MOVED, this::handleMouseMoved)
         addEventHandler(MouseEvent.MOUSE_EXITED, this::handleMouseExited)
 
         val border = Rectangle()
@@ -37,7 +40,7 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
             30.0,
             30.0
         )
-        this.setPrefSize(40.0, 40.0)
+//        this.setPrefSize(40.0, 40.0)
         this.resize(60.0, 60.0)
         this.layoutX = 20.0
         this.layoutY = 30.0
@@ -53,21 +56,47 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
     }
 
     private fun handleMouseExited(event: MouseEvent) {
-//        println("exit ${event.y},${event.y}")
+        sharedEventLock.ifUnlocked {
+            cursor = null
+        }
+
     }
 
     private fun handleMouseEntered(event: MouseEvent) {
-//        println("enter ${event.y},${event.y}")
+        sharedEventLock.ifUnlocked {
+            val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+            if (sizeMode != null) {
+                cursor = sizeMode.cursor()
+            }
+        }
+    }
+
+    private fun handleMouseMoved(event: MouseEvent) {
+        sharedEventLock.ifUnlocked {
+            val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+            if (sizeMode != null) {
+                cursor = sizeMode.cursor()
+            }
+        }
     }
 
     private fun handleMousePressed(event: MouseEvent) {
         sharedEventLock.lock(this) {
-//            println("press -> ${event.screenX},${event.screenY}")
             event.consume()
-            Action.Move(
-                clickPosition = Point2D(event.screenX, event.screenY),
-                layoutPosition = Point2D(layoutX, layoutY)
-            )
+//            println("press -> ${event.screenX},${event.screenY}")
+            val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+            if (sizeMode != null && sizeMode != SizeMode.INSIDE) {
+                cursor = sizeMode.cursor()
+                Action.Resize(
+                    clickPosition = Point2D(event.screenX, event.screenY),
+                    sizeMode = sizeMode,
+                    layout = rawLayoutBounds
+                )
+            } else
+                Action.Move(
+                    clickPosition = Point2D(event.screenX, event.screenY),
+                    layoutPosition = Point2D(layoutX, layoutY)
+                )
         }
     }
 
@@ -83,6 +112,12 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
                     layoutX = newLayoutX
                     layoutY = newLayoutY
                 }
+                is Action.Resize -> {
+                    val diffX = event.screenX - it.clickPosition.x
+                    val diffY = event.screenY - it.clickPosition.y
+                    val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, diffX, diffY)
+                    this.setRawLayoutBounds(resizedBounds)
+                }
             }
             event.consume()
         }
@@ -91,14 +126,29 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
     private fun handleMouseReleased(event: MouseEvent) {
         sharedEventLock.release(this, Action::class.java) {
 //            println("release -> ${event.y},${event.y}")
+            // finish action?
             event.consume()
+            cursor = null
         }
+    }
+
+    private fun setRawLayoutBounds(bounds: LayoutBounds) {
+        layoutX = bounds.x
+        layoutY = bounds.y
+        width = bounds.width
+        height = bounds.height
     }
 
     sealed class Action {
         data class Move(
             val clickPosition: Point2D,
             val layoutPosition: Point2D
+        ) : Action()
+
+        data class Resize(
+            val clickPosition: Point2D,
+            val sizeMode: SizeMode,
+            val layout: LayoutBounds
         ) : Action()
     }
 }

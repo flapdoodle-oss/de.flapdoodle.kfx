@@ -9,17 +9,16 @@ import javafx.scene.layout.StackPane
 import javafx.scene.shape.Rectangle
 
 class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : StackPane() {
-    private val DEFAULT_RESIZE_BORDER_TOLERANCE = 8
-
     init {
         isPickOnBounds = false
 
-        addEventHandler(MouseEvent.MOUSE_ENTERED, this::handleMouseEntered)
-        addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed)
-        addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged)
-        addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased)
-        addEventHandler(MouseEvent.MOUSE_MOVED, this::handleMouseMoved)
-        addEventHandler(MouseEvent.MOUSE_EXITED, this::handleMouseExited)
+//        addEventHandler(MouseEvent.MOUSE_ENTERED, this::handleMouseEvent)
+//        addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMouseEvent)
+//        addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseEvent)
+//        addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseEvent)
+//        addEventHandler(MouseEvent.MOUSE_MOVED, this::handleMouseEvent)
+//        addEventHandler(MouseEvent.MOUSE_EXITED, this::handleMouseEvent)
+        addEventHandler(MouseEvent.ANY, this::handleMouseEvent)
 
         val border = Rectangle()
         val background = Rectangle()
@@ -55,83 +54,79 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
 
     }
 
-    private fun handleMouseExited(event: MouseEvent) {
-        sharedEventLock.ifUnlocked {
-            cursor = null
-        }
-
-    }
-
-    private fun handleMouseEntered(event: MouseEvent) {
-        sharedEventLock.ifUnlocked {
-            val sizeMode = SizeMode.guess(event.x, event.y, width, height)
-            if (sizeMode != null) {
-                cursor = sizeMode.cursor()
+    private fun handleMouseEvent(event: MouseEvent) {
+        when (event.eventType) {
+            MouseEvent.MOUSE_EXITED -> sharedEventLock.ifUnlocked {
+                cursor = null
             }
-        }
-    }
-
-    private fun handleMouseMoved(event: MouseEvent) {
-        sharedEventLock.ifUnlocked {
-            val sizeMode = SizeMode.guess(event.x, event.y, width, height)
-            if (sizeMode != null) {
-                cursor = sizeMode.cursor()
+            MouseEvent.MOUSE_ENTERED -> sharedEventLock.ifUnlocked {
+                val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+                if (sizeMode != null) {
+                    cursor = sizeMode.cursor()
+                }
             }
-        }
-    }
-
-    private fun handleMousePressed(event: MouseEvent) {
-        sharedEventLock.lock(this) {
-            event.consume()
+            MouseEvent.MOUSE_MOVED -> sharedEventLock.ifUnlocked {
+                val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+                if (sizeMode != null) {
+                    cursor = sizeMode.cursor()
+                }
+            }
+            MouseEvent.MOUSE_PRESSED -> sharedEventLock.lock(this) {
+                event.consume()
 //            println("press -> ${event.screenX},${event.screenY}")
-            val sizeMode = SizeMode.guess(event.x, event.y, width, height)
-            if (sizeMode != null && sizeMode != SizeMode.INSIDE) {
-                cursor = sizeMode.cursor()
-                Action.Resize(
-                    clickPosition = Point2D(event.screenX, event.screenY),
-                    sizeMode = sizeMode,
-                    layout = rawLayoutBounds
-                )
-            } else
-                Action.Move(
-                    clickPosition = Point2D(event.screenX, event.screenY),
-                    layoutPosition = Point2D(layoutX, layoutY)
-                )
-        }
-    }
-
-    private fun handleMouseDragged(event: MouseEvent) {
-        sharedEventLock.ifLocked(this, Action::class.java) {
-//            println("dragged -> ${event.screenX},${event.screenY} - $it")
-            when (it) {
-                is Action.Move -> {
-                    val diffX = event.screenX - it.clickPosition.x
-                    val diffY = event.screenY - it.clickPosition.y
-                    val newLayoutX = it.layoutPosition.x + diffX
-                    val newLayoutY = it.layoutPosition.y + diffY
-                    layoutX = newLayoutX
-                    layoutY = newLayoutY
-                }
-                is Action.Resize -> {
-                    val diffX = event.screenX - it.clickPosition.x
-                    val diffY = event.screenY - it.clickPosition.y
-                    val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, diffX, diffY)
-                    this.setRawLayoutBounds(resizedBounds)
-                }
+                val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+                if (sizeMode != null && sizeMode != SizeMode.INSIDE) {
+                    cursor = sizeMode.cursor()
+                    Action.Resize(
+                        clickPosition = Point2D(event.screenX, event.screenY),
+                        sizeMode = sizeMode,
+                        layout = rawLayoutBounds
+                    )
+                } else
+                    Action.Move(
+                        clickPosition = Point2D(event.screenX, event.screenY),
+                        layoutPosition = Point2D(layoutX, layoutY)
+                    )
             }
-            event.consume()
-        }
-    }
-
-    private fun handleMouseReleased(event: MouseEvent) {
-        sharedEventLock.release(this, Action::class.java) {
+            MouseEvent.MOUSE_DRAGGED -> sharedEventLock.ifLocked(this, Action::class.java) {
+//            println("dragged -> ${event.screenX},${event.screenY} - $it")
+                when (it) {
+                    is Action.Move -> {
+                        val diffX = event.screenX - it.clickPosition.x
+                        val diffY = event.screenY - it.clickPosition.y
+                        val newLayoutX = it.layoutPosition.x + diffX
+                        val newLayoutY = it.layoutPosition.y + diffY
+                        layoutX = newLayoutX
+                        layoutY = newLayoutY
+                    }
+                    is Action.Resize -> {
+                        val diffX = event.screenX - it.clickPosition.x
+                        val diffY = event.screenY - it.clickPosition.y
+                        val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, diffX, diffY)
+                        this.setRawLayoutBounds(resizedBounds)
+                    }
+                }
+                event.consume()
+            }
+            MouseEvent.MOUSE_RELEASED -> sharedEventLock.release(this, Action::class.java) {
 //            println("release -> ${event.y},${event.y}")
-            // finish action?
-            event.consume()
-            cursor = null
+                // finish action?
+                event.consume()
+                cursor = null
+            }
+
         }
     }
 
+//    private fun handleMouseReleased(event: MouseEvent) {
+//        sharedEventLock.release(this, Action::class.java) {
+////            println("release -> ${event.y},${event.y}")
+//            // finish action?
+//            event.consume()
+//            cursor = null
+//        }
+//    }
+//
     private fun setRawLayoutBounds(bounds: LayoutBounds) {
         layoutX = bounds.x
         layoutY = bounds.y

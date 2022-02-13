@@ -83,8 +83,8 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
                         val fixedDiff = screenDeltaToLocal(diff)
                         val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, fixedDiff)
                         this.layoutPosition = resizedBounds.layoutPosition
-                        this.width = resizedBounds.width
-                        this.height = resizedBounds.height
+                        this.width = resizedBounds.size.width
+                        this.height = resizedBounds.size.height
                     }
                 }
             }

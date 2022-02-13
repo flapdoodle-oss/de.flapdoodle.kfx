@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.graph.nodes
 
 import de.flapdoodle.kfx.types.Direction
 import de.flapdoodle.kfx.types.LayoutBounds
+import javafx.geometry.Point2D
 import javafx.scene.Cursor
 
 enum class SizeMode(private val cursor: Cursor) {
@@ -54,16 +55,16 @@ enum class SizeMode(private val cursor: Cursor) {
             }
         }
 
-        fun resize(sizeMode: SizeMode, base: LayoutBounds, diffX: Double, diffY: Double): LayoutBounds {
+        fun resize(sizeMode: SizeMode, base: LayoutBounds, diff: Point2D): LayoutBounds {
             return when(sizeMode) {
-                NORTH -> base.expand(Direction.TOP, diffY)
-                NORTHEAST -> base.expand(Direction.TOP, diffY).expand(Direction.RIGHT, diffX)
-                EAST -> base.expand(Direction.RIGHT, diffX)
-                SOUTHEAST -> base.expand(Direction.RIGHT, diffX).expand(Direction.BOTTOM, diffY)
-                SOUTH -> base.expand(Direction.BOTTOM, diffY)
-                SOUTHWEST -> base.expand(Direction.BOTTOM, diffY).expand(Direction.LEFT, diffX)
-                WEST -> base.expand(Direction.LEFT, diffX)
-                NORTHWEST -> base.expand(Direction.LEFT, diffX).expand(Direction.TOP, diffY)
+                NORTH -> base.expand(Direction.TOP, diff.y)
+                NORTHEAST -> base.expand(Direction.TOP, diff.y).expand(Direction.RIGHT, diff.x)
+                EAST -> base.expand(Direction.RIGHT, diff.x)
+                SOUTHEAST -> base.expand(Direction.RIGHT, diff.x).expand(Direction.BOTTOM, diff.y)
+                SOUTH -> base.expand(Direction.BOTTOM, diff.y)
+                SOUTHWEST -> base.expand(Direction.BOTTOM, diff.y).expand(Direction.LEFT, diff.x)
+                WEST -> base.expand(Direction.LEFT, diff.x)
+                NORTHWEST -> base.expand(Direction.LEFT, diff.x).expand(Direction.TOP, diff.y)
                 else -> base
             }
         }

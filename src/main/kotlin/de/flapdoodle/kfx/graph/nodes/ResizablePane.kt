@@ -1,8 +1,6 @@
 package de.flapdoodle.kfx.graph.nodes
 
-import de.flapdoodle.kfx.extensions.minus
-import de.flapdoodle.kfx.extensions.plus
-import de.flapdoodle.kfx.extensions.screen
+import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.virtual.SharedEventLock
 import de.flapdoodle.kfx.types.LayoutBounds
 import de.flapdoodle.kfx.types.rawLayoutBounds
@@ -54,6 +52,7 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
             }
             MouseEvent.MOUSE_PRESSED -> {
                 if (!event.isControlDown) {
+                    event.consume()
                     sharedEventLock.lock(this) {
                         event.consume()
                         val sizeMode = SizeMode.guess(event.x, event.y, width, height)
@@ -73,31 +72,19 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
                 }
             }
             MouseEvent.MOUSE_DRAGGED -> sharedEventLock.ifLocked(this, Action::class.java) {
+                event.consume()
                 when (it) {
                     is Action.Move -> {
                         val diff = event.screen - it.clickPosition
-                        val fixedDiff = screenToLocal(diff) - screenToLocal(Point2D(0.0, 0.0))
-                        val newLayout = it.layoutPosition + fixedDiff
-                        layoutX = newLayout.x
-                        layoutY = newLayout.y
-//                        val diffX = event.screenX - it.clickPosition.x
-//                        val diffY = event.screenY - it.clickPosition.y
-////                        this.screenToLocal()
-//                        val newLayoutX = it.layoutPosition.x + diffX
-//                        val newLayoutY = it.layoutPosition.y + diffY
-//                        layoutX = newLayoutX
-//                        layoutY = newLayoutY
+                        layout = it.layoutPosition + screenDeltaToLocal(diff)
                     }
                     is Action.Resize -> {
-                        val diffX = event.screenX - it.clickPosition.x
-                        val diffY = event.screenY - it.clickPosition.y
                         val diff = event.screen - it.clickPosition
-                        val fixedDiff = screenToLocal(diff) - screenToLocal(Point2D(0.0, 0.0))
-                        val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, fixedDiff.x, fixedDiff.y)
+                        val fixedDiff = screenDeltaToLocal(diff)
+                        val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, fixedDiff)
                         this.setRawLayoutBounds(resizedBounds)
                     }
                 }
-                event.consume()
             }
             MouseEvent.MOUSE_RELEASED -> sharedEventLock.release(this, Action::class.java) {
                 event.consume()

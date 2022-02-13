@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.extensions
 
+import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
 import kotlin.reflect.KClass
@@ -89,3 +90,14 @@ fun Node.heightLimits(): Pair<Double, Double> {
     Pair(minH, minH)
   }
 }
+
+fun Node.screenDeltaToLocal(delta: Point2D): Point2D {
+  return screenToLocal(delta) - screenToLocal(Point2D.ZERO)
+}
+
+var Node.layout: Point2D
+  get() = Point2D(layoutX, layoutY)
+  set(value: Point2D) {
+    layoutX = value.x
+    layoutY = value.y
+  }

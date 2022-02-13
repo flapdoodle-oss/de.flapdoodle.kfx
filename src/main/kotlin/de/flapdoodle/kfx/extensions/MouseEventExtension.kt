@@ -5,3 +5,6 @@ import javafx.scene.input.MouseEvent
 
 val MouseEvent.screen: Point2D
     get() = Point2D(this.screenX, this.screenY)
+
+val MouseEvent.local: Point2D
+    get() = Point2D(this.x, this.y)

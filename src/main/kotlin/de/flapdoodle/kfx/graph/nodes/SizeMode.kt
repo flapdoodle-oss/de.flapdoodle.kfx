@@ -2,8 +2,10 @@ package de.flapdoodle.kfx.graph.nodes
 
 import de.flapdoodle.kfx.types.Direction
 import de.flapdoodle.kfx.types.LayoutBounds
+import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
+import java.text.FieldPosition
 
 enum class SizeMode(private val cursor: Cursor) {
     NORTH(Cursor.N_RESIZE),
@@ -19,7 +21,11 @@ enum class SizeMode(private val cursor: Cursor) {
     fun cursor() = cursor
 
     companion object {
-        fun guess(
+        fun guess(position: Point2D, size: Dimension2D): SizeMode? {
+            return guess(position.x, position.y, size.width, size.height)
+        }
+        
+        private fun guess(
             x: Double,
             y: Double,
             width: Double,

@@ -4,6 +4,7 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.virtual.SharedEventLock
 import de.flapdoodle.kfx.types.LayoutBounds
 import de.flapdoodle.kfx.types.rawLayoutBounds
+import de.flapdoodle.kfx.types.size
 import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
@@ -42,7 +43,7 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
     private fun handleMouseEvent(event: MouseEvent) {
         when (event.eventType) {
             MouseEvent.MOUSE_ENTERED, MouseEvent.MOUSE_MOVED -> sharedEventLock.ifUnlocked {
-                val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+                val sizeMode = SizeMode.guess(event.localPosition, size)
                 if (sizeMode != null) {
                     cursor = sizeMode.cursor()
                 }
@@ -55,18 +56,18 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
                     event.consume()
                     sharedEventLock.lock(this) {
                         event.consume()
-                        val sizeMode = SizeMode.guess(event.x, event.y, width, height)
+                        val sizeMode = SizeMode.guess(event.localPosition, size)
                         if (sizeMode != null && sizeMode != SizeMode.INSIDE) {
                             cursor = sizeMode.cursor()
                             Action.Resize(
-                                clickPosition = Point2D(event.screenX, event.screenY),
+                                clickPosition = event.screenPosition,
                                 sizeMode = sizeMode,
                                 layout = rawLayoutBounds
                             )
                         } else
                             Action.Move(
-                                clickPosition = Point2D(event.screenX, event.screenY),
-                                layoutPosition = Point2D(layoutX, layoutY)
+                                clickPosition = event.screenPosition,
+                                layoutPosition = layoutPosition
                             )
                     }
                 }

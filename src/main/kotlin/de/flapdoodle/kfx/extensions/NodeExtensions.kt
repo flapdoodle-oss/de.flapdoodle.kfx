@@ -95,7 +95,7 @@ fun Node.screenDeltaToLocal(delta: Point2D): Point2D {
   return screenToLocal(delta) - screenToLocal(Point2D.ZERO)
 }
 
-var Node.layout: Point2D
+var Node.layoutPosition: Point2D
   get() = Point2D(layoutX, layoutY)
   set(value: Point2D) {
     layoutX = value.x

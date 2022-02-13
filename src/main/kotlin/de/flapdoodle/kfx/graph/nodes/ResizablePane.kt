@@ -75,14 +75,16 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
                 event.consume()
                 when (it) {
                     is Action.Move -> {
-                        val diff = event.screen - it.clickPosition
-                        layout = it.layoutPosition + screenDeltaToLocal(diff)
+                        val diff = event.screenPosition - it.clickPosition
+                        layoutPosition = it.layoutPosition + screenDeltaToLocal(diff)
                     }
                     is Action.Resize -> {
-                        val diff = event.screen - it.clickPosition
+                        val diff = event.screenPosition - it.clickPosition
                         val fixedDiff = screenDeltaToLocal(diff)
                         val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, fixedDiff)
-                        this.setRawLayoutBounds(resizedBounds)
+                        this.layoutPosition = resizedBounds.layoutPosition
+                        this.width = resizedBounds.width
+                        this.height = resizedBounds.height
                     }
                 }
             }
@@ -91,13 +93,6 @@ class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : 
                 cursor = null
             }
         }
-    }
-
-    private fun setRawLayoutBounds(bounds: LayoutBounds) {
-        layoutX = bounds.x
-        layoutY = bounds.y
-        width = bounds.width
-        height = bounds.height
     }
 
     sealed class Action {

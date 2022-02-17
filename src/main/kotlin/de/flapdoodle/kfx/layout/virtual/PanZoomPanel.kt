@@ -16,17 +16,14 @@
  */
 package de.flapdoodle.kfx.layout.virtual
 
-import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.minus
 import de.flapdoodle.kfx.extensions.plus
 import de.flapdoodle.kfx.extensions.screenPosition
-import javafx.beans.InvalidationListener
+import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.geometry.Bounds
 import javafx.geometry.Orientation
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -36,7 +33,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.Region
-import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
 
 class PanZoomPanel(
@@ -57,21 +53,8 @@ class PanZoomPanel(
         styleClass.addAll("pan-zoom-panel")
         stylesheets += javaClass.getResource("PanZoomPanel.css").toExternalForm();
 
-        val wrapperBounds: ReadOnlyObjectProperty<Bounds> = wrapper.boundsInParentProperty()
-
-        wrapperBounds.addListener(InvalidationListener {
-            requestLayout()
-        })
-
-        children.add(Rectangle().apply {
+        children.add(Bounds.boundsRectangle(wrapper).apply {
             styleClass.addAll("content-background")
-            isManaged = false
-            isMouseTransparent = true
-
-            xProperty().bind(wrapperBounds.mapToDouble(Bounds::getMinX))
-            yProperty().bind(wrapperBounds.mapToDouble(Bounds::getMinY))
-            widthProperty().bind(wrapperBounds.mapToDouble(Bounds::getWidth))
-            heightProperty().bind(wrapperBounds.mapToDouble(Bounds::getHeight))
         })
 
         wrapper.transforms.add(Scale().apply {
@@ -87,10 +70,7 @@ class PanZoomPanel(
         scrollY.valueProperty().bindBidirectional(wrapper.layoutYProperty())
         children.addAll(scrollX,scrollY)
 
-        val clip = Rectangle()
-        clip.widthProperty().bind(widthProperty())
-        clip.heightProperty().bind(heightProperty())
-        setClip(clip)
+        clip = Bounds.sizeRectangle(this)
 
         addEventHandler(MouseEvent.ANY, this::handleMouseEvent)
 
@@ -122,8 +102,6 @@ class PanZoomPanel(
                 currentItemOffset = wrapper.layoutY
             )
         )
-
-//        wrapper.relocate(panZoomHandler.translateX(), panZoomHandler.translateY())
 
         val w = scrollY.width
         val h = scrollX.height
@@ -212,7 +190,7 @@ class PanZoomPanel(
                 }
             } else {
                 sharedEventLock.ifUnlocked {
-                    panTo(translateX() + pEvent.deltaX, translateY() + pEvent.deltaY)
+                    panTo(wrapper.layoutX + pEvent.deltaX, wrapper.layoutY + pEvent.deltaY)
                     pEvent.consume()
                 }
             }
@@ -252,15 +230,8 @@ class PanZoomPanel(
         wrapper.layoutY = y
     }
 
-    fun translateX() = wrapper.layoutX
-    fun translateY() = wrapper.layoutY
-
-    fun zoomProperty() = zoom
-    fun zoom() = zoom.get()
-
-
     fun setZoom(pZoom: Double) {
-        setZoomAt(pZoom, translateX(), translateY())
+        setZoomAt(pZoom, wrapper.layoutX, wrapper.layoutY)
     }
 
     enum class ZoomDirection {
@@ -280,7 +251,7 @@ class PanZoomPanel(
         if (newZoomLevel != oldZoomLevel) {
             val f = newZoomLevel / oldZoomLevel - 1
             zoom.set(newZoomLevel)
-            panTo(translateX() + f * pPivotX, translateY() + f * pPivotY)
+            panTo(wrapper.layoutX + f * pPivotX, wrapper.layoutY + f * pPivotY)
         }
     }
 

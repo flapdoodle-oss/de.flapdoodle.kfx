@@ -37,8 +37,8 @@ class PanZoomPanel(
     private val scrollY = ScrollBar()
 
     init {
-        styleClass.addAll("panning-window")
-        stylesheets += javaClass.getResource("PanningWindow.css").toExternalForm();
+        styleClass.addAll("pan-zoom-panel")
+        stylesheets += javaClass.getResource("PanZoomPanel.css").toExternalForm();
 
         val wrapperBounds: ReadOnlyObjectProperty<Bounds> = wrapper.boundsInParentProperty()
 

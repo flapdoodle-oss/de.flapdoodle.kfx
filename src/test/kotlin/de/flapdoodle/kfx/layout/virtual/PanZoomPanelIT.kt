@@ -34,7 +34,7 @@ internal class PanZoomPanelIT {
         val content = robot.lookup(".content")
             .queryAs(Rectangle::class.java)
 
-        val testee = robot.lookup(".panning-window")
+        val testee = robot.lookup(".pan-zoom-panel")
             .queryAs(PanZoomPanel::class.java)
 
         Assertions.assertThat(content)

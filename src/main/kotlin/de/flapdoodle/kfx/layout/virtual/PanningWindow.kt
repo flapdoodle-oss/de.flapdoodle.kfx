@@ -18,19 +18,12 @@ package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.bindings.mapToDouble
 import javafx.beans.InvalidationListener
-import javafx.beans.binding.Bindings
 import javafx.beans.property.ReadOnlyObjectProperty
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds
 import javafx.geometry.Orientation
-import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.Parent
 import javafx.scene.control.ScrollBar
 import javafx.scene.layout.*
-import javafx.scene.paint.Color
-import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
 
@@ -39,8 +32,6 @@ open class PanningWindow(
 ) : Region() {
     private val wrapper = Wrapper()
     private val panZoomHandler = PanZoomHandler(this, sharedEventLock)
-    private val scale = Scale()
-    private val contentBorder = Rectangle()
 
     private val scrollX = ScrollBar()
     private val scrollY = ScrollBar()
@@ -49,37 +40,24 @@ open class PanningWindow(
         styleClass.addAll("panning-window")
         stylesheets += javaClass.getResource("PanningWindow.css").toExternalForm();
 
-        contentBorder.styleClass.addAll("content-background")
-        contentBorder.isManaged = false
-        contentBorder.isMouseTransparent = true
-        
         val wrapperBounds: ReadOnlyObjectProperty<Bounds> = wrapper.boundsInParentProperty()
 
         wrapperBounds.addListener(InvalidationListener {
             requestLayout()
         })
-//        wrapperBounds.addListener(ChangeListener { observable, oldValue, newValue ->
-//            println("wrapper bounds ${newValue.minX},${newValue.minY} - ${newValue.width},${newValue.height}")
-//        })
 
-        val boundsMinX = wrapperBounds.mapToDouble(Bounds::getMinX)
-        val boundsMinY = wrapperBounds.mapToDouble(Bounds::getMinY)
-        val boundsWidht = wrapperBounds.mapToDouble(Bounds::getWidth)
-        val boundsHeight = wrapperBounds.mapToDouble(Bounds::getHeight)
-//        val boundsMaxX = wrapperBounds.mapToDouble(Bounds::getMaxX)
-//        val boundsMaxY = wrapperBounds.mapToDouble(Bounds::getMaxY)
+        children.add(Rectangle().apply {
+            styleClass.addAll("content-background")
+            isManaged = false
+            isMouseTransparent = true
 
-        with(contentBorder) {
-            xProperty().bind(boundsMinX)
-            yProperty().bind(boundsMinY)
-            widthProperty().bind(boundsWidht)
-            heightProperty().bind(boundsHeight)
-//            widthProperty().bind(boundsMaxX.subtract(boundsMinX))
-//            heightProperty().bind(boundsMaxY.subtract(boundsMinY))
-        }
-        contentBorder.isManaged = false
-        children.add(contentBorder)
+            xProperty().bind(wrapperBounds.mapToDouble(Bounds::getMinX))
+            yProperty().bind(wrapperBounds.mapToDouble(Bounds::getMinY))
+            widthProperty().bind(wrapperBounds.mapToDouble(Bounds::getWidth))
+            heightProperty().bind(wrapperBounds.mapToDouble(Bounds::getHeight))
+        })
 
+        val scale = Scale()
         scale.xProperty().bind(panZoomHandler.zoomProperty())
         scale.yProperty().bind(panZoomHandler.zoomProperty())
         wrapper.transforms.add(scale)

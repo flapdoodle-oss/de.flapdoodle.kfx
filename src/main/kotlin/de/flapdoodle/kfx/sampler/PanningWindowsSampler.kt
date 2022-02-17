@@ -20,6 +20,7 @@ import de.flapdoodle.kfx.clone.BoxFactory
 import de.flapdoodle.kfx.clone.GraphEditorView
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
+import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import de.flapdoodle.kfx.layout.virtual.PanningWindow
 import de.flapdoodle.kfx.layout.virtual.SharedEventLock
 import javafx.application.Application
@@ -45,7 +46,7 @@ class PanningWindowsSampler : Application() {
 //            }
 //        }
 //
-        val testee = PanningWindow(sharedEventLock).apply {
+        val testee = PanZoomPanel(sharedEventLock).apply {
             setContent(sampleContent(sharedEventLock))
             WeightGridPane.setPosition(this, 1, 0)
         }

@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.bindings.mapToDouble
+import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.minus
 import de.flapdoodle.kfx.extensions.plus

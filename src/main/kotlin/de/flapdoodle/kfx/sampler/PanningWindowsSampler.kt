@@ -17,12 +17,10 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.clone.BoxFactory
-import de.flapdoodle.kfx.clone.GraphEditorView
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
-import de.flapdoodle.kfx.layout.virtual.PanningWindow
-import de.flapdoodle.kfx.layout.virtual.SharedEventLock
+import de.flapdoodle.kfx.events.SharedEventLock
 import javafx.application.Application
 import javafx.scene.Group
 import javafx.scene.Scene
@@ -38,14 +36,6 @@ class PanningWindowsSampler : Application() {
         val graphEditorProperties = BoxFactory.sampleProperties()
         val sharedEventLock = SharedEventLock()
 
-//        val template = object : de.flapdoodle.kfx.clone.PanningWindow() {
-//            init {
-//                setEditorProperties(graphEditorProperties)
-//                setContent(sampleContent(sharedEventLock))
-//                WeightGridPane.setPosition(this, 0, 0)
-//            }
-//        }
-//
         val testee = PanZoomPanel(sharedEventLock).apply {
             setContent(sampleContent(sharedEventLock))
             WeightGridPane.setPosition(this, 1, 0)

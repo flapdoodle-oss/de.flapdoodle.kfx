@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.layout.virtual
+package de.flapdoodle.kfx.events
 
 import javafx.scene.Node
 

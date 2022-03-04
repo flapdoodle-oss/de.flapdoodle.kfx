@@ -16,18 +16,21 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.clone.BoxFactory
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.layout.decoration.AttachedNode
+import de.flapdoodle.kfx.layout.decoration.NodeDecorator
 import de.flapdoodle.kfx.layout.layer.LayerPane
+import de.flapdoodle.kfx.types.Direction
+import de.flapdoodle.kfx.types.Percent
 import javafx.application.Application
-import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
+import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
 
 class PanningWindowsSampler : Application() {
@@ -60,7 +63,9 @@ class PanningWindowsSampler : Application() {
 
     fun otherSampleContent(sharedEventLock: SharedEventLock): LayerPane<String> {
         return LayerPane(setOf("A","B","C")).apply {
-            addAll("B", ResizablePane(sharedEventLock))
+            val resizablePane = ResizablePane(sharedEventLock)
+
+            addAll("B", resizablePane)
             
             addAll("A", Pane().apply {
                 this.layoutX = 0.0
@@ -89,41 +94,13 @@ class PanningWindowsSampler : Application() {
                 strokeDashArray.addAll(5.0, 5.0)
             })
 
+            val rect = Rectangle(30.0, 30.0, Color.BLUE)
+            addAll("A", rect)
+
+            AttachedNode.attach(resizablePane, rect, AttachedNode.Companion.Mode(
+                Direction.RIGHT, Percent(0.5), 5.0, 0.0
+            ))
         }
     }
 
-    fun sampleContent(sharedEventLock: SharedEventLock): Group {
-        return object : Group() {
-            init {
-                children.addAll(Pane().apply {
-                    this.layoutX = 0.0
-                    this.layoutY = 0.0
-                    this.minWidth = 420.0
-                    this.minHeight = 180.0
-                    this.border = Border(BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths(1.0)))
-                })
-
-                children.addAll(Pane().apply {
-                    this.layoutX = 50.0
-                    this.layoutY = 150.0
-                    this.minWidth = 80.0
-                    this.minHeight = 40.0
-                    this.border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths(1.0)))
-                })
-
-                children.addAll(Line(-100.0, -100.0, 100.0, 100.0).apply {
-                    strokeWidth = 1.0
-                    stroke = Color.GREEN
-                    strokeDashArray.addAll(5.0, 5.0)
-                })
-                children.addAll(Line(100.0, -100.0, -100.0, 100.0).apply {
-                    strokeWidth = 1.0
-                    stroke = Color.GREEN
-                    strokeDashArray.addAll(5.0, 5.0)
-                })
-
-                children.addAll(ResizablePane(sharedEventLock))
-            }
-        }
-    }
 }

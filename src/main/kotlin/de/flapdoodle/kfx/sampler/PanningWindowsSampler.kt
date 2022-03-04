@@ -21,6 +21,7 @@ import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.layout.layer.LayerPane
 import javafx.application.Application
 import javafx.scene.Group
 import javafx.scene.Scene
@@ -32,12 +33,10 @@ import javafx.stage.Stage
 class PanningWindowsSampler : Application() {
 
     override fun start(stage: Stage) {
-
-        val graphEditorProperties = BoxFactory.sampleProperties()
         val sharedEventLock = SharedEventLock()
 
         val testee = PanZoomPanel(sharedEventLock).apply {
-            setContent(sampleContent(sharedEventLock))
+            setContent(otherSampleContent(sharedEventLock))
             WeightGridPane.setPosition(this, 1, 0)
         }
 
@@ -58,6 +57,40 @@ class PanningWindowsSampler : Application() {
         return resource.toExternalForm() ?: throw IllegalArgumentException("could not get external form for $resource")
     }
 
+
+    fun otherSampleContent(sharedEventLock: SharedEventLock): LayerPane<String> {
+        return LayerPane(setOf("A","B","C")).apply {
+            addAll("B", ResizablePane(sharedEventLock))
+            
+            addAll("A", Pane().apply {
+                this.layoutX = 0.0
+                this.layoutY = 0.0
+                this.minWidth = 420.0
+                this.minHeight = 180.0
+                this.border = Border(BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths(1.0)))
+            })
+
+            addAll("A", Pane().apply {
+                this.layoutX = 50.0
+                this.layoutY = 150.0
+                this.minWidth = 80.0
+                this.minHeight = 40.0
+                this.border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths(1.0)))
+            })
+
+            addAll("C", Line(-100.0, -100.0, 100.0, 100.0).apply {
+                strokeWidth = 1.0
+                stroke = Color.GREEN
+                strokeDashArray.addAll(5.0, 5.0)
+            })
+            addAll("A", Line(100.0, -100.0, -100.0, 100.0).apply {
+                strokeWidth = 1.0
+                stroke = Color.GREEN
+                strokeDashArray.addAll(5.0, 5.0)
+            })
+
+        }
+    }
 
     fun sampleContent(sharedEventLock: SharedEventLock): Group {
         return object : Group() {

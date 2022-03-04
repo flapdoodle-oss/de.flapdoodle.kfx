@@ -21,18 +21,18 @@ import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
-import java.text.FieldPosition
+import javafx.scene.Cursor.*
 
 enum class SizeMode(private val cursor: Cursor) {
-    NORTH(Cursor.N_RESIZE),
-    NORTHEAST(Cursor.NE_RESIZE),
-    EAST(Cursor.E_RESIZE),
-    SOUTHEAST(Cursor.SE_RESIZE),
-    SOUTH(Cursor.S_RESIZE),
-    SOUTHWEST(Cursor.SW_RESIZE),
-    WEST(Cursor.W_RESIZE),
-    NORTHWEST(Cursor.NW_RESIZE),
-    INSIDE(Cursor.MOVE);
+    NORTH(N_RESIZE),
+    NORTHEAST(NE_RESIZE),
+    EAST(E_RESIZE),
+    SOUTHEAST(SE_RESIZE),
+    SOUTH(S_RESIZE),
+    SOUTHWEST(SW_RESIZE),
+    WEST(W_RESIZE),
+    NORTHWEST(NW_RESIZE),
+    INSIDE(MOVE);
 
     fun cursor() = cursor
 

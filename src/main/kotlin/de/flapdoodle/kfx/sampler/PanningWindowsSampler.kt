@@ -18,7 +18,9 @@ package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
-import de.flapdoodle.kfx.layout.decoration.AttachedNode
+import de.flapdoodle.kfx.layout.decoration.Base
+import de.flapdoodle.kfx.layout.decoration.NodeConnections
+import de.flapdoodle.kfx.layout.decoration.Position
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
@@ -65,7 +67,7 @@ class PanningWindowsSampler : Application() {
             val resizablePane = ResizablePane(sharedEventLock)
 
             addAll("B", resizablePane)
-            
+
             addAll("A", Pane().apply {
                 this.layoutX = 0.0
                 this.layoutY = 0.0
@@ -99,23 +101,31 @@ class PanningWindowsSampler : Application() {
             addAll("A", redRect)
             val violetRect = Rectangle(60.0, 30.0, Color.BLUEVIOLET)
             addAll("A", violetRect)
+            val green = Rectangle(10.0, 10.0, Color.GREEN)
+            addAll("A", green)
 
-            AttachedNode.attach(
+            NodeConnections.attach(
                 resizablePane, redRect,
-                AttachedNode.Companion.Mode(Direction.RIGHT, UnitInterval.HALF, 10.0, 0.0),
-                AttachedNode.Companion.Mode(Direction.LEFT, UnitInterval.HALF, 5.0, 0.0)
+                Position(Base.RIGHT, UnitInterval.HALF, 10.0, 0.0),
+                Position(Base.LEFT, UnitInterval.HALF, 5.0, 0.0)
             )
 
-            AttachedNode.attach(
+            NodeConnections.attach(
                 redRect, blueRect,
-                AttachedNode.Companion.Mode(Direction.RIGHT, UnitInterval.ONE, 0.0, 0.0),
-                AttachedNode.Companion.Mode(Direction.TOP, UnitInterval.ZERO, 0.0, 0.0)
+                Position(Base.RIGHT, UnitInterval.ONE, 0.0, 0.0),
+                Position(Base.TOP, UnitInterval.ZERO, 0.0, 0.0)
             )
 
-            AttachedNode.attach(
+            NodeConnections.attach(
                 resizablePane, violetRect,
-                AttachedNode.Companion.Mode(Direction.LEFT, UnitInterval.HALF, 10.0, 0.0),
-                AttachedNode.Companion.Mode(Direction.RIGHT, UnitInterval.HALF, 5.0, 0.0)
+                Position(Base.LEFT, UnitInterval.HALF, 10.0, 0.0),
+                Position(Base.RIGHT, UnitInterval.HALF, 5.0, 0.0)
+            )
+
+            NodeConnections.attach(
+                violetRect, green,
+                Position(Base.HORIZONTAL, UnitInterval.HALF, 0.0, 0.0),
+                Position(Base.HORIZONTAL, UnitInterval.HALF, 0.0, 0.0)
             )
         }
     }

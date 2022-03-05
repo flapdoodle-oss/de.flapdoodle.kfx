@@ -16,4 +16,9 @@
  */
 package de.flapdoodle.kfx.types
 
-enum class Direction { LEFT, RIGHT, TOP, BOTTOM }
+enum class Direction {
+    TOP,
+    RIGHT,
+    BOTTOM,
+    LEFT
+}

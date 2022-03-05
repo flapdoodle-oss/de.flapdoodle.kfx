@@ -7,7 +7,7 @@ fun Point2D.to(other: Point2D) = Line2D(this, other)
 
 data class Line2D(val start: Point2D, val end: Point2D) {
 
-    fun positionAt(position: Percent, distance: Double, offset: Double): Point2D {
+    fun positionAt(position: UnitInterval, distance: Double, offset: Double): Point2D {
 
         val diff = end.subtract(start)
 
@@ -15,11 +15,17 @@ data class Line2D(val start: Point2D, val end: Point2D) {
 
         val offsetPoint = Point2D(offset, -distance)
 
-        val baseAngle = Point2D(1.0, 0.0).angle(diff)
+        var baseAngle = Point2D(1.0, 0.0).angle(diff)
 
-        val rotation = Affine.rotate(baseAngle + Math.PI/4.0, 0.0, 0.0)
+        if (diff.y < 0) {
+            baseAngle = 360 - baseAngle
+        }
 
-        val result = rotation.transform(offsetPoint).add(base)
+        val rotation = Affine.rotate(baseAngle, 0.0, 0.0)
+
+        val rotated = rotation.transform(offsetPoint)
+
+        val result = rotated.add(base)
 
         return result
     }

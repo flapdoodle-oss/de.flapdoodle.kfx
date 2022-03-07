@@ -1,11 +1,9 @@
 package de.flapdoodle.kfx.graph.nodes
 
 import de.flapdoodle.kfx.bindings.Bindings
-import de.flapdoodle.kfx.bindings.mapTo
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Bounds

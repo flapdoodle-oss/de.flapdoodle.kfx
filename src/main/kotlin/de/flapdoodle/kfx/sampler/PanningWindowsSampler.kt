@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.graph.nodes.ConnectionPath
 import de.flapdoodle.kfx.graph.nodes.Connector
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.decoration.Base
@@ -146,24 +147,7 @@ class PanningWindowsSampler : Application() {
             addAll("Top", start)
             addAll("Top", end)
             addAll("Top", boundingBox)
-
-            val path = CubicCurve().apply {
-                strokeWidth = 1.0
-                stroke = Color.BLACK
-                fill = Color.TRANSPARENT
-                startXProperty().bind(start.connectionPointProperty().mapToDouble { it.point2D.x })
-                startYProperty().bind(start.connectionPointProperty().mapToDouble { it.point2D.y })
-
-                controlX1Property().bind(start.connectionPointProperty().mapToDouble { it.withDistance(40.0).x })
-                controlY1Property().bind(start.connectionPointProperty().mapToDouble { it.withDistance(40.0).y })
-
-                controlX2Property().bind(end.connectionPointProperty().mapToDouble { it.withDistance(40.0).x })
-                controlY2Property().bind(end.connectionPointProperty().mapToDouble { it.withDistance(40.0).y })
-
-                endXProperty().bind(end.connectionPointProperty().mapToDouble { it.point2D.x })
-                endYProperty().bind(end.connectionPointProperty().mapToDouble { it.point2D.y })
-            }
-            addAll("Top", path)
+            addAll("Top", ConnectionPath(start, end))
 
 //            addAll("Top", Button("what").apply {
 //                addEventHandler(ActionEvent.ACTION, EventHandler {

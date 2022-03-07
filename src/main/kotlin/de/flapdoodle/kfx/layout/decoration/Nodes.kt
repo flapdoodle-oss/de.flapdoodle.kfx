@@ -18,6 +18,7 @@ object Nodes {
             strokeWidth = 1.0
             stroke = Color.RED
             strokeDashArray.addAll(5.0, 5.0)
+            isMouseTransparent = true
         }
     }
 }

@@ -99,18 +99,6 @@ class PanningWindowsSampler : Application() {
                 strokeDashArray.addAll(5.0, 5.0)
             })
 
-//            val connectorContent = Circle(10.0, Color.DARKGRAY)
-            val connectorContent = Rectangle(10.0, 10.0, Color.DARKGRAY)
-            val connector = Connector(connectorContent).apply {
-                relocate(10.0, 20.0)
-            }
-            val boundingBox = Nodes.boundingBox()
-
-            Nodes.attachBoundingBox(connector, boundingBox)
-
-            addAll("Top", connector)
-            addAll("Top", boundingBox)
-
             val blueRect = Rectangle(30.0, 60.0, Color.BLUE)
             addAll("A", blueRect)
             val redRect = Rectangle(60.0, 30.0, Color.RED)
@@ -146,13 +134,28 @@ class PanningWindowsSampler : Application() {
 
             var angle = 0.0
 
-            addAll("Top", Button("what").apply {
-                addEventHandler(ActionEvent.ACTION, EventHandler {
-                    angle+=10.0
-                    connector.angle(angle)
-                })
-                    relocate(0.0, -30.0)
-            })
+//            val connectorContent = Circle(10.0, Color.DARKGRAY)
+            val connectorContent = Rectangle(10.0, 10.0, Color.DARKGRAY)
+            val connector = Connector(connectorContent).apply {
+                relocate(10.0, 20.0)
+            }
+            val boundingBox = Nodes.boundingBox()
+
+            Nodes.attachBoundingBox(connector, boundingBox)
+
+            addAll("Top", connector)
+            addAll("Top", boundingBox)
+
+            connector.connectionPointProperty().addListener { _, _, it ->
+                println("connection at $it")
+            }
+//            addAll("Top", Button("what").apply {
+//                addEventHandler(ActionEvent.ACTION, EventHandler {
+//                    angle+=10.0
+//                    connector.angle(angle)
+//                })
+//                    relocate(0.0, -30.0)
+//            })
         }
     }
 

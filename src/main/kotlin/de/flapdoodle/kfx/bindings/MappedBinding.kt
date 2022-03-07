@@ -18,15 +18,17 @@ package de.flapdoodle.kfx.bindings
 
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.ReadOnlyProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 
-fun <S, T> ReadOnlyObjectProperty<S>.mapTo(mapping: (S) -> T): MappedBinding<S, T> {
+fun <S, T> ObservableValue<S>.mapTo(mapping: (S) -> T): MappedBinding<S, T> {
     return MappedBinding(this, mapping)
 }
 
 class MappedBinding<S, T>(
-    val source: ReadOnlyObjectProperty<S>,
+    val source: ObservableValue<S>,
     val mapping: (S) -> T
 ) : ObjectBinding<T>() {
     private val dependencies = FXCollections.observableArrayList(source)

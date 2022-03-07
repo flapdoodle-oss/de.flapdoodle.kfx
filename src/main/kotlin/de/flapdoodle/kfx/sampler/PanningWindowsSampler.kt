@@ -17,19 +17,23 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.graph.nodes.Connector
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.decoration.Base
-import de.flapdoodle.kfx.layout.decoration.NodeConnections
+import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.decoration.Position
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
-import de.flapdoodle.kfx.types.Direction
 import de.flapdoodle.kfx.types.UnitInterval
 import javafx.application.Application
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
@@ -63,7 +67,7 @@ class PanningWindowsSampler : Application() {
 
 
     fun otherSampleContent(sharedEventLock: SharedEventLock): LayerPane<String> {
-        return LayerPane(setOf("A","B","C")).apply {
+        return LayerPane(setOf("A","B","C","Top")).apply {
             val resizablePane = ResizablePane(sharedEventLock)
 
             addAll("B", resizablePane)
@@ -95,6 +99,18 @@ class PanningWindowsSampler : Application() {
                 strokeDashArray.addAll(5.0, 5.0)
             })
 
+//            val connectorContent = Circle(10.0, Color.DARKGRAY)
+            val connectorContent = Rectangle(10.0, 10.0, Color.DARKGRAY)
+            val connector = Connector(connectorContent).apply {
+                relocate(10.0, 20.0)
+            }
+            val boundingBox = Nodes.boundingBox()
+
+            Nodes.attachBoundingBox(connector, boundingBox)
+
+            addAll("Top", connector)
+            addAll("Top", boundingBox)
+
             val blueRect = Rectangle(30.0, 60.0, Color.BLUE)
             addAll("A", blueRect)
             val redRect = Rectangle(60.0, 30.0, Color.RED)
@@ -104,29 +120,39 @@ class PanningWindowsSampler : Application() {
             val green = Rectangle(10.0, 10.0, Color.GREEN)
             addAll("A", green)
 
-            NodeConnections.attach(
+            Nodes.attach(
                 resizablePane, redRect,
                 Position(Base.RIGHT, UnitInterval.HALF, 10.0, 0.0),
                 Position(Base.LEFT, UnitInterval.HALF, 5.0, 0.0)
             )
 
-            NodeConnections.attach(
+            Nodes.attach(
                 redRect, blueRect,
                 Position(Base.RIGHT, UnitInterval.ONE, 0.0, 0.0),
                 Position(Base.TOP, UnitInterval.ZERO, 0.0, 0.0)
             )
 
-            NodeConnections.attach(
+            Nodes.attach(
                 resizablePane, violetRect,
                 Position(Base.LEFT, UnitInterval.HALF, 10.0, 0.0),
                 Position(Base.RIGHT, UnitInterval.HALF, 5.0, 0.0)
             )
 
-            NodeConnections.attach(
+            Nodes.attach(
                 violetRect, green,
                 Position(Base.HORIZONTAL, UnitInterval.HALF, 0.0, 0.0),
                 Position(Base.HORIZONTAL, UnitInterval.HALF, 0.0, 0.0)
             )
+
+            var angle = 0.0
+
+            addAll("Top", Button("what").apply {
+                addEventHandler(ActionEvent.ACTION, EventHandler {
+                    angle+=10.0
+                    connector.angle(angle)
+                })
+                    relocate(0.0, -30.0)
+            })
         }
     }
 

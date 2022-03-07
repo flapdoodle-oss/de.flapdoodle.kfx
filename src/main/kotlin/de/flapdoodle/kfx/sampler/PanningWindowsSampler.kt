@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.sampler
 
+import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.graph.nodes.Connector
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
@@ -27,13 +28,11 @@ import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import de.flapdoodle.kfx.types.UnitInterval
 import javafx.application.Application
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
 import javafx.scene.Scene
-import javafx.scene.control.Button
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
@@ -134,21 +133,38 @@ class PanningWindowsSampler : Application() {
 
             var angle = 0.0
 
-//            val connectorContent = Circle(10.0, Color.DARKGRAY)
-            val connectorContent = Rectangle(10.0, 10.0, Color.DARKGRAY)
-            val connector = Connector(connectorContent).apply {
+            val start = Connector(Rectangle(10.0, 10.0, Color.DARKGRAY)).apply {
                 relocate(10.0, 20.0)
             }
             val boundingBox = Nodes.boundingBox()
+            Nodes.attachBoundingBox(start, boundingBox)
 
-            Nodes.attachBoundingBox(connector, boundingBox)
+            val end = Connector(Circle(10.0,Color.DARKGRAY)).apply {
+                relocate(70.0, 30.0)
+            }
 
-            addAll("Top", connector)
+            addAll("Top", start)
+            addAll("Top", end)
             addAll("Top", boundingBox)
 
-            connector.connectionPointProperty().addListener { _, _, it ->
-                println("connection at $it")
+            val path = CubicCurve().apply {
+                strokeWidth = 1.0
+                stroke = Color.BLACK
+                fill = Color.TRANSPARENT
+                startXProperty().bind(start.connectionPointProperty().mapToDouble { it.point2D.x })
+                startYProperty().bind(start.connectionPointProperty().mapToDouble { it.point2D.y })
+
+                controlX1Property().bind(start.connectionPointProperty().mapToDouble { it.withDistance(40.0).x })
+                controlY1Property().bind(start.connectionPointProperty().mapToDouble { it.withDistance(40.0).y })
+
+                controlX2Property().bind(end.connectionPointProperty().mapToDouble { it.withDistance(40.0).x })
+                controlY2Property().bind(end.connectionPointProperty().mapToDouble { it.withDistance(40.0).y })
+
+                endXProperty().bind(end.connectionPointProperty().mapToDouble { it.point2D.x })
+                endYProperty().bind(end.connectionPointProperty().mapToDouble { it.point2D.y })
             }
+            addAll("Top", path)
+
 //            addAll("Top", Button("what").apply {
 //                addEventHandler(ActionEvent.ACTION, EventHandler {
 //                    angle+=10.0

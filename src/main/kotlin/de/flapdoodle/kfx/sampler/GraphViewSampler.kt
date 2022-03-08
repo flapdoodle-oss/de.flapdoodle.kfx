@@ -1,10 +1,7 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.events.SharedEventLock
-import de.flapdoodle.kfx.graph.nodes.ConnectionPath
-import de.flapdoodle.kfx.graph.nodes.Connections
-import de.flapdoodle.kfx.graph.nodes.Connector
-import de.flapdoodle.kfx.graph.nodes.ResizablePane
+import de.flapdoodle.kfx.graph.nodes.*
 import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.layer.LayerPane
@@ -68,9 +65,14 @@ class GraphViewSampler : Application() {
             addAll(connectionLayer, boundingBox)
             addAll(connectionLayer, ConnectionPath(start, end))
 
-            val connections = Connections(sharedEventLock).apply {
-                addConnectorAt(Point2D(130.0, 140.0), Connections.ConnectorType.Socket).apply { angle(30.0) }
-                addConnectorAt(Point2D(80.0, 160.0), Connections.ConnectorType.Plug).apply { angle(200.0) }
+            val connectableConnectors = ConnectableConnectors { connectors, start ->
+                if (start!=null) connectors.filter { it !== start }
+                else connectors
+            }
+            
+            val connections = Connections(connectableConnectors, sharedEventLock).apply {
+                addConnectorAt(Point2D(130.0, 140.0)).apply { angle(30.0) }
+                addConnectorAt(Point2D(80.0, 160.0)).apply { angle(200.0) }
             }
 
             addAll(connectionLayer, connections)

@@ -62,8 +62,8 @@ class Connector(val content: Node) : Group() {
     fun angle(value: Double) {
         angleProperty.set(value)
     }
-
     fun angle() = angleProperty.get()
+    fun angleProperty() = angleProperty
 
     fun connectionPoint() = connectionProperty.get()
     fun connectionPointProperty() = connectionProperty.readOnlyProperty

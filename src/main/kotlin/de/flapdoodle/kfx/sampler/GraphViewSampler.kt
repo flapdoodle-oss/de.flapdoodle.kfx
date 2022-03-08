@@ -1,0 +1,71 @@
+package de.flapdoodle.kfx.sampler
+
+import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.graph.nodes.ConnectionPath
+import de.flapdoodle.kfx.graph.nodes.Connector
+import de.flapdoodle.kfx.graph.nodes.ResizablePane
+import de.flapdoodle.kfx.layout.decoration.Nodes
+import de.flapdoodle.kfx.layout.grid.WeightGridPane
+import de.flapdoodle.kfx.layout.layer.LayerPane
+import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
+import javafx.application.Application
+import javafx.scene.Scene
+import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
+import javafx.scene.shape.Rectangle
+import javafx.stage.Stage
+
+class GraphViewSampler : Application() {
+
+    override fun start(stage: Stage) {
+        val sharedEventLock = SharedEventLock()
+
+        val testee = PanZoomPanel(sharedEventLock).apply {
+            setContent(otherSampleContent(sharedEventLock))
+            WeightGridPane.setPosition(this, 1, 0)
+        }
+
+        stage.scene = Scene(WeightGridPane().apply {
+//            children.add(template)
+            children.add(testee)
+
+            setColumnWeight(0, 1.0)
+            setColumnWeight(1, 1.0)
+            setRowWeight(0, 1.0)
+        }, 400.0, 400.0)
+        stage.scene.stylesheets.add(getStyleResource())
+        stage.show()
+    }
+
+    fun getStyleResource(): String {
+        val resource = PanningWindowsSampler::class.java.getResource("panning-windows-sampler.css") ?: throw IllegalArgumentException("stylesheet not found")
+        return resource.toExternalForm() ?: throw IllegalArgumentException("could not get external form for $resource")
+    }
+
+
+    fun otherSampleContent(sharedEventLock: SharedEventLock): LayerPane<String> {
+        val nodeLayer = "Nodes"
+        val connectionLayer = "Connections"
+        return LayerPane(setOf(nodeLayer, connectionLayer)).apply {
+            val resizablePane = ResizablePane(sharedEventLock)
+
+            addAll(nodeLayer, resizablePane)
+
+            val start = Connector(Rectangle(10.0, 10.0, Color.DARKGRAY)).apply {
+                relocate(10.0, 20.0)
+            }
+            val boundingBox = Nodes.boundingBox()
+            Nodes.attachBoundingBox(start, boundingBox)
+
+            val end = Connector(Circle(10.0, Color.DARKGRAY)).apply {
+                relocate(70.0, 30.0)
+            }
+
+            addAll(connectionLayer, start)
+            addAll(connectionLayer, end)
+            addAll(connectionLayer, boundingBox)
+            addAll(connectionLayer, ConnectionPath(start, end))
+        }
+    }
+
+}

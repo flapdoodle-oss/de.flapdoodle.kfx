@@ -12,11 +12,12 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Line
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Transform
 
-class Connector(val content: Node) : Group() {
+class Connector(val content: Node = Circle(10.0, Color.GREY)) : Group() {
 
     private val angleProperty: DoubleProperty = object : SimpleDoubleProperty(0.0) {
         override fun invalidated() {
@@ -46,12 +47,10 @@ class Connector(val content: Node) : Group() {
             pivotYProperty().bind(boundsInParentProperty.mapToDouble(Bounds::getCenterY))
         })
 
-        var current=0.0
-        addEventHandler(MouseEvent.MOUSE_CLICKED) {
-            current += 10.0
-            angle(current)
-            it.consume()
-        }
+//        addEventHandler(MouseEvent.MOUSE_CLICKED) {
+//            angle(angle()+10.0)
+//            it.consume()
+//        }
 
         val endPoint: Bindings.Merge2Double<Point2D> = Bindings.mapDouble(line.endXProperty(), line.endYProperty(), ::Point2D)
         val endPointInParent = Bindings.map<Transform, Point2D, Point2D>(localToParentTransformProperty(), endPoint, Transform::transform)

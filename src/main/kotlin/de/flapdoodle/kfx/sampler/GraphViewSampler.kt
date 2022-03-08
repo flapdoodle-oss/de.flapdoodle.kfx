@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.graph.nodes.ConnectionPath
+import de.flapdoodle.kfx.graph.nodes.Connections
 import de.flapdoodle.kfx.graph.nodes.Connector
 import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.decoration.Nodes
@@ -9,6 +10,7 @@ import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import javafx.application.Application
+import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -21,7 +23,7 @@ class GraphViewSampler : Application() {
         val sharedEventLock = SharedEventLock()
 
         val testee = PanZoomPanel(sharedEventLock).apply {
-            setContent(otherSampleContent(sharedEventLock))
+            setContent(sample(sharedEventLock))
             WeightGridPane.setPosition(this, 1, 0)
         }
 
@@ -43,7 +45,7 @@ class GraphViewSampler : Application() {
     }
 
 
-    fun otherSampleContent(sharedEventLock: SharedEventLock): LayerPane<String> {
+    fun sample(sharedEventLock: SharedEventLock): LayerPane<String> {
         val nodeLayer = "Nodes"
         val connectionLayer = "Connections"
         return LayerPane(setOf(nodeLayer, connectionLayer)).apply {
@@ -65,6 +67,13 @@ class GraphViewSampler : Application() {
             addAll(connectionLayer, end)
             addAll(connectionLayer, boundingBox)
             addAll(connectionLayer, ConnectionPath(start, end))
+
+            val connections = Connections(sharedEventLock).apply {
+                addConnectorAt(Point2D(130.0, 140.0), Connections.ConnectorType.Socket).apply { angle(30.0) }
+                addConnectorAt(Point2D(80.0, 160.0), Connections.ConnectorType.Plug).apply { angle(200.0) }
+            }
+
+            addAll(connectionLayer, connections)
         }
     }
 

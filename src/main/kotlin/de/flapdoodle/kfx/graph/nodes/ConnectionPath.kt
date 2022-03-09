@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.graph.nodes
 import javafx.scene.Group
 import javafx.scene.paint.Color
 
+@Deprecated("dont use")
 class ConnectionPath(
     val start: Connector,
     val end: Connector

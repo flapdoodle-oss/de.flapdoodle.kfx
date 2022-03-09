@@ -71,8 +71,18 @@ class GraphViewSampler : Application() {
             }
             
             val connections = Connections(connectableConnectors, sharedEventLock).apply {
-                addConnectorAt(Point2D(130.0, 140.0)).apply { angle(30.0) }
-                addConnectorAt(Point2D(80.0, 160.0)).apply { angle(200.0) }
+//                addConnectorAt(Point2D(130.0, 140.0)).apply { angle(30.0) }
+//                addConnectorAt(Point2D(80.0, 160.0)).apply { angle(200.0) }
+
+                addSocket(Connector().apply {
+                    relocate(130.0, 140.0)
+                    angle(30.0)
+                })
+
+                addSocket(Connector().apply {
+                    relocate(80.0, 160.0)
+                    angle(200.0)
+                })
             }
 
             addAll(connectionLayer, connections)

@@ -4,10 +4,13 @@ import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.size
 import de.flapdoodle.kfx.graph.nodes.*
+import de.flapdoodle.kfx.layout.decoration.Base
 import de.flapdoodle.kfx.layout.decoration.Nodes
+import de.flapdoodle.kfx.layout.decoration.Position
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
+import de.flapdoodle.kfx.types.UnitInterval
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
@@ -52,6 +55,11 @@ class GraphViewSampler : Application() {
         return LayerPane(setOf(nodeLayer, connectionLayer)).apply {
             val resizablePane = NonResizablePane().apply {
                 layoutPosition = Point2D(10.0, 10.0)
+                children.addAll(Button("click me").apply {
+                    onAction = EventHandler {
+                        println("click...")
+                    }
+                })
             }
 
             val movables = Movables(sharedEventLock) { node ->
@@ -60,14 +68,8 @@ class GraphViewSampler : Application() {
                     else -> null
                 }
             }
-            movables.addAll(resizablePane, NonResizablePane().apply {
-                layoutX = 80.0
-                children.addAll(Button("click me").apply {
-                    onAction = EventHandler {
-                        println("click...")
-                    }
-                })
-            })
+
+            movables.addAll(resizablePane)
             addAll(nodeLayer, movables)
 
             val start = Connector(Rectangle(10.0, 10.0, Color.DARKGRAY)).apply {
@@ -102,6 +104,7 @@ class GraphViewSampler : Application() {
                 addSocket(Connector().apply {
                     relocate(80.0, 160.0)
                     angle(200.0)
+//                    Nodes.attach(resizablePane, this, Position(Base.LEFT, UnitInterval.HALF, 5.0), Position(Base.RIGHT, UnitInterval.HALF,0.0))
                 })
             }
 

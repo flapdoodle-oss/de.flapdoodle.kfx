@@ -31,11 +31,14 @@ class RunSamplerIT {
 
     @Start
     private fun createElement(stage: Stage) {
-//        val testee = PanningWindowsSampler().apply {
-//            start(stage)
-//        }
-        val testee = GraphViewSampler().apply {
-            start(stage)
+        val case = 2
+        when (case) {
+            1 -> PanningWindowsSampler().apply {
+                start(stage)
+            }
+            2 -> GraphViewSampler().apply {
+                start(stage)
+            }
         }
     }
 

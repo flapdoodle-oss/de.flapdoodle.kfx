@@ -17,8 +17,11 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.extensions.size
 import de.flapdoodle.kfx.graph.nodes.ConnectionPath
 import de.flapdoodle.kfx.graph.nodes.Connector
+import de.flapdoodle.kfx.graph.nodes.Movable
+import de.flapdoodle.kfx.graph.nodes.Movables
 import de.flapdoodle.kfx.layout.decoration.Base
 import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.decoration.Position
@@ -64,10 +67,19 @@ class PanningWindowsSampler : Application() {
 
 
     fun otherSampleContent(sharedEventLock: SharedEventLock): LayerPane<String> {
-        return LayerPane(setOf("A","B","C","Top")).apply {
-            val resizablePane = NonResizablePane()
+        return LayerPane(setOf("A", "B", "C", "Top")).apply {
+            val resizablePane = NonResizablePane().apply {
+                resizeTo(50.0, 30.0)
+            }
 
-            addAll("B", resizablePane)
+            addAll("B", Movables(sharedEventLock) {
+                when (it) {
+                    is NonResizablePane -> Movable(it, NonResizablePane::size, NonResizablePane::resizeTo)
+                    else -> null
+                }
+            }.apply {
+                addAll(resizablePane)
+            })
 
             addAll("A", Pane().apply {
                 this.layoutX = 0.0
@@ -137,7 +149,7 @@ class PanningWindowsSampler : Application() {
             val boundingBox = Nodes.boundingBox()
             Nodes.attachBoundingBox(start, boundingBox)
 
-            val end = Connector(Circle(10.0,Color.DARKGRAY)).apply {
+            val end = Connector(Circle(10.0, Color.DARKGRAY)).apply {
                 relocate(70.0, 30.0)
             }
 
@@ -155,5 +167,4 @@ class PanningWindowsSampler : Application() {
 //            })
         }
     }
-
 }

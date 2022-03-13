@@ -22,16 +22,6 @@ class Movables(
     private fun handleMouseEvent(event: MouseEvent) {
         currentEnteredTarget?.let { targetAsRegion ->
             when (event.eventType) {
-                MouseEvent.MOUSE_MOVED -> sharedEventLock.ifUnlocked {
-                    val targetLocalPosition = targetAsRegion.node.parentToLocal(event.localPosition)
-                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size())
-                    if (sizeMode != null) {
-                        cursor = if (targetAsRegion.isResizeable())
-                            sizeMode.cursor()
-                        else
-                            SizeMode.INSIDE.cursor()
-                    }
-                }
                 MouseEvent.MOUSE_PRESSED -> {
                     if (!event.isControlDown) {
                         sharedEventLock.lock(this) {
@@ -86,6 +76,16 @@ class Movables(
 //            println("event -> $event (lock: ${sharedEventLock.current})")
 
             when (event.eventType) {
+//                MouseEvent.MOUSE_MOVED -> sharedEventLock.ifUnlocked {
+//                    val targetLocalPosition = targetAsRegion.node.parentToLocal(event.localPosition)
+//                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size())
+//                    if (sizeMode != null) {
+//                        cursor = if (targetAsRegion.isResizeable())
+//                            sizeMode.cursor()
+//                        else
+//                            SizeMode.INSIDE.cursor()
+//                    }
+//                }
                 MouseEvent.MOUSE_ENTERED_TARGET -> sharedEventLock.ifUnlocked {
                     currentEnteredTarget = targetAsRegion
 

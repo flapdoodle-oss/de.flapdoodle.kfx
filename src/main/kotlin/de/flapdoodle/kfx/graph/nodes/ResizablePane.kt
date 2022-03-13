@@ -26,6 +26,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.scene.shape.Rectangle
 
+@Deprecated("use Movables layer")
 class ResizablePane(val sharedEventLock: SharedEventLock = SharedEventLock()) : StackPane() {
     init {
         isPickOnBounds = false

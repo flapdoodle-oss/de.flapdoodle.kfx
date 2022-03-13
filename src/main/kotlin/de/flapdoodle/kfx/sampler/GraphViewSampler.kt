@@ -9,7 +9,9 @@ import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import de.flapdoodle.kfx.types.size
 import javafx.application.Application
+import javafx.event.EventHandler
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -58,6 +60,11 @@ class GraphViewSampler : Application() {
             }
             movables.addAll(resizablePane, NonResizablePane().apply {
                 layoutX = 80.0
+                children.addAll(Button("click me").apply {
+                    onAction = EventHandler {
+                        println("click...")
+                    }
+                })
             })
             addAll(nodeLayer, movables)
 

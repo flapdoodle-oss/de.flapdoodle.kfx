@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.size
 import de.flapdoodle.kfx.graph.nodes.*
 import de.flapdoodle.kfx.layout.decoration.Nodes
@@ -9,6 +10,7 @@ import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import javafx.application.Application
 import javafx.event.EventHandler
+import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.paint.Color
@@ -48,7 +50,9 @@ class GraphViewSampler : Application() {
         val nodeLayer = "Nodes"
         val connectionLayer = "Connections"
         return LayerPane(setOf(nodeLayer, connectionLayer)).apply {
-            val resizablePane = ResizablePane(sharedEventLock)
+            val resizablePane = NonResizablePane().apply {
+                layoutPosition = Point2D(10.0, 10.0)
+            }
 
             val movables = Movables(sharedEventLock) { node ->
                 when (node) {

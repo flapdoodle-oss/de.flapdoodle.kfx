@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.graph.nodes
+package de.flapdoodle.kfx.sampler
 
 import javafx.scene.layout.StackPane
 import javafx.scene.shape.Rectangle

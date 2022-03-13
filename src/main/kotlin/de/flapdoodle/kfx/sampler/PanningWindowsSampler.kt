@@ -16,11 +16,9 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.graph.nodes.ConnectionPath
 import de.flapdoodle.kfx.graph.nodes.Connector
-import de.flapdoodle.kfx.graph.nodes.ResizablePane
 import de.flapdoodle.kfx.layout.decoration.Base
 import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.decoration.Position
@@ -33,7 +31,6 @@ import javafx.scene.Scene
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
@@ -68,7 +65,7 @@ class PanningWindowsSampler : Application() {
 
     fun otherSampleContent(sharedEventLock: SharedEventLock): LayerPane<String> {
         return LayerPane(setOf("A","B","C","Top")).apply {
-            val resizablePane = ResizablePane(sharedEventLock)
+            val resizablePane = NonResizablePane()
 
             addAll("B", resizablePane)
 

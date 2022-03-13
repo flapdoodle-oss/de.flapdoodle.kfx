@@ -99,12 +99,12 @@ class GraphViewSampler : Application() {
                 addSocket(Connector().apply {
                     relocate(130.0, 140.0)
                     angle(30.0)
+                    Nodes.attach(resizablePane, this, Position(Base.LEFT, UnitInterval.HALF, 5.0), Position(Base.RIGHT, UnitInterval.HALF,0.0))
                 })
 
                 addSocket(Connector().apply {
                     relocate(80.0, 160.0)
                     angle(200.0)
-//                    Nodes.attach(resizablePane, this, Position(Base.LEFT, UnitInterval.HALF, 5.0), Position(Base.RIGHT, UnitInterval.HALF,0.0))
                 })
             }
 

@@ -22,6 +22,17 @@ class Movables(
     private fun handleMouseEvent(event: MouseEvent) {
         currentEnteredTarget?.let { targetAsRegion ->
             when (event.eventType) {
+                MouseEvent.MOUSE_MOVED -> sharedEventLock.ifUnlocked {
+                    val targetLocalPosition = targetAsRegion.node.parentToLocal(event.localPosition)
+                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size())
+                    if (sizeMode != null) {
+                        if (sizeMode != SizeMode.INSIDE) {
+                            cursor = sizeMode.cursor()
+                        } else {
+                            cursor = null
+                        }
+                    }
+                }
                 MouseEvent.MOUSE_PRESSED -> {
                     if (!event.isControlDown) {
                         sharedEventLock.lock(this) {
@@ -36,11 +47,13 @@ class Movables(
                                     sizeMode = sizeMode,
                                     layout = targetAsRegion.rawLayoutBounds()
                                 )
-                            } else
+                            } else {
+                                cursor = SizeMode.INSIDE.cursor()
                                 Action.Move(
                                     clickPosition = event.screenPosition,
                                     layoutPosition = targetAsRegion.node.layoutPosition
                                 )
+                            }
                         }
                     }
                 }
@@ -76,16 +89,6 @@ class Movables(
 //            println("event -> $event (lock: ${sharedEventLock.current})")
 
             when (event.eventType) {
-//                MouseEvent.MOUSE_MOVED -> sharedEventLock.ifUnlocked {
-//                    val targetLocalPosition = targetAsRegion.node.parentToLocal(event.localPosition)
-//                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size())
-//                    if (sizeMode != null) {
-//                        cursor = if (targetAsRegion.isResizeable())
-//                            sizeMode.cursor()
-//                        else
-//                            SizeMode.INSIDE.cursor()
-//                    }
-//                }
                 MouseEvent.MOUSE_ENTERED_TARGET -> sharedEventLock.ifUnlocked {
                     currentEnteredTarget = targetAsRegion
 

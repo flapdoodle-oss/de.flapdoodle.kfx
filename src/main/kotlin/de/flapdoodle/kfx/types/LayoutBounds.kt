@@ -22,9 +22,6 @@ import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.layout.Region
 
-val Region.size: Dimension2D
-    get() = Dimension2D(width, height)
-
 val Region.rawLayoutBounds: LayoutBounds
     get() = LayoutBounds(layoutPosition, size)
 

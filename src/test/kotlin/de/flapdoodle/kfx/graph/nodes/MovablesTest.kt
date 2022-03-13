@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.graph.nodes
 
 import de.flapdoodle.kfx.extensions.layoutPosition
+import de.flapdoodle.kfx.extensions.size
 import de.flapdoodle.kfx.isNearlyEqualTo
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
@@ -63,6 +64,8 @@ internal class MovablesTest {
 
         assertThat(content.layoutPosition)
             .isNearlyEqualTo(Point2D(10.0, 25.0))
+        assertThat(content.size)
+            .isEqualTo(Dimension2D(50.0, 50.0))
 
         assertThat(testee.layoutPosition)
             .isNearlyEqualTo(Point2D(0.0, 0.0))
@@ -95,5 +98,7 @@ internal class MovablesTest {
 
         assertThat(content.layoutPosition)
             .isNearlyEqualTo(Point2D(40.0, 20.0))
+        assertThat(content.size)
+            .isEqualTo(Dimension2D(60.0, 80.0))
     }
 }

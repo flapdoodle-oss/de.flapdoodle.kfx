@@ -16,11 +16,10 @@
  */
 package de.flapdoodle.kfx.graph.nodes
 
-import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.LayoutBounds
 import de.flapdoodle.kfx.types.rawLayoutBounds
-import de.flapdoodle.kfx.types.size
 import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane

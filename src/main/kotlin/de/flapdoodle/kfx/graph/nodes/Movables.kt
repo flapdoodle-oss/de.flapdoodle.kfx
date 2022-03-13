@@ -3,20 +3,17 @@ package de.flapdoodle.kfx.graph.nodes
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.LayoutBounds
-import de.flapdoodle.kfx.types.rawLayoutBounds
-import de.flapdoodle.kfx.types.size
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Region
 
 class Movables(
     val sharedEventLock: SharedEventLock = SharedEventLock(),
-    val regionAsResizeable: (Region) -> Resizeable?
+    val regionAsResizeable: (Node) -> Movable<out Node>?
 ) : Group() {
 
-    private var currentEnteredTarget: Movable? = null
+    private var currentEnteredTarget: Movable<out Node>? = null
 
     init {
         addEventHandler(MouseEvent.ANY, ::handleMouseEvent)
@@ -27,9 +24,9 @@ class Movables(
             when (event.eventType) {
                 MouseEvent.MOUSE_MOVED -> sharedEventLock.ifUnlocked {
                     val targetLocalPosition = targetAsRegion.node.parentToLocal(event.localPosition)
-                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.node.size)
+                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size())
                     if (sizeMode != null) {
-                        cursor = if (null != targetAsRegion.resizeable)
+                        cursor = if (targetAsRegion.isResizeable())
                             sizeMode.cursor()
                         else
                             SizeMode.INSIDE.cursor()
@@ -41,13 +38,13 @@ class Movables(
                             event.consume()
 
                             val targetLocalPosition = targetAsRegion.node.parentToLocal(event.localPosition)
-                            val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.node.size)
-                            if (sizeMode != null && sizeMode != SizeMode.INSIDE && targetAsRegion.resizeable != null) {
+                            val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size())
+                            if (sizeMode != null && sizeMode != SizeMode.INSIDE && targetAsRegion.isResizeable()) {
                                 cursor = sizeMode.cursor()
                                 Action.Resize(
                                     clickPosition = event.screenPosition,
                                     sizeMode = sizeMode,
-                                    layout = targetAsRegion.node.rawLayoutBounds
+                                    layout = targetAsRegion.rawLayoutBounds()
                                 )
                             } else
                                 Action.Move(
@@ -69,10 +66,7 @@ class Movables(
                             val fixedDiff = targetAsRegion.node.screenDeltaToLocal(diff)
                             val resizedBounds = SizeMode.resize(it.sizeMode, it.layout, fixedDiff)
                             targetAsRegion.node.layoutPosition = resizedBounds.layoutPosition
-                            (targetAsRegion.resizeable ?: throw IllegalArgumentException("resizable not set"))
-                                .resizeTo(
-                                    resizedBounds.size.width, resizedBounds.size.height
-                                )
+                            targetAsRegion.resizeTo(resizedBounds.size.width, resizedBounds.size.height)
                         }
                     }
                 }
@@ -85,7 +79,7 @@ class Movables(
 
         val target = children.firstOrNull { it == event.target }
         val targetAsRegion = target?.let {
-            if (it is Region) it else null
+            regionAsResizeable(target)
         }
 
         if (targetAsRegion != null) {
@@ -93,10 +87,10 @@ class Movables(
 
             when (event.eventType) {
                 MouseEvent.MOUSE_ENTERED_TARGET -> sharedEventLock.ifUnlocked {
-                    currentEnteredTarget = Movable(targetAsRegion, regionAsResizeable(targetAsRegion))
+                    currentEnteredTarget = targetAsRegion
 
-                    val targetLocalPosition = targetAsRegion.parentToLocal(event.localPosition)
-                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size)
+                    val targetLocalPosition = targetAsRegion.node.parentToLocal(event.localPosition)
+                    val sizeMode = SizeMode.guess(targetLocalPosition, targetAsRegion.size())
                     if (sizeMode != null) {
                         cursor = sizeMode.cursor()
                     }
@@ -127,5 +121,5 @@ class Movables(
         ) : Action()
     }
 
-    data class Movable(val node: Region, val resizeable: Resizeable?)
+//    data class Movable(val node: Region, val resizeable: Resizeable?)
 }

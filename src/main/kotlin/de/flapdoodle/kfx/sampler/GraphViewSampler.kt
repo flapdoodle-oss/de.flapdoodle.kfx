@@ -1,13 +1,16 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.graph.nodes.*
 import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
+import de.flapdoodle.kfx.types.size
 import javafx.application.Application
 import javafx.scene.Scene
+import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
@@ -49,7 +52,7 @@ class GraphViewSampler : Application() {
 
             val movables = Movables(sharedEventLock) { node ->
                 when (node) {
-                    is NonResizablePane -> Resizeable(node::resizeTo)
+                    is NonResizablePane -> Movable(node, NonResizablePane::size) { Resizeable(it::resizeTo) }
                     else -> null
                 }
             }

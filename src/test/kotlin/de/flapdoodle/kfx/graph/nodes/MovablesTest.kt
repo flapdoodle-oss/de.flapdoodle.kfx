@@ -27,11 +27,9 @@ internal class MovablesTest {
     private fun createElement(stage: Stage) {
         val testee = Movables { node ->
             when (node) {
-                is Rectangle -> Movable(node, { rect -> Dimension2D(rect.width, rect.height) }, { rect ->
-                    Resizeable { width, height ->
-                        rect.width = width
-                        rect.height = height
-                    }
+                is Rectangle -> Movable(node, { rect -> Dimension2D(rect.width, rect.height) }, { it,w,h ->
+                    it.width = w
+                    it.height = h
                 })
                 else -> null
             }

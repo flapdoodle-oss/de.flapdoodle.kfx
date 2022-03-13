@@ -56,7 +56,7 @@ class GraphViewSampler : Application() {
 
             val movables = Movables(sharedEventLock) { node ->
                 when (node) {
-                    is NonResizablePane -> Movable(node, NonResizablePane::size) { Resizeable(it::resizeTo) }
+                    is NonResizablePane -> Movable(node, NonResizablePane::size, NonResizablePane::resizeTo)
                     else -> null
                 }
             }

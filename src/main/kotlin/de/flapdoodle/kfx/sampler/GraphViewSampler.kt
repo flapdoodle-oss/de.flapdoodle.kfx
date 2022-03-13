@@ -7,7 +7,6 @@ import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import javafx.application.Application
-import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -48,7 +47,16 @@ class GraphViewSampler : Application() {
         return LayerPane(setOf(nodeLayer, connectionLayer)).apply {
             val resizablePane = ResizablePane(sharedEventLock)
 
-            addAll(nodeLayer, resizablePane)
+            val movables = Movables(sharedEventLock) { node ->
+                when (node) {
+                    is NonResizablePane -> Resizeable(node::resizeTo)
+                    else -> null
+                }
+            }
+            movables.addAll(resizablePane, NonResizablePane().apply {
+                layoutX = 80.0
+            })
+            addAll(nodeLayer, movables)
 
             val start = Connector(Rectangle(10.0, 10.0, Color.DARKGRAY)).apply {
                 relocate(10.0, 20.0)

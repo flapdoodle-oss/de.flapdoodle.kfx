@@ -47,7 +47,6 @@ class Connections(
                             event.consume()
                             Action.Connect(
                                 clickPosition = event.localPosition,
-                                layoutPosition = event.localPosition, // remove
                                 source = matching,
                                 destination = ReadOnlyObjectWrapper(AngleAtPoint2D(event.localPosition, 0.0))
                             ).also {
@@ -89,6 +88,7 @@ class Connections(
                                 val currentPos = event.localPosition
                                 val openSocket = socketAt(currentPos)
                                 if (openSocket!=null && openSocket != it.source) {
+                                    // TODO delegate this to some external stuff
                                     addConnection(it.source, openSocket)
                                 }
                             }
@@ -182,7 +182,6 @@ class Connections(
 
         data class Connect(
             val clickPosition: Point2D,
-            val layoutPosition: Point2D,
             val source: Connector,
             val destination: ReadOnlyObjectWrapper<AngleAtPoint2D>
         ) : Action() {

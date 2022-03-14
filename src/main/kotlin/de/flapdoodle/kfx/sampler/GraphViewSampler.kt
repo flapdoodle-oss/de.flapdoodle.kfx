@@ -87,19 +87,24 @@ class GraphViewSampler : Application() {
             addAll(connectionLayer, boundingBox)
             addAll(connectionLayer, ConnectionPath(start, end))
 
-            val connectableConnectors = ConnectableConnectors { connectors, start ->
-                if (start!=null) connectors.filter { it !== start }
-                else connectors
-            }
-            
-            val connections = Connections(connectableConnectors, sharedEventLock).apply {
+            val eventHandler = Connections.EventHandler.with(
+                Connections.EventMatch(Connections.Event.OnConnector::class, Connections.Response.OnConnector::IsConnectable),
+                Connections.EventMatch(Connections.Event.StartConnect::class) { Connections.Response.CanConnectTo(it, listOf(start, end)) },
+                Connections.EventMatch(Connections.Event.AtDestination::class, Connections.Response.AtDestination::IsConnectable),
+                Connections.EventMatch(Connections.Event.Connect::class) {
+                    // TODO add connection?
+                    Connections.Response.Connected(it)
+                }
+            )
+
+            val connections = Connections(sharedEventLock, eventHandler).apply {
 //                addConnectorAt(Point2D(130.0, 140.0)).apply { angle(30.0) }
 //                addConnectorAt(Point2D(80.0, 160.0)).apply { angle(200.0) }
 
                 addSocket(Connector().apply {
                     relocate(130.0, 140.0)
                     angle(30.0)
-                    Nodes.attach(resizablePane, this, Position(Base.LEFT, UnitInterval.HALF, 5.0), Position(Base.RIGHT, UnitInterval.HALF,0.0))
+                    Nodes.attach(resizablePane, this, Position(Base.LEFT, UnitInterval.HALF, 5.0), Position(Base.RIGHT, UnitInterval.HALF, 0.0))
                 })
 
                 addSocket(Connector().apply {

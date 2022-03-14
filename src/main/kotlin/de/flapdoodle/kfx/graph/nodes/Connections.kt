@@ -1,11 +1,10 @@
 package de.flapdoodle.kfx.graph.nodes
 
 import de.flapdoodle.kfx.events.SharedEventLock
-import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.extensions.localPosition
 import de.flapdoodle.kfx.graph.nodes.Curves.bindControls
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.Group
@@ -14,10 +13,11 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.Shape
+import kotlin.reflect.KClass
 
 class Connections(
-    val connectableConnectors: ConnectableConnectors,
-    val sharedEventLock: SharedEventLock = SharedEventLock()
+    val sharedEventLock: SharedEventLock = SharedEventLock(),
+    val eventHandler: Connections.EventHandler
 ) : Group() {
 
     private val sockets = Group()
@@ -33,24 +33,28 @@ class Connections(
             val matchingConnection = connectionAt(event.localPosition)
 
             sharedEventLock.ifUnlocked {
-                if (matching != null || matchingConnection != null) {
-                    cursor = Cursor.HAND
-                } else {
-                    cursor = null
+                if (matching!=null) {
+                    cursor = when (eventHandler.onEvent(Event.OnConnector(matching))) {
+                        is Response.OnConnector.IsConnectable -> Cursor.HAND
+                        is Response.OnConnector.IsNotConnectable -> null
+                    }
                 }
             }
 
             when (event.eventType) {
                 MouseEvent.MOUSE_PRESSED -> {
                     if (matching != null) {
-                        sharedEventLock.lock(this) {
-                            event.consume()
-                            Action.Connect(
-                                clickPosition = event.localPosition,
-                                source = matching,
-                                destination = ReadOnlyObjectWrapper(AngleAtPoint2D(event.localPosition, 0.0))
-                            ).also {
-                                connections.children.addAll(it.curve)
+                        val onStartConnect = eventHandler.onEvent(Event.StartConnect(matching))
+                        if (onStartConnect.to.isNotEmpty()) {
+                            sharedEventLock.lock(this) {
+                                event.consume()
+                                Action.Connect(
+                                    clickPosition = event.localPosition,
+                                    source = matching,
+                                    destination = ReadOnlyObjectWrapper(AngleAtPoint2D(event.localPosition, 0.0))
+                                ).also {
+                                    connections.children.addAll(it.curve)
+                                }
                             }
                         }
                     } else {
@@ -63,17 +67,26 @@ class Connections(
                 }
                 MouseEvent.MOUSE_DRAGGED -> {
                     sharedEventLock.ifLocked(this, Action::class.java) {
+                        event.consume()
+
                         when (it) {
                             is Action.Connect -> {
-                                event.consume()
 
-//                                val diff = event.screenPosition - it.clickPosition
-//                                val currentPos = it.layoutPosition + screenDeltaToLocal(diff)
                                 val currentPos = event.localPosition
                                 val openSocket = socketAt(currentPos)
 
-                                it.destination.value = (if (openSocket != null && openSocket != it.source) openSocket.connectionPoint()
-                                else AngleAtPoint2D(currentPos, 0.0))
+                                var angle = AngleAtPoint2D(currentPos, 0.0)
+                                if (openSocket!=null) {
+                                    when (eventHandler.onEvent(Event.AtDestination(it.source, openSocket))) {
+                                        is Response.AtDestination.IsConnectable -> {
+                                            angle = openSocket.connectionPoint()
+                                        }
+                                        is Response.AtDestination.IsNotConnectable -> {
+
+                                        }
+                                    }
+                                }
+                                it.destination.value = angle
                             }
                         }
                     }
@@ -81,20 +94,22 @@ class Connections(
                 MouseEvent.MOUSE_RELEASED -> {
                     sharedEventLock.release(this, Action::class.java) {
                         event.consume()
+
                         when (it) {
                             is Action.Connect -> {
                                 connections.children.remove(it.curve)
 
                                 val currentPos = event.localPosition
                                 val openSocket = socketAt(currentPos)
-                                if (openSocket!=null && openSocket != it.source) {
-                                    // TODO delegate this to some external stuff
-                                    addConnection(it.source, openSocket)
+                                if (openSocket != null && openSocket != it.source) {
+                                    val connected = eventHandler.onEvent(Event.Connect(it.source, openSocket))
+//                                    // TODO delegate this to some external stuff
+//                                    addConnection(it.source, openSocket)
                                 }
                             }
                             is Action.Select -> {
                                 val oldSelection = selection
-                                if (oldSelection!=null) {
+                                if (oldSelection != null) {
                                     oldSelection.stroke = Color.BLACK
                                 }
                                 if (oldSelection == it.connection) {
@@ -151,7 +166,7 @@ class Connections(
     }
 
     fun addConnection(source: Connector, destination: Connector) {
-        connections.children.addAll(Connection(source,destination))
+        connections.children.addAll(Connection(source, destination))
     }
 
     fun removeConnection(source: Connector, destination: Connector) {
@@ -194,6 +209,53 @@ class Connections(
 
         data class Select(
             val connection: Connection
-        ): Action()
+        ) : Action()
+    }
+
+    sealed class Event<R: Response> {
+        data class OnConnector(val connector: Connector) : Event<Response.OnConnector>()
+        data class StartConnect(val connector: Connector) : Event<Response.CanConnectTo>()
+        data class AtDestination(val start: Connector, val destination: Connector) : Event<Response.AtDestination>()
+        data class Connect(val start: Connector, val destination: Connector) : Event<Response.Connected>()
+    }
+
+    sealed class Response {
+        sealed class OnConnector : Response() {
+            data class IsConnectable(val source: Event.OnConnector) : OnConnector()
+            data class IsNotConnectable(val source: Event.OnConnector) : OnConnector()
+        }
+        data class CanConnectTo(val source: Event.StartConnect, val to: List<Connector>) : Response()
+        sealed class AtDestination : Response() {
+            data class IsConnectable(val source: Event.AtDestination) : AtDestination()
+            data class IsNotConnectable(val source: Event.AtDestination) : AtDestination()
+        }
+        data class Connected(val source: Event.Connect) : Response()
+    }
+
+    data class EventMatch<E: Event<R>, R: Response>(val type: KClass<E>, val action: (E) -> R) {
+        fun respond(event: Event<out Response>): R? {
+            return if (type.isInstance(event))
+                action(event as E)
+            else
+                null
+        }
+    }
+
+    interface EventHandler {
+        fun <T: Event<R>, R: Response> onEvent(event: T): R
+
+        companion object {
+            fun with(vararg matches: EventMatch<out Event<out Response>, out Response>): EventHandler {
+                return object : EventHandler {
+                    override fun <T : Event<R>, R : Response> onEvent(event: T): R {
+                        for (match in matches) {
+                            val response = match.respond(event)
+                            if (response!=null) return response as R
+                        }
+                        throw IllegalArgumentException("no match found for $event")
+                    }
+                }
+            }
+        }
     }
 }

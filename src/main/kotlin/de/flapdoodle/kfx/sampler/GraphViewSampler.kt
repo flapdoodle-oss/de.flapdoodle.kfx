@@ -3,7 +3,12 @@ package de.flapdoodle.kfx.sampler
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.size
-import de.flapdoodle.kfx.graph.nodes.*
+import de.flapdoodle.kfx.graph.connections.ConnectionEventHandler
+import de.flapdoodle.kfx.graph.connections.Connections
+import de.flapdoodle.kfx.graph.nodes.ConnectionPath
+import de.flapdoodle.kfx.graph.nodes.Connector
+import de.flapdoodle.kfx.graph.nodes.Movable
+import de.flapdoodle.kfx.graph.nodes.Movables
 import de.flapdoodle.kfx.layout.decoration.Base
 import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.decoration.Position
@@ -87,31 +92,42 @@ class GraphViewSampler : Application() {
             addAll(connectionLayer, boundingBox)
             addAll(connectionLayer, ConnectionPath(start, end))
 
-            val eventHandler = Connections.EventHandler.with(
-                Connections.EventMatch(Connections.Event.OnConnector::class, Connections.Response.OnConnector::IsConnectable),
-                Connections.EventMatch(Connections.Event.StartConnect::class) { Connections.Response.CanConnectTo(it, listOf(start, end)) },
-                Connections.EventMatch(Connections.Event.AtDestination::class, Connections.Response.AtDestination::IsConnectable),
-                Connections.EventMatch(Connections.Event.Connect::class) {
-                    // TODO add connection?
-                    Connections.Response.Connected(it)
-                }
-            )
 
-            val connections = Connections(sharedEventLock, eventHandler).apply {
-//                addConnectorAt(Point2D(130.0, 140.0)).apply { angle(30.0) }
-//                addConnectorAt(Point2D(80.0, 160.0)).apply { angle(200.0) }
+            val connections = Connections(sharedEventLock)
 
-                addSocket(Connector().apply {
-                    relocate(130.0, 140.0)
-                    angle(30.0)
-                    Nodes.attach(resizablePane, this, Position(Base.LEFT, UnitInterval.HALF, 5.0), Position(Base.RIGHT, UnitInterval.HALF, 0.0))
-                })
-
-                addSocket(Connector().apply {
-                    relocate(80.0, 160.0)
-                    angle(200.0)
-                })
+            val attachedC = Connector().apply {
+                relocate(130.0, 140.0)
+                angle(30.0)
+                Nodes.attach(resizablePane, this, Position(Base.LEFT, UnitInterval.HALF, 5.0), Position(Base.RIGHT, UnitInterval.HALF, 0.0))
             }
+
+            val staticC = Connector().apply {
+                relocate(80.0, 160.0)
+                angle(200.0)
+            }
+
+            connections.addConnector(attachedC)
+            connections.addConnector(staticC)
+
+            connections.setHandler(object : ConnectionEventHandler {
+                override fun isConnectable(matching: Connector): Boolean {
+                    return true
+                }
+
+                override fun connectableTo(source: Connector, destination: Connector): Boolean {
+                    return true
+                }
+
+                override fun onConnect(source: Connector, destination: Connector) {
+                    println("--> connect $source -> $destination")
+                    connections.addConnection(source,destination)
+                }
+
+                override fun onSelect(selection: Connections.Connection) {
+                    println("--> select $selection")
+                    connections.select(selection.start, selection.end)
+                }
+            })
 
             addAll(connectionLayer, connections)
         }

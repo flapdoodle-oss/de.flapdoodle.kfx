@@ -24,8 +24,10 @@ import de.flapdoodle.kfx.extensions.screenPosition
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.geometry.HPos
 import javafx.geometry.Orientation
 import javafx.geometry.Point2D
+import javafx.geometry.VPos
 import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.ScrollBar
@@ -293,5 +295,13 @@ class PanZoomPanel(
             if (content!=null) children.remove(content)
             content=null
         }
+    }
+
+    override fun computePrefHeight(width: Double): Double {
+        return wrapper.prefHeight(width)
+    }
+
+    override fun computePrefWidth(height: Double): Double {
+        return wrapper.prefWidth(height)
     }
 }

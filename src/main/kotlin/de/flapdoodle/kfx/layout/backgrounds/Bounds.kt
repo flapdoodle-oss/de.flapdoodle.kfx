@@ -12,11 +12,7 @@ object Bounds {
     fun boundsRectangle(node: Node): Rectangle {
         val wrapperBounds: ReadOnlyObjectProperty<Bounds> = node.boundsInParentProperty()
 
-        wrapperBounds.addListener(InvalidationListener {
-            node.parent?.requestLayout()
-        })
-
-        return Rectangle().apply {
+        val rect = Rectangle().apply {
 //            styleClass.addAll("content-background")
             isManaged = false
             isMouseTransparent = true
@@ -26,6 +22,12 @@ object Bounds {
             widthProperty().bind(wrapperBounds.mapToDouble(Bounds::getWidth))
             heightProperty().bind(wrapperBounds.mapToDouble(Bounds::getHeight))
         }
+
+        wrapperBounds.addListener(InvalidationListener {
+            rect.parent?.requestLayout()
+        })
+
+        return rect
     }
 
     fun sizeRectangle(region: Region): Rectangle = Rectangle().apply {

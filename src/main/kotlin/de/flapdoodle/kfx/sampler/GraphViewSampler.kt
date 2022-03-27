@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.sampler
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.size
+import de.flapdoodle.kfx.graph.GraphView
 import de.flapdoodle.kfx.graph.connections.ConnectionEventHandler
 import de.flapdoodle.kfx.graph.connections.Connections
 import de.flapdoodle.kfx.graph.nodes.ConnectionPath
@@ -36,9 +37,13 @@ class GraphViewSampler : Application() {
             WeightGridPane.setPosition(this, 1, 0)
         }
 
+        val graphView = GraphView().apply {
+            WeightGridPane.setPosition(this,1,0)
+        }
+
         stage.scene = Scene(WeightGridPane().apply {
-//            children.add(template)
-            children.add(testee)
+//            children.add(testee)
+            children.add(graphView)
 
             setColumnWeight(0, 1.0)
             setColumnWeight(1, 1.0)

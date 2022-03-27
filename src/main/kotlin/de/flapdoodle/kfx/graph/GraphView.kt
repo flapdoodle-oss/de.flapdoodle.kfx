@@ -16,9 +16,18 @@
  */
 package de.flapdoodle.kfx.graph
 
-import javafx.scene.layout.Region
+import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
+import javafx.scene.control.Button
+import javafx.scene.control.Control
+import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
 
-class GraphView : Region() {
+class GraphView : StackPane() {
     // model: Graph
     // components: ...
+    init {
+         children.add(PanZoomPanel().apply {
+             setContent(Button("whooooo"))
+         })
+    }
 }

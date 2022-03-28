@@ -50,10 +50,10 @@ internal class MovablesTest {
         val testee = robot.lookup<Node> { it is Movables }
             .queryAs(Movables::class.java)
 
-        robot.moveTo(testee)
-
         val content = robot.lookup(".movable")
             .queryAs(Rectangle::class.java)
+
+        robot.moveTo(content)
 
         robot.moveBy(10.0, 10.0)
             .press(MouseButton.PRIMARY)
@@ -74,10 +74,10 @@ internal class MovablesTest {
         val testee = robot.lookup<Node> { it is Movables }
             .queryAs(Movables::class.java)
 
-        robot.moveTo(testee)
-
         val content = robot.lookup(".movable")
             .queryAs(Rectangle::class.java)
+
+        robot.moveTo(content)
 
         robot.moveBy(10.0, 10.0)
             .press(MouseButton.PRIMARY)

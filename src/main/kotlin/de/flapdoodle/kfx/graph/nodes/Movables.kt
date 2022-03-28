@@ -7,11 +7,13 @@ import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
 
 class Movables(
     val sharedEventLock: SharedEventLock = SharedEventLock(),
     val regionAsResizeable: (Node) -> Movable<out Node>?
-) : Group() {
+) : Pane() {
 
     private var currentEnteredTarget: Movable<out Node>? = null
 

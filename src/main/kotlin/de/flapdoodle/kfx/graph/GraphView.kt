@@ -16,18 +16,67 @@
  */
 package de.flapdoodle.kfx.graph
 
+import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.extensions.size
+import de.flapdoodle.kfx.graph.nodes.Movable
+import de.flapdoodle.kfx.graph.nodes.Movables
+import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
+import javafx.geometry.HPos
+import javafx.geometry.VPos
+import javafx.scene.Node
 import javafx.scene.control.Button
-import javafx.scene.control.Control
-import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
+import javafx.scene.layout.Region
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 
-class GraphView : StackPane() {
+class GraphView : Region() {
     // model: Graph
     // components: ...
+    enum class Layer {
+        Nodes,
+        Connections
+    }
+
     init {
-         children.add(PanZoomPanel().apply {
-             setContent(Button("whooooo"))
-         })
+        val sharedEventLock = SharedEventLock()
+        val nodes = Movables(sharedEventLock) { node ->
+            when (node) {
+                is Rectangle -> Movable(node, Rectangle::size) { it, w, h -> it.width = w;it.height = h }
+                else -> null
+            }
+        }
+        nodes.addAll(Rectangle(30.0,30.0).apply {
+            fill = Color.RED
+        })
+        val layers = LayerPane(setOf(*Layer.values()))
+        layers.addAll(Layer.Nodes, nodes)
+        layers.addAll(Layer.Connections, Button("Connections"))
+
+        children.add(PanZoomPanel().apply {
+            setContent(layers)
+        })
+    }
+
+    override fun layoutChildren() {
+        val managed = getManagedChildren<Node>()
+
+        val width = width
+        val height = height
+
+        val top = insets.top
+        val right = insets.right
+        val left = insets.left
+        val bottom = insets.bottom
+
+        val contentWidth = width - left - right
+        val contentHeight = height - top - bottom
+
+        managed.forEach { child ->
+            layoutInArea(
+                child, left, top, contentWidth, contentHeight,
+                0.0, null, HPos.CENTER, VPos.CENTER
+            )
+        }
     }
 }

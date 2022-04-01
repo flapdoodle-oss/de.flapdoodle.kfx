@@ -47,7 +47,7 @@ class WeightGridPaneSkin(
             .filter { it.isManaged }
             .map { it: Node ->
                 (it.constraint[GridMap.Pos::class]
-                    ?: GridMap.Pos(10, 10)) to it
+                    ?: GridMap.Pos(0, 0)) to it
             }.toMap())
     }
 

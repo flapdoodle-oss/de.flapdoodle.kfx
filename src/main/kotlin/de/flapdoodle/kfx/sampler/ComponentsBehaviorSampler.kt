@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.extensions.property
+import de.flapdoodle.kfx.layout.absolute.AbsolutePane
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
@@ -64,7 +65,8 @@ class ComponentsBehaviorSampler : Application() {
             children.add(sample(RegionAdapter(), Meta(1,0)) { fillStuffInto("Region", it.c()) })
             children.add(sample(StackPane(), Meta(0,1)) { fillStuffInto("SPane", it.children) })
             children.add(sample(Group(), Meta(1,1)) { fillStuffInto("Group", it.children) })
-            children.add(sample(WeightGridPane(), Meta(2,0)) { fillStuffInto("WeightG", it.children) })
+//            children.add(sample(WeightGridPane(), Meta(2,0)) { fillStuffInto("WeightG", it.children) })
+            children.add(sample(AbsolutePane(), Meta(2,0)) { fillStuffInto("AbsPane", it.children) })
             children.add(sample(PanZoomPanel(), Meta(2,1)) { pz ->
                 val content = Pane()
                 pz.setContent(content)
@@ -119,9 +121,16 @@ class ComponentsBehaviorSampler : Application() {
                 layoutY = 50.0
             })
             list.add(Rectangle(30.0, 30.0).apply {
+                isManaged = false
                 layoutX = 90.0
-                layoutY = 90.0
+                layoutY = 85.0
                 fill = Color.BLACK
+            })
+            list.add(Rectangle(10.0, 60.0).apply {
+                isManaged = false
+                layoutX = 10.0
+                layoutY = -30.0
+                fill = Color.BLUE
             })
         }
     }

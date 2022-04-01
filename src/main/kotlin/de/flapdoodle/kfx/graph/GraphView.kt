@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.graph
 
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.size
+import de.flapdoodle.kfx.graph.connections.Connections
 import de.flapdoodle.kfx.graph.nodes.Movable
 import de.flapdoodle.kfx.graph.nodes.Movables
 import de.flapdoodle.kfx.layout.layer.LayerPane
@@ -51,7 +52,9 @@ class GraphView : Region() {
         })
         val layers = LayerPane(setOf(*Layer.values()))
         layers.addAll(Layer.Nodes, nodes)
-        layers.addAll(Layer.Connections, Button("Connections"))
+        val connections = Connections(sharedEventLock)
+        
+        layers.addAll(Layer.Connections, connections)
 
         children.add(PanZoomPanel().apply {
             setContent(layers)

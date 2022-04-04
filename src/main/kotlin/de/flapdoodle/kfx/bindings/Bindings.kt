@@ -24,6 +24,10 @@ object Bindings {
         return Mapped(source, mapping)
     }
 
+    fun <S, T> mapList(source: ObservableList<S>, mapping: (List<S>) -> T): MappedList<S, T> {
+        return MappedList(source, mapping)
+    }
+
     fun <A, B, T> map(a: ObservableValue<A>, b: ObservableValue<B>, mapping: (A, B) -> T): Merge2<A, B, T> {
         return Merge2(a,b,mapping)
     }
@@ -35,6 +39,32 @@ object Bindings {
     class ToMerge2<A, B>(val a: ObservableValue<A>, val b: ObservableValue<B>) {
         fun <T> map(mapping: (A, B) -> T): Merge2<A, B, T> {
             return map(a,b, mapping)
+        }
+
+    }
+
+    class MappedList<S, T>(
+        val source: ObservableList<S>,
+        val mapping: (List<S>) -> T
+    ) : ObjectBinding<T>() {
+
+        private val dependencies = FXCollections.observableArrayList(source)
+
+        init {
+            bind(source)
+        }
+
+        override fun dispose() {
+            super.dispose()
+            unbind(source)
+        }
+
+        override fun getDependencies(): ObservableList<*> {
+            return dependencies
+        }
+
+        override fun computeValue(): T {
+            return mapping(source)
         }
 
     }

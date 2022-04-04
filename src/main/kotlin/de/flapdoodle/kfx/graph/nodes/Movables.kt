@@ -23,9 +23,9 @@ class Movables(
 
     init {
         addEventHandler(MouseEvent.ANY, ::handleMouseEvent)
-        boundsInLocalProperty().addListener(InvalidationListener {
-            println("BoundsInLocal: $boundsInLocal")
-        })
+//        boundsInLocalProperty().addListener(InvalidationListener {
+//            println("BoundsInLocal: $boundsInLocal")
+//        })
     }
 
     private fun handleMouseEvent(event: MouseEvent) {

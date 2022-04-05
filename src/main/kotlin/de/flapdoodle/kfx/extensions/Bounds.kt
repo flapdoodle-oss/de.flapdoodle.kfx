@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.extensions
 
 import de.flapdoodle.kfx.bindings.Bindings
+import javafx.beans.InvalidationListener
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
@@ -22,6 +23,9 @@ object Bounds {
         val binding = Bindings.map(layoutXY, childrenAsValue) { xy, list -> childBoundsInParent(xy, list) }
         val property = ReadOnlyObjectWrapper<Bounds>()
         property.bind(binding)
+        parent.boundsInParentProperty().addListener(InvalidationListener {
+            binding.invalidate()
+        })
         return property.readOnlyProperty
     }
 
@@ -30,12 +34,20 @@ object Bounds {
     }
 
     private fun childBoundsInParent(layoutXY: Point2D, children: List<Node>): Bounds {
-        val bounds = children.map { it.boundsInParent }
-        return when (bounds.size) {
+        val bounds = children.map {
+            println("$it -> ${it.boundsInParent}")
+            it.boundsInParent
+        }
+        val ret = when (bounds.size) {
             0 -> BoundingBox(layoutXY.x, layoutXY.y, -1.0, -1.0)
-            1 -> bounds[0]
+            1 -> {
+                println("single entry -> ${bounds[0]}")
+                bounds[0]
+            }
             else -> bounds.reduce { a: Bounds, b: Bounds -> merge(a, b) }
         }
+        println("-> $ret (children: ${children.size})")
+        return ret
     }
 
     private fun merge(a: Bounds, b: Bounds): Bounds {

@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.extensions.property
 import de.flapdoodle.kfx.layout.absolute.AbsolutePane
+import de.flapdoodle.kfx.layout.absolute.KGroup
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
@@ -14,6 +15,7 @@ import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Control
+import javafx.scene.control.ScrollPane
 import javafx.scene.control.SkinBase
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
@@ -29,8 +31,8 @@ class ComponentsBehaviorSampler : Application() {
         val bounds = ShowBounds(overview)
 
         stage.scene = Scene(StackPane().apply {
-            children.add(overview)
             children.add(bounds)
+            children.add(overview)
         }, 600.0, 400.0)
         stage.show()
     }
@@ -38,6 +40,9 @@ class ComponentsBehaviorSampler : Application() {
     class ShowBounds(val overview: Overview) : Pane() {
         init {
             overview.childrenUnmodifiable.forEach { node ->
+                children.add(Bounds.boundsRectangle(node).apply {
+                    fill = Color.rgb(255,255,255,0.5)
+                })
                 children.add(Rectangle().apply {
                     isManaged = false
                     isMouseTransparent = true
@@ -52,9 +57,6 @@ class ComponentsBehaviorSampler : Application() {
                     fill = Color.TRANSPARENT
                     stroke = Color.RED
                 })
-                children.add(Bounds.boundsRectangle(node).apply {
-                    fill = Color.rgb(255,255,255,0.5)
-                })                
             }
         }
     }
@@ -63,8 +65,17 @@ class ComponentsBehaviorSampler : Application() {
         init {
             children.add(sample(Pane(), Meta(0,0)) { fillStuffInto("Pane", it.children) })
             children.add(sample(RegionAdapter(), Meta(1,0)) { fillStuffInto("Region", it.c()) })
-            children.add(sample(StackPane(), Meta(0,1)) { fillStuffInto("SPane", it.children) })
-            children.add(sample(Group(), Meta(1,1)) { fillStuffInto("Group", it.children) })
+//            children.add(sample(StackPane(), Meta(0,1)) { fillStuffInto("SPane", it.children) })
+            children.add(sample(ScrollPane(), Meta(0,1)) { sp ->
+                val content = Pane()
+                content.setPrefSize(_panelW*2.0, _panelH*2.0)
+                sp.setContent(content)
+                sp.hbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
+                sp.isPannable = true
+                sp.setPrefSize(_panelW, _panelH)
+                fillStuffInto("Scroll", content.children)
+            })
+            children.add(sample(KGroup(), Meta(1,1)) { fillStuffInto("KGroup", it.children) })
 //            children.add(sample(WeightGridPane(), Meta(2,0)) { fillStuffInto("WeightG", it.children) })
             children.add(sample(AbsolutePane(), Meta(2,0)) { fillStuffInto("AbsPane", it.children) })
             children.add(sample(PanZoomPanel(), Meta(2,1)) { pz ->
@@ -98,7 +109,7 @@ class ComponentsBehaviorSampler : Application() {
                 val w = _panelW - _padding*2
                 val h = _panelH - _padding*2
 
-                layoutInArea(node, x, y, w, h, -1.0, HPos.CENTER, VPos.CENTER)
+                layoutInArea(node, x, y, w, h, -1.0, HPos.LEFT, VPos.TOP)
             }
         }
     }
@@ -115,22 +126,24 @@ class ComponentsBehaviorSampler : Application() {
         }
 
         fun fillStuffInto(name: String, list: ObservableList<Node>) {
-            list.add(Button(name))
+//            list.add(Rectangle(30.0, 30.0).apply {
+//                isManaged = false
+//                layoutX = 90.0
+//                layoutY = 85.0
+//                fill = Color.BLACK
+//            })
+//            list.add(Rectangle(10.0, 10.0).apply {
+//                layoutX = 10.0
+//                layoutY = -30.0
+//                fill = Color.BLUE
+//            })
+            list.add(Button(name).apply {
+                layoutX = 5.0
+                layoutY = 10.0
+            })
             list.add(Button("X").apply {
-                layoutX = 50.0
-                layoutY = 50.0
-            })
-            list.add(Rectangle(30.0, 30.0).apply {
-                isManaged = false
-                layoutX = 90.0
-                layoutY = 85.0
-                fill = Color.BLACK
-            })
-            list.add(Rectangle(10.0, 60.0).apply {
-                isManaged = false
                 layoutX = 10.0
                 layoutY = -30.0
-                fill = Color.BLUE
             })
         }
     }

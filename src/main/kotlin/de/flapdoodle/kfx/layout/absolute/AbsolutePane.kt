@@ -2,12 +2,13 @@ package de.flapdoodle.kfx.layout.absolute
 
 import com.sun.javafx.geom.BaseBounds
 import com.sun.javafx.geom.transform.BaseTransform
+import de.flapdoodle.kfx.extensions.HasChildsInParentBounds
 import javafx.collections.ObservableList
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.control.Control
 
-open class AbsolutePane : Control() {
+open class AbsolutePane : Control(), HasChildsInParentBounds {
 
     private val skin = AbsolutePaneSkin(this)
     override fun createDefaultSkin() = skin

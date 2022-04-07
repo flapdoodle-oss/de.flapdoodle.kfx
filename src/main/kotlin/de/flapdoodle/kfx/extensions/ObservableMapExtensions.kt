@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.extensions
 
 import javafx.collections.ObservableMap
+import java.util.function.Function
 import kotlin.reflect.KClass
 
 object ObservableMapExtensions {
@@ -33,6 +34,11 @@ object ObservableMapExtensions {
       map.remove(key) as T?
   }
 
+  fun <T: Any> computeIfAbsend(map: ObservableMap<Any, Any>, key: Key<T>, mapping: Function<in Key<T>, out T>): T {
+    @Suppress("UNCHECKED_CAST")
+    return map.computeIfAbsent(key) { k -> mapping.apply(k as Key<T>) } as T
+  }
+
   open class TypedMap(
       private val map: ObservableMap<Any, Any>
   ) {
@@ -44,12 +50,20 @@ object ObservableMapExtensions {
       return get(map, key)
     }
 
+    fun <T: Any> computeIfAbsend(key: Key<T>, mapping: Function<in Key<T>, out T>): T {
+      return computeIfAbsend(map, key, mapping)
+    }
+
     open operator fun <T: Any> set(type: KClass<T>, value: T?): T? {
       return set(map, Key.ofType(type), value)
     }
 
     operator fun <T: Any> get(type: KClass<T>): T? {
       return get(map, Key.ofType(type))
+    }
+
+    fun <T: Any> computeIfAbsend(type: KClass<T>, mapping: Function<in Key<T>, out T>): T {
+      return computeIfAbsend(map, Key.ofType(type), mapping)
     }
   }
 }

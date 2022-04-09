@@ -55,7 +55,7 @@ class PanZoomPanel(
         styleClass.addAll("pan-zoom-panel")
         stylesheets += javaClass.getResource("PanZoomPanel.css").toExternalForm();
 
-        children.add(Bounds.boundsRectangle(wrapper).apply {
+        children.add(Bounds.childBoundsRectangle(wrapper).apply {
             styleClass.addAll("content-background")
         })
 

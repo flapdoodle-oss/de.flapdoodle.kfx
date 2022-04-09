@@ -1,11 +1,10 @@
 package de.flapdoodle.kfx.layout.backgrounds
 
-import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.bindings.mapToDouble
-import de.flapdoodle.kfx.extensions.childBoundsInParentPropery
+import de.flapdoodle.kfx.extensions.childsInParentBoundsProperty
 import javafx.beans.InvalidationListener
-import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.ReadOnlyProperty
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -15,7 +14,7 @@ import javafx.scene.shape.Rectangle
 object Bounds {
     // TODO does it work?
     fun childBoundsRectangle(parent: Parent): Rectangle {
-        val wrapperBounds: ReadOnlyObjectProperty<Bounds> = parent.childBoundsInParentPropery()
+        val wrapperBounds: ReadOnlyProperty<Bounds> = parent.childsInParentBoundsProperty()
 
         val rect = Rectangle().apply {
 //            styleClass.addAll("content-background")

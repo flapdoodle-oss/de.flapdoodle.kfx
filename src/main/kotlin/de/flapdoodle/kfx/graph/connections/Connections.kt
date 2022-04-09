@@ -5,6 +5,7 @@ import de.flapdoodle.kfx.extensions.localPosition
 import de.flapdoodle.kfx.graph.nodes.Connector
 import de.flapdoodle.kfx.graph.nodes.Curves
 import de.flapdoodle.kfx.graph.nodes.Curves.bindControls
+import de.flapdoodle.kfx.layout.absolute.AbsolutePane
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.geometry.Point2D
@@ -16,11 +17,11 @@ import javafx.scene.shape.CubicCurve
 
 class Connections(
     val sharedEventLock: SharedEventLock = SharedEventLock()
-) : Group() {
+) : AbsolutePane() {
 
-    private val sockets = Group()
-    private val connections = Group()
-    private val selections = Group()
+    private val sockets = AbsolutePane()
+    private val connections = AbsolutePane()
+    private val selections = AbsolutePane()
 
     private var connectionEventHandler: ConnectionEventHandler = DummyHandler()
 

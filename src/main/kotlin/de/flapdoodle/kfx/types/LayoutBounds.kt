@@ -21,18 +21,23 @@ import de.flapdoodle.kfx.types.Direction.*
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.layout.Region
+import kotlin.math.sign
 
 val Region.rawLayoutBounds: LayoutBounds
     get() = LayoutBounds(layoutPosition, size)
 
-data class LayoutBounds(val layoutPosition: Point2D, val size: Dimension2D) {
+data class LayoutBounds constructor(val x: Double, val y: Double, val width: Double, val height: Double) {
+    constructor(layoutPosition: Point2D, size: Dimension2D) : this(layoutPosition.x, layoutPosition.y, size.width, size.height)
+
+    val layoutPosition = Point2D(x,y)
+    val size = Dimension2D(width,height)
 
     fun expand(direction: Direction, diff: Double): LayoutBounds {
         return when (direction) {
-            RIGHT -> copy(size = size.addWidth(diff))
-            LEFT -> copy(layoutPosition = layoutPosition.addX(diff), size = size.subWidth(diff))
-            BOTTOM -> copy(size = size.addHeight(diff))
-            TOP -> copy(layoutPosition = layoutPosition.addY(diff), size = size.subHeight(diff))
+            RIGHT -> copy(width = width + diff)
+            LEFT -> copy(x = x + diff, width = width - diff)
+            BOTTOM -> copy(height = height + diff)
+            TOP -> copy(y = y + diff, height = height - diff)
         }
     }
 }

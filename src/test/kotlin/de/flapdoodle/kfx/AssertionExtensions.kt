@@ -1,5 +1,7 @@
 package de.flapdoodle.kfx
 
+import de.flapdoodle.kfx.types.LayoutBounds
+import javafx.geometry.Bounds
 import javafx.geometry.Point2D
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
@@ -17,4 +19,11 @@ fun ObjectAssert<Point2D>.isEqualTo(other: Point2D, delta: Double) {
 
 fun ObjectAssert<Point2D>.isNearlyEqualTo(other: Point2D) {
     isEqualTo(other, 0.01)
+}
+
+fun ObjectAssert<Bounds>.hasBounds(bounds: LayoutBounds) {
+    extracting(Bounds::getMinX).describedAs("minX").isEqualTo(bounds.x)
+    extracting(Bounds::getMinY).describedAs("minY").isEqualTo(bounds.y)
+    extracting(Bounds::getWidth).describedAs("width").isEqualTo(bounds.width)
+    extracting(Bounds::getHeight).describedAs("height").isEqualTo(bounds.height)
 }

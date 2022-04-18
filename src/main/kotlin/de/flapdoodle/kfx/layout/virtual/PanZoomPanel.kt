@@ -17,10 +17,7 @@
 package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.events.SharedEventLock
-import de.flapdoodle.kfx.extensions.layoutPosition
-import de.flapdoodle.kfx.extensions.minus
-import de.flapdoodle.kfx.extensions.plus
-import de.flapdoodle.kfx.extensions.screenPosition
+import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
@@ -40,7 +37,7 @@ import javafx.scene.transform.Scale
 class PanZoomPanel(
     val sharedEventLock: SharedEventLock = SharedEventLock()
 ) : Region() {
-    private val wrapper = Wrapper()
+    private val wrapper = Wrapper().markAsContainer()
 
     private val zoom: DoubleProperty = object : SimpleDoubleProperty(1.0) {
         override fun invalidated() {
@@ -90,8 +87,8 @@ class PanZoomPanel(
         scrollX.setBounds(
             ScrollBounds.of(
                 windowSize = width,
-                itemSize = wrapper.boundsInParent.width,
-                itemOffset = zoom.get() * wrapper.boundsInLocal.minX,
+                itemSize = wrapper.containerlessBoundsInParent().width,
+                itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minX,
                 currentItemOffset = wrapper.layoutX
             )
         )
@@ -99,8 +96,8 @@ class PanZoomPanel(
         scrollY.setBounds(
             ScrollBounds.of(
                 windowSize = height,
-                itemSize =  wrapper.boundsInParent.height,
-                itemOffset = zoom.get() * wrapper.boundsInLocal.minY,
+                itemSize =  wrapper.containerlessBoundsInParent().height,
+                itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minY,
                 currentItemOffset = wrapper.layoutY
             )
         )

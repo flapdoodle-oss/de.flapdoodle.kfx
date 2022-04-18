@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.layout.layer
 
+import de.flapdoodle.kfx.extensions.markAsContainer
 import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
@@ -22,6 +23,10 @@ class LayerPane<T>(val layers: Set<T>) : Region() {
     }
 
     class Layer : Region() {
+
+        init {
+            markAsContainer()
+        }
 
         public override fun getChildren(): ObservableList<Node> {
             return super.getChildren()

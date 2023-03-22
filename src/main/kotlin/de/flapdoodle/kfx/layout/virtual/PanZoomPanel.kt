@@ -89,8 +89,17 @@ class PanZoomPanel(
                 windowSize = width,
                 itemSize = wrapper.containerlessBoundsInParent().width,
                 itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minX,
-                currentItemOffset = wrapper.layoutX
+                currentItemOffset = wrapper.layoutX,
+                false
             )
+        )
+
+        ScrollBounds.of(
+            windowOffset = wrapper.layoutX,
+            windowSize = width,
+            zoom = zoom.get(),
+            contentOffset = wrapper.containerlessBoundsInParent().minX,
+            contentSize = wrapper.containerlessBoundsInParent().width
         )
 
         scrollY.setBounds(
@@ -138,6 +147,9 @@ class PanZoomPanel(
                         val newPosition = current.posAtClick + delta
                         panTo(newPosition.x, newPosition.y)
                     }
+                    else -> {
+
+                    }
                 }
             }
             MouseEvent.MOUSE_RELEASED,
@@ -147,6 +159,9 @@ class PanZoomPanel(
                         event.consume()
 
                         cursor = null
+                    }
+                    else -> {
+                        
                     }
                 }
             }
@@ -216,6 +231,9 @@ class PanZoomPanel(
                             val newZoomLevel: Double = zoom.get() * pEvent.zoomFactor
                             setZoomAt(newZoomLevel, pEvent.x, pEvent.y)
                             pEvent.consume()
+                        }
+                        else -> {
+                            
                         }
                     }
                 }

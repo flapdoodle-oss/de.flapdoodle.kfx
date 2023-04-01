@@ -128,6 +128,7 @@ class PanZoomPanel(
 
 
     private fun handleMouseEvent(event: MouseEvent) {
+        println("PanZoomPanel.handleMouseEvent")
         when (event.eventType) {
             MouseEvent.MOUSE_PRESSED -> sharedEventLock.lock(this) {
                 event.consume()

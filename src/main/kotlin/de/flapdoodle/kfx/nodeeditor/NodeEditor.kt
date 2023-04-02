@@ -10,11 +10,10 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 
 class NodeEditor : AnchorPane() {
-  val sharedEventLock = SharedLock<javafx.scene.Node>()
-  var focusedNode: Node? = null
+  val sharedLock = SharedLock<javafx.scene.Node>()
 
   init {
-    children.add(NodeView(sharedEventLock).withAnchors(all = 0.0).apply {
+    children.add(NodeView(sharedLock).withAnchors(all = 0.0).apply {
       setContent(Pane().apply {
         children.add(Node("one").apply {
           layoutPosition = Point2D(100.0, 50.0)
@@ -31,7 +30,7 @@ class NodeEditor : AnchorPane() {
     if (target is Node) {
       when (event.eventType) {
         MouseEvent.MOUSE_ENTERED_TARGET -> {
-          sharedEventLock.tryLock(target) {
+          sharedLock.tryLock(target) {
             event.consume()
             target.onFocus()
 
@@ -39,7 +38,7 @@ class NodeEditor : AnchorPane() {
           }
         }
         MouseEvent.MOUSE_EXITED_TARGET -> {
-          sharedEventLock.tryRelease(target, Action.Focus::class.java) {
+          sharedLock.tryRelease(target, Action.Focus::class.java) {
             event.consume()
 
             target.onBlur()
@@ -48,16 +47,16 @@ class NodeEditor : AnchorPane() {
       }
     }
 
-    sharedEventLock.ifLocked(Node::class.java, Action::class.java) { active: Node, action: Action ->
+    sharedLock.ifLocked(Node::class.java, Action::class.java) { active: Node, action: Action ->
       if (action == Action.Focus) {
         when (event.eventType) {
           MouseEvent.MOUSE_PRESSED -> {
             event.consume()
 
-            val targetLocalPosition = active.parentToLocal(event.localPosition)
+            val targetLocalPosition = active.screenToLocal(event.screenPosition)
             val sizeMode = SizeMode.guess(targetLocalPosition, active.size)
 
-            sharedEventLock.replaceLock(active, Action::class.java) {
+            sharedLock.replaceLock(active, Action::class.java) {
               val newAction = if (sizeMode != null && sizeMode != SizeMode.INSIDE /*&& active.isResizeable()*/) {
                 cursor = sizeMode.cursor()
                 Action.Resize(
@@ -74,6 +73,15 @@ class NodeEditor : AnchorPane() {
               }
               println("replace with $newAction")
               newAction
+            }
+          }
+          MouseEvent.MOUSE_MOVED -> {
+            val targetLocalPosition = active.screenToLocal(event.screenPosition)
+            val sizeMode = SizeMode.guess(targetLocalPosition, active.size)
+            if (sizeMode != null && sizeMode != SizeMode.INSIDE /*&& active.isResizeable()*/) {
+              cursor = sizeMode.cursor()
+            } else {
+              cursor = SizeMode.INSIDE.cursor()
             }
           }
         }
@@ -102,7 +110,7 @@ class NodeEditor : AnchorPane() {
             }
           }
 
-          MouseEvent.MOUSE_RELEASED -> sharedEventLock.replaceLock(active, Action::class.java) { it: Action ->
+          MouseEvent.MOUSE_RELEASED -> sharedLock.replaceLock(active, Action::class.java) { it: Action ->
             event.consume()
             cursor = null
 

@@ -1,9 +1,8 @@
 package de.flapdoodle.kfx.nodeeditor
 
-import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
-import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.setBounds
 import javafx.beans.property.DoubleProperty
@@ -20,7 +19,7 @@ import javafx.scene.layout.Region
 import javafx.scene.transform.Scale
 
 class NodeView(
-  val sharedEventLock: SharedEventLock = SharedEventLock()
+  val sharedEventLock: SharedLock<Node> = SharedLock()
 ) : Region() {
 
   private val wrapper = Wrapper().markAsContainer()
@@ -116,14 +115,16 @@ class NodeView(
   private fun handleMouseEvent(event: MouseEvent) {
 //    println("NodeView.handleMouseEvent")
     when (event.eventType) {
-      MouseEvent.MOUSE_PRESSED -> sharedEventLock.lock(this) {
-        event.consume()
+      MouseEvent.MOUSE_PRESSED -> {
+        sharedEventLock.tryLock(this) {
+          event.consume()
 
-        cursor = Cursor.MOVE
-        Action.Pan(
-          clickPosition = event.screenPosition,
-          posAtClick = wrapper.layoutPosition
-        )
+          cursor = Cursor.MOVE
+          Action.Pan(
+            clickPosition = event.screenPosition,
+            posAtClick = wrapper.layoutPosition
+          )
+        }
       }
       MouseEvent.MOUSE_DRAGGED -> sharedEventLock.ifLocked(this, Action::class.java) { current ->
         when (current) {
@@ -140,15 +141,18 @@ class NodeView(
         }
       }
       MouseEvent.MOUSE_RELEASED,
-      MouseEvent.MOUSE_CLICKED -> sharedEventLock.release(this, Action::class.java) {
-        when (it) {
-          is Action.Pan -> {
-            event.consume()
+      MouseEvent.MOUSE_CLICKED -> {
+        sharedEventLock.tryRelease(this, Action::class.java) { it: Action ->
+          when (it) {
+            is Action.Pan -> {
+              event.consume()
 
-            cursor = null
-          }
-          else -> {
+              cursor = null
+            }
 
+            else -> {
+
+            }
           }
         }
       }
@@ -173,7 +177,7 @@ class NodeView(
             }
           }
           ScrollEvent.SCROLL_STARTED -> {
-            sharedEventLock.lock(this) {
+            sharedEventLock.tryLock(this) {
 
               if (pEvent.deltaY != 0.0) {
                 val direction = if (pEvent.deltaY > 1) ZoomDirection.In else ZoomDirection.Out
@@ -184,7 +188,7 @@ class NodeView(
             }
           }
           ScrollEvent.SCROLL_FINISHED -> {
-            sharedEventLock.release(this, Action::class.java) {
+            sharedEventLock.tryRelease(this, Action::class.java) { it: Action ->
               pEvent.consume()
             }
           }
@@ -201,13 +205,13 @@ class NodeView(
   private fun handleZoom(pEvent: ZoomEvent) {
     when (pEvent.eventType) {
       ZoomEvent.ZOOM_STARTED -> {
-        sharedEventLock.lock(this) {
+        sharedEventLock.tryLock(this) {
           pEvent.consume()
           Action.Zoom
         }
       }
       ZoomEvent.ZOOM_FINISHED -> {
-        sharedEventLock.release(this, Action::class.java) {
+        sharedEventLock.tryRelease(this, Action::class.java) { it: Action ->
           pEvent.consume()
         }
       }

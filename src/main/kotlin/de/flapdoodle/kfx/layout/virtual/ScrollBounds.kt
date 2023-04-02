@@ -38,11 +38,11 @@ data class ScrollBounds(
             contentOffset: Double, // +-
             contentSize: Double, // >=0
         ) {
-            println("----------------")
-            println("window: $windowOffset - $windowSize")
-            println("zoom: $zoom")
-            println("content: $contentOffset - $contentSize")
-            println()
+//            println("----------------")
+//            println("window: $windowOffset - $windowSize")
+//            println("zoom: $zoom")
+//            println("content: $contentOffset - $contentSize")
+//            println()
 
             val fact = contentSize / windowSize
             if (fact <= 1) {

@@ -1,11 +1,8 @@
 package de.flapdoodle.kfx.nodeeditor
 
-import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
-import de.flapdoodle.kfx.graph.nodes.Movables
 import de.flapdoodle.kfx.graph.nodes.SizeMode
-import de.flapdoodle.kfx.layout.absolute.AbsolutePane
-import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
@@ -13,7 +10,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 
 class NodeEditor : AnchorPane() {
-  val sharedEventLock = SharedEventLock()
+  val sharedEventLock = SharedLock<javafx.scene.Node>()
   var focusedNode: Node? = null
 
   init {
@@ -34,7 +31,7 @@ class NodeEditor : AnchorPane() {
     if (target is Node) {
       when (event.eventType) {
         MouseEvent.MOUSE_ENTERED_TARGET -> {
-          sharedEventLock.lock(target) {
+          sharedEventLock.tryLock(target) {
             event.consume()
             target.onFocus()
 
@@ -42,22 +39,17 @@ class NodeEditor : AnchorPane() {
           }
         }
         MouseEvent.MOUSE_EXITED_TARGET -> {
-          sharedEventLock.ifAnyLocked(Node::class.java, Action::class.java) { active, action ->
-            if (action == Action.Focus) {
-              sharedEventLock.release(active, Action::class.java) {
-                event.consume()
+          sharedEventLock.tryRelease(target, Action.Focus::class.java) {
+            event.consume()
 
-                active.onBlur()
-              }
-            }
+            target.onBlur()
           }
         }
       }
     }
 
-    sharedEventLock.ifAnyLocked(Node::class.java, Action::class.java) { active, action ->
+    sharedEventLock.ifLocked(Node::class.java, Action::class.java) { active: Node, action: Action ->
       if (action == Action.Focus) {
-        println("is focused")
         when (event.eventType) {
           MouseEvent.MOUSE_PRESSED -> {
             event.consume()
@@ -65,7 +57,7 @@ class NodeEditor : AnchorPane() {
             val targetLocalPosition = active.parentToLocal(event.localPosition)
             val sizeMode = SizeMode.guess(targetLocalPosition, active.size)
 
-            sharedEventLock.replaceLocked<Action>(active) {
+            sharedEventLock.replaceLock(active, Action::class.java) {
               val newAction = if (sizeMode != null && sizeMode != SizeMode.INSIDE /*&& active.isResizeable()*/) {
                 cursor = sizeMode.cursor()
                 Action.Resize(
@@ -86,7 +78,6 @@ class NodeEditor : AnchorPane() {
           }
         }
       } else {
-        println("or $action")
         when (event.eventType) {
           MouseEvent.MOUSE_DRAGGED -> {
             event.consume()
@@ -111,10 +102,11 @@ class NodeEditor : AnchorPane() {
             }
           }
 
-          MouseEvent.MOUSE_RELEASED -> sharedEventLock.release(active, Action::class.java) {
+          MouseEvent.MOUSE_RELEASED -> sharedEventLock.replaceLock(active, Action::class.java) { it: Action ->
             event.consume()
-
             cursor = null
+
+            Action.Focus
           }
         }
       }

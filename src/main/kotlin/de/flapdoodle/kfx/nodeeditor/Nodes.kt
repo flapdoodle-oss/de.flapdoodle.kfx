@@ -50,7 +50,9 @@ object Nodes {
     }
 
     override fun computeValue(): Bounds {
-      return if (parent is Parent) boundsInParent(parent.childrenUnmodifiable) else BoundingBoxes.empty()
+      return if (parent is Parent) {
+        parent.localToParent(boundsInParent(parent.childrenUnmodifiable))
+      } else BoundingBoxes.empty()
     }
 
     override fun getBean(): Any {

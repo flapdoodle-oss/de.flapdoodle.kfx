@@ -37,7 +37,7 @@ class NodeView(
     styleClass.addAll("node-view")
     stylesheets += javaClass.getResource("NodeView.css").toExternalForm()
 
-    children.add(Bounds.childBoundsRectangle(wrapper).apply {
+    children.add(Nodes.childBoundsRectangle(wrapper).apply {
       styleClass.addAll("content-background")
     })
 
@@ -62,8 +62,8 @@ class NodeView(
     addEventHandler(ScrollEvent.SCROLL, this::handleScroll)
   }
 
-  fun setContent(node: Node) {
-    wrapper.setContent(node)
+  fun setContent(nodes: Collection<out Node>) {
+    wrapper.setContent(nodes)
   }
 
   override fun layoutChildren() {
@@ -281,7 +281,7 @@ class NodeView(
 
 
   class Wrapper : Region() {
-    private var content: Node? = null
+    private var content: List<Node> = emptyList()
 
     init {
       isManaged = false
@@ -290,15 +290,15 @@ class NodeView(
       height = 10.0
     }
 
-    fun setContent(node: Node) {
+    fun setContent(nodes: Collection<out Node>) {
       removeContent()
-      content = node
-      children.addAll(node)
+      content = emptyList<Node>() + nodes
+      children.addAll(nodes)
     }
 
     fun removeContent() {
-      if (content!=null) children.remove(content)
-      content=null
+      children.removeAll(content)
+      content= emptyList()
     }
   }
 

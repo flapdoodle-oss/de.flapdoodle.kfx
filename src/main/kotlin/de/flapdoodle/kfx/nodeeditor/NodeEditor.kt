@@ -14,13 +14,10 @@ class NodeEditor : AnchorPane() {
 
   init {
     children.add(NodeView(sharedLock).withAnchors(all = 0.0).apply {
-      setContent(Pane().apply {
-        children.add(Node("one").apply {
+      setContent(listOf(Node("one").apply {
           layoutPosition = Point2D(100.0, 50.0)
-        })
-        children.add(Node("two"))
+        },Node("two")))
       })
-    })
     
     addEventHandler(MouseEvent.ANY, this::handleMouseEvent)
   }

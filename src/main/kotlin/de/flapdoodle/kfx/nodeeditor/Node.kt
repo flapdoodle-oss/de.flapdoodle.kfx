@@ -1,6 +1,8 @@
 package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.layout.absolute.AbsolutePane
+import javafx.geometry.BoundingBox
+import javafx.geometry.Bounds
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.*

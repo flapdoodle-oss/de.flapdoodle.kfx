@@ -14,9 +14,9 @@ class NodeEditor : AnchorPane() {
 
   init {
     children.add(NodeView(sharedLock).withAnchors(all = 0.0).apply {
-      setContent(listOf(Node("one").apply {
+      getViewChildren().addAll(Node("one").apply {
           layoutPosition = Point2D(100.0, 50.0)
-        },Node("two")))
+        },Node("two"))
       })
     
     addEventHandler(MouseEvent.ANY, this::handleMouseEvent)

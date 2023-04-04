@@ -7,6 +7,7 @@ import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.setBounds
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.collections.ObservableList
 import javafx.geometry.Orientation
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -62,36 +63,30 @@ class NodeView(
     addEventHandler(ScrollEvent.SCROLL, this::handleScroll)
   }
 
-  fun setContent(nodes: Collection<out Node>) {
-    wrapper.setContent(nodes)
+  fun getViewChildren(): ObservableList<Node> {
+    return wrapper.children
   }
 
   override fun layoutChildren() {
     super.layoutChildren()
 
+    val bounds = Nodes.boundsInParent(wrapper.children);
+
     scrollX.setBounds(
       ScrollBounds.of(
         windowSize = width,
-        itemSize = wrapper.containerlessBoundsInParent().width,
-        itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minX,
+        itemSize = zoom.get() * bounds.width,
+        itemOffset = zoom.get() * bounds.minX,
         currentItemOffset = wrapper.layoutX,
         false
       )
     )
 
-    ScrollBounds.of(
-      windowOffset = wrapper.layoutX,
-      windowSize = width,
-      zoom = zoom.get(),
-      contentOffset = wrapper.containerlessBoundsInParent().minX,
-      contentSize = wrapper.containerlessBoundsInParent().width
-    )
-
     scrollY.setBounds(
       ScrollBounds.of(
         windowSize = height,
-        itemSize =  wrapper.containerlessBoundsInParent().height,
-        itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minY,
+        itemSize =  zoom.get() * bounds.height,
+        itemOffset = zoom.get() * bounds.minY,
         currentItemOffset = wrapper.layoutY
       )
     )
@@ -281,25 +276,18 @@ class NodeView(
 
 
   class Wrapper : Region() {
-    private var content: List<Node> = emptyList()
 
     init {
       isManaged = false
-//            isMouseTransparent = true
       width = 10.0
       height = 10.0
     }
 
-    fun setContent(nodes: Collection<out Node>) {
-      removeContent()
-      content = emptyList<Node>() + nodes
-      children.addAll(nodes)
+    public override fun getChildren(): ObservableList<Node> {
+      return super.getChildren()
     }
 
-    fun removeContent() {
-      children.removeAll(content)
-      content= emptyList()
-    }
+    
   }
 
   override fun computePrefHeight(width: Double): Double {

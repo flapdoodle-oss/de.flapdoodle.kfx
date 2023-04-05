@@ -164,13 +164,13 @@ class NodeView(
 
       if (pEvent.isControlDown) {
         val local = wrapper.screenToLocal(Point2D(pEvent.screenX, pEvent.screenY))
-        println("zoom at ${pEvent.x},${pEvent.y} (${pEvent.screenX},${pEvent.screenY} -> (${local.x},${local.y})")
+//        println("zoom at ${pEvent.x},${pEvent.y} -> (screen: ${pEvent.screenX}, ${pEvent.screenY}) local: ${local.x},${local.y}) on ${wrapper.boundsInParent}")
         when (pEvent.eventType) {
           ScrollEvent.SCROLL -> {
             sharedEventLock.ifUnlocked {
               if (pEvent.deltaY != 0.0) {
                 val direction = if (pEvent.deltaY > 1) ZoomDirection.In else ZoomDirection.Out
-                zoom(direction, local.x, local.y)
+                zoom(direction, pEvent.x, pEvent.y)
               }
               pEvent.consume()
             }
@@ -180,7 +180,7 @@ class NodeView(
 
               if (pEvent.deltaY != 0.0) {
                 val direction = if (pEvent.deltaY > 1) ZoomDirection.In else ZoomDirection.Out
-                zoom(direction, local.x, local.y)
+                zoom(direction, pEvent.x, pEvent.y)
               }
               pEvent.consume()
               Action.Zoom
@@ -258,9 +258,11 @@ class NodeView(
     if (newZoomLevel != oldZoomLevel) {
       val f = newZoomLevel / oldZoomLevel - 1
       zoom.set(newZoomLevel)
-      val diffX = f * pPivotX * 0.0
-      val diffY = f * pPivotY * 0.0
-//      println("pan diff: $diffX,$diffY")
+      val pivotInWrapperSpace = wrapper.parentToLocal(Point2D(pPivotX, pPivotY))
+      val diffX = - f * pivotInWrapperSpace.x
+      val diffY = - f * pivotInWrapperSpace.y
+//      println("pan diff: $diffX,$diffY - ${wrapper.layoutX},${wrapper.layoutY}")
+//      println("$pivotInWrapperSpace -> ${wrapper.layoutX},${wrapper.layoutY}")
       panTo(wrapper.layoutX + diffX, wrapper.layoutY + diffY)
     }
   }

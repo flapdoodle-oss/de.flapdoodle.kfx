@@ -37,7 +37,7 @@ class NodeEditor : AnchorPane() {
         MouseEvent.MOUSE_EXITED_TARGET -> {
           sharedLock.tryRelease(target, Action.Focus::class.java) {
             event.consume()
-
+            cursor = null
             target.onBlur()
           }
         }

@@ -23,6 +23,9 @@ class NodeEditor : AnchorPane() {
   }
 
   private fun handleMouseEvent(event: MouseEvent) {
+    if (event.eventType == MouseEvent.MOUSE_ENTERED_TARGET || event.eventType == MouseEvent.MOUSE_EXITED_TARGET ) {
+      println("--> ${event.eventType}  ${event.target}")
+    }
     val target = event.target
     if (target is Node) {
       when (event.eventType) {

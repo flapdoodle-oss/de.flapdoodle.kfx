@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.extensions
 
 import de.flapdoodle.kfx.bindings.LazyBoundsProperty
 import javafx.beans.InvalidationListener
+import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -11,10 +12,12 @@ fun Node.childsInParentBounds() = childsInParentBoundsProperty().get()
 fun Node.childsInLocalBoundsProperty() = ChildsInParentBoundsExtension.childsInLocalBoundsProperty(this)
 fun Node.childsInLocalBounds() = childsInLocalBoundsProperty().get()
 
-fun Node.containerlessBoundsInParent() = ChildsInParentBoundsExtension.containerlessBoundsInParent(this)
-fun Node.containerlessBoundsInLocal() = ChildsInParentBoundsExtension.containerlessBoundsInLocal(this)
+fun Node.containerlessBoundsInParentProperty() = ChildsInParentBoundsExtension.containerlessBoundsInParentProperty(this)
+fun Node.containerlessBoundsInLocalProperty() = ChildsInParentBoundsExtension.containerlessBoundsInLocalProperty(this)
+fun Node.containerlessBoundsInParent() = containerlessBoundsInParentProperty().get()
+fun Node.containerlessBoundsInLocal() = containerlessBoundsInLocalProperty().get()
 
-fun Node.markAsContainer() = ChildsInParentBoundsExtension.markAsContainer(this)
+fun <T: Node> T.markAsContainer() = ChildsInParentBoundsExtension.markAsContainer(this)
 
 object ChildsInParentBoundsExtension {
 
@@ -22,28 +25,20 @@ object ChildsInParentBoundsExtension {
         return node.property[IsContainer::class] != null
     }
 
-    fun markAsContainer(node: Node) {
+    fun <T: Node> markAsContainer(node: T): T {
         node.property[IsContainer::class] = IsContainer
+        return node
     }
 
     fun containerlessBoundsInParent(node: Node): Bounds {
-        return if (isContainer(node)) {
-            val bounds: List<Bounds> = when (node) {
-                is Parent -> {
-                    node.childrenUnmodifiable.map {
-                        val bounds = containerlessBoundsInParent(it)
-                        if (bounds.isEmpty) bounds else node.localToParent(bounds)
-                    }
-                }
-                else -> listOf(node.boundsInParent)
-            }
-            BoundingBoxes.reduce(bounds)
-        } else {
-            node.boundsInParent
-        }
+        return containerlessBounds(node, false)
     }
 
     fun containerlessBoundsInLocal(node: Node): Bounds {
+        return containerlessBounds(node, true)
+    }
+
+    private fun containerlessBounds(node: Node, boundsInLocal: Boolean): Bounds {
         return if (isContainer(node)) {
             val bounds: List<Bounds> = when (node) {
                 is Parent -> {
@@ -52,12 +47,76 @@ object ChildsInParentBoundsExtension {
                         if (bounds.isEmpty) bounds else node.localToParent(bounds)
                     }
                 }
-                else -> listOf(node.boundsInLocal)
+                else -> {
+                    throw IllegalArgumentException("marked as container, but is not a parent: $node")
+//                    listOf(if (boundsInLocal) node.boundsInLocal else node.boundsInParent)
+                }
             }
             BoundingBoxes.reduce(bounds)
         } else {
-            node.boundsInLocal
+//            println("not container: $node")
+            if (boundsInLocal) node.boundsInLocal else node.boundsInParent
         }
+    }
+
+    fun containerlessBoundsInParentProperty(parent: Node): ContainerlessBoundsInParentProperty {
+        return parent.property.computeIfAbsend(ContainerlessBoundsInParentProperty::class) {
+            ContainerlessBoundsInParentProperty(parent)
+        }
+    }
+
+    class ContainerlessBoundsInParentProperty(val parent: Node) : LazyBoundsProperty<Bounds>() {
+        init {
+            parent.boundsInParentProperty().addListener(InvalidationListener {
+                invalidate()
+            })
+            parent.boundsInParentProperty().addListener(ChangeListener { observable, oldValue, newValue ->
+                invalidate()
+            })
+        }
+
+        override fun computeValue(): Bounds {
+            return containerlessBoundsInParent(parent)
+        }
+
+        override fun getBean(): Any {
+            return parent
+        }
+
+        override fun getName(): String {
+            return "containerlessBoundsInParentProperty"
+        }
+
+    }
+
+    fun containerlessBoundsInLocalProperty(parent: Node): ContainerlessBoundsInLocalProperty {
+        return parent.property.computeIfAbsend(ContainerlessBoundsInLocalProperty::class) {
+            ContainerlessBoundsInLocalProperty(parent)
+        }
+    }
+
+    class ContainerlessBoundsInLocalProperty(val parent: Node) : LazyBoundsProperty<Bounds>() {
+        init {
+            parent.boundsInLocalProperty().addListener(InvalidationListener {
+                invalidate()
+            })
+            parent.boundsInLocalProperty().addListener(ChangeListener { observable, oldValue, newValue ->
+                invalidate()
+            })
+        }
+
+        override fun computeValue(): Bounds {
+            return containerlessBoundsInLocal(parent)
+        }
+
+        override fun getBean(): Any {
+            return parent
+        }
+
+        override fun getName(): String {
+            return "containerlessBoundsInLocalProperty"
+        }
+
     }
 
     // TODO:

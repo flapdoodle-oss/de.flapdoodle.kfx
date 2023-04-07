@@ -27,6 +27,14 @@ class SharedEventLock {
         }
     }
 
+    fun <K> replaceLocked(owner: Node, stateFactory: () -> Any) {
+        current?.let { active ->
+            if (active.first == owner) {
+                current = owner to stateFactory()
+            }
+        }
+    }
+
     private fun <K> currentState(owner: Node, clazz: Class<K>): K? {
         return current?.run {
             return if (first == owner) clazz.cast(second) else null
@@ -35,6 +43,14 @@ class SharedEventLock {
 
     fun <K> ifLocked(owner: Node, clazz: Class<K>, onLocked: (K) -> Unit) {
         currentState(owner, clazz)?.let(onLocked)
+    }
+
+    fun <N: Node, K> ifAnyLocked(ownerType: Class<N>, clazz: Class<K>, onLocket: (N, K) -> Unit) {
+        current?.let { (owner,state) ->
+            if (ownerType.isInstance(owner) && clazz.isInstance(state)) {
+                onLocket(ownerType.cast(owner), clazz.cast(state))
+            }
+        }
     }
 
     fun ifUnlocked(onUnlocked: () -> Unit) {
@@ -48,5 +64,9 @@ class SharedEventLock {
                 current=null
             }
         }
+    }
+
+    override fun toString(): String {
+        return "SharedEventLock($current)"
     }
 }

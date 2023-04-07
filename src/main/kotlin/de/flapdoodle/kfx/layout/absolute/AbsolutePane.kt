@@ -1,10 +1,14 @@
 package de.flapdoodle.kfx.layout.absolute
 
+import de.flapdoodle.kfx.extensions.markAsContainer
 import javafx.collections.ObservableList
 import javafx.scene.Node
 import javafx.scene.control.Control
 
 open class AbsolutePane : Control() {
+    init {
+        markAsContainer()
+    }
 
     private val skin = AbsolutePaneSkin(this)
     override fun createDefaultSkin() = skin

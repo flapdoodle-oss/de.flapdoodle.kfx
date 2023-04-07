@@ -23,6 +23,7 @@ class Movables(
 
     init {
         addEventHandler(MouseEvent.ANY, ::handleMouseEvent)
+        markAsContainer()
 //        boundsInLocalProperty().addListener(InvalidationListener {
 //            println("BoundsInLocal: $boundsInLocal")
 //        })

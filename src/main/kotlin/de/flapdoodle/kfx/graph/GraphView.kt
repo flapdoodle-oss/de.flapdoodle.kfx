@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.graph
 
 import de.flapdoodle.kfx.events.SharedEventLock
+import de.flapdoodle.kfx.extensions.markAsContainer
 import de.flapdoodle.kfx.extensions.size
 import de.flapdoodle.kfx.graph.connections.Connections
 import de.flapdoodle.kfx.graph.nodes.Movable
@@ -51,8 +52,10 @@ class GraphView : Region() {
             fill = Color.RED
         })
         val layers = LayerPane(setOf(*Layer.values()))
+        layers.markAsContainer()
         layers.addAll(Layer.Nodes, nodes)
         val connections = Connections(sharedEventLock)
+        connections.markAsContainer()
         
         layers.addAll(Layer.Connections, connections)
 

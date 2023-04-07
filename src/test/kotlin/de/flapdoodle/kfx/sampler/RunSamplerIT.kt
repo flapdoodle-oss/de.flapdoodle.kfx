@@ -16,22 +16,26 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.App
+import javafx.scene.Scene
+import javafx.scene.control.Button
+import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.testfx.api.FxAssert
 import org.testfx.api.FxRobot
-import org.testfx.assertions.api.Assertions
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
+import org.testfx.matcher.control.LabeledMatchers
+
 
 @ExtendWith(ApplicationExtension::class)
 class RunSamplerIT {
 
     @Start
     private fun createElement(stage: Stage) {
-        val case = 2
+        val case = 4
         when (case) {
             1 -> PanningWindowsSampler().apply {
                 start(stage)
@@ -40,6 +44,9 @@ class RunSamplerIT {
                 start(stage)
             }
             3 -> ComponentsBehaviorSampler().apply {
+                start(stage)
+            }
+            4 -> NodeEditorSampler().apply {
                 start(stage)
             }
         }

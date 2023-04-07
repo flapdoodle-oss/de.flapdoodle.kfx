@@ -32,10 +32,35 @@ data class ScrollBounds(
 
     companion object {
         fun of(
+            windowOffset: Double, // +-
+            windowSize: Double, // >0
+            zoom: Double, // 0<zoom<n
+            contentOffset: Double, // +-
+            contentSize: Double, // >=0
+        ) {
+//            println("----------------")
+//            println("window: $windowOffset - $windowSize")
+//            println("zoom: $zoom")
+//            println("content: $contentOffset - $contentSize")
+//            println()
+
+            val fact = contentSize / windowSize
+            if (fact <= 1) {
+                // full visible
+                
+
+
+            } else {
+                
+            }
+        }
+
+        fun of(
             windowSize: Double, // >0
             itemSize: Double, // >=0
             itemOffset: Double, // +-
-            currentItemOffset: Double
+            currentItemOffset: Double,
+            debug: Boolean = false
         ): ScrollBounds {
             val fact = itemSize / windowSize // it < 1 if item is smaller
 
@@ -49,6 +74,23 @@ data class ScrollBounds(
                 val fixedMin = Math.min(max, currentItemOffset)
 
                 val visibleAmount = diff * fact
+
+                if (debug) {
+                    println("--------------------------")
+                    println("windowSize: $windowSize")
+                    println("itemSize: $itemSize")
+                    println("itemOffset: $itemOffset")
+                    println("currentItemOffset: $currentItemOffset")
+                    println("--------------------------")
+                    println("diff: $diff")
+                    println("max: $max")
+                    println("min: $min")
+                    println("fixedMax: $fixedMax")
+                    println("fixedMin: $fixedMin")
+                    println("visibleAmount: $visibleAmount")
+                    println()
+                    println()
+                }
 
                 return ScrollBounds(fixedMin, fixedMax, visibleAmount)
 

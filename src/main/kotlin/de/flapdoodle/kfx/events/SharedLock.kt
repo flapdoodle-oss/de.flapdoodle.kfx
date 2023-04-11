@@ -10,30 +10,18 @@ class SharedLock<T> {
     }
   }
 
-  fun <K> ifLocked(owner: T, lockType: Class<K>, onLocked: (K) -> Unit) {
+  fun <K: Any> ifLocked(owner: T, lockType: Class<K>, onLocked: Locked<T,T,K>.(K) -> Unit) {
     withLock(owner, lockType, onLocked)
   }
 
-  fun <O: T, K> ifLocked(ownerType: Class<O>, lockType: Class<K>, onLocked: (O, K) -> Unit) {
+  fun <O: T, K: Any> ifLocked(ownerType: Class<O>, lockType: Class<K>, onLocked: Locked<T,O,K>.(O, K) -> Unit) {
     withLock(ownerType, lockType, onLocked)
   }
 
-  fun <K> replaceLock(owner: T, lockType: Class<K>, onLocked: (K) -> Any) {
-    withLock(owner, lockType) { lock ->
-      current = owner to onLocked(lock)
-    }
-  }
-
-  fun <O: T, K> replaceLock(ownerType: Class<O>, lockType: Class<K>, onLocked: (O, K) -> Any) {
-    withLock(ownerType, lockType) { owner, lock ->
-      current = owner to onLocked(owner, lock)
-    }
-  }
-
-  fun <K> tryRelease(owner: T, lockType: Class<K>, onRelease: (K) -> Unit) {
+  fun <K: Any> tryRelease(owner: T, lockType: Class<K>, onRelease: (K) -> Unit) {
     withLock(owner, lockType) {
       onRelease(it)
-      current = null
+      releaseLock()
     }
   }
 
@@ -43,19 +31,19 @@ class SharedLock<T> {
   }
 
   @Synchronized
-  private fun <K> withLock(owner: T, lockType: Class<K>, action: (K) -> Unit) {
+  private fun <K: Any> withLock(owner: T, lockType: Class<K>, action: Locked<T,T,K>.(K) -> Unit) {
     current?.run {
       if (first==owner && lockType.isInstance(second)) {
-        action(lockType.cast(second))
+        Locked<T,T,K>(this@SharedLock).action(lockType.cast(second))
       }
     }
   }
 
   @Synchronized
-  private fun <O: T, K> withLock(ownerType: Class<O>, lockType: Class<K>, action: (O, K) -> Unit) {
+  private fun <O: T, K: Any> withLock(ownerType: Class<O>, lockType: Class<K>, action: Locked<T,O,K>.(O, K) -> Unit) {
     current?.run {
       if (ownerType.isInstance(first) && lockType.isInstance(second)) {
-        action(ownerType.cast(first), lockType.cast(second))
+        Locked<T, O,K>(this@SharedLock).action(ownerType.cast(first), lockType.cast(second))
       }
     }
   }
@@ -63,5 +51,16 @@ class SharedLock<T> {
   @Synchronized
   override fun toString(): String {
     return "SharedLock($current)"
+  }
+
+  class Locked<T,O: T,K: Any>(val sharedLock: SharedLock<T>) {
+    fun replaceLock(newLock: K) {
+      val current = sharedLock.current ?: throw IllegalStateException("current not set")
+      sharedLock.current = current.first to newLock
+    }
+
+    fun releaseLock() {
+      sharedLock.current = null
+    }
   }
 }

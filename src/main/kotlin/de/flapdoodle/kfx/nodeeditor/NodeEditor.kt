@@ -59,7 +59,7 @@ class NodeEditor : AnchorPane() {
             val targetLocalPosition = active.screenToLocal(event.screenPosition)
             val sizeMode = SizeMode.guess(targetLocalPosition, active.size)
 
-            sharedLock.replaceLock(active, Action::class.java) {
+//            sharedLock.replaceLock(active, Action::class.java) {
               val newAction = if (sizeMode != null && sizeMode != SizeMode.INSIDE /*&& active.isResizeable()*/) {
                 cursor = sizeMode.cursor()
                 Action.Resize(
@@ -76,7 +76,9 @@ class NodeEditor : AnchorPane() {
               }
               println("replace with $newAction")
               newAction
-            }
+
+              replaceLock(newAction)
+//            }
           }
           MouseEvent.MOUSE_MOVED -> {
 //            val targetLocalPosition = active.screenToLocal(event.screenPosition)
@@ -87,7 +89,7 @@ class NodeEditor : AnchorPane() {
 //              cursor = SizeMode.INSIDE.cursor()
 //            }
 
-            sharedLock.replaceLock(active, Action.Focus::class.java) { current ->
+//            sharedLock.replaceLock(active, Action.Focus::class.java) { current ->
               val replacement: Action.Focus = if (target is javafx.scene.Node && Markers.isDragBar(target)) {
                 Action.Focus(SizeMode.INSIDE)
               } else {
@@ -96,7 +98,7 @@ class NodeEditor : AnchorPane() {
                 if (sizeMode!=SizeMode.INSIDE) {
                   Action.Focus(sizeMode)
                 } else {
-                  current
+                  action
                 }
               }
               if (replacement.sizeMode!=null) {
@@ -105,8 +107,8 @@ class NodeEditor : AnchorPane() {
                 cursor=null
               }
 
-              replacement
-            }
+              replaceLock(replacement)
+//            }
           }
         }
       } else {
@@ -139,11 +141,13 @@ class NodeEditor : AnchorPane() {
             }
           }
 
-          MouseEvent.MOUSE_RELEASED -> sharedLock.replaceLock(active, Action::class.java) { it: Action ->
-            event.consume()
-            cursor = null
+          MouseEvent.MOUSE_RELEASED -> {
+//            sharedLock.replaceLock(active, Action::class.java) { it: Action ->
+              event.consume()
+              cursor = null
 
-            Action.Focus()
+              replaceLock(Action.Focus())
+//            }
           }
         }
       }

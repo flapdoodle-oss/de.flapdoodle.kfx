@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.extensions
 
 import javafx.geometry.Dimension2D
+import javafx.geometry.Point2D
 import javafx.scene.layout.Region
 import javafx.scene.shape.Rectangle
 
@@ -32,6 +33,10 @@ operator fun Dimension2D.minus(other: Dimension2D): Dimension2D {
 
 operator fun Dimension2D.plus(other: Dimension2D): Dimension2D {
     return Dimension2D(this.width + other.width, this.height + other.height)
+}
+
+fun Dimension2D.isEmpty(): Boolean {
+    return width==0.0 && height==0.0
 }
 
 fun Dimension2D.addWidth(value: Double): Dimension2D = Dimension2D(this.width + value, this.height)

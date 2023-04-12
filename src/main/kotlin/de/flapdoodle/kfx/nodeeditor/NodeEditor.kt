@@ -9,7 +9,6 @@ import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.Pane
 
 class NodeEditor : AnchorPane() {
   val sharedLock = SharedLock<javafx.scene.Node>()
@@ -39,10 +38,10 @@ class NodeEditor : AnchorPane() {
             Action.Focus()
           }
         } else {
-          sharedLock.ifLocked(Node::class.java, Action.Focus::class.java) { active: Node, action: Action.Focus ->
+          sharedLock.ifLocked(Node::class.java, Action.Focus::class.java) { lock ->
             if (target is javafx.scene.Node && Markers.isDragBar(target)) {
               cursor = SizeMode.INSIDE.cursor()
-              replaceLock(Action.Focus(SizeMode.INSIDE))
+              lock.replaceLock(Action.Focus(SizeMode.INSIDE))
             }
           }
         }
@@ -56,44 +55,41 @@ class NodeEditor : AnchorPane() {
             Node.Style.Active.disable(target)
           }
         } else {
-          sharedLock.ifLocked(Node::class.java, Action.Focus::class.java) { active: Node, action: Action.Focus ->
+          sharedLock.ifLocked(Node::class.java, Action.Focus::class.java) {
             if (target is javafx.scene.Node && Markers.isDragBar(target)) {
               cursor = null
-              replaceLock(Action.Focus())
+              it.replaceLock(Action.Focus())
             }
           }
         }
       }
     }
 
-    sharedLock.ifLocked(Node::class.java, Action::class.java) { active: Node, action: Action ->
+    sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
+      val action = lock.value
+      val active = lock.owner
       if (action is Action.Focus) {
 //        println("action -> $action")
         when (event.eventType) {
           MouseEvent.MOUSE_PRESSED -> {
-            event.consume()
+            if (action.sizeMode!=null) {
+              cursor = action.sizeMode.cursor()
 
-            val targetLocalPosition = active.screenToLocal(event.screenPosition)
-            val sizeMode = SizeMode.guess(targetLocalPosition, active.size)
+              val newAction = when(action.sizeMode) {
+                SizeMode.INSIDE -> Action.Move(
+                  clickPosition = event.screenPosition,
+                  layoutPosition = active.layoutPosition
+                )
+                else -> Action.Resize(
+                  clickPosition = event.screenPosition,
+                  sizeMode = action.sizeMode,
+                  layout = LayoutBounds(active.layoutPosition, active.size)
+                )
+              }
 
-            val newAction = if (sizeMode != null && sizeMode != SizeMode.INSIDE /*&& active.isResizeable()*/) {
-              cursor = sizeMode.cursor()
-              Action.Resize(
-                clickPosition = event.screenPosition,
-                sizeMode = sizeMode,
-                layout = LayoutBounds(active.layoutPosition, active.size)
-              )
-            } else {
-              cursor = SizeMode.INSIDE.cursor()
-              Action.Move(
-                clickPosition = event.screenPosition,
-                layoutPosition = active.layoutPosition
-              )
+              event.consume()
+              lock.replaceLock(newAction)
             }
-            println("replace with $newAction")
-            newAction
-
-            replaceLock(newAction)
           }
 
           MouseEvent.MOUSE_MOVED -> {
@@ -102,24 +98,14 @@ class NodeEditor : AnchorPane() {
             if (sizeMode != SizeMode.INSIDE) {
               if (sizeMode!=null) {
                 cursor = sizeMode.cursor()
-                replaceLock(Action.Focus(sizeMode))
+                lock.replaceLock(Action.Focus(sizeMode))
               }
             } else {
               if (action.sizeMode!=SizeMode.INSIDE) {
                 cursor = null
+                lock.replaceLock(Action.Focus())
               }
             }
-//
-//            if (sizeMode!=SizeMode.INSIDE && action.sizeMode==null) {
-//              val replacement = Action.Focus(sizeMode)
-//              if (sizeMode != null) {
-//                cursor = sizeMode.cursor()
-//              } else {
-//                cursor = null
-//              }
-//
-//              replaceLock(replacement)
-//            }
           }
         }
       } else {
@@ -141,8 +127,8 @@ class NodeEditor : AnchorPane() {
                 active.resizeTo(resizedBounds)
               }
 
-              is Action.Focus -> {
-                println("ignore...")
+              else -> {
+                println(".. should not happen")
               }
             }
           }
@@ -151,7 +137,7 @@ class NodeEditor : AnchorPane() {
             event.consume()
             cursor = null
 
-            replaceLock(Action.Focus())
+            lock.replaceLock(Action.Focus())
           }
         }
       }

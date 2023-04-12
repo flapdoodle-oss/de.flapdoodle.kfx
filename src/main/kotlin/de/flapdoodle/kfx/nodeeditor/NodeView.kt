@@ -123,7 +123,8 @@ class NodeView(
           )
         }
       }
-      MouseEvent.MOUSE_DRAGGED -> sharedEventLock.ifLocked(this, Action::class.java) { current ->
+      MouseEvent.MOUSE_DRAGGED -> sharedEventLock.ifLocked(this, Action::class.java) {
+        val current = it.value
         when (current) {
           is Action.Pan -> {
             event.consume()
@@ -215,7 +216,8 @@ class NodeView(
         }
       }
       ZoomEvent.ZOOM -> {
-        sharedEventLock.ifLocked(this, Action::class.java) { action ->
+        sharedEventLock.ifLocked(this, Action::class.java) {
+          val action = it.value
           when (action) {
             is Action.Zoom -> {
               val newZoomLevel: Double = zoom.get() * pEvent.zoomFactor

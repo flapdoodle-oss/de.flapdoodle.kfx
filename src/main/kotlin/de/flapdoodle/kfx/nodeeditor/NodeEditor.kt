@@ -7,6 +7,7 @@ import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
 import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
+import javafx.scene.control.Button
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 
@@ -17,7 +18,9 @@ class NodeEditor : AnchorPane() {
     children.add(NodeView(sharedLock).withAnchors(all = 0.0).apply {
       getViewChildren().addAll(Node("one").apply {
         layoutPosition = Point2D(100.0, 50.0)
-      }, Node("two"))
+      }, Node("two").apply {
+        content = Button("Helloooo")
+      })
     })
 
     addEventHandler(MouseEvent.ANY, this::handleMouseEvent)

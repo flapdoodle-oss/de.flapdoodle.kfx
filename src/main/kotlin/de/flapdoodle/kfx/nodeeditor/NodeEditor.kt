@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.extensions.Nodes
 import de.flapdoodle.kfx.graph.nodes.SizeMode
 import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
 import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
@@ -30,6 +31,20 @@ class NodeEditor : AnchorPane() {
 //    if (event.eventType == MouseEvent.MOUSE_ENTERED_TARGET || event.eventType == MouseEvent.MOUSE_EXITED_TARGET ) {
 //      println("--> ${event.eventType}  ${event.target}")
 //    }
+
+    if (event.eventType == MouseEvent.MOUSE_MOVED) {
+      println("------------------")
+      Nodes.hit(
+        this,
+        Point2D(event.screenX, event.screenY),
+        1.0,
+        javafx.scene.Node::screenToLocal
+      ).filter { it is Node || Markers.isDragBar(it) }
+        .forEach {
+          println("node -> $it")
+        }
+    }
+
     val target = event.target
     when (event.eventType) {
       MouseEvent.MOUSE_ENTERED_TARGET -> {
@@ -96,6 +111,12 @@ class NodeEditor : AnchorPane() {
           }
 
           MouseEvent.MOUSE_MOVED -> {
+
+//            val picked = Nodes.pick(this@NodeEditor, event.sceneX, event.sceneY)
+//            if (picked!=null) {
+//              println("node -> $picked")
+//            }
+
             val targetLocalPosition = active.screenToLocal(event.screenPosition)
             val sizeMode = SizeMode.guess(targetLocalPosition, active.size)
             if (sizeMode != SizeMode.INSIDE) {

@@ -23,13 +23,13 @@ object Nodes {
     toLocal: (Node, Point2D) -> Point2D = Node::screenToLocal
   ) {
     if (contains(container, points, toLocal)) {
-      yield(container)
       if (container is Parent) {
         val children = container.childrenUnmodifiable.reversed()
         children.forEach {
           hit(it, points, toLocal)
         }
       }
+      yield(container)
     }
   }
 

@@ -31,29 +31,23 @@ class NodeEditor : AnchorPane() {
     val target = event.target
 
     when (event.eventType) {
-      MouseEvent.MOUSE_ENTERED_TARGET -> {
-        sharedLock.ifUnlocked {
-          if (target is Node) {
-            Node.Style.Active.enable(target)
-          }
+      MouseEvent.MOUSE_ENTERED_TARGET -> sharedLock.ifUnlocked {
+        if (target is Node) {
+          Node.Style.Active.enable(target)
         }
       }
-      MouseEvent.MOUSE_EXITED_TARGET -> {
-        sharedLock.ifUnlocked {
-          if (target is Node) {
-            Node.Style.Active.disable(target)
-          }
+      MouseEvent.MOUSE_EXITED_TARGET -> sharedLock.ifUnlocked {
+        if (target is Node) {
+          Node.Style.Active.disable(target)
         }
       }
-      MouseEvent.MOUSE_MOVED -> {
-        sharedLock.ifUnlocked {
-          val nodeAction = bestAction(event.screenPosition)
-          val action = nodeAction?.second
-          cursor = when (action) {
-            is Action.Move -> SizeMode.INSIDE.cursor()
-            is Action.Resize -> action.sizeMode.cursor()
-            else -> null
-          }
+      MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {
+        val nodeAction = bestAction(event.screenPosition)
+        val action = nodeAction?.second
+        cursor = when (action) {
+          is Action.Move -> SizeMode.INSIDE.cursor()
+          is Action.Resize -> action.sizeMode.cursor()
+          else -> null
         }
       }
       MouseEvent.MOUSE_PRESSED -> {
@@ -65,53 +59,38 @@ class NodeEditor : AnchorPane() {
           }
         }
       }
-      MouseEvent.MOUSE_DRAGGED -> {
-        sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
-          event.consume()
+      MouseEvent.MOUSE_DRAGGED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { (active, action) ->
+        event.consume()
 
-          val action = lock.value
-          val active = lock.owner
+        when (action) {
+          is Action.Move -> {
+            val diff = event.screenPosition - action.clickPosition
+            active.layoutPosition = action.layoutPosition + active.screenDeltaToLocal(diff)
+          }
 
-          when (action) {
-            is Action.Move -> {
-              val diff = event.screenPosition - action.clickPosition
-              active.layoutPosition = action.layoutPosition + active.screenDeltaToLocal(diff)
-            }
+          is Action.Resize -> {
+            val diff = event.screenPosition - action.clickPosition
+            val fixedDiff = active.screenDeltaToLocal(diff)
+            val resizedBounds = SizeMode.resize(action.sizeMode, action.layout, fixedDiff)
 
-            is Action.Resize -> {
-              val diff = event.screenPosition - action.clickPosition
-              val fixedDiff = active.screenDeltaToLocal(diff)
-              val resizedBounds = SizeMode.resize(action.sizeMode, action.layout, fixedDiff)
-
-              active.resizeTo(resizedBounds)
-            }
-
-            else -> {
-              // Ignore Focus
-            }
+            active.resizeTo(resizedBounds)
           }
         }
       }
-      MouseEvent.MOUSE_RELEASED -> {
-        sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
-          event.consume()
-          
-          cursor = null
-          lock.releaseLock()
-        }
+      MouseEvent.MOUSE_RELEASED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
+        event.consume()
+
+        cursor = null
+        lock.releaseLock()
       }
     }
   }
 
   private fun bestAction(screenPosition: Point2D): Pair<Node,Action>? {
-    val nodesAndBars = Nodes.hit(
-      this,
-      screenPosition,
-      0.0,
-      javafx.scene.Node::screenToLocal
-    ).filter {
-      it is Node || Markers.isDragBar(it)
-    }.toList()
+    val nodesAndBars = pickScreen(screenPosition)
+      .filter {
+        it is Node || Markers.isDragBar(it)
+      }.toList()
 
     val bestSizeMode = nodesAndBars.map { when {
       Markers.isDragBar(it) -> SizeMode.INSIDE
@@ -134,7 +113,6 @@ class NodeEditor : AnchorPane() {
   }
 
   sealed class Action {
-    object Focus : Action()
     data class Move(
       val clickPosition: Point2D,
       val layoutPosition: Point2D

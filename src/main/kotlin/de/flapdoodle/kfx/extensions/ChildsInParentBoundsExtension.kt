@@ -19,6 +19,7 @@ fun Node.containerlessBoundsInLocal() = containerlessBoundsInLocalProperty().get
 
 fun <T: Node> T.markAsContainer() = ChildsInParentBoundsExtension.markAsContainer(this)
 
+@Deprecated("tooo complicated, of no use")
 object ChildsInParentBoundsExtension {
 
     fun isContainer(node: Node): Boolean {

@@ -40,6 +40,14 @@ val Node.constraint: ObservableMapExtensions.TypedMap
     }
   }
 
+fun Node.pickScreen(center: Point2D, distance: Double = 0.0): Sequence<Node> {
+  return Nodes.pick(this, center, distance, Node::screenToLocal)
+}
+
+fun Node.pickScene(center: Point2D, distance: Double = 0.0): Sequence<Node> {
+  return Nodes.pick(this, center, distance, Node::sceneToLocal)
+}
+
 fun <T : Any> Parent.findAllInTree(type: KClass<T>): List<T> {
   return childrenUnmodifiable.flatMap {
     val nodeAsList = if (type.isInstance(it)) {

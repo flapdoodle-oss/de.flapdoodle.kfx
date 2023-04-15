@@ -7,7 +7,6 @@ import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.setBounds
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.collections.ObservableList
 import javafx.geometry.Orientation
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -23,7 +22,7 @@ class NodeView(
   val sharedEventLock: SharedLock<Node> = SharedLock()
 ) : Region() {
 
-  private val nodeLayer = NodeLayer()
+  private val layers = Layers()
 
   private val zoom: DoubleProperty = object : SimpleDoubleProperty(1.0) {
     override fun invalidated() {
@@ -38,23 +37,26 @@ class NodeView(
     styleClass.addAll("node-view")
     stylesheets += javaClass.getResource("NodeView.css").toExternalForm()
 
-    children.add(Nodes.childBoundsRectangle(nodeLayer).apply {
+    children.add(layers.nodes().boundingBox().apply {
       styleClass.addAll("content-background")
     })
+//    children.add(Nodes.childBoundsRectangle(nodeLayers).apply {
+//      styleClass.addAll("content-background")
+//    })
 
-    nodeLayer.transforms.add(Scale().apply {
+    layers.transforms.add(Scale().apply {
       xProperty().bind(zoom)
       yProperty().bind(zoom)
 //      pivotXProperty().bind(widthProperty().divide(2.0))
 //      pivotYProperty().bind(heightProperty().divide(2.0))
     })
-    children.add(nodeLayer)
+    children.add(layers)
 
     scrollX.orientation = Orientation.HORIZONTAL
-    scrollX.valueProperty().bindBidirectional(nodeLayer.layoutXProperty())
+    scrollX.valueProperty().bindBidirectional(layers.layoutXProperty())
 //        scrollX.styleClass.add("graph-editor-scroll-bar") //$NON-NLS-1$
     scrollY.orientation = Orientation.VERTICAL
-    scrollY.valueProperty().bindBidirectional(nodeLayer.layoutYProperty())
+    scrollY.valueProperty().bindBidirectional(layers.layoutYProperty())
     children.addAll(scrollX,scrollY)
 
     clip = Bounds.sizeRectangle(this)
@@ -65,21 +67,19 @@ class NodeView(
     addEventHandler(ScrollEvent.SCROLL, this::handleScroll)
   }
 
-  fun getViewChildren(): ObservableList<Node> {
-    return nodeLayer.children
-  }
+  fun layers() = layers
 
   override fun layoutChildren() {
     super.layoutChildren()
 
-    val bounds = Nodes.boundsInParent(nodeLayer.children);
+    val bounds = Nodes.boundsInParent(layers.nodes().children);
 
     scrollX.setBounds(
       ScrollBounds.of(
         windowSize = width,
         itemSize = zoom.get() * bounds.width,
         itemOffset = zoom.get() * bounds.minX,
-        currentItemOffset = nodeLayer.layoutX,
+        currentItemOffset = layers.layoutX,
         false
       )
     )
@@ -89,7 +89,7 @@ class NodeView(
         windowSize = height,
         itemSize =  zoom.get() * bounds.height,
         itemOffset = zoom.get() * bounds.minY,
-        currentItemOffset = nodeLayer.layoutY
+        currentItemOffset = layers.layoutY
       )
     )
 
@@ -119,7 +119,7 @@ class NodeView(
           cursor = Cursor.MOVE
           Action.Pan(
             clickPosition = event.screenPosition,
-            posAtClick = nodeLayer.layoutPosition
+            posAtClick = layers.layoutPosition
           )
         }
       }
@@ -164,7 +164,7 @@ class NodeView(
     if (!pEvent.isDirect && pEvent.touchCount <= 0) {
 
       if (pEvent.isControlDown) {
-        val local = nodeLayer.screenToLocal(Point2D(pEvent.screenX, pEvent.screenY))
+        val local = layers.screenToLocal(Point2D(pEvent.screenX, pEvent.screenY))
 //        println("zoom at ${pEvent.x},${pEvent.y} -> (screen: ${pEvent.screenX}, ${pEvent.screenY}) local: ${local.x},${local.y}) on ${wrapper.boundsInParent}")
         when (pEvent.eventType) {
           ScrollEvent.SCROLL -> {
@@ -195,7 +195,7 @@ class NodeView(
         }
       } else {
         sharedEventLock.ifUnlocked {
-          panTo(nodeLayer.layoutX + pEvent.deltaX, nodeLayer.layoutY + pEvent.deltaY)
+          panTo(layers.layoutX + pEvent.deltaX, layers.layoutY + pEvent.deltaY)
           pEvent.consume()
         }
       }
@@ -235,12 +235,12 @@ class NodeView(
 
 
   fun panTo(x: Double, y: Double) {
-    nodeLayer.layoutX = x
-    nodeLayer.layoutY = y
+    layers.layoutX = x
+    layers.layoutY = y
   }
 
   fun setZoom(pZoom: Double) {
-    setZoomAt(pZoom, nodeLayer.layoutX, nodeLayer.layoutY)
+    setZoomAt(pZoom, layers.layoutX, layers.layoutY)
   }
 
   enum class ZoomDirection {
@@ -260,12 +260,12 @@ class NodeView(
     if (newZoomLevel != oldZoomLevel) {
       val f = newZoomLevel / oldZoomLevel - 1
       zoom.set(newZoomLevel)
-      val pivotInWrapperSpace = nodeLayer.parentToLocal(Point2D(pPivotX, pPivotY))
+      val pivotInWrapperSpace = layers.parentToLocal(Point2D(pPivotX, pPivotY))
       val diffX = - f * pivotInWrapperSpace.x
       val diffY = - f * pivotInWrapperSpace.y
 //      println("pan diff: $diffX,$diffY - ${wrapper.layoutX},${wrapper.layoutY}")
 //      println("$pivotInWrapperSpace -> ${wrapper.layoutX},${wrapper.layoutY}")
-      panTo(nodeLayer.layoutX + diffX, nodeLayer.layoutY + diffY)
+      panTo(layers.layoutX + diffX, layers.layoutY + diffY)
     }
   }
 
@@ -285,27 +285,11 @@ class NodeView(
     object Zoom : Action()
   }
 
-
-  class NodeLayer : Region() {
-
-    init {
-      isManaged = false
-      width = 10.0
-      height = 10.0
-    }
-
-    public override fun getChildren(): ObservableList<Node> {
-      return super.getChildren()
-    }
-
-    
-  }
-
   override fun computePrefHeight(width: Double): Double {
-    return nodeLayer.prefHeight(width)
+    return layers.prefHeight(width)
   }
 
   override fun computePrefWidth(height: Double): Double {
-    return nodeLayer.prefWidth(height)
+    return layers.prefWidth(height)
   }
 }

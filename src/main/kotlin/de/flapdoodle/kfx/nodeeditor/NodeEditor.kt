@@ -2,7 +2,6 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
-import de.flapdoodle.kfx.extensions.Nodes
 import de.flapdoodle.kfx.graph.nodes.SizeMode
 import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
 import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
@@ -17,7 +16,7 @@ class NodeEditor : AnchorPane() {
 
   init {
     children.add(NodeView(sharedLock).withAnchors(all = 0.0).apply {
-      getViewChildren().addAll(Node("one").apply {
+      layers().nodes().children.addAll(Node("one").apply {
         layoutPosition = Point2D(100.0, 50.0)
       }, Node("two").apply {
         content = Button("Helloooo")

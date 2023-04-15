@@ -24,10 +24,24 @@ class NodeEditor : AnchorPane() {
       })
     })
 
-    addEventHandler(MouseEvent.ANY, this::handleMouseEventSimplified)
+    addEventHandler(MouseEvent.ANY, this::handleMouseEvents)
+    addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
   }
 
-  private fun handleMouseEventSimplified(event: MouseEvent) {
+  private fun filterMouseEvents(event: MouseEvent) {
+    val target = event.target
+
+    when (event.eventType) {
+      MouseEvent.MOUSE_PRESSED -> {
+        val nodeAction = bestAction(event.screenPosition)
+        if (nodeAction!=null) {
+          println("best guess -> $nodeAction")
+        }
+      }
+    }
+  }
+
+  private fun handleMouseEvents(event: MouseEvent) {
 //    println("--> ${event.eventType} : $sharedLock")
 
     val target = event.target

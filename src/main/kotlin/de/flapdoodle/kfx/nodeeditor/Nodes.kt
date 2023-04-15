@@ -34,7 +34,7 @@ object Nodes {
     return rect
   }
 
-  fun childBoundsInParentProperty(parent: Node): ChildBoundsInParentProperty {
+  private fun childBoundsInParentProperty(parent: Node): ChildBoundsInParentProperty {
     return parent.property.computeIfAbsend(ChildBoundsInParentProperty::class) {
       ChildBoundsInParentProperty(parent)
     }

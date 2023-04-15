@@ -5,6 +5,7 @@ import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ChangeListener
 
+// TODO hmm.. das sollte besser weg
 abstract class LazyBoundsProperty<T> : ReadOnlyObjectProperty<T>() {
     private var helper: ExpressionHelper<T>? = null
     private var valid = false

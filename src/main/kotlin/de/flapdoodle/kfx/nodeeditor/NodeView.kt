@@ -23,7 +23,7 @@ class NodeView(
   val sharedEventLock: SharedLock<Node> = SharedLock()
 ) : Region() {
 
-  private val wrapper = Wrapper().markAsContainer()
+  private val wrapper = Wrapper()
 
   private val zoom: DoubleProperty = object : SimpleDoubleProperty(1.0) {
     override fun invalidated() {

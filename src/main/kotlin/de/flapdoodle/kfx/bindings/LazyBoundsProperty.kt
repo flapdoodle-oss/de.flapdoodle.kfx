@@ -1,30 +1,30 @@
 package de.flapdoodle.kfx.bindings
 
-import com.sun.javafx.binding.ExpressionHelper
 import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ChangeListener
 
-// TODO hmm.. das sollte besser weg
 abstract class LazyBoundsProperty<T> : ReadOnlyObjectProperty<T>() {
-    private var helper: ExpressionHelper<T>? = null
     private var valid = false
     private var _value: T? = null
 
+    private var invalidationListener = emptyList<InvalidationListener>()
+    private var changeListener = emptyList<ChangeListener<in T>>()
+
     override fun addListener(listener: InvalidationListener) {
-        helper = ExpressionHelper.addListener(helper, this, listener)
+        invalidationListener = invalidationListener + listener
     }
 
     override fun removeListener(listener: InvalidationListener) {
-        helper = ExpressionHelper.removeListener(helper, listener)
+        invalidationListener = invalidationListener - listener
     }
 
     override fun addListener(listener: ChangeListener<in T>) {
-        helper = ExpressionHelper.addListener(helper, this, listener)
+        changeListener = changeListener + listener
     }
 
     override fun removeListener(listener: ChangeListener<in T>) {
-        helper = ExpressionHelper.removeListener(helper, listener)
+        changeListener = changeListener - listener
     }
 
     override fun get(): T {
@@ -38,9 +38,35 @@ abstract class LazyBoundsProperty<T> : ReadOnlyObjectProperty<T>() {
     fun invalidate() {
         if (valid) {
             valid = false
-            ExpressionHelper.fireValueChangedEvent(helper)
+            fireValueChangedEvent()
+        }
+    }
+
+    private fun fireValueChangedEvent() {
+        invalidationListener.forEach {
+            try {
+                it.invalidated(this)
+            } catch (e: Exception) {
+                Thread.currentThread().uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e)
+            }
+        }
+        if (!changeListener.isEmpty()) {
+            val oldValue = _value
+            val currentValue = get()
+            val changed = if (currentValue == null) oldValue != null else currentValue != oldValue
+            if (changed) {
+                changeListener.forEach {
+                    try {
+                        it.changed(this, oldValue, currentValue)
+                    } catch (e: Exception) {
+                        Thread.currentThread().uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e)
+                    }
+                }
+            }
         }
     }
 
     protected abstract fun computeValue(): T
 }
+
+

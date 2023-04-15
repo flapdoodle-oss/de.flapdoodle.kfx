@@ -5,7 +5,10 @@ import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.extensions.BoundingBoxes
 import de.flapdoodle.kfx.extensions.property
 import javafx.beans.InvalidationListener
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyProperty
+import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds
 import javafx.geometry.Point2D
 import javafx.scene.Node
@@ -65,7 +68,6 @@ object Nodes {
     }
 
   }
-
 
   fun boundsInParent(nodeList: Collection<out Node>): Bounds {
     val nodes = nodeList.filterIsInstance<de.flapdoodle.kfx.nodeeditor.Node>()

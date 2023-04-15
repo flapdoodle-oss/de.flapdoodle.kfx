@@ -24,7 +24,6 @@ class NodeEditor : AnchorPane() {
       })
     })
 
-    addEventHandler(MouseEvent.ANY, this::handleMouseEvents)
     addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
   }
 
@@ -32,42 +31,22 @@ class NodeEditor : AnchorPane() {
     val target = event.target
 
     when (event.eventType) {
-      MouseEvent.MOUSE_PRESSED -> {
-        val nodeAction = bestAction(event.screenPosition)
-        if (nodeAction!=null) {
-          println("best guess -> $nodeAction")
-        }
-      }
-    }
-  }
-
-  private fun handleMouseEvents(event: MouseEvent) {
-//    println("--> ${event.eventType} : $sharedLock")
-
-    val target = event.target
-
-    when (event.eventType) {
       MouseEvent.MOUSE_ENTERED_TARGET -> {
-        if (target is Node) {
-          sharedLock.tryLock(target) {
-            event.consume()
+        sharedLock.ifUnlocked {
+          if (target is Node) {
             Node.Style.Active.enable(target)
-            Action.Focus
           }
         }
       }
       MouseEvent.MOUSE_EXITED_TARGET -> {
-        if (target is Node) {
-          sharedLock.ifLocked(target, Action.Focus::class.java) {
-            event.consume()
-            cursor = null
+        sharedLock.ifUnlocked {
+          if (target is Node) {
             Node.Style.Active.disable(target)
-            it.releaseLock()
           }
         }
       }
       MouseEvent.MOUSE_MOVED -> {
-        sharedLock.ifLocked(Node::class.java, Action::class.java) {
+        sharedLock.ifUnlocked {
           val nodeAction = bestAction(event.screenPosition)
           val action = nodeAction?.second
           cursor = when (action) {
@@ -78,18 +57,18 @@ class NodeEditor : AnchorPane() {
         }
       }
       MouseEvent.MOUSE_PRESSED -> {
-        sharedLock.ifLocked(Node::class.java, Action::class.java) {
-          val nodeAction = bestAction(event.screenPosition)
-          if (nodeAction != null) {
+        val nodeAction = bestAction(event.screenPosition)
+        if (nodeAction != null) {
+          sharedLock.tryLock(nodeAction.first) {
             event.consume()
-            it.replaceLock(nodeAction.second)
-          } else {
-            println("no action found")
+            nodeAction.second
           }
         }
       }
       MouseEvent.MOUSE_DRAGGED -> {
         sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
+          event.consume()
+
           val action = lock.value
           val active = lock.owner
 
@@ -111,14 +90,14 @@ class NodeEditor : AnchorPane() {
               // Ignore Focus
             }
           }
-
         }
       }
       MouseEvent.MOUSE_RELEASED -> {
         sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
           event.consume()
+          
           cursor = null
-          lock.replaceLock(Action.Focus)
+          lock.releaseLock()
         }
       }
     }

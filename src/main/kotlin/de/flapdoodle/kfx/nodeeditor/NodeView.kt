@@ -33,6 +33,8 @@ class NodeView(
   private val scrollX = ScrollBar()
   private val scrollY = ScrollBar()
 
+  private val nodeBoundingBoxProperty = layers.nodes().boundingBoxProperty()
+
   init {
     styleClass.addAll("node-view")
     stylesheets += javaClass.getResource("NodeView.css").toExternalForm()
@@ -72,7 +74,8 @@ class NodeView(
   override fun layoutChildren() {
     super.layoutChildren()
 
-    val bounds = Nodes.boundsInParent(layers.nodes().children);
+
+    val bounds = nodeBoundingBoxProperty.get()
 
     scrollX.setBounds(
       ScrollBounds.of(

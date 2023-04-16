@@ -3,10 +3,8 @@ package de.flapdoodle.kfx.extensions
 import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.bindings.LazyProperty
 import de.flapdoodle.kfx.bindings.mapToDouble
-import de.flapdoodle.kfx.nodeeditor.Nodes
 import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty
-import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.value.ObservableValue
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds

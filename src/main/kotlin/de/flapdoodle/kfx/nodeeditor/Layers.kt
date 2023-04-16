@@ -37,10 +37,6 @@ class Layers : Region() {
       return super.getChildren()
     }
 
-    fun boundingBox(): Rectangle {
-      return Nodes.childBoundsRectangle(this)
-    }
-
     fun boundingBoxProperty(): ReadOnlyObjectProperty<Bounds> {
       return BoundingBoxes.boundsInParentProperty(this) { node -> node is de.flapdoodle.kfx.nodeeditor.Node}
     }

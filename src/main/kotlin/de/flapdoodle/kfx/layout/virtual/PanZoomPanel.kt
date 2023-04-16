@@ -21,10 +21,8 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.geometry.HPos
 import javafx.geometry.Orientation
 import javafx.geometry.Point2D
-import javafx.geometry.VPos
 import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.ScrollBar

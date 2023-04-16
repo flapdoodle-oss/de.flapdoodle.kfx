@@ -18,10 +18,6 @@ fun <A, B> ObservableValue<A>.and(other: ObservableValue<B>): Bindings.ToMerge2<
     return Bindings.ToMerge2(this, other)
 }
 
-fun ObservableDoubleValue.asDoubleValue(): ObservableDoubleValue {
-    return this
-}
-
 object Bindings {
 
     fun <S, T> map(source: ObservableValue<S>, mapping: (S) -> T): Mapped<S, T> {

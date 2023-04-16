@@ -1,18 +1,12 @@
 package de.flapdoodle.kfx.graph.nodes
 
-import com.sun.javafx.geom.BaseBounds
-import com.sun.javafx.geom.transform.BaseTransform
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.absolute.AbsolutePane
 import de.flapdoodle.kfx.types.LayoutBounds
-import javafx.beans.InvalidationListener
 import javafx.geometry.Point2D
-import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
-import javafx.scene.layout.Region
 
 class Movables(
     val sharedEventLock: SharedEventLock = SharedEventLock(),

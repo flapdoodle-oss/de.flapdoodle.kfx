@@ -2,9 +2,7 @@ package de.flapdoodle.kfx.layout.layer
 
 import de.flapdoodle.kfx.extensions.markAsContainer
 import javafx.collections.ObservableList
-import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 
 class LayerPane<T>(val layers: Set<T>) : Region() {

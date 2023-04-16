@@ -10,7 +10,6 @@ import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
-import javafx.scene.Group
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve

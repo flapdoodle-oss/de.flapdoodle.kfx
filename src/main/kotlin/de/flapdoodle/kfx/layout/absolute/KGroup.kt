@@ -1,6 +1,5 @@
 package de.flapdoodle.kfx.layout.absolute
 
-import com.sun.javafx.scene.GroupHelper
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.BooleanPropertyBase
 import javafx.collections.ObservableList

@@ -16,12 +16,12 @@
  */
 package de.flapdoodle.kfx.types
 
-import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.extensions.layoutPosition
+import de.flapdoodle.kfx.extensions.size
 import de.flapdoodle.kfx.types.Direction.*
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.layout.Region
-import kotlin.math.sign
 
 val Region.rawLayoutBounds: LayoutBounds
     get() = LayoutBounds(layoutPosition, size)

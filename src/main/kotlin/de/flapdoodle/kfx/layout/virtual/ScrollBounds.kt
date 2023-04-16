@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.bindings.mapToDouble
 import javafx.beans.value.ObservableValue
+import javafx.geometry.Bounds
 import javafx.scene.control.ScrollBar
 
 fun ScrollBar.setBounds(scrollBounds: ScrollBounds) {
@@ -39,6 +40,34 @@ data class ScrollBounds(
     ) {
 
     companion object {
+        private fun of(windowSize: Number, itemSize: Double, itemOffset: Double, currentItemOffset: Number): ScrollBounds {
+            return ScrollBounds.of(
+                windowSize = windowSize.toDouble(),
+                itemSize = itemSize,
+                itemOffset = itemOffset,
+                currentItemOffset = currentItemOffset.toDouble(),
+                false
+            )
+        }
+
+        fun widthOf(width: Number, bounds: Bounds, layoutX: Number): ScrollBounds {
+            return of(
+                windowSize = width,
+                itemSize = bounds.width,
+                itemOffset = bounds.minX,
+                currentItemOffset = layoutX,
+            )
+        }
+
+        fun heightOf(height: Number, bounds: Bounds, layoutY: Number): ScrollBounds {
+            return of(
+                windowSize = height,
+                itemSize = bounds.height,
+                itemOffset = bounds.minY,
+                currentItemOffset = layoutY,
+            )
+        }
+
         fun of(
             windowOffset: Double, // +-
             windowSize: Double, // >0

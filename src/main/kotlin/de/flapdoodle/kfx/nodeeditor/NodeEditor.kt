@@ -7,7 +7,6 @@ import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
 import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
-import javafx.scene.control.Button
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 

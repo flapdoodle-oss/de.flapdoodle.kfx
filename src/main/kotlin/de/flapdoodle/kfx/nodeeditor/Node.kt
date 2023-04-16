@@ -2,17 +2,12 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
 import de.flapdoodle.kfx.extensions.layoutPosition
-import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.css.PseudoClass
-import javafx.geometry.Dimension2D
 import javafx.geometry.Insets
-import javafx.geometry.Pos
-import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 
 class Node(val name: String) : BorderPane() {
 

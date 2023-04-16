@@ -1,7 +1,6 @@
 package de.flapdoodle.kfx.layout.backgrounds
 
 import de.flapdoodle.kfx.bindings.mapToDouble
-import de.flapdoodle.kfx.extensions.childsInParentBoundsProperty
 import de.flapdoodle.kfx.extensions.containerlessBoundsInParentProperty
 import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty

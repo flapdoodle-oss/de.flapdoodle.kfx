@@ -1,17 +1,14 @@
 package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.bindings.Bindings
-import de.flapdoodle.kfx.bindings.asDoubleValue
+import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.bind
-import de.flapdoodle.kfx.layout.virtual.setBounds
-import javafx.beans.InvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.value.ChangeListener
 import javafx.geometry.Orientation
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -39,28 +36,9 @@ class NodeView(
   private val scrollY = ScrollBar()
 
   private val nodeBoundingBoxProperty = layers.boundingBoxProperty()
-
-  private val scrollXBounds = Bindings
-    .map(widthProperty(), zoom, nodeBoundingBoxProperty, layers.layoutXProperty()) { w, z, b, x ->
-      ScrollBounds.of(
-        windowSize = w.toDouble(),
-        itemSize = z.toDouble() * b.width,
-        itemOffset = z.toDouble() * b.minX,
-        currentItemOffset = x.toDouble(),
-        false
-      )
-    }
-
-  private val scrollYBounds = Bindings
-    .map(heightProperty(), zoom, nodeBoundingBoxProperty, layers.layoutYProperty()) { h, z, b, y ->
-      ScrollBounds.of(
-        windowSize = h.toDouble(),
-        itemSize = z.toDouble() * b.height,
-        itemOffset = z.toDouble() * b.minY,
-        currentItemOffset = y.toDouble(),
-        false
-      )
-    }
+  private val zoomedBounds = Bindings.map(nodeBoundingBoxProperty, zoom.mapToDouble(Number::toDouble), BoundingBoxes::multiply)
+  private val scrollXBounds = Bindings.map(widthProperty(), zoomedBounds, layers.layoutXProperty(), ScrollBounds.Companion::widthOf)
+  private val scrollYBounds = Bindings.map(heightProperty(), zoomedBounds, layers.layoutYProperty(), ScrollBounds.Companion::heightOf)
 
   init {
     styleClass.addAll("node-view")
@@ -76,25 +54,15 @@ class NodeView(
       styleClass.addAll("content-background")
     })
 
-//    children.add(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
-//      styleClass.addAll("content-background")
-//    })
-//    children.add(Nodes.childBoundsRectangle(nodeLayers).apply {
-//      styleClass.addAll("content-background")
-//    })
-
     layers.transforms.add(Scale().apply {
       xProperty().bind(zoom)
       yProperty().bind(zoom)
-//      pivotXProperty().bind(widthProperty().divide(2.0))
-//      pivotYProperty().bind(heightProperty().divide(2.0))
     })
     children.add(layers)
 
     scrollX.orientation = Orientation.HORIZONTAL
     scrollX.valueProperty().bindBidirectional(layers.layoutXProperty())
     scrollX.bind(scrollXBounds)
-//        scrollX.styleClass.add("graph-editor-scroll-bar") //$NON-NLS-1$
     scrollY.orientation = Orientation.VERTICAL
     scrollY.valueProperty().bindBidirectional(layers.layoutYProperty())
     scrollY.bind(scrollYBounds)

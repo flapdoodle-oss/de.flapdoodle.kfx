@@ -46,6 +46,17 @@ object BoundingBoxes {
         }
     }
 
+    fun multiply(bounds: Bounds, factor: Double): Bounds {
+        return BoundingBox(
+            bounds.minX * factor,
+            bounds.minY * factor,
+            bounds.minZ * factor,
+            bounds.width * factor,
+            bounds.height * factor,
+            bounds.depth * factor
+        )
+    }
+
     fun boundsInParent(nodeList: Collection<out Node>): Bounds {
         return reduce(nodeList.map { it.boundsInParent })
     }

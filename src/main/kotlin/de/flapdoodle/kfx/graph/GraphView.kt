@@ -27,7 +27,6 @@ import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.Node
-import javafx.scene.control.Button
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle

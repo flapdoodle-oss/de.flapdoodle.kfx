@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.extensions
 
 import javafx.geometry.Dimension2D
-import javafx.geometry.Point2D
 import javafx.scene.layout.Region
 import javafx.scene.shape.Rectangle
 

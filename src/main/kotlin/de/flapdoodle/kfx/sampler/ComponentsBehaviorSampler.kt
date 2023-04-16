@@ -4,13 +4,11 @@ import de.flapdoodle.kfx.extensions.property
 import de.flapdoodle.kfx.layout.absolute.AbsolutePane
 import de.flapdoodle.kfx.layout.absolute.KGroup
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
-import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import javafx.application.Application
 import javafx.collections.ObservableList
 import javafx.geometry.HPos
 import javafx.geometry.VPos
-import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button

@@ -2,7 +2,6 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.extensions.BoundingBoxes
-import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList

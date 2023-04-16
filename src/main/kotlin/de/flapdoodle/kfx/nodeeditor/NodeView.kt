@@ -1,9 +1,12 @@
 package de.flapdoodle.kfx.nodeeditor
 
+import de.flapdoodle.kfx.bindings.Bindings
+import de.flapdoodle.kfx.bindings.asDoubleValue
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
+import de.flapdoodle.kfx.layout.virtual.bind
 import de.flapdoodle.kfx.layout.virtual.setBounds
 import javafx.beans.InvalidationListener
 import javafx.beans.property.DoubleProperty
@@ -35,11 +38,29 @@ class NodeView(
   private val scrollX = ScrollBar()
   private val scrollY = ScrollBar()
 
-  private val nodeBoundingBoxProperty = layers.nodes().boundingBoxProperty().apply {
-    addListener(InvalidationListener {
-      requestLayout()
-    })
-  }
+  private val nodeBoundingBoxProperty = layers.boundingBoxProperty()
+
+  private val scrollXBounds = Bindings
+    .map(widthProperty(), zoom, nodeBoundingBoxProperty, layers.layoutXProperty()) { w, z, b, x ->
+      ScrollBounds.of(
+        windowSize = w.toDouble(),
+        itemSize = z.toDouble() * b.width,
+        itemOffset = z.toDouble() * b.minX,
+        currentItemOffset = x.toDouble(),
+        false
+      )
+    }
+
+  private val scrollYBounds = Bindings
+    .map(heightProperty(), zoom, nodeBoundingBoxProperty, layers.layoutYProperty()) { h, z, b, y ->
+      ScrollBounds.of(
+        windowSize = h.toDouble(),
+        itemSize = z.toDouble() * b.height,
+        itemOffset = z.toDouble() * b.minY,
+        currentItemOffset = y.toDouble(),
+        false
+      )
+    }
 
   init {
     styleClass.addAll("node-view")
@@ -72,9 +93,12 @@ class NodeView(
 
     scrollX.orientation = Orientation.HORIZONTAL
     scrollX.valueProperty().bindBidirectional(layers.layoutXProperty())
+    scrollX.bind(scrollXBounds)
 //        scrollX.styleClass.add("graph-editor-scroll-bar") //$NON-NLS-1$
     scrollY.orientation = Orientation.VERTICAL
     scrollY.valueProperty().bindBidirectional(layers.layoutYProperty())
+    scrollY.bind(scrollYBounds)
+    
     children.addAll(scrollX,scrollY)
 
     clip = Bounds.sizeRectangle(this)
@@ -89,27 +113,6 @@ class NodeView(
 
   override fun layoutChildren() {
     super.layoutChildren()
-
-    val bounds = nodeBoundingBoxProperty.get()
-
-    scrollX.setBounds(
-      ScrollBounds.of(
-        windowSize = width,
-        itemSize = zoom.get() * bounds.width,
-        itemOffset = zoom.get() * bounds.minX,
-        currentItemOffset = layers.layoutX,
-        false
-      )
-    )
-
-    scrollY.setBounds(
-      ScrollBounds.of(
-        windowSize = height,
-        itemSize =  zoom.get() * bounds.height,
-        itemOffset = zoom.get() * bounds.minY,
-        currentItemOffset = layers.layoutY
-      )
-    )
 
     val w = scrollY.width
     val h = scrollX.height

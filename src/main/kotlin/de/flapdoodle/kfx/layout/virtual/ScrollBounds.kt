@@ -16,12 +16,20 @@
  */
 package de.flapdoodle.kfx.layout.virtual
 
+import de.flapdoodle.kfx.bindings.mapToDouble
+import javafx.beans.value.ObservableValue
 import javafx.scene.control.ScrollBar
 
 fun ScrollBar.setBounds(scrollBounds: ScrollBounds) {
     this.min = scrollBounds.min
     this.max = scrollBounds.max
     this.visibleAmount = scrollBounds.visibleAmount
+}
+
+fun ScrollBar.bind(scrollBounds: ObservableValue<ScrollBounds>) {
+    this.minProperty().bind(scrollBounds.mapToDouble { it.min })
+    this.maxProperty().bind(scrollBounds.mapToDouble { it.max })
+    this.visibleAmountProperty().bind(scrollBounds.mapToDouble { it.visibleAmount })
 }
 
 data class ScrollBounds(

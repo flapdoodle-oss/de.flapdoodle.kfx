@@ -18,6 +18,10 @@ fun <A, B> ObservableValue<A>.and(other: ObservableValue<B>): Bindings.ToMerge2<
     return Bindings.ToMerge2(this, other)
 }
 
+fun ObservableDoubleValue.asDoubleValue(): ObservableDoubleValue {
+    return this
+}
+
 object Bindings {
 
     fun <S, T> map(source: ObservableValue<S>, mapping: (S) -> T): Mapped<S, T> {
@@ -30,6 +34,14 @@ object Bindings {
 
     fun <A, B, T> map(a: ObservableValue<A>, b: ObservableValue<B>, mapping: (A, B) -> T): Merge2<A, B, T> {
         return Merge2(a,b,mapping)
+    }
+
+    fun <A, B, C, T> map(a: ObservableValue<A>, b: ObservableValue<B>, c: ObservableValue<C>, mapping: (A, B, C) -> T): Merge3<A, B, C, T> {
+        return Merge3(a, b, c, mapping)
+    }
+
+    fun <A, B, C, D, T> map(a: ObservableValue<A>, b: ObservableValue<B>, c: ObservableValue<C>, d: ObservableValue<D>, mapping: (A, B, C, D) -> T): Merge4<A, B, C, D, T> {
+        return Merge4(a, b, c, d, mapping)
     }
 
     fun <T> mapDouble(a: ObservableDoubleValue, b: ObservableDoubleValue, mapping: (Double, Double) -> T): Merge2Double<T> {
@@ -115,6 +127,59 @@ object Bindings {
 
         override fun computeValue(): T {
             return mapping(a.value, b.value)
+        }
+    }
+
+    class Merge3<A, B, C, T>(
+        val a: ObservableValue<A>,
+        val b: ObservableValue<B>,
+        val c: ObservableValue<C>,
+        val mapping: (A, B, C) -> T
+    ) : ObjectBinding<T>() {
+        private val dependencies = FXCollections.observableArrayList(a, b, c)
+
+        init {
+            bind(a, b, c)
+        }
+
+        override fun dispose() {
+            super.dispose()
+            unbind(a, b, c)
+        }
+
+        override fun getDependencies(): ObservableList<*> {
+            return dependencies
+        }
+
+        override fun computeValue(): T {
+            return mapping(a.value, b.value, c.value)
+        }
+    }
+
+    class Merge4<A, B, C, D, T>(
+        val a: ObservableValue<A>,
+        val b: ObservableValue<B>,
+        val c: ObservableValue<C>,
+        val d: ObservableValue<D>,
+        val mapping: (A, B, C, D) -> T
+    ) : ObjectBinding<T>() {
+        private val dependencies = FXCollections.observableArrayList(a, b, c, d)
+
+        init {
+            bind(a, b, c, d)
+        }
+
+        override fun dispose() {
+            super.dispose()
+            unbind(a, b, c, d)
+        }
+
+        override fun getDependencies(): ObservableList<*> {
+            return dependencies
+        }
+
+        override fun computeValue(): T {
+            return mapping(a.value, b.value, c.value, d.value)
         }
     }
 

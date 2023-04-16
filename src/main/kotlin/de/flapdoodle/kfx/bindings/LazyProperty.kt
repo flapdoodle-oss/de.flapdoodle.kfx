@@ -43,10 +43,8 @@ abstract class LazyProperty<T> : ReadOnlyObjectProperty<T>() {
     }
 
     private fun fireValueChangedEvent() {
-//        println("changed: $_value")
         invalidationListener.forEach {
             try {
-//                println(" notify: $it")
                 it.invalidated(this)
             } catch (e: Exception) {
                 Thread.currentThread().uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e)
@@ -64,8 +62,6 @@ abstract class LazyProperty<T> : ReadOnlyObjectProperty<T>() {
                         Thread.currentThread().uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), e)
                     }
                 }
-            } else {
-                println("invalidated but not changed: $currentValue ($oldValue)")
             }
         }
     }

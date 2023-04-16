@@ -6,6 +6,10 @@ import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 
+fun <T> ObservableValue<T?>.defaultIfNull(other: ObservableValue<T>): ObjectBindings.DefaultIfNull<T> {
+    return ObjectBindings.defaultIfNull(this,other)
+}
+
 fun <S, T> ObservableValue<S>.map(mapping: (S) -> T): Bindings.Mapped<S, T> {
     return Bindings.map(this, mapping)
 }
@@ -18,6 +22,7 @@ fun <A, B> ObservableValue<A>.and(other: ObservableValue<B>): Bindings.ToMerge2<
     return Bindings.ToMerge2(this, other)
 }
 
+@Deprecated("use ObjectBindings impl")
 object Bindings {
 
     fun <S, T> map(source: ObservableValue<S>, mapping: (S) -> T): Mapped<S, T> {

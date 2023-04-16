@@ -41,7 +41,7 @@ data class ScrollBounds(
 
     companion object {
         private fun of(windowSize: Number, itemSize: Double, itemOffset: Double, currentItemOffset: Number): ScrollBounds {
-            return ScrollBounds.of(
+            return of(
                 windowSize = windowSize.toDouble(),
                 itemSize = itemSize,
                 itemOffset = itemOffset,

@@ -12,7 +12,8 @@ import javafx.scene.layout.AnchorPane
 
 class NodeEditor : AnchorPane() {
   private val sharedLock = SharedLock<javafx.scene.Node>()
-  private val view = NodeView(sharedLock).withAnchors(all = 0.0)
+  private val model = Model()
+  private val view = NodeView(sharedLock, model).withAnchors(all = 0.0)
   init {
 //    children.add(view.apply {
 //      layers().nodes().children.addAll(Node("one").apply {

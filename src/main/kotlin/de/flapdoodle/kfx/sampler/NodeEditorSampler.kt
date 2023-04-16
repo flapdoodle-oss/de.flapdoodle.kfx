@@ -26,6 +26,11 @@ class NodeEditorSampler : Application() {
       layers().connections().children.addAll(
         Rectangle(40.0, 30.0, Color.BISQUE)
       )
+      layers().connections().children.addAll(
+        Rectangle(40.0, 30.0, Color.DARKGRAY).apply {
+          relocate(30.0, 70.0)
+        }
+      )
     })
     stage.scene = Scene(wrapper, 600.0, 400.0)
     stage.show()

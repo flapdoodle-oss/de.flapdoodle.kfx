@@ -114,12 +114,7 @@ object Bindings {
         }
 
         override fun computeValue(): T {
-            println("compute ${a.value} ${b.value}")
             return mapping(a.value, b.value)
-        }
-
-        override fun onInvalidating() {
-//            println("invalidated: $a, $b")
         }
     }
 

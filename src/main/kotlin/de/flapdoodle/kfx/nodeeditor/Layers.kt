@@ -1,8 +1,10 @@
 package de.flapdoodle.kfx.nodeeditor
 
+import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.extensions.BoundingBoxes
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.geometry.Bounds
 import javafx.scene.Node
@@ -27,8 +29,8 @@ class Layers : Region() {
   fun connections() = connections
   fun hints() = hints
 
-  fun boundingBoxProperty(): ObjectBinding<Bounds> {
-    return BoundingBoxes.mapLocalToParent(this, nodes.boundingBoxProperty())
+  fun boundingBoxProperty(): ObservableValue<Bounds> {
+    return Bindings.map(nodes.boundingBoxProperty(), connections.boundingBoxProperty(), BoundingBoxes::merge)
   }
 
   class Layer<T: Node>(val type: Class<T>) : Region() {

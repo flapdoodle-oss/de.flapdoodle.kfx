@@ -12,19 +12,21 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 
 class NodeEditor : AnchorPane() {
-  val sharedLock = SharedLock<javafx.scene.Node>()
-
+  private val sharedLock = SharedLock<javafx.scene.Node>()
+  private val view = NodeView(sharedLock).withAnchors(all = 0.0)
   init {
-    children.add(NodeView(sharedLock).withAnchors(all = 0.0).apply {
-      layers().nodes().children.addAll(Node("one").apply {
-        layoutPosition = Point2D(100.0, 50.0)
-      }, Node("two").apply {
-        content = Button("Helloooo")
-      })
-    })
-
+//    children.add(view.apply {
+//      layers().nodes().children.addAll(Node("one").apply {
+//        layoutPosition = Point2D(100.0, 50.0)
+//      }, Node("two").apply {
+//        content = Button("Helloooo")
+//      })
+//    })
+    children.add(view)
     addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
   }
+
+  fun layers() = view.layers()
 
   private fun filterMouseEvents(event: MouseEvent) {
     val target = event.target

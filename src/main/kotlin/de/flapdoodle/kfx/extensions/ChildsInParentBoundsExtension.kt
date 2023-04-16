@@ -1,6 +1,6 @@
 package de.flapdoodle.kfx.extensions
 
-import de.flapdoodle.kfx.bindings.LazyBoundsProperty
+import de.flapdoodle.kfx.bindings.LazyProperty
 import javafx.beans.InvalidationListener
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds
@@ -66,7 +66,7 @@ object ChildsInParentBoundsExtension {
         }
     }
 
-    class ContainerlessBoundsInParentProperty(val parent: Node) : LazyBoundsProperty<Bounds>() {
+    class ContainerlessBoundsInParentProperty(val parent: Node) : LazyProperty<Bounds>() {
         init {
             parent.boundsInParentProperty().addListener(InvalidationListener {
                 invalidate()
@@ -96,7 +96,7 @@ object ChildsInParentBoundsExtension {
         }
     }
 
-    class ContainerlessBoundsInLocalProperty(val parent: Node) : LazyBoundsProperty<Bounds>() {
+    class ContainerlessBoundsInLocalProperty(val parent: Node) : LazyProperty<Bounds>() {
         init {
             parent.boundsInLocalProperty().addListener(InvalidationListener {
                 invalidate()
@@ -164,7 +164,7 @@ object ChildsInParentBoundsExtension {
         }
     }
 
-    class ChildsInParentBoundsProperty(val parent: Node) : LazyBoundsProperty<Bounds>() {
+    class ChildsInParentBoundsProperty(val parent: Node) : LazyProperty<Bounds>() {
         init {
             parent.boundsInParentProperty().addListener(InvalidationListener {
                 invalidate()
@@ -191,7 +191,7 @@ object ChildsInParentBoundsExtension {
         }
     }
 
-    class ChildsInLocalBoundsProperty(val parent: Node) : LazyBoundsProperty<Bounds>() {
+    class ChildsInLocalBoundsProperty(val parent: Node) : LazyProperty<Bounds>() {
         init {
             parent.boundsInParentProperty().addListener(InvalidationListener {
                 invalidate()

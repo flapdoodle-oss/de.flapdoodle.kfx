@@ -37,7 +37,7 @@ class NodeView(
     styleClass.addAll("node-view")
     stylesheets += javaClass.getResource("NodeView.css").toExternalForm()
 
-    children.add(layers.nodes().boundingBox().apply {
+    children.add(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
       styleClass.addAll("content-background")
     })
 //    children.add(Nodes.childBoundsRectangle(nodeLayers).apply {

@@ -1,16 +1,12 @@
 package de.flapdoodle.kfx.nodeeditor
 
-import de.flapdoodle.kfx.bindings.LazyBoundsProperty
+import de.flapdoodle.kfx.bindings.LazyProperty
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.extensions.BoundingBoxes
 import de.flapdoodle.kfx.extensions.property
 import javafx.beans.InvalidationListener
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyProperty
-import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds
-import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.shape.Rectangle
@@ -43,7 +39,7 @@ object Nodes {
     }
   }
 
-  class ChildBoundsInParentProperty(val parent: Node) : LazyBoundsProperty<Bounds>() {
+  class ChildBoundsInParentProperty(val parent: Node) : LazyProperty<Bounds>() {
     init {
       parent.boundsInParentProperty().addListener(InvalidationListener {
         invalidate()

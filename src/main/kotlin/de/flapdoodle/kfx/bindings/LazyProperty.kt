@@ -4,7 +4,7 @@ import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ChangeListener
 
-abstract class LazyBoundsProperty<T> : ReadOnlyObjectProperty<T>() {
+abstract class LazyProperty<T> : ReadOnlyObjectProperty<T>() {
     private var valid = false
     private var _value: T? = null
 

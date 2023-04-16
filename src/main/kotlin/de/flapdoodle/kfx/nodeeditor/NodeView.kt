@@ -5,8 +5,10 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.setBounds
+import javafx.beans.InvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.value.ChangeListener
 import javafx.geometry.Orientation
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -33,15 +35,23 @@ class NodeView(
   private val scrollX = ScrollBar()
   private val scrollY = ScrollBar()
 
-  private val nodeBoundingBoxProperty = layers.nodes().boundingBoxProperty()
+  private val nodeBoundingBoxProperty = layers.nodes().boundingBoxProperty().apply {
+    addListener(InvalidationListener {
+      requestLayout()
+    })
+  }
 
   init {
     styleClass.addAll("node-view")
     stylesheets += javaClass.getResource("NodeView.css").toExternalForm()
 
-    children.add(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
+    layers.hints().add(BoundingBoxes.bindRectangle(layers.nodes().boundingBoxProperty()).apply {
       styleClass.addAll("content-background")
     })
+
+//    children.add(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
+//      styleClass.addAll("content-background")
+//    })
 //    children.add(Nodes.childBoundsRectangle(nodeLayers).apply {
 //      styleClass.addAll("content-background")
 //    })
@@ -73,7 +83,6 @@ class NodeView(
 
   override fun layoutChildren() {
     super.layoutChildren()
-
 
     val bounds = nodeBoundingBoxProperty.get()
 

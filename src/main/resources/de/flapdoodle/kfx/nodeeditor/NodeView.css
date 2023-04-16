@@ -23,3 +23,7 @@
 .node-view > .content-background {
     -fx-fill: rgba(255,255,255,0.7);
 }
+
+.node-view .content-background {
+    -fx-fill: rgba(255,255,255,0.3);
+}

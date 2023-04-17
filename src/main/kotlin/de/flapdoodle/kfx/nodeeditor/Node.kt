@@ -8,6 +8,7 @@ import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.css.PseudoClass
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
+import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -15,6 +16,16 @@ import java.util.UUID
 
 class Node(val name: String) : BorderPane() {
   val uuid=UUID.randomUUID()
+
+  companion object {
+    fun onlyNodes(node: javafx.scene.Node): List<Node> {
+      return if (node is Parent) {
+        node.childrenUnmodifiable.filterIsInstance<Node>()
+      } else {
+        emptyList<Node>()
+      }
+    }
+  }
 
   object Style {
     val Active: PseudoClass = PseudoClass.getPseudoClass("active")

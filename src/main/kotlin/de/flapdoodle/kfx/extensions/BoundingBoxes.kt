@@ -57,13 +57,23 @@ object BoundingBoxes {
         )
     }
 
-    fun boundsInParent(nodeList: Collection<out Node>): Bounds {
-        return reduce(nodeList.map { it.boundsInParent })
+    fun reduceBounds(nodeList: Collection<Node>): Bounds {
+        return reduceBounds(nodeList, Node::getBoundsInParent)
     }
 
     fun boundsInParentProperty(parent: Node, filter: Predicate<Node>): ReadOnlyObjectProperty<Bounds> {
         return parent.property.computeIfAbsend(BoundsInParentProperty::class) {
             BoundsInParentProperty(parent, filter)
+        }
+    }
+
+    fun <T: Node> reduceBounds(nodeList: Collection<T>, boundsOfNode: (T) -> Bounds): Bounds {
+        return reduce(nodeList.map { boundsOfNode(it) })
+    }
+
+    fun <T: Node> reduceBoundsProperty(parent: Node, boundMapping: BoundMapping<T>): ReadOnlyObjectProperty<Bounds> {
+        return parent.property.computeIfAbsent(Key.of(boundMapping)) {
+            BoundsProperty(parent, boundMapping)
         }
     }
 
@@ -85,7 +95,32 @@ object BoundingBoxes {
 
         override fun computeValue(): Bounds {
             return if (parent is Parent) {
-                parent.localToParent(boundsInParent(parent.childrenUnmodifiable.filtered(filter)))
+                parent.localToParent(reduceBounds(parent.childrenUnmodifiable.filtered(filter)))
+            } else empty()
+        }
+
+        override fun getBean(): Any {
+            return parent
+        }
+
+        override fun getName(): String {
+            return "BoundsInParentProperty"
+        }
+    }
+
+    private class BoundsProperty<T: Node>(val parent: Node, val boundMapping: BoundMapping<T>) : LazyProperty<Bounds>() {
+        init {
+            parent.boundsInParentProperty().addListener(InvalidationListener {
+                invalidate()
+            })
+            parent.boundsInParentProperty().addListener { _, _, _ ->
+                invalidate()
+            }
+        }
+
+        override fun computeValue(): Bounds {
+            return if (parent is Parent) {
+                parent.localToParent(reduceBounds(boundMapping.childOfNode(parent), boundMapping.boundsOfChild))
             } else empty()
         }
 
@@ -115,4 +150,9 @@ object BoundingBoxes {
 
         return rect
     }
+
+    data class BoundMapping<T: Node>(
+        val childOfNode: (Node) -> Collection<T>,
+        val boundsOfChild: (T) -> Bounds
+    )
 }

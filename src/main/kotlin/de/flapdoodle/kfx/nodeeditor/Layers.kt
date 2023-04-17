@@ -8,12 +8,17 @@ import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.geometry.Bounds
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.layout.Region
 
 class Layers(val model: Model) : Region() {
-  private val nodes = Layer(de.flapdoodle.kfx.nodeeditor.Node::class.java)
-  private val connections = Layer(NodeConnection::class.java)
-  private val hints = Layer(Node::class.java)
+  private val nodesBoundsMapping = BoundingBoxes.BoundMapping(de.flapdoodle.kfx.nodeeditor.Node::onlyNodes, Node::getBoundsInParent)
+  private val connectionBoundsMapping = BoundingBoxes.BoundMapping(NodeConnection::onlyConnections, NodeConnection::lineBoundsInParent)
+  private val hintsBoundsMapping = BoundingBoxes.BoundMapping<Node>({ if (it is Parent) it.childrenUnmodifiable else emptyList() }, Node::getBoundsInParent)
+
+  private val nodes = Layer(de.flapdoodle.kfx.nodeeditor.Node::class.java, nodesBoundsMapping)
+  private val connections = Layer(NodeConnection::class.java, connectionBoundsMapping)
+  private val hints = Layer(Node::class.java, hintsBoundsMapping)
 
   init {
     isManaged = false
@@ -53,7 +58,7 @@ class Layers(val model: Model) : Region() {
     return Bindings.map(nodes.boundingBoxProperty(), connections.boundingBoxProperty(), BoundingBoxes::merge)
   }
 
-  class Layer<T: Node>(val type: Class<T>) : Region() {
+  class Layer<T: Node>(val type: Class<T>, val boundMapping: BoundingBoxes.BoundMapping<T>) : Region() {
 
     public override fun getChildren(): ObservableList<Node> {
       return super.getChildren()
@@ -64,7 +69,8 @@ class Layers(val model: Model) : Region() {
     }
 
     fun boundingBoxProperty(): ReadOnlyObjectProperty<Bounds> {
-      return BoundingBoxes.boundsInParentProperty(this, type::isInstance)
+      return BoundingBoxes.reduceBoundsProperty(this, boundMapping)
+//      return BoundingBoxes.boundsInParentProperty(this, type::isInstance)
     }
   }
 }

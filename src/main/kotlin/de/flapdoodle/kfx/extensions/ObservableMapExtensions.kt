@@ -34,9 +34,9 @@ object ObservableMapExtensions {
       map.remove(key) as T?
   }
 
-  fun <T: Any> computeIfAbsend(map: ObservableMap<Any, Any>, key: Key<T>, mapping: Function<in Key<T>, out T>): T {
+  fun <K: Any, T: Any> computeIfAbsend(map: ObservableMap<Any, Any>, key: Key<K>, mapping: Function<in Key<K>, out T>): T {
     @Suppress("UNCHECKED_CAST")
-    return map.computeIfAbsent(key) { k -> mapping.apply(k as Key<T>) } as T
+    return map.computeIfAbsent(key) { k -> mapping.apply(k as Key<K>) } as T
   }
 
   open class TypedMap(
@@ -50,7 +50,7 @@ object ObservableMapExtensions {
       return get(map, key)
     }
 
-    fun <T: Any> computeIfAbsend(key: Key<T>, mapping: Function<in Key<T>, out T>): T {
+    fun <K: Any, T: Any> computeIfAbsent(key: Key<K>, mapping: Function<in Key<K>, out T>): T {
       return computeIfAbsend(map, key, mapping)
     }
 

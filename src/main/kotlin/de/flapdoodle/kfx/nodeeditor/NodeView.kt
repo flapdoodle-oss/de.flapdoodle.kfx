@@ -1,6 +1,6 @@
 package de.flapdoodle.kfx.nodeeditor
 
-import de.flapdoodle.kfx.bindings.Bindings
+import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
@@ -37,9 +37,9 @@ class NodeView(
   private val scrollY = ScrollBar()
 
   private val nodeBoundingBoxProperty = layers.boundingBoxProperty()
-  private val zoomedBounds = Bindings.map(nodeBoundingBoxProperty, zoom.mapToDouble(), BoundingBoxes::multiply)
-  private val scrollXBounds = Bindings.map(widthProperty(), zoomedBounds, layers.layoutXProperty(), ScrollBounds.Companion::widthOf)
-  private val scrollYBounds = Bindings.map(heightProperty(), zoomedBounds, layers.layoutYProperty(), ScrollBounds.Companion::heightOf)
+  private val zoomedBounds = nodeBoundingBoxProperty.and(zoom.mapToDouble()).map(BoundingBoxes::multiply)
+  private val scrollXBounds = widthProperty().and(zoomedBounds).and(layers.layoutXProperty()).map(ScrollBounds.Companion::widthOf)
+  private val scrollYBounds = heightProperty().and(zoomedBounds).and(layers.layoutYProperty()).map(ScrollBounds.Companion::heightOf)
 
   init {
     styleClass.addAll("node-view")

@@ -33,6 +33,17 @@ object ObjectBindings {
     fun <T> map(mapping: (A, B) -> T): Merge2<A, B, T> {
       return Merge2(a,b, mapping)
     }
+    fun <C> and(other: ObservableValue<C>) = WithABC(a, b, other)
+  }
+
+  class WithABC<A,B,C>(
+    private val a: ObservableValue<A>,
+    private val b: ObservableValue<B>,
+    private val c: ObservableValue<C>
+  ) {
+    fun <T> map(mapping: (A, B, C) -> T): Merge3<A, B, C, T> {
+      return Merge3(a,b,c, mapping)
+    }
   }
 
   abstract class Base<T>(

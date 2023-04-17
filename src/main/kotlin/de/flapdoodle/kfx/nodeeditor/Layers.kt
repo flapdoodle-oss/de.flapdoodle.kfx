@@ -1,6 +1,6 @@
 package de.flapdoodle.kfx.nodeeditor
 
-import de.flapdoodle.kfx.bindings.Bindings
+import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.BoundingBoxes
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
@@ -55,7 +55,9 @@ class Layers(val model: Model) : Region() {
   fun hints() = hints
 
   fun boundingBoxProperty(): ObservableValue<Bounds> {
-    return Bindings.map(nodes.boundingBoxProperty(), connections.boundingBoxProperty(), BoundingBoxes::merge)
+    return nodes.boundingBoxProperty()
+      .and(connections.boundingBoxProperty())
+      .map(BoundingBoxes::merge)
   }
 
   class Layer<T: Node>(val type: Class<T>, val boundMapping: BoundingBoxes.BoundMapping<T>) : Region() {

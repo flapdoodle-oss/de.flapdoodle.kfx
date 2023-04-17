@@ -1,7 +1,7 @@
 package de.flapdoodle.kfx.graph.nodes
 
-import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.bindings.DoubleBindings
+import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.DoubleProperty
@@ -54,8 +54,8 @@ class Connector(val content: Node = Circle(10.0, Color.GREY)) : Group() {
 //        }
 
         val endPoint: ObservableValue<Point2D> = DoubleBindings.merge(line.endXProperty(), line.endYProperty(), ::Point2D)
-        val endPointInParent = Bindings.map<Transform, Point2D, Point2D>(localToParentTransformProperty(), endPoint, Transform::transform)
-        val pointWithAngle = Bindings.map(endPointInParent, angleProperty) { a, b -> AngleAtPoint2D(a, b.toDouble()) }
+        val endPointInParent = localToParentTransformProperty().and(endPoint).map(Transform::transform)
+        val pointWithAngle = endPointInParent.and(angleProperty).map { a, b -> AngleAtPoint2D(a, b.toDouble()) }
         connectionProperty.bind(pointWithAngle)
     }
 

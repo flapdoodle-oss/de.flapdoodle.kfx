@@ -1,8 +1,6 @@
 package de.flapdoodle.kfx.extensions
 
-import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.bindings.LazyProperty
-import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.mapToDouble
 import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty
@@ -12,7 +10,6 @@ import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.shape.Rectangle
-import javafx.scene.transform.Transform
 import java.util.function.Predicate
 
 object BoundingBoxes {

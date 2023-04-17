@@ -1,11 +1,9 @@
 package de.flapdoodle.kfx.nodeeditor
 
-import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.layoutPosition
-import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.beans.binding.ObjectBinding

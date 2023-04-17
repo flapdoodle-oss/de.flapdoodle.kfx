@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.extensions
 
 import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.bindings.LazyProperty
+import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.mapToDouble
 import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty
@@ -74,12 +75,6 @@ object BoundingBoxes {
     fun <T: Node> reduceBoundsProperty(parent: Node, boundMapping: BoundMapping<T>): ReadOnlyObjectProperty<Bounds> {
         return parent.property.computeIfAbsent(Key.of(boundMapping)) {
             BoundsProperty(parent, boundMapping)
-        }
-    }
-
-    fun mapLocalToParent(parent: Node, property: ObservableValue<Bounds>): Bindings.Merge2<Transform, Bounds, Bounds> {
-        return Bindings.map(parent.localToParentTransformProperty(), property) { transform, bounds ->
-            transform.transform(bounds)
         }
     }
 

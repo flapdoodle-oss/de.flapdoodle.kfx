@@ -2,9 +2,13 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.bindings.Bindings
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
+import de.flapdoodle.kfx.bindings.ObjectBindings
+import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
+import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
+import javafx.beans.binding.ObjectBinding
 import javafx.css.PseudoClass
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
@@ -70,9 +74,15 @@ class Node(val name: String) : BorderPane() {
     layoutPosition = bounds.layoutPosition
   }
 
-  fun someFakeHandleCoord(): Bindings.Merge2<Number, Number, Point2D> {
-    return Bindings.map(layoutXProperty(), layoutYProperty()) { x, y ->
+  fun someFakeHandleCoord(): ObjectBinding<Point2D> {
+    return ObjectBindings.merge(layoutXProperty(), layoutYProperty()){ x, y ->
       Point2D(x.toDouble()-5.0,y.toDouble() + 10.0)
+    }
+  }
+
+  fun someFakeConnector(): ObjectBinding<AngleAtPoint2D> {
+    return layoutXProperty().and(layoutYProperty()).map { x, y ->
+      AngleAtPoint2D(Point2D(x.toDouble()-5.0, y.toDouble() + 20.0), 0.0)
     }
   }
 

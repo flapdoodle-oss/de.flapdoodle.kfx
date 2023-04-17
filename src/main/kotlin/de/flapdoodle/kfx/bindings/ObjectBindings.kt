@@ -22,6 +22,17 @@ object ObjectBindings {
     fun <B, T> merge(other: ObservableValue<B>, mapping: (S, B) -> T) = merge(source, other, mapping)
     fun <B, C, T> merge(b: ObservableValue<B>, c: ObservableValue<C>, mapping: (S, B, C) -> T) = merge(source, b, c, mapping)
     fun <B, C, D, T> merge(b: ObservableValue<B>, c: ObservableValue<C>, d: ObservableValue<D>, mapping: (S, B, C, D) -> T) = merge(source, b, c, d, mapping)
+
+    fun <B> and(other: ObservableValue<B>) = WithAB(source, other)
+  }
+
+  class WithAB<A,B>(
+    private val a: ObservableValue<A>,
+    private val b: ObservableValue<B>
+  ) {
+    fun <T> map(mapping: (A, B) -> T): Merge2<A, B, T> {
+      return Merge2(a,b, mapping)
+    }
   }
 
   abstract class Base<T>(
@@ -82,6 +93,31 @@ object ObjectBindings {
   ) : Base<T>(a, b, c, d) {
     override fun computeValue(): T {
       return mapping(a.value, b.value, c.value, d.value)
+    }
+  }
+
+  class MapList<S, T>(
+    val source: ObservableList<S>,
+    val mapping: (List<S>) -> T
+  ) : ObjectBinding<T>() {
+
+    private val dependencies = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(source))
+
+    init {
+      bind(source)
+    }
+
+    override fun dispose() {
+      unbind(source)
+      super.dispose()
+    }
+
+    override fun getDependencies(): ObservableList<*> {
+      return dependencies
+    }
+
+    override fun computeValue(): T {
+      return mapping(source)
     }
   }
 

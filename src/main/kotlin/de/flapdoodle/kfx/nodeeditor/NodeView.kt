@@ -37,7 +37,7 @@ class NodeView(
   private val scrollY = ScrollBar()
 
   private val nodeBoundingBoxProperty = layers.boundingBoxProperty()
-  private val zoomedBounds = Bindings.map(nodeBoundingBoxProperty, zoom.mapToDouble(Number::toDouble), BoundingBoxes::multiply)
+  private val zoomedBounds = Bindings.map(nodeBoundingBoxProperty, zoom.mapToDouble(), BoundingBoxes::multiply)
   private val scrollXBounds = Bindings.map(widthProperty(), zoomedBounds, layers.layoutXProperty(), ScrollBounds.Companion::widthOf)
   private val scrollYBounds = Bindings.map(heightProperty(), zoomedBounds, layers.layoutYProperty(), ScrollBounds.Companion::heightOf)
 

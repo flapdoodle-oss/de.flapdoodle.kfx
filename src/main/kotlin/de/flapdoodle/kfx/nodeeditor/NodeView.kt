@@ -21,11 +21,10 @@ import javafx.scene.layout.Region
 import javafx.scene.transform.Scale
 
 class NodeView(
-  val sharedEventLock: SharedLock<Node> = SharedLock(),
-  model: Model
+  val sharedEventLock: SharedLock<Node> = SharedLock()
 ) : Region() {
 
-  private val layers = Layers(model)
+  private val layers = Layers()
 
   private val zoom: DoubleProperty = object : SimpleDoubleProperty(1.0) {
     override fun invalidated() {
@@ -45,13 +44,13 @@ class NodeView(
     styleClass.addAll("node-view")
     stylesheets += javaClass.getResource("NodeView.css").toExternalForm()
 
-    layers.hints().add(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
+    layers.addHints(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
       styleClass.addAll("content-background-union")
     })
-    layers.hints().add(BoundingBoxes.bindRectangle(layers.nodes().boundingBoxProperty()).apply {
+    layers.addHints(BoundingBoxes.bindRectangle(layers.nodes().boundingBoxProperty()).apply {
       styleClass.addAll("content-background")
     })
-    layers.hints().add(BoundingBoxes.bindRectangle(layers.connections().boundingBoxProperty()).apply {
+    layers.addHints(BoundingBoxes.bindRectangle(layers.connections().boundingBoxProperty()).apply {
       styleClass.addAll("content-background")
     })
 

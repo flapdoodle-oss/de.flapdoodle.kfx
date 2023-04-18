@@ -7,12 +7,11 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableMap
 import java.util.*
 
-class Model {
-  private val nodes: ObservableMap<UUID, Node> = FXCollections.observableHashMap<UUID, Node>()
+class NodeRegistry {
+  private val nodes: ObservableMap<UUID, Node> = FXCollections.observableHashMap()
   private val nodesPropery = ReadOnlyMapWrapper(nodes);
 
   fun registerNode(node: Node) {
-    println("register node: ${node.uuid} to ${node.name}")
     nodes[node.uuid] = node
   }
 
@@ -21,12 +20,11 @@ class Model {
   }
 
   fun registerConnection(connection: NodeConnection) {
-    println("register connection ${connection.name} - ${connection.start} to ${connection.end}")
     connection.init(this::nodeByIdProperty)
   }
 
   fun unregisterConnection(connection: NodeConnection) {
-    // TODO .. must remove listener..
+    connection.dispose()
   }
 
   private fun nodeByIdProperty(id: UUID): ObjectBinding<Node?> {

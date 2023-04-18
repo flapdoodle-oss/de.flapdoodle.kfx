@@ -7,6 +7,7 @@ import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.beans.binding.ObjectBinding
+import javafx.collections.FXCollections
 import javafx.css.PseudoClass
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
@@ -43,6 +44,7 @@ class Node(val name: String) : BorderPane() {
 
   private val contentWrapper=StackPane()
   private val _content=NodeContainerProperty.of<javafx.scene.Node>("content", contentWrapper::getChildren)
+  private val connectors = FXCollections.observableArrayList<Connector>()
 
   var content: javafx.scene.Node
     get() = _content.get()
@@ -82,6 +84,14 @@ class Node(val name: String) : BorderPane() {
     return layoutXProperty().and(layoutYProperty()).map { x, y ->
       AngleAtPoint2D(Point2D(x.toDouble()-5.0, y.toDouble() + 20.0), 0.0)
     }
+  }
+
+  fun addConnector(connector: Connector) {
+    connectors.add(connector)
+  }
+
+  fun removeConnector(uuid: UUID) {
+    connectors.removeIf { it.uuid==uuid }
   }
 
   class NodeHeader(label: String) : HBox() {

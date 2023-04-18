@@ -23,8 +23,8 @@ class NodeEditorSampler : Application() {
     }
 
     val nodeEditor = NodeEditor().withAnchors(all = 10.0)
-    nodeEditor.layers().nodes().add(nodeOne, nodeTwo)
-    nodeEditor.layers().connections().add(
+    nodeEditor.layers().addNodes(nodeOne, nodeTwo)
+    nodeEditor.layers().addConnections(
       NodeConnection("one2two", nodeOne.uuid, nodeTwo.uuid)
     )
 

@@ -2,7 +2,7 @@ package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.withAnchors
-import de.flapdoodle.kfx.nodeeditor.Connector
+import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.Node
 import de.flapdoodle.kfx.nodeeditor.NodeConnection
 import de.flapdoodle.kfx.nodeeditor.NodeEditor
@@ -18,14 +18,14 @@ class NodeEditorSampler : Application() {
     val wrapper = AnchorPane()
     val nodeOne = Node("one").apply {
       layoutPosition = Point2D(100.0, 50.0)
-      addConnector(Connector("in", Connector.Mode.IN))
-      addConnector(Connector("out", Connector.Mode.OUT))
-      addConnector(Connector("1", Connector.Mode.OUT))
-      addConnector(Connector("2", Connector.Mode.OUT))
+      addConnector(Slot("in", Slot.Mode.IN))
+      addConnector(Slot("out", Slot.Mode.OUT))
+      addConnector(Slot("1", Slot.Mode.OUT))
+      addConnector(Slot("2", Slot.Mode.OUT))
     }
     val nodeTwo = Node("two").apply {
       content = Button("Helloooo")
-      addConnector(Connector("in", Connector.Mode.IN))
+      addConnector(Slot("in", Slot.Mode.IN))
     }
 
     val nodeEditor = NodeEditor().withAnchors(all = 10.0)

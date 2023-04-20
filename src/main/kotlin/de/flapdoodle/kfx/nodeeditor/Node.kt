@@ -3,9 +3,9 @@ package de.flapdoodle.kfx.nodeeditor
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
-import de.flapdoodle.kfx.events.Events
 import de.flapdoodle.kfx.extensions.layoutPosition
-import de.flapdoodle.kfx.nodeeditor.connectors.ConnectorPane
+import de.flapdoodle.kfx.nodeeditor.connectors.ConnectorsPane
+import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.beans.binding.ObjectBinding
@@ -46,7 +46,7 @@ class Node(val name: String) : BorderPane() {
 
   private val contentWrapper=StackPane()
   private val _content=NodeContainerProperty.of<javafx.scene.Node>("content", contentWrapper::getChildren)
-  private val connectors = FXCollections.observableArrayList<Connector>()
+  private val connectors = FXCollections.observableArrayList<Slot>()
 
   var content: javafx.scene.Node
     get() = _content.get()
@@ -62,8 +62,8 @@ class Node(val name: String) : BorderPane() {
     top = NodeHeader(name).apply {
       Markers.markAsDragBar(this)
     }
-    left = ConnectorPane(connectors, Connector.Mode.IN)
-    right = ConnectorPane(connectors, Connector.Mode.OUT)
+    left = ConnectorsPane(connectors, Slot.Mode.IN)
+    right = ConnectorsPane(connectors, Slot.Mode.OUT)
   }
 
   fun resizeTo(bounds: LayoutBounds) {
@@ -90,7 +90,7 @@ class Node(val name: String) : BorderPane() {
     }
   }
 
-  fun addConnector(connector: Connector) {
+  fun addConnector(connector: Slot) {
     connectors.add(connector)
   }
 

@@ -3,7 +3,9 @@ package de.flapdoodle.kfx.nodeeditor
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
+import de.flapdoodle.kfx.events.Events
 import de.flapdoodle.kfx.extensions.layoutPosition
+import de.flapdoodle.kfx.nodeeditor.connectors.ConnectorPane
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.beans.binding.ObjectBinding
@@ -60,6 +62,8 @@ class Node(val name: String) : BorderPane() {
     top = NodeHeader(name).apply {
       Markers.markAsDragBar(this)
     }
+    left = ConnectorPane(connectors, Connector.Mode.IN)
+    right = ConnectorPane(connectors, Connector.Mode.OUT)
   }
 
   fun resizeTo(bounds: LayoutBounds) {

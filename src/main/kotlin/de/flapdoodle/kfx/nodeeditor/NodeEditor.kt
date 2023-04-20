@@ -24,7 +24,6 @@ class NodeEditor : AnchorPane() {
       nodeEvent.consume()
     }
     addEventFilter(NodeConnectionEvent.ANY) { nodeConnectionEvent ->
-      println("event: $nodeConnectionEvent")
       nodeRegistry.registerConnection(nodeConnectionEvent.connection)
       nodeConnectionEvent.consume()
     }

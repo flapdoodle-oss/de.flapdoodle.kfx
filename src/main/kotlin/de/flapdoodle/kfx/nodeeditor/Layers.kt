@@ -46,14 +46,14 @@ class Layers : Region() {
   fun addNodes(vararg list: de.flapdoodle.kfx.nodeeditor.Node) {
     nodes.add(*list)
     list.forEach {
-      Event.fireEvent(this, NodeEvent(NodeEvent.NODE_ADDED, it))
+      fireEvent(NodeEvent(NodeEvent.NODE_ADDED, it))
     }
   }
 
   fun addConnections(vararg list: NodeConnection) {
     connections.add(*list)
     list.forEach {
-      Event.fireEvent(this, NodeConnectionEvent(NodeConnectionEvent.ADDED, it))
+      fireEvent(NodeConnectionEvent(NodeConnectionEvent.ADDED, it))
     }
   }
 

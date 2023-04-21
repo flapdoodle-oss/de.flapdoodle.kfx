@@ -14,8 +14,18 @@ class Connector(val slot: Slot) : HBox() {
     }
 
     if (false) {
+      sceneProperty().addListener(ChangeListener { observable, oldValue, newValue ->
+        println("$this: scene -> $oldValue -> $newValue")
+      })
+
       localToSceneTransformProperty().addListener(ChangeListener { observable, oldValue, newValue ->
-        println("-> ${localToScene(Point2D(0.0, 0.0))}")
+        val hasScene = this@Connector.scene != null
+        println("$this ($hasScene): ${localToScene(Point2D(0.0, 0.0))}")
+      })
+
+      parentProperty().addListener(ChangeListener { observable, oldValue, newValue ->
+        val hasScene = this@Connector.scene != null
+        println("$this ($hasScene): parent has changed somehow")
       })
     }
   }

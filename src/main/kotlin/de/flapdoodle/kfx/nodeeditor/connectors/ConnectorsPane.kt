@@ -13,7 +13,6 @@ class ConnectorsPane(
 ) : Pane() {
 
   init {
-
     border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths.DEFAULT))
     val filtered = slots.filtered { it.mode == mode }
     val vBox = VBox()

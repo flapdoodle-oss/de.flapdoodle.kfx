@@ -6,9 +6,12 @@ import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.nodeeditor.connectors.ConnectorsPane
 import de.flapdoodle.kfx.nodeeditor.model.Slot
+import de.flapdoodle.kfx.nodeeditor.types.NodeId
+import de.flapdoodle.kfx.nodeeditor.types.SlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.beans.binding.ObjectBinding
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.css.PseudoClass
 import javafx.geometry.Insets
@@ -17,10 +20,11 @@ import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import java.util.UUID
+import java.util.*
 
 class Node(val name: String) : BorderPane() {
-  val uuid=UUID.randomUUID()
+  val nodeId=NodeId()
+  val registry = SimpleObjectProperty<NodeRegistry>()
 
   companion object {
     fun onlyNodes(node: javafx.scene.Node): List<Node> {
@@ -62,8 +66,8 @@ class Node(val name: String) : BorderPane() {
     top = NodeHeader(name).apply {
       Markers.markAsDragBar(this)
     }
-    left = ConnectorsPane(connectors, Slot.Mode.IN)
-    right = ConnectorsPane(connectors, Slot.Mode.OUT)
+    left = ConnectorsPane(registry, nodeId, connectors, Slot.Mode.IN)
+    right = ConnectorsPane(registry, nodeId, connectors, Slot.Mode.OUT)
   }
 
   fun resizeTo(bounds: LayoutBounds) {
@@ -94,8 +98,8 @@ class Node(val name: String) : BorderPane() {
     connectors.add(connector)
   }
 
-  fun removeConnector(uuid: UUID) {
-    connectors.removeIf { it.uuid==uuid }
+  fun removeConnector(slotId: SlotId) {
+    connectors.removeIf { it.id==slotId }
   }
 
   class NodeHeader(label: String) : HBox() {

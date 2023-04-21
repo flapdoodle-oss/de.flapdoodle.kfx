@@ -43,6 +43,7 @@ class Layers(private val nodeRegistry: NodeRegistry) : Region() {
   fun addNodes(vararg list: de.flapdoodle.kfx.nodeeditor.Node) {
     nodes.add(*list)
     list.forEach {
+      it.registry.value = nodeRegistry
       nodeRegistry.registerNode(it)
     }
   }
@@ -50,6 +51,7 @@ class Layers(private val nodeRegistry: NodeRegistry) : Region() {
   fun addConnections(vararg list: NodeConnection) {
     connections.add(*list)
     list.forEach {
+      it.registry.value = nodeRegistry
       nodeRegistry.registerConnection(it)
     }
   }

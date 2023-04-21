@@ -16,22 +16,25 @@ import javafx.stage.Stage
 class NodeEditorSampler : Application() {
   override fun start(stage: Stage) {
     val wrapper = AnchorPane()
+    val slotIn = Slot("in", Slot.Mode.IN)
+    val slotOut = Slot("1", Slot.Mode.OUT)
+
     val nodeOne = Node("one").apply {
       layoutPosition = Point2D(100.0, 50.0)
-      addConnector(Slot("in", Slot.Mode.IN))
+      addConnector(slotIn)
       addConnector(Slot("out", Slot.Mode.OUT))
-      addConnector(Slot("1", Slot.Mode.OUT))
+      addConnector(slotOut)
       addConnector(Slot("2", Slot.Mode.OUT))
     }
     val nodeTwo = Node("two").apply {
       content = Button("Helloooo")
-      addConnector(Slot("in", Slot.Mode.IN))
+      addConnector(slotIn)
     }
 
     val nodeEditor = NodeEditor().withAnchors(all = 10.0)
     nodeEditor.layers().addNodes(nodeOne, nodeTwo)
     nodeEditor.layers().addConnections(
-      NodeConnection("one2two", nodeOne.uuid, nodeTwo.uuid)
+      NodeConnection("one2two", nodeOne.nodeId to slotOut.id, nodeTwo.nodeId to slotIn.id)
     )
 
     wrapper.children.add(nodeEditor)

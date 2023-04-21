@@ -3,7 +3,10 @@ package de.flapdoodle.kfx.nodeeditor
 import de.flapdoodle.kfx.bindings.ValueOfValueBinding
 import de.flapdoodle.kfx.bindings.Values
 import de.flapdoodle.kfx.bindings.defaultIfNull
+import de.flapdoodle.kfx.bindings.map
 import de.flapdoodle.kfx.graph.nodes.Curves
+import de.flapdoodle.kfx.nodeeditor.types.NodeId
+import de.flapdoodle.kfx.nodeeditor.types.SlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.SimpleObjectProperty
@@ -14,7 +17,11 @@ import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import java.util.*
 
-class NodeConnection(val name: String, val start: UUID, val end: UUID): Region() {
+class NodeConnection(
+  val name: String,
+  val start: Pair<NodeId, SlotId>,
+  val end: Pair<NodeId, SlotId>
+): Region() {
   companion object {
     fun onlyConnections(node: javafx.scene.Node): List<NodeConnection> {
       return if (node is Parent) {
@@ -25,14 +32,18 @@ class NodeConnection(val name: String, val start: UUID, val end: UUID): Region()
     }
   }
 
+  val registry = SimpleObjectProperty<NodeRegistry>()
+  
   private val startNode = SimpleObjectProperty<Node?>()
   private val endNode = SimpleObjectProperty<Node?>()
 //  private val line = Line(0.0, 0.0, 100.0, 50.0)
 
-  private val startConnector = ValueOfValueBinding.of(startNode, Node::someFakeConnector)
-    .defaultIfNull(Values.constantObject(AngleAtPoint2D(Point2D(0.0, 0.0), 0.0)))
-  private val endConnector = ValueOfValueBinding.of(endNode, Node::someFakeConnector)
-    .defaultIfNull(Values.constantObject(AngleAtPoint2D(Point2D(0.0, 0.0), 0.0)))
+//  private val startConnector = ValueOfValueBinding.of(startNode, Node::someFakeConnector)
+//    .defaultIfNull(Values.constantObject(AngleAtPoint2D(Point2D(0.0, 0.0), 0.0)))
+//  private val endConnector = ValueOfValueBinding.of(endNode, Node::someFakeConnector)
+//    .defaultIfNull(Values.constantObject(AngleAtPoint2D(Point2D(0.0, 0.0), 0.0)))
+  private val startConnector = SimpleObjectProperty(AngleAtPoint2D(0.0, 0.0, 0.0))
+  private val endConnector = SimpleObjectProperty(AngleAtPoint2D(0.0, 0.0, 0.0))
 
   private val curve = Curves.cubicCurve(startConnector, endConnector)
 
@@ -44,9 +55,9 @@ class NodeConnection(val name: String, val start: UUID, val end: UUID): Region()
     })
   }
 
-  fun init(resolver: (UUID) -> ObjectBinding<Node?>) {
-    startNode.bind(resolver(start))
-    endNode.bind(resolver(end))
+  fun init(resolver: (NodeId, SlotId) -> ObjectBinding<AngleAtPoint2D>) {
+    startConnector.bind(resolver(start.first, start.second).map { AngleAtPoint2D(sceneToLocal(it.point2D), it.angle) })
+    endConnector.bind(resolver(end.first, end.second).map { AngleAtPoint2D(sceneToLocal(it.point2D), it.angle) })
   }
 
   fun dispose() {

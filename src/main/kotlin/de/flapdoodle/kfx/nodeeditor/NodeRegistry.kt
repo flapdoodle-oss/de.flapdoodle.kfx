@@ -9,7 +9,7 @@ import java.util.*
 
 class NodeRegistry {
   private val nodes: ObservableMap<UUID, Node> = FXCollections.observableHashMap()
-  private val nodesPropery = ReadOnlyMapWrapper(nodes);
+  private val nodesPropery = ReadOnlyMapWrapper(nodes)
 
   fun registerNode(node: Node) {
     nodes[node.uuid] = node

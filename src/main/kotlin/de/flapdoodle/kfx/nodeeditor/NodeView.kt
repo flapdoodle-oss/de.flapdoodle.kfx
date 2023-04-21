@@ -21,10 +21,11 @@ import javafx.scene.layout.Region
 import javafx.scene.transform.Scale
 
 class NodeView(
-  val sharedEventLock: SharedLock<Node> = SharedLock()
+  val sharedEventLock: SharedLock<Node> = SharedLock(),
+  nodeRegistry: NodeRegistry
 ) : Region() {
 
-  private val layers = Layers()
+  private val layers = Layers(nodeRegistry)
 
   private val zoom: DoubleProperty = object : SimpleDoubleProperty(1.0) {
     override fun invalidated() {

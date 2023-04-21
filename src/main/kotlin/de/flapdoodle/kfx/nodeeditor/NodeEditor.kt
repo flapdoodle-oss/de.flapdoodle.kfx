@@ -5,8 +5,6 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.graph.nodes.SizeMode
 import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
 import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
-import de.flapdoodle.kfx.nodeeditor.events.NodeConnectionEvent
-import de.flapdoodle.kfx.nodeeditor.events.NodeEvent
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
@@ -15,18 +13,10 @@ import javafx.scene.layout.AnchorPane
 class NodeEditor : AnchorPane() {
   private val sharedLock = SharedLock<javafx.scene.Node>()
   private val nodeRegistry = NodeRegistry()
-  private val view = NodeView(sharedLock).withAnchors(all = 0.0)
+  private val view = NodeView(sharedLock, nodeRegistry).withAnchors(all = 0.0)
   init {
     children.add(view)
     addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
-    addEventFilter(NodeEvent.ANY) { nodeEvent ->
-      nodeRegistry.registerNode(nodeEvent.node)
-      nodeEvent.consume()
-    }
-    addEventFilter(NodeConnectionEvent.ANY) { nodeConnectionEvent ->
-      nodeRegistry.registerConnection(nodeConnectionEvent.connection)
-      nodeConnectionEvent.consume()
-    }
   }
 
   fun layers() = view.layers()

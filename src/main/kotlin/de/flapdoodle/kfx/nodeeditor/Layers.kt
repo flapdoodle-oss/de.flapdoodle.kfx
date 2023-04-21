@@ -2,18 +2,15 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.BoundingBoxes
-import de.flapdoodle.kfx.nodeeditor.events.NodeConnectionEvent
-import de.flapdoodle.kfx.nodeeditor.events.NodeEvent
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
-import javafx.event.Event
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.layout.Region
 
-class Layers : Region() {
+class Layers(private val nodeRegistry: NodeRegistry) : Region() {
   private val nodesBoundsMapping = BoundingBoxes.BoundMapping(de.flapdoodle.kfx.nodeeditor.Node::onlyNodes, Node::getBoundsInParent)
   private val connectionBoundsMapping = BoundingBoxes.BoundMapping(NodeConnection::onlyConnections, NodeConnection::boundsInParent)
   private val hintsBoundsMapping = BoundingBoxes.BoundMapping<Node>({ if (it is Parent) it.childrenUnmodifiable else emptyList() }, Node::getBoundsInParent)
@@ -46,14 +43,14 @@ class Layers : Region() {
   fun addNodes(vararg list: de.flapdoodle.kfx.nodeeditor.Node) {
     nodes.add(*list)
     list.forEach {
-      fireEvent(NodeEvent(NodeEvent.NODE_ADDED, it))
+      nodeRegistry.registerNode(it)
     }
   }
 
   fun addConnections(vararg list: NodeConnection) {
     connections.add(*list)
     list.forEach {
-      fireEvent(NodeConnectionEvent(NodeConnectionEvent.ADDED, it))
+      nodeRegistry.registerConnection(it)
     }
   }
 

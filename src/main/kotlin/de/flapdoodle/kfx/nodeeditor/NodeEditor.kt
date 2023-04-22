@@ -5,7 +5,9 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.graph.nodes.SizeMode
 import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
 import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
+import de.flapdoodle.kfx.nodeeditor.hints.NodeConnectionHint
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
+import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -52,7 +54,16 @@ class NodeEditor : AnchorPane() {
         if (nodeAction != null) {
           sharedLock.tryLock(nodeAction.first) {
             event.consume()
-            nodeAction.second
+            val action = nodeAction.second
+            if (action is Action.Connect) {
+              val hint = NodeConnectionHint()
+              val position = nodeRegistry.scenePositionOf(action.source)!!
+              hint.start(position)
+              hint.end(position.copy(angle = position.angle-180))
+              layers().addHints(hint)
+              action.copy(hint = hint)
+            } else
+              action
           }
         }
       }
@@ -75,11 +86,16 @@ class NodeEditor : AnchorPane() {
             active.resizeTo(resizedBounds)
           }
           is Action.Connect -> {
+            action.hint?.end(event.scenePosition)
             val nextBestNodeAndAction = bestAction(event.screenPosition)
             if (nextBestNodeAndAction!=null) {
               val nextAction = nextBestNodeAndAction.second
               if (nextAction is Action.Connect) {
+                val position = nodeRegistry.scenePositionOf(nextAction.source)!!
+                action.hint?.end(position)
                 lock.replaceLock(action.copy(destination = nextAction.source))
+              } else {
+                lock.replaceLock(action.copy(destination = null))
               }
             }
           }
@@ -88,8 +104,12 @@ class NodeEditor : AnchorPane() {
       MouseEvent.MOUSE_RELEASED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
         event.consume()
         val action = lock.value
-        if (action is Action.Connect && action.destination!=null) {
-          layers().addConnections(NodeConnection("blob", action.source, action.destination))
+        if (action is Action.Connect) {
+          action.hint?.let { layers().removeHints(it) }
+          
+          if (action.destination != null) {
+            layers().addConnections(NodeConnection("blob", action.source, action.destination))
+          }
         }
 
         cursor = null
@@ -153,7 +173,8 @@ class NodeEditor : AnchorPane() {
       val clickPosition: Point2D,
       val layoutPosition: Point2D,
       val source: NodeSlotId,
-      val destination: NodeSlotId? = null
+      val destination: NodeSlotId? = null,
+      val hint: NodeConnectionHint? = null
     ) : Action()
   }
 

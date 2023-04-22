@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.BoundingBoxes
+import de.flapdoodle.kfx.nodeeditor.hints.NodeConnectionHint
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
@@ -60,6 +61,10 @@ class Layers(private val nodeRegistry: NodeRegistry) : Region() {
     hints.add(*list)
   }
 
+  fun removeHints(vararg list: Node) {
+    hints.remove(*list)
+  }
+
   class Layer<T: Node>(val type: Class<T>, private val boundMapping: BoundingBoxes.BoundMapping<T>) : Region() {
 
     public override fun getChildren(): ObservableList<Node> {
@@ -68,6 +73,10 @@ class Layers(private val nodeRegistry: NodeRegistry) : Region() {
 
     internal fun add(vararg nodes: T) {
       children.addAll(nodes)
+    }
+
+    internal fun remove(vararg nodes: T) {
+      children.removeAll(nodes)
     }
 
     fun boundingBoxProperty(): ReadOnlyObjectProperty<Bounds> {

@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.extensions
 
+import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -110,3 +111,17 @@ var Node.layoutPosition: Point2D
 //    layoutX = value.x
 //    layoutY = value.y
   }
+
+fun Node.screenToLocal(src: AngleAtPoint2D?): AngleAtPoint2D? {
+  return if (src != null) {
+    val result = screenToLocal(src.point2D)
+    if (result!=null) AngleAtPoint2D(result, src.angle) else null
+  } else null
+}
+
+fun Node.sceneToLocal(src: AngleAtPoint2D?): AngleAtPoint2D? {
+  return if (src != null) {
+    val result = sceneToLocal(src.point2D)
+    if (result!=null) AngleAtPoint2D(result, src.angle) else null
+  } else null
+}

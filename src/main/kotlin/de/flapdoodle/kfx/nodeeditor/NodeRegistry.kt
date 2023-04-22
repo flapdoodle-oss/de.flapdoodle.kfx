@@ -3,15 +3,12 @@ package de.flapdoodle.kfx.nodeeditor
 import de.flapdoodle.kfx.bindings.*
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
-import de.flapdoodle.kfx.nodeeditor.types.SlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyMapWrapper
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableMap
-import javafx.geometry.Point2D
-import javafx.scene.transform.Transform
 
 class NodeRegistry {
   private val nodes: ObservableMap<NodeId, Node> = FXCollections.observableHashMap()
@@ -46,5 +43,9 @@ class NodeRegistry {
 
   fun registerSlot(nodeSlotId: NodeSlotId, positionInScene: ObservableValue<AngleAtPoint2D>) {
     nodeSlots[nodeSlotId] = positionInScene
+  }
+
+  fun scenePositionOf(source: NodeSlotId): AngleAtPoint2D? {
+    return scenePosition(source).value
   }
 }

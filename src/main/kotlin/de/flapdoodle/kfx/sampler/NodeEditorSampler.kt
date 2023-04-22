@@ -6,6 +6,7 @@ import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.Node
 import de.flapdoodle.kfx.nodeeditor.NodeConnection
 import de.flapdoodle.kfx.nodeeditor.NodeEditor
+import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import javafx.application.Application
 import javafx.geometry.Point2D
 import javafx.scene.Scene
@@ -34,7 +35,7 @@ class NodeEditorSampler : Application() {
     val nodeEditor = NodeEditor().withAnchors(all = 10.0)
     nodeEditor.layers().addNodes(nodeOne, nodeTwo)
     nodeEditor.layers().addConnections(
-      NodeConnection("one2two", nodeOne.nodeId to slotOut.id, nodeTwo.nodeId to slotIn.id)
+      NodeConnection("one2two", NodeSlotId(nodeOne.nodeId, slotOut.id), NodeSlotId(nodeTwo.nodeId,slotIn.id))
     )
 
     wrapper.children.add(nodeEditor)

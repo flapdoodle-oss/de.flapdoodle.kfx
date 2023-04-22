@@ -5,8 +5,10 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.graph.nodes.SizeMode
 import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
 import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
+import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
+import javafx.scene.Cursor
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 
@@ -41,6 +43,7 @@ class NodeEditor : AnchorPane() {
         cursor = when (action) {
           is Action.Move -> SizeMode.INSIDE.cursor()
           is Action.Resize -> action.sizeMode.cursor()
+          is Action.Connect -> Cursor.CROSSHAIR
           else -> null
         }
       }
@@ -53,8 +56,10 @@ class NodeEditor : AnchorPane() {
           }
         }
       }
-      MouseEvent.MOUSE_DRAGGED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { (active, action) ->
+      MouseEvent.MOUSE_DRAGGED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
         event.consume()
+        val action = lock.value
+        val active = lock.owner
 
         when (action) {
           is Action.Move -> {
@@ -69,10 +74,23 @@ class NodeEditor : AnchorPane() {
 
             active.resizeTo(resizedBounds)
           }
+          is Action.Connect -> {
+            val nextBestNodeAndAction = bestAction(event.screenPosition)
+            if (nextBestNodeAndAction!=null) {
+              val nextAction = nextBestNodeAndAction.second
+              if (nextAction is Action.Connect) {
+                lock.replaceLock(action.copy(destination = nextAction.source))
+              }
+            }
+          }
         }
       }
       MouseEvent.MOUSE_RELEASED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
         event.consume()
+        val action = lock.value
+        if (action is Action.Connect && action.destination!=null) {
+          layers().addConnections(NodeConnection("blob", action.source, action.destination))
+        }
 
         cursor = null
         lock.releaseLock()
@@ -81,12 +99,12 @@ class NodeEditor : AnchorPane() {
   }
 
   private fun bestAction(screenPosition: Point2D): Pair<Node,Action>? {
-    val nodesAndBars = pickScreen(screenPosition)
+    val nodesAndMarkers = pickScreen(screenPosition)
       .filter {
-        it is Node || Markers.isDragBar(it)
+        it is Node || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
       }.toList()
 
-    val bestSizeMode = nodesAndBars.map { when {
+    val bestSizeMode = nodesAndMarkers.map { when {
       Markers.isDragBar(it) -> SizeMode.INSIDE
       it is Node -> {
         val targetLocalPosition = it.screenToLocal(screenPosition)
@@ -97,11 +115,24 @@ class NodeEditor : AnchorPane() {
       else -> null
     } }.firstOrNull()
 
-    val matchingNode = nodesAndBars.filterIsInstance<Node>().firstOrNull()
-    return if (matchingNode!=null && bestSizeMode!=null) {
-      matchingNode to when (bestSizeMode) {
-        SizeMode.INSIDE -> Action.Move(screenPosition, matchingNode.layoutPosition)
-        else -> Action.Resize(screenPosition,bestSizeMode,LayoutBounds(matchingNode.layoutPosition, matchingNode.size))
+    val nodeSlotId = nodesAndMarkers.map(Markers::nodeSlot).firstOrNull()
+    val matchingNode = nodesAndMarkers.filterIsInstance<Node>().firstOrNull()
+
+//    println("node: $matchingNode, sizeMode: $bestSizeMode, nodeSlot: $nodeSlotId")
+
+
+    return if (matchingNode!=null) {
+      when {
+        nodeSlotId != null -> {
+          matchingNode to Action.Connect(screenPosition, matchingNode.layoutPosition, nodeSlotId)
+        }
+        bestSizeMode != null -> {
+          matchingNode to when (bestSizeMode) {
+            SizeMode.INSIDE -> Action.Move(screenPosition, matchingNode.layoutPosition)
+            else -> Action.Resize(screenPosition,bestSizeMode,LayoutBounds(matchingNode.layoutPosition, matchingNode.size))
+          }
+        }
+        else -> null
       }
     } else null
   }
@@ -116,6 +147,13 @@ class NodeEditor : AnchorPane() {
       val clickPosition: Point2D,
       val sizeMode: SizeMode,
       val layout: LayoutBounds
+    ) : Action()
+
+    data class Connect(
+      val clickPosition: Point2D,
+      val layoutPosition: Point2D,
+      val source: NodeSlotId,
+      val destination: NodeSlotId? = null
     ) : Action()
   }
 

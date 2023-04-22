@@ -26,7 +26,7 @@ object Curves {
         val endPointProperty = end.map(AngleAtPoint2D::point2D)
 
         val distance = startPointProperty.and(endPointProperty)
-            .map { s, e -> e.distance(s).div(3) }
+            .map { s, e -> e.distance(s).div(2) }
 
         startXProperty().bind(startPointProperty.mapToDouble(Point2D::getX))
         startYProperty().bind(startPointProperty.mapToDouble(Point2D::getY))

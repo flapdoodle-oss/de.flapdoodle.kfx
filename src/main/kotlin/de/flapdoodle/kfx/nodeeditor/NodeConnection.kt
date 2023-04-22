@@ -6,6 +6,7 @@ import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.bindings.map
 import de.flapdoodle.kfx.graph.nodes.Curves
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
+import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.nodeeditor.types.SlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.binding.ObjectBinding
@@ -19,8 +20,8 @@ import java.util.*
 
 class NodeConnection(
   val name: String,
-  val start: Pair<NodeId, SlotId>,
-  val end: Pair<NodeId, SlotId>
+  val start: NodeSlotId,
+  val end: NodeSlotId
 ): Region() {
   companion object {
     fun onlyConnections(node: javafx.scene.Node): List<NodeConnection> {
@@ -55,9 +56,9 @@ class NodeConnection(
     })
   }
 
-  fun init(resolver: (NodeId, SlotId) -> ObjectBinding<AngleAtPoint2D>) {
-    startConnector.bind(resolver(start.first, start.second).map { AngleAtPoint2D(sceneToLocal(it.point2D), it.angle) })
-    endConnector.bind(resolver(end.first, end.second).map { AngleAtPoint2D(sceneToLocal(it.point2D), it.angle) })
+  fun init(resolver: (NodeSlotId) -> ObjectBinding<AngleAtPoint2D>) {
+    startConnector.bind(resolver(start).map { AngleAtPoint2D(sceneToLocal(it.point2D), it.angle) })
+    endConnector.bind(resolver(end).map { AngleAtPoint2D(sceneToLocal(it.point2D), it.angle) })
   }
 
   fun dispose() {

@@ -1,9 +1,11 @@
 package de.flapdoodle.kfx.nodeeditor.connectors
 
 import de.flapdoodle.kfx.bindings.and
+import de.flapdoodle.kfx.nodeeditor.Markers
 import de.flapdoodle.kfx.nodeeditor.NodeRegistry
 import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
+import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.nodeeditor.types.SlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.value.ChangeListener
@@ -25,6 +27,8 @@ class Connector(
   }
 
   init {
+    Markers.markAsNodeSlot(circle, NodeSlotId(nodeId, slot.id))
+    
     when (slot.mode) {
       Slot.Mode.IN -> children.addAll(circle, Label(slot.name))
       Slot.Mode.OUT -> children.addAll(Label(slot.name), circle)
@@ -47,11 +51,8 @@ class Connector(
     }
 
     registry.addListener(ChangeListener { observable, oldValue, newValue ->
-      newValue?.registerSlot(nodeId, slot.id, pointInSceneProperty)
+      newValue?.registerSlot(NodeSlotId(nodeId, slot.id), pointInSceneProperty)
     })
-
-
   }
-
 
 }

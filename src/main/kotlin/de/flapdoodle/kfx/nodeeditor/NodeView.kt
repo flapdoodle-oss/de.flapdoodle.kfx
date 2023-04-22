@@ -7,6 +7,7 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.bind
+import de.flapdoodle.kfx.nodeeditor.hints.NodeConnectionHint
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Orientation
@@ -40,6 +41,9 @@ class NodeView(
   private val zoomedBounds = nodeBoundingBoxProperty.and(zoom.mapToDouble()).map(BoundingBoxes::multiply)
   private val scrollXBounds = widthProperty().and(zoomedBounds).and(layers.layoutXProperty()).map(ScrollBounds.Companion::widthOf)
   private val scrollYBounds = heightProperty().and(zoomedBounds).and(layers.layoutYProperty()).map(ScrollBounds.Companion::heightOf)
+  private val nodeConnectionHint = NodeConnectionHint().apply {
+    isVisible = false
+  }
 
   init {
     styleClass.addAll("node-view")
@@ -54,6 +58,7 @@ class NodeView(
     layers.addHints(BoundingBoxes.bindRectangle(layers.connections().boundingBoxProperty()).apply {
       styleClass.addAll("content-background")
     })
+    layers.addHints(nodeConnectionHint)
 
     layers.transforms.add(Scale().apply {
       xProperty().bind(zoom)
@@ -79,6 +84,8 @@ class NodeView(
   }
 
   fun layers() = layers
+
+  fun nodeConnectionHint() = nodeConnectionHint
 
   override fun layoutChildren() {
     super.layoutChildren()

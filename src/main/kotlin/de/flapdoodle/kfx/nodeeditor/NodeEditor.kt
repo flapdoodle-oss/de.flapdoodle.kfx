@@ -56,12 +56,12 @@ class NodeEditor : AnchorPane() {
             event.consume()
             val action = nodeAction.second
             if (action is Action.Connect) {
-              val hint = NodeConnectionHint()
+              val hint = view.nodeConnectionHint()
               val position = nodeRegistry.scenePositionOf(action.source)!!
+              hint.isVisible = true
               hint.start(position)
               hint.end(position.copy(angle = position.angle-180))
-              layers().addHints(hint)
-              action.copy(hint = hint)
+              action
             } else
               action
           }
@@ -86,13 +86,14 @@ class NodeEditor : AnchorPane() {
             active.resizeTo(resizedBounds)
           }
           is Action.Connect -> {
-            action.hint?.end(event.scenePosition)
+            val angle = Point2DMath.angle(action.clickPosition, event.screenPosition)
+            view.nodeConnectionHint().end(AngleAtPoint2D(event.scenePosition, angle - 180))
             val nextBestNodeAndAction = bestAction(event.screenPosition)
             if (nextBestNodeAndAction!=null) {
               val nextAction = nextBestNodeAndAction.second
               if (nextAction is Action.Connect) {
                 val position = nodeRegistry.scenePositionOf(nextAction.source)!!
-                action.hint?.end(position)
+                view.nodeConnectionHint().end(position)
                 lock.replaceLock(action.copy(destination = nextAction.source))
               } else {
                 lock.replaceLock(action.copy(destination = null))
@@ -105,7 +106,7 @@ class NodeEditor : AnchorPane() {
         event.consume()
         val action = lock.value
         if (action is Action.Connect) {
-          action.hint?.let { layers().removeHints(it) }
+          view.nodeConnectionHint().isVisible = false
           
           if (action.destination != null) {
             layers().addConnections(NodeConnection("blob", action.source, action.destination))
@@ -173,8 +174,7 @@ class NodeEditor : AnchorPane() {
       val clickPosition: Point2D,
       val layoutPosition: Point2D,
       val source: NodeSlotId,
-      val destination: NodeSlotId? = null,
-      val hint: NodeConnectionHint? = null
+      val destination: NodeSlotId? = null
     ) : Action()
   }
 

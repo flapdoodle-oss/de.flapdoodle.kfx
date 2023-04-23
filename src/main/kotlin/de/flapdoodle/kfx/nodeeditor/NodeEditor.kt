@@ -53,6 +53,25 @@ class NodeEditor : AnchorPane() {
         }
       }
       MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {
+//        val elementAndAction = guessAction(event.screenPosition)
+//        when (elementAndAction) {
+//          is ElementAction.NodeAction -> {
+//            val action = elementAndAction.action
+//            cursor = when (action) {
+//              is Action.Move -> SizeMode.INSIDE.cursor()
+//              is Action.Resize -> action.sizeMode.cursor()
+//              is Action.Connect -> Cursor.CROSSHAIR
+//              else -> null
+//            }
+//          }
+//          is ElementAction.ConnectionAction -> {
+//
+//          }
+//          else -> {
+//
+//          }
+//        }
+//
         val nodeAction = bestAction(event.screenPosition)
         val action = nodeAction?.second
         cursor = when (action) {
@@ -132,11 +151,56 @@ class NodeEditor : AnchorPane() {
     }
   }
 
+  private fun guessAction(screenPosition: Point2D): ElementAction<out javafx.scene.Node>? {
+    val nodesAndMarkers = pickScreen(screenPosition)
+      .filter {
+        it is Node || it is NodeConnection || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
+      }.toList()
+
+    val matchingNode = nodesAndMarkers.filterIsInstance<Node>().firstOrNull()
+
+    if (matchingNode!=null) {
+      val bestSizeMode = nodesAndMarkers.map {
+        when {
+          Markers.isDragBar(it) -> SizeMode.INSIDE
+          it is Node -> {
+            val targetLocalPosition = it.screenToLocal(screenPosition)
+            val sizeMode = SizeMode.guess(targetLocalPosition, it.size)
+            if (sizeMode != SizeMode.INSIDE) sizeMode else null
+          }
+
+          else -> null
+        }
+      }.firstOrNull()
+
+      val nodeSlotId = nodesAndMarkers.map(Markers::nodeSlot).firstOrNull()
+
+      return when {
+        nodeSlotId != null -> {
+          ElementAction.NodeAction(matchingNode, Action.Connect(screenPosition, matchingNode.layoutPosition, nodeSlotId))
+        }
+        bestSizeMode != null -> {
+          when (bestSizeMode) {
+            SizeMode.INSIDE -> ElementAction.NodeAction(matchingNode, Action.Move(screenPosition, matchingNode.layoutPosition))
+            else -> ElementAction.NodeAction(matchingNode, Action.Resize(screenPosition,bestSizeMode,LayoutBounds(matchingNode.layoutPosition, matchingNode.size)))
+          }
+        }
+        else -> null
+      }
+    } else {
+      val matchingNodeConnection = nodesAndMarkers.filterIsInstance<NodeConnection>().firstOrNull()
+
+      return matchingNodeConnection?.let { ElementAction.ConnectionAction(it, Connection.Select(screenPosition)) }
+    }
+  }
+
   private fun bestAction(screenPosition: Point2D): Pair<Node,Action>? {
     val nodesAndMarkers = pickScreen(screenPosition)
       .filter {
         it is Node || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
       }.toList()
+
+    val matchingNode = nodesAndMarkers.filterIsInstance<Node>().firstOrNull()
 
     val bestSizeMode = nodesAndMarkers.map { when {
       Markers.isDragBar(it) -> SizeMode.INSIDE
@@ -150,7 +214,6 @@ class NodeEditor : AnchorPane() {
     } }.firstOrNull()
 
     val nodeSlotId = nodesAndMarkers.map(Markers::nodeSlot).firstOrNull()
-    val matchingNode = nodesAndMarkers.filterIsInstance<Node>().firstOrNull()
 
     return if (matchingNode!=null) {
       when {
@@ -167,6 +230,13 @@ class NodeEditor : AnchorPane() {
       }
     } else null
   }
+
+  sealed class ElementAction<T: javafx.scene.Node> {
+    data class NodeAction(val node: Node, val action: Action) : ElementAction<Node>()
+    data class ConnectionAction(val nodeConnection: NodeConnection, val action: Connection) : ElementAction<NodeConnection>()
+  }
+  
+  data class ElementAndAction<T: javafx.scene.Node, A>(val element: T, val action: A)
 
   sealed class Action {
     data class Move(
@@ -186,6 +256,12 @@ class NodeEditor : AnchorPane() {
       val source: NodeSlotId,
       val destination: NodeSlotId? = null
     ) : Action()
+  }
+
+  sealed class Connection {
+    data class Select(
+      val clickPosition: Point2D
+    ) : Connection()
   }
 
 }

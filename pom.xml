@@ -445,6 +445,16 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+                <!--
+
+                ubuntu hybrid gfx intel+nvidia
+                https://stackoverflow.com/questions/71365052/how-to-force-gpu-usage-with-javafx
+
+                env: DRI_PRIME=1;__NV_PRIME_RENDER_OFFLOAD=1;__GLX_VENDOR_LIBRARY_NAME=nvidia
+                args: -Dprism.forceGPU=true
+
+                -Djdk.gtk.version=2 -Dprism.verbose=true -Dprism.order=sw
+                -->
                 <plugin>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>

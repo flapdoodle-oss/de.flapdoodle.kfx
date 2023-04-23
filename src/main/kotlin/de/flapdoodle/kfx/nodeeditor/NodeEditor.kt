@@ -53,100 +53,129 @@ class NodeEditor : AnchorPane() {
         }
       }
       MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {
-//        val elementAndAction = guessAction(event.screenPosition)
-//        when (elementAndAction) {
-//          is ElementAction.NodeAction -> {
-//            val action = elementAndAction.action
-//            cursor = when (action) {
-//              is Action.Move -> SizeMode.INSIDE.cursor()
-//              is Action.Resize -> action.sizeMode.cursor()
-//              is Action.Connect -> Cursor.CROSSHAIR
-//              else -> null
-//            }
-//          }
-//          is ElementAction.ConnectionAction -> {
-//
-//          }
-//          else -> {
-//
-//          }
-//        }
-//
-        val nodeAction = bestAction(event.screenPosition)
-        val action = nodeAction?.second
-        cursor = when (action) {
-          is Action.Move -> SizeMode.INSIDE.cursor()
-          is Action.Resize -> action.sizeMode.cursor()
-          is Action.Connect -> Cursor.CROSSHAIR
-          else -> null
+        when (val elementAndAction = guessAction(event.screenPosition)) {
+          is ElementAction.NodeAction -> {
+            val action = elementAndAction.action
+            cursor = when (action) {
+              is Action.Move -> SizeMode.INSIDE.cursor()
+              is Action.Resize -> action.sizeMode.cursor()
+              is Action.Connect -> Cursor.CROSSHAIR
+            }
+          }
+          is ElementAction.ConnectionAction -> {
+            cursor = Cursor.CLOSED_HAND
+          }
+          else -> {
+            cursor = null
+          }
         }
       }
       MouseEvent.MOUSE_PRESSED -> {
-        val nodeAction = bestAction(event.screenPosition)
-        if (nodeAction != null) {
-          sharedLock.tryLock(nodeAction.first) {
-            event.consume()
-            val action = nodeAction.second
-            if (action is Action.Connect) {
-              val hint = view.nodeConnectionHint()
-              val position = nodeRegistry.scenePositionOf(action.source)!!
-              hint.isVisible = true
-              hint.start(position)
-              hint.end(position.copy(angle = position.angle-180))
-              action
-            } else
-              action
+        when (val elementAndAction = guessAction(event.screenPosition)) {
+          is ElementAction.NodeAction -> {
+            sharedLock.tryLock(elementAndAction.node) {
+              event.consume()
+              val action = elementAndAction.action
+              if (action is Action.Connect) {
+                val hint = view.nodeConnectionHint()
+                val position = nodeRegistry.scenePositionOf(action.source)!!
+                hint.isVisible = true
+                hint.start(position)
+                hint.end(position.copy(angle = position.angle-180))
+                action
+              } else
+                action
+            }
+          }
+          is ElementAction.ConnectionAction -> {
+            sharedLock.tryLock(elementAndAction.nodeConnection) {
+              event.consume()
+              elementAndAction.action
+            }
+          }
+          else -> {
+
           }
         }
       }
-      MouseEvent.MOUSE_DRAGGED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
-        event.consume()
-        val action = lock.value
-        val active = lock.owner
+      MouseEvent.MOUSE_DRAGGED -> {
+        sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
+          event.consume()
+          val action = lock.value
+          val active = lock.owner
 
-        when (action) {
-          is Action.Move -> {
-            val diff = event.screenPosition - action.clickPosition
-            active.layoutPosition = action.layoutPosition + active.screenDeltaToLocal(diff)
-          }
+          when (action) {
+            is Action.Move -> {
+              val diff = event.screenPosition - action.clickPosition
+              active.layoutPosition = action.layoutPosition + active.screenDeltaToLocal(diff)
+            }
 
-          is Action.Resize -> {
-            val diff = event.screenPosition - action.clickPosition
-            val fixedDiff = active.screenDeltaToLocal(diff)
-            val resizedBounds = SizeMode.resize(action.sizeMode, action.layout, fixedDiff)
+            is Action.Resize -> {
+              val diff = event.screenPosition - action.clickPosition
+              val fixedDiff = active.screenDeltaToLocal(diff)
+              val resizedBounds = SizeMode.resize(action.sizeMode, action.layout, fixedDiff)
 
-            active.resizeTo(resizedBounds)
-          }
-          is Action.Connect -> {
-            val angle = Point2DMath.angle(action.clickPosition, event.screenPosition)
-            view.nodeConnectionHint().end(AngleAtPoint2D(event.scenePosition, angle - 180))
-            val nextBestNodeAndAction = bestAction(event.screenPosition)
-            if (nextBestNodeAndAction!=null) {
-              val nextAction = nextBestNodeAndAction.second
-              if (nextAction is Action.Connect) {
-                val position = nodeRegistry.scenePositionOf(nextAction.source)!!
-                view.nodeConnectionHint().end(position)
-                lock.replaceLock(action.copy(destination = nextAction.source))
-              } else {
-                lock.replaceLock(action.copy(destination = null))
+              active.resizeTo(resizedBounds)
+            }
+
+            is Action.Connect -> {
+              val angle = Point2DMath.angle(action.clickPosition, event.screenPosition)
+              view.nodeConnectionHint().end(AngleAtPoint2D(event.scenePosition, angle - 180))
+              val nextBestGuess = guessAction(event.screenPosition)
+              if (nextBestGuess!=null && nextBestGuess is ElementAction.NodeAction) {
+                val nextAction = nextBestGuess.action
+                if (nextAction is Action.Connect) {
+                  val position = nodeRegistry.scenePositionOf(nextAction.source)!!
+                  view.nodeConnectionHint().end(position)
+                  lock.replaceLock(action.copy(destination = nextAction.source))
+                } else {
+                  lock.replaceLock(action.copy(destination = null))
+                }
               }
+
+//              val nextBestNodeAndAction = bestAction(event.screenPosition)
+//              if (nextBestNodeAndAction!=null) {
+//                val nextAction = nextBestNodeAndAction.second
+//                if (nextAction is Action.Connect) {
+//                  val position = nodeRegistry.scenePositionOf(nextAction.source)!!
+//                  view.nodeConnectionHint().end(position)
+//                  lock.replaceLock(action.copy(destination = nextAction.source))
+//                } else {
+//                  lock.replaceLock(action.copy(destination = null))
+//                }
+//              }
+            }
+          }
+        }
+        sharedLock.ifLocked(NodeConnection::class.java, Connection::class.java) { lock ->
+          event.consume()
+          when (lock.value) {
+            is Connection.Select -> {
+              println("connection selected .. ${lock.owner}")
             }
           }
         }
       }
-      MouseEvent.MOUSE_RELEASED -> sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
-        event.consume()
-        val action = lock.value
-        if (action is Action.Connect) {
-          view.nodeConnectionHint().isVisible = false
-          
-          if (action.destination != null) {
-            layers().addConnections(NodeConnection("blob", action.source, action.destination))
-          }
-        }
+      MouseEvent.MOUSE_RELEASED -> {
+        sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
+          event.consume()
+          val action = lock.value
+          if (action is Action.Connect) {
+            view.nodeConnectionHint().isVisible = false
 
-        cursor = null
-        lock.releaseLock()
+            if (action.destination != null) {
+              layers().addConnections(NodeConnection("blob", action.source, action.destination))
+            }
+          }
+
+          cursor = null
+          lock.releaseLock()
+        }
+        sharedLock.ifLocked(NodeConnection::class.java, Connection::class.java) { lock ->
+          event.consume()
+          cursor = null
+          lock.releaseLock()
+        }
       }
     }
   }

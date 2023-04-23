@@ -16,18 +16,13 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.testfx.api.FxAssert
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
-import org.testfx.matcher.control.LabeledMatchers
 
 
 @ExtendWith(ApplicationExtension::class)
@@ -47,6 +42,10 @@ class RunSamplerIT {
                 start(stage)
             }
             4 -> NodeEditorSampler().apply {
+                start(stage)
+            }
+            10 -> PickMesh3DSampler().apply {
+                // -Dprism.forceGPU=true
                 start(stage)
             }
         }

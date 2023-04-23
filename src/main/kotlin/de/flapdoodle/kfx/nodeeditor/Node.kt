@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.nodeeditor
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
+import de.flapdoodle.kfx.extensions.PseudoClassWrapper
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.nodeeditor.connectors.ConnectorsPane
 import de.flapdoodle.kfx.nodeeditor.model.Slot
@@ -37,15 +38,7 @@ class Node(val name: String) : BorderPane() {
   }
 
   object Style {
-    val Active: PseudoClass = PseudoClass.getPseudoClass("active")
-
-    fun PseudoClass.enable(destination: Node) {
-      destination.pseudoClassStateChanged(this, true)
-    }
-
-    fun PseudoClass.disable(destination: Node) {
-      destination.pseudoClassStateChanged(this, false)
-    }
+    val Active = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("active"))
   }
 
   private val contentWrapper=StackPane()

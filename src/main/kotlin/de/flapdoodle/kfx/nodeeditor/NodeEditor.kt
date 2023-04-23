@@ -3,9 +3,6 @@ package de.flapdoodle.kfx.nodeeditor
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.graph.nodes.SizeMode
-import de.flapdoodle.kfx.nodeeditor.Node.Style.disable
-import de.flapdoodle.kfx.nodeeditor.Node.Style.enable
-import de.flapdoodle.kfx.nodeeditor.hints.NodeConnectionHint
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
@@ -28,15 +25,33 @@ class NodeEditor : AnchorPane() {
   private fun filterMouseEvents(event: MouseEvent) {
     val target = event.target
 
+//    event.pickResult.intersectedNode?.let {
+//      println("--> $it")
+//    }
+//    if (target is javafx.scene.Node) {
+//      val connection = Markers.connection(target)
+//      if (connection != null) {
+//        println("found connection: $connection")
+//      }
+//    }
+
     when (event.eventType) {
       MouseEvent.MOUSE_ENTERED_TARGET -> sharedLock.ifUnlocked {
         if (target is Node) {
           Node.Style.Active.enable(target)
         }
+        if (target is NodeConnection) {
+//          Markers.connection(target)
+          NodeConnection.Style.Active.enable(target)
+        }
       }
       MouseEvent.MOUSE_EXITED_TARGET -> sharedLock.ifUnlocked {
         if (target is Node) {
           Node.Style.Active.disable(target)
+        }
+        if (target is NodeConnection) {
+//          Markers.connection(target)
+          NodeConnection.Style.Active.disable(target)
         }
       }
       MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {
@@ -138,9 +153,6 @@ class NodeEditor : AnchorPane() {
 
     val nodeSlotId = nodesAndMarkers.map(Markers::nodeSlot).firstOrNull()
     val matchingNode = nodesAndMarkers.filterIsInstance<Node>().firstOrNull()
-
-//    println("node: $matchingNode, sizeMode: $bestSizeMode, nodeSlot: $nodeSlotId")
-
 
     return if (matchingNode!=null) {
       when {

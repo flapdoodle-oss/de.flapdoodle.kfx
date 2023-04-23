@@ -4,13 +4,16 @@ import de.flapdoodle.kfx.bindings.ValueOfValueBinding
 import de.flapdoodle.kfx.bindings.Values
 import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.bindings.map
+import de.flapdoodle.kfx.extensions.PseudoClassWrapper
 import de.flapdoodle.kfx.graph.nodes.Curves
+import de.flapdoodle.kfx.nodeeditor.types.ConnectionId
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.nodeeditor.types.SlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.SimpleObjectProperty
+import javafx.css.PseudoClass
 import javafx.geometry.Bounds
 import javafx.geometry.Point2D
 import javafx.scene.Parent
@@ -33,6 +36,11 @@ class NodeConnection(
     }
   }
 
+  object Style {
+    val Active = PseudoClassWrapper<NodeConnection>(PseudoClass.getPseudoClass("active"))
+  }
+
+
   val registry = SimpleObjectProperty<NodeRegistry>()
   
   private val startNode = SimpleObjectProperty<Node?>()
@@ -49,11 +57,19 @@ class NodeConnection(
   private val curve = Curves.cubicCurve(startConnector, endConnector)
 
   init {
+    styleClass.addAll("nodeConnection")
+    stylesheets += javaClass.getResource("NodeConnection.css").toExternalForm()
+
     children.add(curve.apply {
-      strokeWidth = 1.0
-      stroke = Color.RED
+      //Markers.markAsConnection(this, ConnectionId(start, end))
+      styleClass.addAll("path")
+      
+//      strokeWidth = 1.0
+//      stroke = Color.RED
       fill = Color.TRANSPARENT
+      isPickOnBounds = false
     })
+    isPickOnBounds = false
   }
 
   fun init(resolver: (NodeSlotId) -> ObjectBinding<AngleAtPoint2D>) {

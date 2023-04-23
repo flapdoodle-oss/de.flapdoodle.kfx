@@ -37,7 +37,8 @@ class NodeConnection(
   }
 
   object Style {
-    val Active = PseudoClassWrapper<NodeConnection>(PseudoClass.getPseudoClass("active"))
+    val Focused = PseudoClassWrapper<NodeConnection>(PseudoClass.getPseudoClass("focused"))
+    val Selected = PseudoClassWrapper<NodeConnection>(PseudoClass.getPseudoClass("selected"))
   }
 
 
@@ -59,6 +60,7 @@ class NodeConnection(
   init {
     styleClass.addAll("nodeConnection")
     stylesheets += javaClass.getResource("NodeConnection.css").toExternalForm()
+    //isFocusTraversable = false
 
     children.add(curve.apply {
       //Markers.markAsConnection(this, ConnectionId(start, end))

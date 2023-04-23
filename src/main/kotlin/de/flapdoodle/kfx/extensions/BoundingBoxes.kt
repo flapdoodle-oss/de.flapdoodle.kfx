@@ -7,6 +7,7 @@ import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
+import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.shape.Rectangle
@@ -73,6 +74,20 @@ object BoundingBoxes {
         return parent.property.computeIfAbsent(Key.of(boundMapping)) {
             BoundsProperty(parent, boundMapping)
         }
+    }
+
+    fun around(points: Collection<Point2D>):Bounds {
+        if (!points.isEmpty()) {
+            val minX = points.minOf { it.x }
+            val minY = points.minOf { it.y }
+            val maxX = points.maxOf { it.x }
+            val maxY = points.maxOf { it.y }
+            return BoundingBox(
+                minX, minY, 0.0,
+                maxX-minX, maxY-minY, -1.0
+            )
+        }
+        return empty()
     }
 
     private class BoundsInParentProperty(val parent: Node, val filter: Predicate<Node>) : LazyProperty<Bounds>() {
@@ -143,7 +158,7 @@ object BoundingBoxes {
         return rect
     }
 
-    data class BoundMapping<T: Node>(
+  data class BoundMapping<T: Node>(
         val childOfNode: (Node) -> Collection<T>,
         val boundsOfChild: (T) -> Bounds
     )

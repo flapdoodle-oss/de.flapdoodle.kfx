@@ -20,6 +20,7 @@
     -fx-stroke: red;
 }
 
-.nodeConnection:active > .path {
+.nodeConnection:focused > .path {
     -fx-stroke: green;
+    -fx-stroke-width: 2.0;
 }

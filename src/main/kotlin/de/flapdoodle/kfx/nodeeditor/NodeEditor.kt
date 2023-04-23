@@ -41,8 +41,7 @@ class NodeEditor : AnchorPane() {
           Node.Style.Active.enable(target)
         }
         if (target is NodeConnection) {
-//          Markers.connection(target)
-          NodeConnection.Style.Active.enable(target)
+          NodeConnection.Style.Focused.enable(target)
         }
       }
       MouseEvent.MOUSE_EXITED_TARGET -> sharedLock.ifUnlocked {
@@ -50,8 +49,7 @@ class NodeEditor : AnchorPane() {
           Node.Style.Active.disable(target)
         }
         if (target is NodeConnection) {
-//          Markers.connection(target)
-          NodeConnection.Style.Active.disable(target)
+          NodeConnection.Style.Focused.disable(target)
         }
       }
       MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {

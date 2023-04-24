@@ -151,7 +151,7 @@ class NodeEditor : AnchorPane() {
           event.consume()
           when (lock.value) {
             is Connection.Select -> {
-              println("connection selected .. ${lock.owner}")
+//              println("connection selected .. ${lock.owner}")
             }
           }
         }
@@ -173,6 +173,7 @@ class NodeEditor : AnchorPane() {
         }
         sharedLock.ifLocked(NodeConnection::class.java, Connection::class.java) { lock ->
           event.consume()
+          println("select ${lock.owner}")
           cursor = null
           lock.releaseLock()
         }
@@ -223,50 +224,11 @@ class NodeEditor : AnchorPane() {
     }
   }
 
-  private fun bestAction(screenPosition: Point2D): Pair<Node,Action>? {
-    val nodesAndMarkers = pickScreen(screenPosition)
-      .filter {
-        it is Node || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
-      }.toList()
-
-    val matchingNode = nodesAndMarkers.filterIsInstance<Node>().firstOrNull()
-
-    val bestSizeMode = nodesAndMarkers.map { when {
-      Markers.isDragBar(it) -> SizeMode.INSIDE
-      it is Node -> {
-        val targetLocalPosition = it.screenToLocal(screenPosition)
-        val sizeMode = SizeMode.guess(targetLocalPosition, it.size)
-        if (sizeMode != SizeMode.INSIDE) sizeMode else null
-      }
-
-      else -> null
-    } }.firstOrNull()
-
-    val nodeSlotId = nodesAndMarkers.map(Markers::nodeSlot).firstOrNull()
-
-    return if (matchingNode!=null) {
-      when {
-        nodeSlotId != null -> {
-          matchingNode to Action.Connect(screenPosition, matchingNode.layoutPosition, nodeSlotId)
-        }
-        bestSizeMode != null -> {
-          matchingNode to when (bestSizeMode) {
-            SizeMode.INSIDE -> Action.Move(screenPosition, matchingNode.layoutPosition)
-            else -> Action.Resize(screenPosition,bestSizeMode,LayoutBounds(matchingNode.layoutPosition, matchingNode.size))
-          }
-        }
-        else -> null
-      }
-    } else null
-  }
-
   sealed class ElementAction<T: javafx.scene.Node> {
     data class NodeAction(val node: Node, val action: Action) : ElementAction<Node>()
     data class ConnectionAction(val nodeConnection: NodeConnection, val action: Connection) : ElementAction<NodeConnection>()
   }
   
-  data class ElementAndAction<T: javafx.scene.Node, A>(val element: T, val action: A)
-
   sealed class Action {
     data class Move(
       val clickPosition: Point2D,

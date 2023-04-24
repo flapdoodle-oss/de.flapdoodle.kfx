@@ -11,7 +11,9 @@ import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
+import javafx.scene.control.Button
 import javafx.scene.control.Label
+import javafx.scene.control.Tooltip
 import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -28,7 +30,9 @@ class Connector(
 
   init {
     Markers.markAsNodeSlot(circle, NodeSlotId(nodeId, slot.id))
-    
+    Tooltip.install(this, Tooltip(slot.name))
+
+
     when (slot.mode) {
       Slot.Mode.IN -> children.addAll(circle, Label(slot.name))
       Slot.Mode.OUT -> children.addAll(Label(slot.name), circle)

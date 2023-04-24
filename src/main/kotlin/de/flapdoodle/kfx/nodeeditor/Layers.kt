@@ -26,8 +26,8 @@ class Layers(private val nodeRegistry: NodeRegistry) : Region() {
     height = 10.0
 
     children.add(hints)
-    children.add(nodes)
     children.add(connections)
+    children.add(nodes)
   }
 
   // TODO remove??
@@ -66,6 +66,10 @@ class Layers(private val nodeRegistry: NodeRegistry) : Region() {
   }
 
   class Layer<T: Node>(val type: Class<T>, private val boundMapping: BoundingBoxes.BoundMapping<T>) : Region() {
+
+    init {
+      isPickOnBounds = false
+    }
 
     public override fun getChildren(): ObservableList<Node> {
       return super.getChildren()

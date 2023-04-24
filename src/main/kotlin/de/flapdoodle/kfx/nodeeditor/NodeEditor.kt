@@ -43,20 +43,21 @@ class NodeEditor : AnchorPane() {
         }
       }
       MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {
-        when (val elementAndAction = guessAction(event.screenPosition)) {
+        cursor = when (val elementAndAction = guessAction(event.screenPosition)) {
           is ElementAction.NodeAndAction -> {
-            val action = elementAndAction.action
-            cursor = when (action) {
+            when (elementAndAction.action) {
               is NodeAction.Move -> SizeMode.INSIDE.cursor()
-              is NodeAction.Resize -> action.sizeMode.cursor()
+              is NodeAction.Resize -> elementAndAction.action.sizeMode.cursor()
               is NodeAction.Connect -> Cursor.CROSSHAIR
             }
           }
+
           is ElementAction.ConnectionAndAction -> {
-            cursor = Cursor.CLOSED_HAND
+            Cursor.CLOSED_HAND
           }
+
           else -> {
-            cursor = null
+            null
           }
         }
       }
@@ -67,11 +68,12 @@ class NodeEditor : AnchorPane() {
               event.consume()
               val action = elementAndAction.action
               if (action is NodeAction.Connect) {
-                val hint = view.nodeConnectionHint()
                 val position = nodeRegistry.scenePositionOf(action.source)!!
-                hint.isVisible = true
-                hint.start(position)
-                hint.end(position.copy(angle = position.angle-180))
+                view.nodeConnectionHint().apply {
+                  isVisible = true
+                  start(position)
+                  end(position.copy(angle = position.angle-180))
+                }
                 action
               } else
                 action
@@ -109,8 +111,9 @@ class NodeEditor : AnchorPane() {
             }
 
             is NodeAction.Connect -> {
-              val angle = Point2DMath.angle(action.clickPosition, event.screenPosition)
-              view.nodeConnectionHint().end(AngleAtPoint2D(event.scenePosition, angle - 180))
+              view.nodeConnectionHint()
+                .end(AngleAtPoint2D(event.scenePosition, Point2DMath.angle(action.clickPosition, event.screenPosition) - 180))
+
               val nextBestGuess = guessAction(event.screenPosition)
               if (nextBestGuess!=null && nextBestGuess is ElementAction.NodeAndAction) {
                 val nextAction = nextBestGuess.action
@@ -154,7 +157,7 @@ class NodeEditor : AnchorPane() {
           event.consume()
           println("select ${lock.owner}")
           NodeConnection.Style.Selected.swap(lock.owner)
-          cursor = null
+//          cursor = null
           lock.releaseLock()
         }
       }

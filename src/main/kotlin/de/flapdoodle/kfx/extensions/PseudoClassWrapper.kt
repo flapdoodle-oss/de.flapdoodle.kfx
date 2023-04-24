@@ -13,4 +13,8 @@ class PseudoClassWrapper<T: Node>(
   fun disable(node: T) {
     node.pseudoClassStateChanged(wrapped, false)
   }
+
+  fun swap(node: T) {
+    node.pseudoClassStateChanged(wrapped, !node.pseudoClassStates.contains(wrapped))
+  }
 }

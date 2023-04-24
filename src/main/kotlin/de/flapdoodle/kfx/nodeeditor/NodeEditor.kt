@@ -25,16 +25,6 @@ class NodeEditor : AnchorPane() {
   private fun filterMouseEvents(event: MouseEvent) {
     val target = event.target
 
-//    event.pickResult.intersectedNode?.let {
-//      println("--> $it")
-//    }
-//    if (target is javafx.scene.Node) {
-//      val connection = Markers.connection(target)
-//      if (connection != null) {
-//        println("found connection: $connection")
-//      }
-//    }
-
     when (event.eventType) {
       MouseEvent.MOUSE_ENTERED_TARGET -> sharedLock.ifUnlocked {
         if (target is Node) {
@@ -54,15 +44,15 @@ class NodeEditor : AnchorPane() {
       }
       MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {
         when (val elementAndAction = guessAction(event.screenPosition)) {
-          is ElementAction.NodeAction -> {
+          is ElementAction.NodeAndAction -> {
             val action = elementAndAction.action
             cursor = when (action) {
-              is Action.Move -> SizeMode.INSIDE.cursor()
-              is Action.Resize -> action.sizeMode.cursor()
-              is Action.Connect -> Cursor.CROSSHAIR
+              is NodeAction.Move -> SizeMode.INSIDE.cursor()
+              is NodeAction.Resize -> action.sizeMode.cursor()
+              is NodeAction.Connect -> Cursor.CROSSHAIR
             }
           }
-          is ElementAction.ConnectionAction -> {
+          is ElementAction.ConnectionAndAction -> {
             cursor = Cursor.CLOSED_HAND
           }
           else -> {
@@ -72,11 +62,11 @@ class NodeEditor : AnchorPane() {
       }
       MouseEvent.MOUSE_PRESSED -> {
         when (val elementAndAction = guessAction(event.screenPosition)) {
-          is ElementAction.NodeAction -> {
+          is ElementAction.NodeAndAction -> {
             sharedLock.tryLock(elementAndAction.node) {
               event.consume()
               val action = elementAndAction.action
-              if (action is Action.Connect) {
+              if (action is NodeAction.Connect) {
                 val hint = view.nodeConnectionHint()
                 val position = nodeRegistry.scenePositionOf(action.source)!!
                 hint.isVisible = true
@@ -87,7 +77,7 @@ class NodeEditor : AnchorPane() {
                 action
             }
           }
-          is ElementAction.ConnectionAction -> {
+          is ElementAction.ConnectionAndAction -> {
             sharedLock.tryLock(elementAndAction.nodeConnection) {
               event.consume()
               elementAndAction.action
@@ -99,18 +89,18 @@ class NodeEditor : AnchorPane() {
         }
       }
       MouseEvent.MOUSE_DRAGGED -> {
-        sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
+        sharedLock.ifLocked(Node::class.java, NodeAction::class.java) { lock ->
           event.consume()
           val action = lock.value
           val active = lock.owner
 
           when (action) {
-            is Action.Move -> {
+            is NodeAction.Move -> {
               val diff = event.screenPosition - action.clickPosition
               active.layoutPosition = action.layoutPosition + active.screenDeltaToLocal(diff)
             }
 
-            is Action.Resize -> {
+            is NodeAction.Resize -> {
               val diff = event.screenPosition - action.clickPosition
               val fixedDiff = active.screenDeltaToLocal(diff)
               val resizedBounds = SizeMode.resize(action.sizeMode, action.layout, fixedDiff)
@@ -118,13 +108,13 @@ class NodeEditor : AnchorPane() {
               active.resizeTo(resizedBounds)
             }
 
-            is Action.Connect -> {
+            is NodeAction.Connect -> {
               val angle = Point2DMath.angle(action.clickPosition, event.screenPosition)
               view.nodeConnectionHint().end(AngleAtPoint2D(event.scenePosition, angle - 180))
               val nextBestGuess = guessAction(event.screenPosition)
-              if (nextBestGuess!=null && nextBestGuess is ElementAction.NodeAction) {
+              if (nextBestGuess!=null && nextBestGuess is ElementAction.NodeAndAction) {
                 val nextAction = nextBestGuess.action
-                if (nextAction is Action.Connect) {
+                if (nextAction is NodeAction.Connect) {
                   val position = nodeRegistry.scenePositionOf(nextAction.source)!!
                   view.nodeConnectionHint().end(position)
                   lock.replaceLock(action.copy(destination = nextAction.source))
@@ -132,35 +122,24 @@ class NodeEditor : AnchorPane() {
                   lock.replaceLock(action.copy(destination = null))
                 }
               }
-
-//              val nextBestNodeAndAction = bestAction(event.screenPosition)
-//              if (nextBestNodeAndAction!=null) {
-//                val nextAction = nextBestNodeAndAction.second
-//                if (nextAction is Action.Connect) {
-//                  val position = nodeRegistry.scenePositionOf(nextAction.source)!!
-//                  view.nodeConnectionHint().end(position)
-//                  lock.replaceLock(action.copy(destination = nextAction.source))
-//                } else {
-//                  lock.replaceLock(action.copy(destination = null))
-//                }
-//              }
             }
           }
         }
-        sharedLock.ifLocked(NodeConnection::class.java, Connection::class.java) { lock ->
+        sharedLock.ifLocked(NodeConnection::class.java, ConnectionAction::class.java) { lock ->
           event.consume()
           when (lock.value) {
-            is Connection.Select -> {
-//              println("connection selected .. ${lock.owner}")
+            is ConnectionAction.Select -> {
+              println("do not select ${lock.owner}")
+              lock.releaseLock()
             }
           }
         }
       }
       MouseEvent.MOUSE_RELEASED -> {
-        sharedLock.ifLocked(Node::class.java, Action::class.java) { lock ->
+        sharedLock.ifLocked(Node::class.java, NodeAction::class.java) { lock ->
           event.consume()
           val action = lock.value
-          if (action is Action.Connect) {
+          if (action is NodeAction.Connect) {
             view.nodeConnectionHint().isVisible = false
 
             if (action.destination != null) {
@@ -171,9 +150,10 @@ class NodeEditor : AnchorPane() {
           cursor = null
           lock.releaseLock()
         }
-        sharedLock.ifLocked(NodeConnection::class.java, Connection::class.java) { lock ->
+        sharedLock.ifLocked(NodeConnection::class.java, ConnectionAction::class.java) { lock ->
           event.consume()
           println("select ${lock.owner}")
+          NodeConnection.Style.Selected.swap(lock.owner)
           cursor = null
           lock.releaseLock()
         }
@@ -181,7 +161,7 @@ class NodeEditor : AnchorPane() {
     }
   }
 
-  private fun guessAction(screenPosition: Point2D): ElementAction<out javafx.scene.Node>? {
+  private fun guessAction(screenPosition: Point2D): ElementAction? {
     val nodesAndMarkers = pickScreen(screenPosition)
       .filter {
         it is Node || it is NodeConnection || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
@@ -207,12 +187,12 @@ class NodeEditor : AnchorPane() {
 
       return when {
         nodeSlotId != null -> {
-          ElementAction.NodeAction(matchingNode, Action.Connect(screenPosition, matchingNode.layoutPosition, nodeSlotId))
+          ElementAction.NodeAndAction(matchingNode, NodeAction.Connect(screenPosition, matchingNode.layoutPosition, nodeSlotId))
         }
         bestSizeMode != null -> {
           when (bestSizeMode) {
-            SizeMode.INSIDE -> ElementAction.NodeAction(matchingNode, Action.Move(screenPosition, matchingNode.layoutPosition))
-            else -> ElementAction.NodeAction(matchingNode, Action.Resize(screenPosition,bestSizeMode,LayoutBounds(matchingNode.layoutPosition, matchingNode.size)))
+            SizeMode.INSIDE -> ElementAction.NodeAndAction(matchingNode, NodeAction.Move(screenPosition, matchingNode.layoutPosition))
+            else -> ElementAction.NodeAndAction(matchingNode, NodeAction.Resize(screenPosition,bestSizeMode,LayoutBounds(matchingNode.layoutPosition, matchingNode.size)))
           }
         }
         else -> null
@@ -220,39 +200,39 @@ class NodeEditor : AnchorPane() {
     } else {
       val matchingNodeConnection = nodesAndMarkers.filterIsInstance<NodeConnection>().firstOrNull()
 
-      return matchingNodeConnection?.let { ElementAction.ConnectionAction(it, Connection.Select(screenPosition)) }
+      return matchingNodeConnection?.let { ElementAction.ConnectionAndAction(it, ConnectionAction.Select(screenPosition)) }
     }
   }
 
-  sealed class ElementAction<T: javafx.scene.Node> {
-    data class NodeAction(val node: Node, val action: Action) : ElementAction<Node>()
-    data class ConnectionAction(val nodeConnection: NodeConnection, val action: Connection) : ElementAction<NodeConnection>()
+  sealed class ElementAction {
+    data class NodeAndAction(val node: Node, val action: NodeAction) : ElementAction()
+    data class ConnectionAndAction(val nodeConnection: NodeConnection, val action: ConnectionAction) : ElementAction()
   }
   
-  sealed class Action {
+  sealed class NodeAction {
     data class Move(
       val clickPosition: Point2D,
       val layoutPosition: Point2D
-    ) : Action()
+    ) : NodeAction()
 
     data class Resize(
       val clickPosition: Point2D,
       val sizeMode: SizeMode,
       val layout: LayoutBounds
-    ) : Action()
+    ) : NodeAction()
 
     data class Connect(
       val clickPosition: Point2D,
       val layoutPosition: Point2D,
       val source: NodeSlotId,
       val destination: NodeSlotId? = null
-    ) : Action()
+    ) : NodeAction()
   }
 
-  sealed class Connection {
+  sealed class ConnectionAction {
     data class Select(
       val clickPosition: Point2D
-    ) : Connection()
+    ) : ConnectionAction()
   }
 
 }

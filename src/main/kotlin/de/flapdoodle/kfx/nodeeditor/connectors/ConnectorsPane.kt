@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.nodeeditor.connectors
 
 import de.flapdoodle.kfx.extensions.ObservableLists
 import de.flapdoodle.kfx.nodeeditor.NodeRegistry
+import de.flapdoodle.kfx.nodeeditor.model.Position
 import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import javafx.beans.value.ObservableValue
@@ -12,25 +13,24 @@ import javafx.scene.paint.Color
 class ConnectorsPane(
   private val registry: ObservableValue<NodeRegistry>,
   private val nodeId: NodeId,
-  private val slots: ObservableList<Slot>,
-  val mode: Slot.Mode
+  slots: ObservableList<Slot>,
+  private val position: Position
 ) : Pane() {
 
   init {
-    border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths.DEFAULT))
-    val filtered = slots.filtered { it.mode == mode }
-    val vBox = VBox()
-//    vBox.children.addListener(AddOrRemoveListChangeListener(
-//      onAdded = {
-//        println("added ${it}")
-//      },
-//      onRemoved = {
-//        println("removed $it")
-//      }
-//    ))
-    ObservableLists.syncWith(filtered, vBox.children) { c -> Connector(registry, nodeId, c) }
-    children.add(vBox)
+//    border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths.DEFAULT))
+
+    val filtered = slots.filtered { it.position == position }
+
+    val wrapper = when (position) {
+      Position.LEFT -> VBox().apply { spacing = 2.0 }
+      Position.RIGHT -> VBox().apply { spacing = 2.0 }
+      Position.BOTTOM -> HBox().apply { spacing = 2.0 }
+    }
+
+    ObservableLists.syncWith(filtered, wrapper.children) { c -> Connector(registry, nodeId, c, position) }
+    children.add(wrapper)
   }
 
-  
+
 }

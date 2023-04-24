@@ -6,6 +6,7 @@ import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.Node
 import de.flapdoodle.kfx.nodeeditor.NodeConnection
 import de.flapdoodle.kfx.nodeeditor.NodeEditor
+import de.flapdoodle.kfx.nodeeditor.model.Position
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import javafx.application.Application
 import javafx.geometry.Point2D
@@ -17,15 +18,15 @@ import javafx.stage.Stage
 class NodeEditorSampler : Application() {
   override fun start(stage: Stage) {
     val wrapper = AnchorPane()
-    val slotIn = Slot("in", Slot.Mode.IN)
-    val slotOut = Slot("1", Slot.Mode.OUT)
+    val slotIn = Slot("in", Slot.Mode.IN, Position.LEFT)
+    val slotOut = Slot("1", Slot.Mode.OUT, Position.RIGHT)
 
     val nodeOne = Node("one").apply {
       layoutPosition = Point2D(100.0, 50.0)
       addConnector(slotIn)
-      addConnector(Slot("out", Slot.Mode.OUT))
+      addConnector(Slot("out", Slot.Mode.OUT, Position.RIGHT))
       addConnector(slotOut)
-      addConnector(Slot("2", Slot.Mode.OUT))
+      addConnector(Slot("2", Slot.Mode.OUT, Position.BOTTOM))
     }
     val nodeTwo = Node("two").apply {
       content = Button("Helloooo")

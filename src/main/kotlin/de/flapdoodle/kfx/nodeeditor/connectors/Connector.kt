@@ -3,60 +3,68 @@ package de.flapdoodle.kfx.nodeeditor.connectors
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.nodeeditor.Markers
 import de.flapdoodle.kfx.nodeeditor.NodeRegistry
+import de.flapdoodle.kfx.nodeeditor.model.Position
 import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
-import de.flapdoodle.kfx.nodeeditor.types.SlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
-import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
-import javafx.scene.control.Button
+import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.HBox
+import javafx.scene.layout.Pane
+import javafx.scene.layout.Priority
+import javafx.scene.layout.Region
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 
 class Connector(
-  private val registry: ObservableValue<NodeRegistry>,
+  registry: ObservableValue<NodeRegistry>,
   private val nodeId: NodeId,
-  val slot: Slot
-) : HBox() {
+  private val slot: Slot,
+  position: Position
+) : StackPane() {
   private val circle = Circle(4.0, Color.RED)
+//  private val label = Label(slot.name)
+  private val space = Region()
+  private val angle = when (position) {
+    Position.LEFT -> 180.0
+    Position.BOTTOM -> 90.0
+    Position.RIGHT -> 0.0
+  }
+
   private val pointInSceneProperty = circle.localToSceneTransformProperty().and(circle.radiusProperty()).map { transform, number ->
-    AngleAtPoint2D(transform.transform(Point2D(0.0, 0.0)), if (slot.mode==Slot.Mode.OUT) 0.0 else 180.0)
+    AngleAtPoint2D(transform.transform(Point2D(0.0, 0.0)), angle)
   }
 
   init {
     Markers.markAsNodeSlot(circle, NodeSlotId(nodeId, slot.id))
-    Tooltip.install(this, Tooltip(slot.name))
-
-
-    when (slot.mode) {
-      Slot.Mode.IN -> children.addAll(circle, Label(slot.name))
-      Slot.Mode.OUT -> children.addAll(Label(slot.name), circle)
+    val wrapper = when (position) {
+      Position.LEFT -> HBox().apply { alignment = Pos.CENTER }
+      Position.RIGHT -> HBox().apply { alignment = Pos.CENTER }
+      Position.BOTTOM -> VBox().apply { alignment = Pos.CENTER }
     }
 
-    if (false) {
-      sceneProperty().addListener(ChangeListener { observable, oldValue, newValue ->
-        println("$this: scene -> $oldValue -> $newValue")
-      })
+    Tooltip.install(wrapper, Tooltip(slot.name))
+    
+    HBox.setHgrow(space, Priority.ALWAYS)
+    VBox.setVgrow(space, Priority.ALWAYS)
 
-      localToSceneTransformProperty().addListener(ChangeListener { observable, oldValue, newValue ->
-        val hasScene = this@Connector.scene != null
-        println("$this ($hasScene): ${localToScene(Point2D(0.0, 0.0))}")
-      })
-
-      parentProperty().addListener(ChangeListener { observable, oldValue, newValue ->
-        val hasScene = this@Connector.scene != null
-        println("$this ($hasScene): parent has changed somehow")
-      })
+    when (position) {
+      Position.LEFT -> wrapper.children.addAll(circle, space)
+      Position.RIGHT -> wrapper.children.addAll(space, circle)
+      Position.BOTTOM -> wrapper.children.addAll(space, circle)
     }
 
-    registry.addListener(ChangeListener { observable, oldValue, newValue ->
+    children.addAll(wrapper)
+
+    registry.addListener { _, _, newValue ->
       newValue?.registerSlot(NodeSlotId(nodeId, slot.id), pointInSceneProperty)
-    })
+    }
   }
 
 }

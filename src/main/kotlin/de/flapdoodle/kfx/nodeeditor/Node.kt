@@ -6,6 +6,7 @@ import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.PseudoClassWrapper
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.nodeeditor.connectors.ConnectorsPane
+import de.flapdoodle.kfx.nodeeditor.model.Position
 import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import de.flapdoodle.kfx.nodeeditor.types.SlotId
@@ -21,7 +22,6 @@ import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import java.util.*
 
 class Node(val name: String) : BorderPane() {
   val nodeId=NodeId()
@@ -59,8 +59,9 @@ class Node(val name: String) : BorderPane() {
     top = NodeHeader(name).apply {
       Markers.markAsDragBar(this)
     }
-    left = ConnectorsPane(registry, nodeId, connectors, Slot.Mode.IN)
-    right = ConnectorsPane(registry, nodeId, connectors, Slot.Mode.OUT)
+    left = ConnectorsPane(registry, nodeId, connectors, Position.LEFT)
+    right = ConnectorsPane(registry, nodeId, connectors, Position.RIGHT)
+    bottom = ConnectorsPane(registry, nodeId, connectors, Position.BOTTOM)
   }
 
   fun resizeTo(bounds: LayoutBounds) {

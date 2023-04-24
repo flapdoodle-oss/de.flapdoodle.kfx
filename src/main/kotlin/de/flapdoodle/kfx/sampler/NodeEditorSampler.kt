@@ -18,25 +18,43 @@ import javafx.stage.Stage
 class NodeEditorSampler : Application() {
   override fun start(stage: Stage) {
     val wrapper = AnchorPane()
-    val slotIn = Slot("in", Slot.Mode.IN, Position.LEFT)
-    val slotOut = Slot("1", Slot.Mode.OUT, Position.RIGHT)
+    val slotInA = Slot("a", Slot.Mode.IN, Position.LEFT)
+    val slotInB = Slot("b", Slot.Mode.IN, Position.LEFT)
+    val slotOutX = Slot("x", Slot.Mode.OUT, Position.RIGHT)
+    val slotOutY = Slot("y", Slot.Mode.OUT, Position.RIGHT)
+    val slotOutZ = Slot("z", Slot.Mode.OUT, Position.RIGHT)
+    val slotAgg1 = Slot("1", Slot.Mode.IN, Position.BOTTOM)
+    val slotAgg2 = Slot("2", Slot.Mode.OUT, Position.BOTTOM)
+    val slotAgg3 = Slot("3", Slot.Mode.IN, Position.BOTTOM)
 
     val nodeOne = Node("one").apply {
       layoutPosition = Point2D(100.0, 50.0)
-      addConnector(slotIn)
-      addConnector(Slot("out", Slot.Mode.OUT, Position.RIGHT))
-      addConnector(slotOut)
-      addConnector(Slot("2", Slot.Mode.OUT, Position.BOTTOM))
+      addConnector(slotInA)
+      addConnector(slotOutX)
+      addConnector(slotOutY)
+      addConnector(slotOutZ)
     }
     val nodeTwo = Node("two").apply {
       content = Button("Helloooo")
-      addConnector(slotIn)
+      addConnector(slotInA)
+      addConnector(slotInB)
+      addConnector(slotAgg1)
+      addConnector(slotAgg2)
+      addConnector(slotAgg3)
+    }
+    val node3 = Node("3").apply {
+      layoutPosition = Point2D(200.0, 0.0)
+
+      content = Button("Noop")
+      addConnector(slotInA)
+      addConnector(slotOutX)
+      addConnector(slotAgg1)
     }
 
     val nodeEditor = NodeEditor().withAnchors(all = 10.0)
-    nodeEditor.layers().addNodes(nodeOne, nodeTwo)
+    nodeEditor.layers().addNodes(nodeOne, nodeTwo, node3)
     nodeEditor.layers().addConnections(
-      NodeConnection("one2two", NodeSlotId(nodeOne.nodeId, slotOut.id), NodeSlotId(nodeTwo.nodeId,slotIn.id))
+      NodeConnection("one2two", NodeSlotId(nodeOne.nodeId, slotOutX.id), NodeSlotId(nodeTwo.nodeId,slotInA.id))
     )
 
     wrapper.children.add(nodeEditor)

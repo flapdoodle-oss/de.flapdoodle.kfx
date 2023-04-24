@@ -49,15 +49,17 @@ class NodeView(
     styleClass.addAll("node-view")
     stylesheets += javaClass.getResource("NodeView.css").toExternalForm()
 
-    layers.addHints(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
-      styleClass.addAll("content-background-union")
-    })
-    layers.addHints(BoundingBoxes.bindRectangle(layers.nodes().boundingBoxProperty()).apply {
-      styleClass.addAll("content-background")
-    })
-    layers.addHints(BoundingBoxes.bindRectangle(layers.connections().boundingBoxProperty()).apply {
-      styleClass.addAll("content-background")
-    })
+    if (false) {
+      layers.addHints(BoundingBoxes.bindRectangle(layers.boundingBoxProperty()).apply {
+        styleClass.addAll("content-background-union")
+      })
+      layers.addHints(BoundingBoxes.bindRectangle(layers.nodes().boundingBoxProperty()).apply {
+        styleClass.addAll("content-background")
+      })
+      layers.addHints(BoundingBoxes.bindRectangle(layers.connections().boundingBoxProperty()).apply {
+        styleClass.addAll("content-background")
+      })
+    }
     layers.addHints(nodeConnectionHint)
 
     layers.transforms.add(Scale().apply {

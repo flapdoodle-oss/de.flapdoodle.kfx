@@ -1,4 +1,4 @@
-package de.flapdoodle.tab.controls.tables
+package de.flapdoodle.kfx.controls.table
 
 import javafx.collections.ObservableList
 import javafx.scene.control.Control

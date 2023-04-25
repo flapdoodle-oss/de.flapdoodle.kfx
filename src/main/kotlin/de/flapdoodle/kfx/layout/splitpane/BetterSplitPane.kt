@@ -1,22 +1,19 @@
-package de.flapdoodle.kfx.layout.splitplane
+package de.flapdoodle.kfx.layout.splitpane
 
+import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.minus
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.geometry.HPos
 import javafx.geometry.Point2D
 import javafx.geometry.VPos
-import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
-import javafx.scene.paint.CycleMethod
-import javafx.scene.paint.LinearGradient
-import javafx.scene.paint.Stop
 import java.lang.Double.max
 import java.lang.Double.min
 
@@ -29,6 +26,7 @@ class BetterSplitPane(
 
   init {
 //    addClass(Style.betterSplitPane)
+    bindCss("better-split-pane")
   }
 
 //  override fun getUserAgentStylesheet() = Style().base64URL.toExternalForm()
@@ -168,7 +166,7 @@ class BetterSplitPane(
 
     init {
       isFocusTraversable = false
-//      addClass(Style.betterSplitPaneHandle)
+      cssClassName("better-split-pane-handle")
     }
 
     override fun createDefaultSkin() = skin
@@ -207,6 +205,7 @@ class BetterSplitPane(
       init {
         children.add(StackPane().apply {
           isMouseTransparent = true
+          cssClassName("stack-pane")
 //          addClass(Style.stackPane)
         })
 

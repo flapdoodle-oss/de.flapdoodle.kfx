@@ -1,5 +1,6 @@
-package de.flapdoodle.tab.controls.tables
+package de.flapdoodle.kfx.controls.table
 
+import de.flapdoodle.kfx.extensions.cssClassName
 import javafx.scene.Node
 import javafx.scene.layout.StackPane
 
@@ -9,7 +10,7 @@ abstract class SmartColumn<T : Any, C: Any>(
 ) : StackPane() {
   init {
     children.add(header)
-//    addClass(SmartTableStyles.smartHeaderColumn)
+    cssClassName("smart-header-column")
   }
 
   abstract fun cell(row: T): SmartCell<T, C>

@@ -16,25 +16,27 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.clone.AutoScrollingWindow
-import de.flapdoodle.kfx.clone.BoxFactory
-import de.flapdoodle.kfx.clone.GraphEditorView
-import de.flapdoodle.tab.controls.tables.SmartCell
-import de.flapdoodle.tab.controls.tables.SmartColumn
-import de.flapdoodle.tab.controls.tables.SmartTable
+import de.flapdoodle.kfx.controls.table.SmartCell
+import de.flapdoodle.kfx.controls.table.SmartColumn
+import de.flapdoodle.kfx.controls.table.SmartTable
+import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.collections.FXCollections
 import javafx.scene.Scene
 import javafx.scene.control.Label
+import javafx.scene.layout.AnchorPane
 import javafx.stage.Stage
-import javafx.util.StringConverter
 import javafx.util.converter.DefaultStringConverter
 import javafx.util.converter.IntegerStringConverter
 
 class SmartTableSampler : Application() {
 
     override fun start(stage: Stage) {
-        val rows = FXCollections.observableArrayList(Data("Klaus", 21))
+        val rows = FXCollections.observableArrayList(
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
+        )
 
         val nameColumn = object : SmartColumn<Data, String>(Label("name")) {
             override fun cell(row: Data): SmartCell<Data, String> {
@@ -60,7 +62,13 @@ class SmartTableSampler : Application() {
             rows,
             columns
         )
-        stage.scene = Scene(table, 600.0, 400.0)
+
+        table.withAnchors(all = 10.0)
+
+        val wrapper = AnchorPane()
+        wrapper.children.add(table)
+
+        stage.scene = Scene(wrapper, 600.0, 400.0)
         stage.show()
     }
 

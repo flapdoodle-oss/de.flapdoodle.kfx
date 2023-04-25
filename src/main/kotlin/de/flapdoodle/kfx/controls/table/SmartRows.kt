@@ -1,5 +1,6 @@
-package de.flapdoodle.tab.controls.tables
+package de.flapdoodle.kfx.controls.table
 
+import de.flapdoodle.kfx.extensions.cssClassName
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
@@ -13,8 +14,7 @@ class SmartRows<T : Any>(
   private val skin = SmartRowsSkin(this)
 
   init {
-//    addClass(SmartTableStyles.smartRows)
-
+    cssClassName("smart-rows")
   }
 
   override fun createDefaultSkin() = skin

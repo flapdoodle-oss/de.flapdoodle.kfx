@@ -1,4 +1,4 @@
-package de.flapdoodle.tab.controls.tables
+package de.flapdoodle.kfx.controls.table
 
 import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction

@@ -1,6 +1,7 @@
-package de.flapdoodle.tab.controls.tables
+package de.flapdoodle.kfx.controls.table
 
 //import de.flapdoodle.tab.fx.events.fireEventToChildren
+import de.flapdoodle.kfx.extensions.bindCss
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.collections.WeakListChangeListener
@@ -28,6 +29,7 @@ class SmartTable<T : Any>(
     columns.addListener(WeakListChangeListener(columnsChangeListener))
 
 //    addClass(SmartTableStyles.smartTable)
+    bindCss("smart-table")
   }
 
   override fun createDefaultSkin() = skin

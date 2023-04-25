@@ -1,0 +1,37 @@
+.smart-table {
+    -fx-border-width: 1px 1px 0px 0px;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-background-color: white;
+}
+
+.smart-table .smart-header {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+    -fx-border-width: 2px;
+}
+
+.smart-table .smart-header .smart-header-column {
+    -fx-padding: 4px;
+    -fx-font-weight: bold;
+}
+
+.smart-table .smart-rows {
+    -fx-background-color: white;
+}
+
+.smart-table .smart-rows .smart-row {
+    -fx-border-width: 0px 1px 0px 0px;
+    -fx-border-color: rgba(0,0,0,0.3);
+}
+
+.smart-table .smart-rows .smart-row:even {
+    -fx-background-color: rgba(0,0,0,0.03);
+}
+
+.smart-table .smart-rows .smart-row:hover {
+    -fx-background-color: rgba(0,0,0,0.06);
+}
+
+.smart-table .smart-rows .smart-row:hover:even {
+    -fx-background-color: rgba(0,0,0,0.09);
+}
+

@@ -1,6 +1,7 @@
-package de.flapdoodle.tab.controls.tables
+package de.flapdoodle.kfx.controls.table
 
-import de.flapdoodle.kfx.layout.splitplane.BetterSplitPane
+import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
@@ -12,7 +13,7 @@ class SmartHeader<T : Any>(
   private val skin = SmartHeaderSkin(this)
 
   init {
-//    addClass(SmartTableStyles.smartHeader)
+    cssClassName("smart-header")
   }
 
   internal fun columnsChanged() {
@@ -25,41 +26,14 @@ class SmartHeader<T : Any>(
       private val src: SmartHeader<T>
   ) : SkinBase<SmartHeader<T>>(src) {
     private val header = BetterSplitPane().apply {
-//      addClass(TabStyle.styledSplitPane)
-//      prefWidth = 200.0
     }
 
-//    private val headerColumns = FXCollections.observableArrayList<ColumnHeader<T>>()
-
     internal fun columnsChanged() {
-//      header.items.bind(src.columns) { SmartHeaderColumn(it) }
       header.nodes().setAll(src.columns/* + Label("   ").apply { maxWidth = Double.MAX_VALUE }*/)
-
-//      header.nodes().addListener(ListChangeListener {
-//        val size = it.list.size
-//        if (size > 0) {
-//          val offset = 1.0 / (size + 1)
-//          (0 until size).forEach { index ->
-//            if (false) {
-//              header.setDividerPosition(index, offset * (index + 1))
-//            }
-//          }
-//        }
-//      })
-
-//      headerColumns.setAll(src.columns.map { ColumnHeader(it) })
-//      header.items.setAll(headerColumns)
-//      if (headerColumns.isNotEmpty()) {
-//        val offset = 1.0 / headerColumns.size
-//        headerColumns.forEachIndexed { index, _ ->
-//          header.setDividerPosition(index, offset * (index + 1))
-//        }
-//      }
     }
 
     init {
       children.add(header)
-//      columnsChanged()
     }
   }
 

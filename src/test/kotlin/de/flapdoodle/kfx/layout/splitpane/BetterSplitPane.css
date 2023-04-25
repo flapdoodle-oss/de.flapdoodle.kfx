@@ -1,0 +1,14 @@
+.better-split-pane {
+    -fx-background-color: #f4f4f4;
+}
+
+.better-split-pane .better-split-pane-handle {
+    -fx-padding: 0px 5px;
+    -fx-cursor: h_resize;
+}
+
+.better-split-pane .better-split-pane-handle .stack-pane {
+    -fx-min-width: 1px;
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, rgba(0,0,0,0.05) 0%,  rgba(0,0,0,0.2) 50,  rgba(0,0,0,0.05) 100%);
+}
+

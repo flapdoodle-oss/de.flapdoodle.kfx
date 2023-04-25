@@ -1,23 +1,36 @@
-package de.flapdoodle.tab.controls.tables
+package de.flapdoodle.kfx.controls.table
 
+import de.flapdoodle.kfx.extensions.PseudoClassWrapper
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.property
+import de.flapdoodle.kfx.nodeeditor.Node
 import javafx.collections.ObservableList
+import javafx.css.PseudoClass
+import javafx.event.Event
 import javafx.scene.control.Control
 import javafx.scene.control.Skin
 import javafx.scene.control.SkinBase
 import javafx.scene.layout.HBox
 
 class SmartRow<T : Any>(
-    internal val columns: ObservableList<out SmartColumn<T, out Any>>,
-    internal val value: T,
-    internal val index: Int
+  internal val columns: ObservableList<out SmartColumn<T, out Any>>,
+  internal val value: T,
+  internal val index: Int
 ) : Control() {
+
+  object Style {
+    val Even = PseudoClassWrapper<SmartRow<out Any>>(PseudoClass.getPseudoClass("even"))
+  }
 
   private val skin = SmartRowSkin(this)
 
   init {
     isFocusTraversable = false
-//    addClass(SmartTableStyles.smartRow)
+    cssClassName("smart-row")
+    if (index % 2 == 0) {
+      Style.Even.enable(this)
+    }
+
     if (index % 2 == 0) {
 //      addClass(Stylesheet.even)
     } else {

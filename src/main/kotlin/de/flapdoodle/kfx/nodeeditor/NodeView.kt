@@ -70,11 +70,13 @@ class NodeView(
 
     scrollX.orientation = Orientation.HORIZONTAL
     scrollX.valueProperty().bindBidirectional(layers.layoutXProperty())
+    scrollX.styleClass.add("graph-editor-scroll-bar") //$NON-NLS-1$
     scrollX.bind(scrollXBounds)
     scrollY.orientation = Orientation.VERTICAL
     scrollY.valueProperty().bindBidirectional(layers.layoutYProperty())
+    scrollY.styleClass.add("graph-editor-scroll-bar") //$NON-NLS-1$
     scrollY.bind(scrollYBounds)
-    
+
     children.addAll(scrollX,scrollY)
 
     clip = Bounds.sizeRectangle(this)

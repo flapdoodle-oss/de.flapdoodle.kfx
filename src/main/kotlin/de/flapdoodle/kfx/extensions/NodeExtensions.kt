@@ -23,6 +23,16 @@ import javafx.scene.Parent
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
 
+fun Node.hide() {
+  isVisible = false
+  isManaged = false
+}
+
+fun Node.show() {
+  isVisible = true
+  isManaged = true
+}
+
 val Node.property: ObservableMapExtensions.TypedMap
   get() = ObservableMapExtensions.TypedMap(this.properties)
 

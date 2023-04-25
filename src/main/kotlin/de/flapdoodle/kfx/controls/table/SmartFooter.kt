@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.controls.table
 
+import de.flapdoodle.kfx.extensions.cssClassName
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
@@ -13,7 +14,7 @@ class SmartFooter<T : Any>(
   private val skin = SmartFooterSkin(this)
 
   init {
-//    addClass(SmartTableStyles.smartFooter)
+    cssClassName("smart-footer")
   }
 
   internal fun columnsChanged() {

@@ -25,6 +25,7 @@ class SmartTable<T : Any>(
   private val columnsChangeListener = ListChangeListener<SmartColumn<T, out Any>> { skin.columnsChanged() }
 
   init {
+    isFocusTraversable = false
     rows.addListener(WeakListChangeListener(rowsChangeListener))
     columns.addListener(WeakListChangeListener(columnsChangeListener))
 

@@ -36,9 +36,30 @@ class SmartTableSampler : Application() {
             Data("Klaus", 21),
             Data("Ich", 1),
             Data("Du", 100),
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
+            Data("Klaus", 21),
+            Data("Ich", 1),
+            Data("Du", 100),
         )
 
-        val nameColumn = object : SmartColumn<Data, String>(Label("name")) {
+        val nameColumn = object : SmartColumn<Data, String>(Label("name"), Label("*")) {
             override fun cell(row: Data): SmartCell<Data, String> {
                 return object : SmartCell<Data, String>(
                     row.name,
@@ -47,7 +68,7 @@ class SmartTableSampler : Application() {
                 ) {}
             }
         }
-        val ageColumn = object : SmartColumn<Data, Int>(Label("age")) {
+        val ageColumn = object : SmartColumn<Data, Int>(Label("age"), Label("+")) {
             override fun cell(row: Data): SmartCell<Data, Int> {
                 return object : SmartCell<Data, Int>(
                     row.age,

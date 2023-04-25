@@ -13,6 +13,7 @@ class SmartHeader<T : Any>(
   private val skin = SmartHeaderSkin(this)
 
   init {
+    isFocusTraversable = false
     cssClassName("smart-header")
   }
 

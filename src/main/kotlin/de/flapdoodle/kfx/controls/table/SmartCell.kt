@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.table
 import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction
 import de.flapdoodle.kfx.events.handleEvent
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
 import javafx.event.EventHandler
@@ -26,6 +27,7 @@ open class SmartCell<T : Any, C : Any>(
     isFocusTraversable = true
 
 //    addClass(SmartTableStyles.smartCell)
+    cssClassName("smart-cell")
   }
 
   open fun onChange(value: C?) {}

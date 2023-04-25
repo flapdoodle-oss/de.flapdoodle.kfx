@@ -35,3 +35,20 @@
     -fx-background-color: rgba(0,0,0,0.09);
 }
 
+.smart-cell {
+    -fx-border-color: rgba(0,0,0,0.1);
+    -fx-border-width: 1px 1px 0px 0px;
+}
+
+.smart-cell:focused {
+    /*-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;*/
+    /*-fx-background-insets: 0 0 -1 0, 0, 1, 2;*/
+    -fx-border-color: -fx-focus-color;
+    -fx-border-width: -fx-focus-border;
+    /*-fx-border-insets: 2px;*/
+}
+
+.smart-table .smart-footer {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+    -fx-border-width: 2px;
+}

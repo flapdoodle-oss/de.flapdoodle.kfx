@@ -53,6 +53,7 @@ class SmartTable<T : Any>(
 //        padding = box(0.px)
 //      }
 //      children.add(rowsPane)
+      hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
       content = rowsPane
     }
 

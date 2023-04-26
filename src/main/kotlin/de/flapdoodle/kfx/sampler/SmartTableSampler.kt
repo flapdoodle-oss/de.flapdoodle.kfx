@@ -25,6 +25,7 @@ import javafx.collections.FXCollections
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.layout.AnchorPane
+import javafx.scene.text.TextAlignment
 import javafx.stage.Stage
 import javafx.util.converter.DefaultStringConverter
 import javafx.util.converter.IntegerStringConverter
@@ -73,7 +74,8 @@ class SmartTableSampler : Application() {
                 return object : SmartCell<Data, Int>(
                     row.age,
                     true,
-                    IntegerStringConverter()
+                    IntegerStringConverter(),
+                    TextAlignment.RIGHT
                 ) {}
             }
         }

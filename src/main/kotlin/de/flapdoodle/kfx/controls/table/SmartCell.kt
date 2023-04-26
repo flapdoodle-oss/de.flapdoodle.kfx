@@ -7,18 +7,21 @@ import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
 import javafx.event.EventHandler
+import javafx.geometry.Pos
 import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.control.SkinBase
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 
 open class SmartCell<T : Any, C : Any>(
     val value: C?,
     val editable: Boolean,
-    val converter: StringConverter<C>
+    val converter: StringConverter<C>,
+    val textAlignment: TextAlignment = TextAlignment.LEFT
 ) : Control() {
 
   private val skin = SmartCellSkin(this)
@@ -41,6 +44,7 @@ open class SmartCell<T : Any, C : Any>(
     private val label = Label().apply {
       isWrapText = false
       prefWidth = Double.MAX_VALUE
+      alignment = asPosition(control.textAlignment)
       text = control.converter.toString(control.value)
       if (control.editable) {
         control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
@@ -54,9 +58,9 @@ open class SmartCell<T : Any, C : Any>(
         }
 
         val logEvent = { it: KeyEvent ->
-          println("#############################")
-          println("event $it -> ${it.isConsumed} --> ${it.target} ? $control")
-          println("#############################")
+//          println("#############################")
+//          println("event $it -> ${it.isConsumed} --> ${it.target} ? $control")
+//          println("#############################")
         }
 
         control.handleEvent(KeyEvent.KEY_RELEASED) {
@@ -88,9 +92,9 @@ open class SmartCell<T : Any, C : Any>(
         if (false) {
           control.addEventHandler(KeyEvent.KEY_RELEASED) {
             if (!it.isShortcutDown) {
-              println("#############################")
-              println("event $it -> ${it.isConsumed} --> ${it.target} ? $control")
-              println("#############################")
+//              println("#############################")
+//              println("event $it -> ${it.isConsumed} --> ${it.target} ? $control")
+//              println("#############################")
 
               if (it.code == KeyCode.LEFT) {
                 it.consume()
@@ -131,6 +135,15 @@ open class SmartCell<T : Any, C : Any>(
             }
           }
         }
+      }
+    }
+
+    private fun asPosition(textAlignment: TextAlignment): Pos {
+      return when (textAlignment) {
+        TextAlignment.RIGHT -> Pos.CENTER_RIGHT
+        TextAlignment.LEFT -> Pos.CENTER_LEFT
+        TextAlignment.CENTER -> Pos.CENTER
+        TextAlignment.JUSTIFY -> Pos.CENTER
       }
     }
 

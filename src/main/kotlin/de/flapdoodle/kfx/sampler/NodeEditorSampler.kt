@@ -9,6 +9,7 @@ import de.flapdoodle.kfx.nodeeditor.NodeEditor
 import de.flapdoodle.kfx.nodeeditor.model.Position
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import javafx.application.Application
+import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.control.Button
@@ -35,7 +36,14 @@ class NodeEditorSampler : Application() {
       addConnector(slotOutZ)
     }
     val nodeTwo = Node("two").apply {
-      content = Button("Helloooo")
+      val node = this
+      content = Button("Helloooo").apply {
+        onMouseClicked = EventHandler {
+          println("clicked...")
+          it.consume()
+          node.toFront()
+        }
+      }
       addConnector(slotInA)
       addConnector(slotInB)
       addConnector(slotAgg1)
@@ -43,9 +51,15 @@ class NodeEditorSampler : Application() {
       addConnector(slotAgg3)
     }
     val node3 = Node("3").apply {
+      val node = this
       layoutPosition = Point2D(200.0, 0.0)
-
-      content = Button("Noop")
+      content = Button("Noop").apply {
+        onMouseClicked = EventHandler {
+          println("clicked...")
+          it.consume()
+          node.toFront()
+        }
+      }
       addConnector(slotInA)
       addConnector(slotOutX)
       addConnector(slotAgg1)

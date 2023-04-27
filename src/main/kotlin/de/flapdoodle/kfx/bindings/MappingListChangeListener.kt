@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.extensions
+package de.flapdoodle.kfx.bindings
 
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList

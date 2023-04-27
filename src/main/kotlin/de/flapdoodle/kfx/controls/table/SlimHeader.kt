@@ -2,12 +2,11 @@ package de.flapdoodle.kfx.controls.table
 
 import de.flapdoodle.kfx.Registration
 import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
-import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
@@ -41,13 +40,16 @@ class SlimHeader<T : Any>(
     private val columnWidthMap = SimpleObjectProperty<Map<Column<T, out Any>, ReadOnlyDoubleProperty>>()
 
     internal fun columnsChanged() {
-      val columns = src.columns.map { HeaderColumn(it) }
-      header.nodes().setAll(columns)
-      columnWidthMap.value = columns.map { it.column to it.widthProperty() }.toMap()
+//      val columns = src.columns.map { HeaderColumn(it) }
+//      header.nodes().setAll(columns)
+//      columnWidthMap.value = columns.map { it.column to it.widthProperty() }.toMap()
     }
 
     init {
       children.add(header)
+      header.nodes().syncWith(src.columns) {
+        HeaderColumn(it)
+      }
     }
 
     internal fun addColumnWidthChangeListener(listener: (Map<Column<T, out Any>, ReadOnlyDoubleProperty>) -> Unit): Registration {

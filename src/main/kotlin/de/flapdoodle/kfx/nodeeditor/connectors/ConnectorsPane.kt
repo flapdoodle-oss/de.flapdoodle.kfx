@@ -1,6 +1,6 @@
 package de.flapdoodle.kfx.nodeeditor.connectors
 
-import de.flapdoodle.kfx.extensions.ObservableLists
+import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.nodeeditor.NodeRegistry
 import de.flapdoodle.kfx.nodeeditor.model.Position
 import de.flapdoodle.kfx.nodeeditor.model.Slot
@@ -8,7 +8,6 @@ import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.scene.layout.*
-import javafx.scene.paint.Color
 
 class ConnectorsPane(
   private val registry: ObservableValue<NodeRegistry>,

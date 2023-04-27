@@ -30,7 +30,7 @@ class RunSamplerIT {
 
     @Start
     private fun createElement(stage: Stage) {
-        val case = 2
+        val case = 3
         when (case) {
             1 -> PanningWindowsSampler().apply {
                 start(stage)
@@ -38,7 +38,7 @@ class RunSamplerIT {
             2 -> SmartTableSampler().apply {
                 start(stage)
             }
-            3 -> ComponentsBehaviorSampler().apply {
+            3 -> SlimTableSampler().apply {
                 start(stage)
             }
             4 -> NodeEditorSampler().apply {
@@ -46,6 +46,9 @@ class RunSamplerIT {
             }
             10 -> PickMesh3DSampler().apply {
                 // -Dprism.forceGPU=true
+                start(stage)
+            }
+            11 -> ComponentsBehaviorSampler().apply {
                 start(stage)
             }
         }

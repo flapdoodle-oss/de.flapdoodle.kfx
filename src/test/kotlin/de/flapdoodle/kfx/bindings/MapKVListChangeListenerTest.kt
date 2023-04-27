@@ -1,17 +1,16 @@
-package de.flapdoodle.kfx.layout.list
+package de.flapdoodle.kfx.bindings
 
-import de.flapdoodle.kfx.bindings.MappingListChangeListener
 import javafx.collections.FXCollections
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class MappingListChangeListenerTest {
+class MapKVListChangeListenerTest {
 
   abstract class Case {
     val source = FXCollections.observableArrayList<String>()
-    val destination = FXCollections.observableArrayList<String>()
-    val testee = MappingListChangeListener<String, String>(destination) { ">$it<" }
+    val destination = FXCollections.observableHashMap<String, Int>()
+    val testee = MapKVListChangeListener<String, String, Int>(destination, { ">$it<" }) { it.length }
 
     init {
       source.addListener(testee)
@@ -26,7 +25,7 @@ class MappingListChangeListenerTest {
       source.add("One")
       assertThat(destination)
         .hasSize(1)
-        .containsExactly(">One<")
+        .containsEntry(">One<", 3)
     }
 
     @Test
@@ -34,7 +33,9 @@ class MappingListChangeListenerTest {
       source.addAll("1", "2", "3")
       assertThat(destination)
         .hasSize(3)
-        .containsExactly(">1<", ">2<", ">3<")
+        .containsExactlyInAnyOrderEntriesOf(
+          mapOf(">1<" to 1, ">2<" to 1, ">3<" to 1)
+        )
     }
 
     @Test
@@ -43,7 +44,9 @@ class MappingListChangeListenerTest {
       source.addAll(2, listOf("a", "b"))
       assertThat(destination)
         .hasSize(5)
-        .containsExactly(">1<", ">2<", ">a<", ">b<", ">3<")
+        .containsExactlyInAnyOrderEntriesOf(
+          mapOf(">1<" to 1, ">2<" to 1, ">a<" to 1, ">b<" to 1, ">3<" to 1)
+        )
     }
   }
 
@@ -63,7 +66,7 @@ class MappingListChangeListenerTest {
       source.removeAll("1", "2")
       assertThat(destination)
         .hasSize(1)
-        .containsExactly(">3<")
+        .containsEntry(">3<",1)
     }
 
     @Test
@@ -72,7 +75,9 @@ class MappingListChangeListenerTest {
       source.removeAll("2", "3")
       assertThat(destination)
         .hasSize(2)
-        .containsExactly(">1<", ">4<")
+        .containsExactlyInAnyOrderEntriesOf(
+          mapOf(">1<" to 1, ">4<" to 1)
+        )
     }
 
     @Test
@@ -81,7 +86,7 @@ class MappingListChangeListenerTest {
       source.removeAll("2", "3")
       assertThat(destination)
         .hasSize(1)
-        .containsExactly(">1<")
+        .containsEntry(">1<" ,1 )
     }
 
     @Test
@@ -101,7 +106,9 @@ class MappingListChangeListenerTest {
       source.set(1, "a")
       assertThat(destination)
         .hasSize(3)
-        .containsExactly(">1<", ">a<", ">3<")
+        .containsExactlyInAnyOrderEntriesOf(
+          mapOf(">1<" to 1, ">a<" to 1, ">3<" to 1)
+        )
     }
   }
 
@@ -109,11 +116,13 @@ class MappingListChangeListenerTest {
   inner class Permutate : Case() {
     @Test
     fun permutateList() {
-      source.addAll("3","1","2")
+      source.addAll("3", "1", "2")
       source.sort()
       assertThat(destination)
         .hasSize(3)
-        .containsExactly(">1<", ">2<", ">3<")
+        .containsExactlyInAnyOrderEntriesOf(
+          mapOf(">1<" to 1, ">2<" to 1, ">3<" to 1)
+        )
     }
   }
 }

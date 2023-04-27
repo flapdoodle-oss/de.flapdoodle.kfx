@@ -7,6 +7,7 @@ import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
@@ -37,6 +38,7 @@ class SlimHeader<T : Any>(
     private val src: SlimHeader<T>
   ) : SkinBase<SlimHeader<T>>(src) {
     private val header = BetterSplitPane()
+    private val headerColumns = FXCollections.observableArrayList<HeaderColumn<T>>()
     private val columnWidthMap = SimpleObjectProperty<Map<Column<T, out Any>, ReadOnlyDoubleProperty>>()
 
     internal fun columnsChanged() {
@@ -47,9 +49,10 @@ class SlimHeader<T : Any>(
 
     init {
       children.add(header)
-      header.nodes().syncWith(src.columns) {
+      headerColumns.syncWith(src.columns) {
         HeaderColumn(it)
       }
+      header.nodes().syncWith(headerColumns) { it }
     }
 
     internal fun addColumnWidthChangeListener(listener: (Map<Column<T, out Any>, ReadOnlyDoubleProperty>) -> Unit): Registration {

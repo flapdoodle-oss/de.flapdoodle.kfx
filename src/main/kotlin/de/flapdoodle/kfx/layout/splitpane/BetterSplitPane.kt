@@ -47,7 +47,7 @@ class BetterSplitPane(
 
     init {
       control.nodes.addListener(ListChangeListener {
-        println("changed: $it")
+//        println("changed: $it")
         handles.setAll(control.nodes.map {
           SplitHandle(this, it)
         })
@@ -117,8 +117,8 @@ class BetterSplitPane(
     override fun computePrefWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
 //      super.computePrefWidth(height,topInset,rightInset,bottomInset,leftInset)
       val ret = handles.filter { it.isNodeManaged() }
-          .map { it.prefWidthOfNode(height) }
-          .sumByDouble { it -> snapSizeX(it) }
+        .map { it.prefWidthOfNode(height) }
+        .sumOf { it -> snapSizeX(it) }
 
 //      println("pref width -> $ret")
       return ret

@@ -19,7 +19,9 @@ package de.flapdoodle.kfx.sampler
 import de.flapdoodle.kfx.controls.smarttable.SmartCell
 import de.flapdoodle.kfx.controls.smarttable.SmartColumn
 import de.flapdoodle.kfx.controls.smarttable.SmartTable
+import de.flapdoodle.kfx.controls.table.Column
 import de.flapdoodle.kfx.controls.table.SlimCell
+import de.flapdoodle.kfx.controls.table.SlimTable
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
@@ -62,28 +64,36 @@ class SlimTableSampler : Application() {
             Data("Du", 100),
         )
 
-        val nameColumn = object : SmartColumn<Data, String>(Label("name"), Label("*")) {
-            override fun cell(row: Data): SmartCell<Data, String> {
-                return object : SmartCell<Data, String>(
-                    row.name,
-                    true,
-                    DefaultStringConverter()
-                ) {}
-            }
-        }
-        val ageColumn = object : SmartColumn<Data, Int>(Label("age"), Label("+")) {
-            override fun cell(row: Data): SmartCell<Data, Int> {
-                return object : SmartCell<Data, Int>(
-                    row.age,
-                    true,
-                    IntegerStringConverter(),
-                    TextAlignment.RIGHT
-                ) {}
-            }
-        }
+        val nameColumn = Column<Data, String>(
+            header = { Label("name") },
+            footer = { Label("N")}
+        )
+//        val nameColumn = object : SmartColumn<Data, String>(Label("name"), Label("*")) {
+//            override fun cell(row: Data): SmartCell<Data, String> {
+//                return object : SmartCell<Data, String>(
+//                    row.name,
+//                    true,
+//                    DefaultStringConverter()
+//                ) {}
+//            }
+//        }
+        val ageColumn = Column<Data, Int>(
+            header = { Label("age") },
+            footer = { Label("A")}
+        )
+//        val ageColumn = object : SmartColumn<Data, Int>(Label("age"), Label("+")) {
+//            override fun cell(row: Data): SmartCell<Data, Int> {
+//                return object : SmartCell<Data, Int>(
+//                    row.age,
+//                    true,
+//                    IntegerStringConverter(),
+//                    TextAlignment.RIGHT
+//                ) {}
+//            }
+//        }
         val columns = FXCollections.observableArrayList(nameColumn, ageColumn)
 
-        val table = SmartTable<Data>(
+        val table = SlimTable<Data>(
             rows,
             columns
         )
@@ -93,16 +103,16 @@ class SlimTableSampler : Application() {
 
 
         val wrapper = AnchorPane()
-//        wrapper.children.add(table)
+        wrapper.children.add(table)
 
-        val testee = SlimCell<Data, String>(
-            SimpleObjectProperty("foo"),
-            DefaultStringConverter(),
-            true,
-            TextAlignment.RIGHT
-        )
-        testee.withAnchors(all = 10.0)
-        wrapper.children.add(testee)
+//        val testee = SlimCell<Data, String>(
+//            SimpleObjectProperty("foo"),
+//            DefaultStringConverter(),
+//            true,
+//            TextAlignment.RIGHT
+//        )
+//        testee.withAnchors(all = 10.0)
+//        wrapper.children.add(testee)
 
         stage.scene = Scene(wrapper, 600.0, 400.0)
         stage.show()

@@ -74,9 +74,9 @@ object EventHandlers {
     }
 
     fun build(): EventHandler<in T> {
-      println("-----------------------------------")
-      println("---> $rootHandler")
-      println("-----------------------------------")
+//      println("-----------------------------------")
+//      println("---> $rootHandler")
+//      println("-----------------------------------")
       return rootHandler ?: throw IllegalArgumentException("no rule added")
     }
   }

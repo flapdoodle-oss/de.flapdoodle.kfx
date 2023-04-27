@@ -16,9 +16,9 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.controls.table.SmartCell
-import de.flapdoodle.kfx.controls.table.SmartColumn
-import de.flapdoodle.kfx.controls.table.SmartTable
+import de.flapdoodle.kfx.controls.smarttable.SmartCell
+import de.flapdoodle.kfx.controls.smarttable.SmartColumn
+import de.flapdoodle.kfx.controls.smarttable.SmartTable
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.collections.FXCollections

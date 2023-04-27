@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.table
+package de.flapdoodle.kfx.controls.smarttable
 
 import de.flapdoodle.kfx.extensions.PseudoClassWrapper
 import de.flapdoodle.kfx.extensions.cssClassName

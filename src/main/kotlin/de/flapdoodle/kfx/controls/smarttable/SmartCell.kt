@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.table
+package de.flapdoodle.kfx.controls.smarttable
 
 import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction

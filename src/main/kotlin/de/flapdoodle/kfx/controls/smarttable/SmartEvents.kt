@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.table
+package de.flapdoodle.kfx.controls.smarttable
 
 import javafx.event.Event
 import javafx.event.EventType

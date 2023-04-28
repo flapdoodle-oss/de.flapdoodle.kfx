@@ -1,16 +1,13 @@
 package de.flapdoodle.kfx.bindings
 
 import javafx.beans.InvalidationListener
-import javafx.beans.WeakInvalidationListener
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.beans.value.WeakChangeListener
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.collections.WeakListChangeListener
 
-class ValueOfValueBinding<S, T>(
+class NestedValueBinding<S, T>(
   private val valueBinding: ObservableValue<S?>,
   private val propertyAccess: (S) -> ObservableValue<T>
 ) : ObjectBinding<T?>() {
@@ -68,7 +65,7 @@ class ValueOfValueBinding<S, T>(
 
   companion object {
     fun <S, T> of(source: ObservableValue<S?>, propertyAccess: (S) -> ObservableValue<T>): ObservableValue<T?> {
-      return ValueOfValueBinding(source, propertyAccess)
+      return NestedValueBinding(source, propertyAccess)
     }
   }
 }

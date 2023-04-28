@@ -37,7 +37,7 @@ class NodeRegistry {
   }
 
   private fun scenePosition(nodeSlotId: NodeSlotId): ObjectBindings.DefaultIfNull<AngleAtPoint2D> {
-    return ValueOfValueBinding.of(nodeSlotsProperty.map { it[nodeSlotId] }) { it }
+    return NestedValueBinding.of(nodeSlotsProperty.map { it[nodeSlotId] }) { it }
       .defaultIfNull(Values.constantObject(AngleAtPoint2D(0.0, 0.0, 0.0)))
   }
 

@@ -1,15 +1,10 @@
 package de.flapdoodle.kfx.controls.table
 
-import de.flapdoodle.kfx.Registration
-import de.flapdoodle.kfx.bindings.ValueOfValueBinding
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
-import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
-import javafx.collections.MapChangeListener
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase

@@ -10,11 +10,13 @@ import javafx.collections.WeakListChangeListener
 import javafx.scene.control.Control
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.SkinBase
+import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 
 class SlimTable<T: Any>(
   internal val rows: ObservableList<T>,
   internal val columns: ObservableList<out Column<T, out Any>>
+  // TODO CellChangeListener
 ) : Control() {
   init {
 
@@ -45,9 +47,9 @@ class SlimTable<T: Any>(
     private var currentCursor: Cursor<T>? = null
 
     private val header = SlimHeader(control.columns)
-//    private val rowsPane = SmartRows(control.rows, control.columns).apply {
-//      VBox.setVgrow(this, Priority.ALWAYS)
-//    }
+    private val rowsPane = SlimRows(control.rows, control.columns, header::columnWidthProperty).apply {
+      VBox.setVgrow(this, Priority.ALWAYS)
+    }
     private val footer = SlimFooter(control.columns, header::columnWidthProperty)
 
     private val scroll = ScrollPane().apply {
@@ -56,7 +58,7 @@ class SlimTable<T: Any>(
 //      }
 //      children.add(rowsPane)
       hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
-//      content = rowsPane
+      content = rowsPane
     }
 
     private val all = VBox().apply {
@@ -111,18 +113,18 @@ class SlimTable<T: Any>(
     }
 
     internal fun rowsChanged() {
-//      rowsPane.rowsChanged()
+      rowsPane.rowsChanged()
       currentCursor?.let {
-//        rowsPane.setCursor(it)
+        rowsPane.setCursor(it)
       }
     }
 
     internal fun columnsChanged() {
       header.columnsChanged()
-//      rowsPane.columnsChanged()
+      rowsPane.columnsChanged()
       footer.columnsChanged()
       currentCursor?.let {
-//        rowsPane.setCursor(it)
+        rowsPane.setCursor(it)
       }
     }
 

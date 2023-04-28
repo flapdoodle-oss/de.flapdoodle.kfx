@@ -23,7 +23,7 @@ import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 
 open class SlimCell<T: Any, C: Any>(
-  val value: Property<C?>,
+  var value: C?,
   val converter: StringConverter<C>,
   val editable: Boolean,
   val textAlignment: TextAlignment = TextAlignment.LEFT
@@ -48,7 +48,7 @@ open class SlimCell<T: Any, C: Any>(
       isWrapText = false
       prefWidth = Double.MAX_VALUE
       alignment = asPosition(control.textAlignment)
-      textProperty().bind(control.value.map { control.converter.toString(it) })
+      text = control.converter.toString(control.value)
       if (control.editable) {
         control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
           if (it.clickCount == 1) {
@@ -119,7 +119,7 @@ open class SlimCell<T: Any, C: Any>(
       value = control.value,
       converter = control.converter,
       commitEdit = {
-        control.value.value = it
+        control.value = it
 //        label.text = control.converter.toString(it)
 //        control.fireEvent(SmartEvents.EditDone(control))
         control.onChange(it)
@@ -190,13 +190,13 @@ open class SlimCell<T: Any, C: Any>(
 
   companion object {
     fun <T : Any> createTextField(
-      value: ObservableValue<T?>,
+      value: T?,
       converter: StringConverter<T>,
       commitEdit: (T?) -> Unit,
       cancelEdit: () -> Unit
     ): TextField {
       val textField = TextField()
-      textField.text = converter.toString(value.value)
+      textField.text = converter.toString(value)
 
 //      textField.onAction = EventHandler { event: ActionEvent ->
 //        event.consume()

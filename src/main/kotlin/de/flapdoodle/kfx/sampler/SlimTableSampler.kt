@@ -66,6 +66,11 @@ class SlimTableSampler : Application() {
 
         val nameColumn = Column<Data, String>(
             header = { Label("name") },
+            cell = { it -> SlimCell<Data,String>(
+                it.name,
+                DefaultStringConverter(),
+        true
+            )},
             footer = { Label("N")}
         )
 //        val nameColumn = object : SmartColumn<Data, String>(Label("name"), Label("*")) {
@@ -79,6 +84,11 @@ class SlimTableSampler : Application() {
 //        }
         val ageColumn = Column<Data, Int>(
             header = { Label("age") },
+            cell = { it -> SlimCell<Data,Int>(
+                it.age,
+                IntegerStringConverter(),
+                true
+            )},
             footer = { Label("A")}
         )
 //        val ageColumn = object : SmartColumn<Data, Int>(Label("age"), Label("+")) {

@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.controls.table
 
+import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.extensions.cssClassName
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
@@ -13,56 +14,40 @@ class SlimFooter<T : Any>(
   private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : Control() {
 
-  private val skin = SlimFooterSkin(this)
+  private val skin = Skin(this)
 
   init {
+    isFocusTraversable = false
     cssClassName("slim-footer")
-  }
-
-  internal fun columnsChanged() {
-    skin.columnsChanged()
   }
 
   override fun createDefaultSkin() = skin
 
-  class SlimFooterSkin<T : Any>(
+  inner class Skin<T : Any>(
     private val src: SlimFooter<T>
   ) : SkinBase<SlimFooter<T>>(src) {
-    private val footer = HBox().apply {
-    }
-
-    internal fun columnsChanged() {
-      val columns = src.columns.map { FooterColumn(it).apply {
-        prefWidthProperty().bind(src.columnWidthProperties(it))
-//        prefWidthProperty().bind(it.widthProperty())
+    private val footer = HBox()
+    init {
+      ObservableLists.syncWith(src.columns, footer.children) {
+        FooterColumn(it).apply {
+          prefWidthProperty().bind(src.columnWidthProperties(it))
         }
       }
-
-      footer.children.setAll(columns)
-    }
-
-    init {
       children.add(footer)
     }
   }
 
-  class FooterColumn<T: Any>(
+  inner class FooterColumn<T: Any>(
     internal val column: Column<T, out Any>
-  ) : Control() {
+  ) : StackPane() {
 
-    private val skin = Skin(this)
-    override fun createDefaultSkin() = skin
+    init {
+      isFocusTraversable = true
+      cssClassName("slim-header-column")
 
-    class Skin<T: Any>(control: FooterColumn<T>) : SkinBase<FooterColumn<T>>(control) {
-      val stackPane = StackPane()
-
-      init {
-        if (control.column.footer!=null) {
-          stackPane.children.add(control.column.footer.invoke())
-        }
-        children.add(stackPane)
+      if (column.footer!=null) {
+        children.add(column.footer.invoke())
       }
-
     }
   }
 }

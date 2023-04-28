@@ -2,16 +2,10 @@ package de.flapdoodle.kfx.controls.table
 
 import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction
-import de.flapdoodle.kfx.bindings.map
-import de.flapdoodle.kfx.controls.smarttable.SmartEvents
 import de.flapdoodle.kfx.events.handleEvent
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.Property
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Control
@@ -30,7 +24,7 @@ open class SlimCell<T: Any, C: Any>(
   val textAlignment: TextAlignment = TextAlignment.LEFT
 ) : Control() {
 
-  private val skin = SlimCellSkin(this)
+  private val skin = Skin(this)
   private var changeListener: ((C?) -> Unit)? = null
 
   init {
@@ -50,7 +44,7 @@ open class SlimCell<T: Any, C: Any>(
 
   override fun createDefaultSkin() = skin
 
-  class SlimCellSkin<T : Any, C : Any>(
+  inner class Skin<T : Any, C : Any>(
     private val control: SlimCell<T, C>
   ) : SkinBase<SlimCell<T, C>>(control) {
 

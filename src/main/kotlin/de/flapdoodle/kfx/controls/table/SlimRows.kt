@@ -23,17 +23,6 @@ class SlimRows<T : Any>(
   }
 
   override fun createDefaultSkin() = skin
-  internal fun rowsChanged() {
-    skin.rowsChanged()
-  }
-
-  fun columnsChanged() {
-    skin.columnsChanged()
-  }
-
-  internal fun setCursor(cursor: Cursor<T>) {
-    skin.setCursor(cursor)
-  }
 
   class SmartRowsSkin<T : Any>(
     private val control: SlimRows<T>
@@ -41,34 +30,11 @@ class SlimRows<T : Any>(
     private val rowPane = VBox()
 
     init {
-      // TODO what?
-      consumeMouseEvents(false)
-
       children.add(rowPane)
 
       ObservableLists.syncWithIndexed(control.rows, rowPane.children) { index, it ->
         SlimRow(control.columns, it, index, control.columnWidthProperties, control.changeListener)
       }
-
-      rowsChanged()
-    }
-
-    internal fun rowsChanged() {
-//      rowPane.children.setAll(control.rows.mapIndexed { index, t ->
-//        SlimRow(control.columns, t, index)
-//      })
-    }
-
-    fun columnsChanged() {
-//      rowPane.children.forEach {
-//        (it as SmartRow<T>).columnsChanged()
-//      }
-    }
-
-    internal fun setCursor(cursor: Cursor<T>) {
-//      rowPane.children.forEach {
-//        (it as SmartRow<T>).setCursor(cursor)
-//      }
     }
   }
 

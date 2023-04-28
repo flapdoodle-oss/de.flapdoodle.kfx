@@ -17,7 +17,8 @@ class SlimRow<T : Any>(
   internal val columns: ObservableList<out Column<T, out Any>>,
   internal val value: T,
   internal val index: Int,
-  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
+  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
+  internal val changeListener: CellChangeListener<T>
 ) : Control() {
 
   object Style {
@@ -117,9 +118,10 @@ class SlimRow<T : Any>(
       }
     }
 
-    private fun <T : Any, C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): SlimCell<T, C> {
+    private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): SlimCell<T, C> {
       return c.cell(value).apply {
         property[Column::class] = c
+        changeListener { row.changeListener.onChange(row.index, CellChangeListener.Change(c, it)) }
         prefWidthProperty().bind(width)
       }
     }

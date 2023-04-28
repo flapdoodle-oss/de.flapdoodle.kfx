@@ -73,15 +73,7 @@ class SlimTableSampler : Application() {
             )},
             footer = { Label("N")}
         )
-//        val nameColumn = object : SmartColumn<Data, String>(Label("name"), Label("*")) {
-//            override fun cell(row: Data): SmartCell<Data, String> {
-//                return object : SmartCell<Data, String>(
-//                    row.name,
-//                    true,
-//                    DefaultStringConverter()
-//                ) {}
-//            }
-//        }
+        
         val ageColumn = Column<Data, Int>(
             header = { Label("age") },
             cell = { it -> SlimCell<Data,Int>(
@@ -91,44 +83,31 @@ class SlimTableSampler : Application() {
             )},
             footer = { Label("A")}
         )
-//        val ageColumn = object : SmartColumn<Data, Int>(Label("age"), Label("+")) {
-//            override fun cell(row: Data): SmartCell<Data, Int> {
-//                return object : SmartCell<Data, Int>(
-//                    row.age,
-//                    true,
-//                    IntegerStringConverter(),
-//                    TextAlignment.RIGHT
-//                ) {}
-//            }
-//        }
         val columns = FXCollections.observableArrayList(nameColumn, ageColumn)
 
         val table = SlimTable<Data>(
             rows,
             columns
-        )
+        ) { row, change ->
+            println("change ($row, ${change.column}) to ${change.value}")
+            val source: Data = rows[row]
+            when (change.column) {
+                nameColumn -> source.name = change.value as String?
+                ageColumn -> source.age = change.value as Int?
+            }
+            rows[row] = source
+        }
 
         table.withAnchors(all = 10.0)
 
-
-
         val wrapper = AnchorPane()
         wrapper.children.add(table)
-
-//        val testee = SlimCell<Data, String>(
-//            SimpleObjectProperty("foo"),
-//            DefaultStringConverter(),
-//            true,
-//            TextAlignment.RIGHT
-//        )
-//        testee.withAnchors(all = 10.0)
-//        wrapper.children.add(testee)
 
         stage.scene = Scene(wrapper, 600.0, 400.0)
         stage.show()
     }
 
-    class Data(var name: String, var age: Int) {
+    class Data(var name: String?, var age: Int?) {
 
     }
 }

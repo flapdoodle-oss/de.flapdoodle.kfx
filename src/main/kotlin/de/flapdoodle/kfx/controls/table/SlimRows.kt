@@ -13,7 +13,8 @@ import javafx.scene.layout.VBox
 class SlimRows<T : Any>(
   private val rows: ObservableList<T>,
   private val columns: ObservableList<out Column<T, out Any>>,
-  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
+  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
+  internal val changeListener: CellChangeListener<T>
 ) : Control() {
   private val skin = SmartRowsSkin(this)
 
@@ -46,7 +47,7 @@ class SlimRows<T : Any>(
       children.add(rowPane)
 
       ObservableLists.syncWithIndexed(control.rows, rowPane.children) { index, it ->
-        SlimRow(control.columns, it, index, control.columnWidthProperties)
+        SlimRow(control.columns, it, index, control.columnWidthProperties, control.changeListener)
       }
 
       rowsChanged()

@@ -12,7 +12,7 @@ object ObservableMaps {
     source.forEach {
       destination[keyOf(it)] = valueOf(it)
     }
-    val listener = WeakListChangeListener(MapKVListChangeListener(destination, keyOf, valueOf))
+    val listener = MapKVListChangeListener(destination, keyOf, valueOf)
     source.addListener(listener)
 
     return Registration {
@@ -24,7 +24,7 @@ object ObservableMaps {
     source.forEach { (key, value) ->
       destination[key] = transformation(value)
     }
-    val listener = WeakMapChangeListener(MappingMapChangeListener(destination, transformation))
+    val listener = MappingMapChangeListener(destination, transformation)
     source.addListener(listener)
 
     return Registration {

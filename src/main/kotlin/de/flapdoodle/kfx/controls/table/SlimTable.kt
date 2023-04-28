@@ -15,8 +15,8 @@ import javafx.scene.layout.VBox
 
 class SlimTable<T: Any>(
   internal val rows: ObservableList<T>,
-  internal val columns: ObservableList<out Column<T, out Any>>
-  // TODO CellChangeListener
+  internal val columns: ObservableList<out Column<T, out Any>>,
+  internal val changeListener: CellChangeListener<T>
 ) : Control() {
   init {
 
@@ -47,7 +47,7 @@ class SlimTable<T: Any>(
     private var currentCursor: Cursor<T>? = null
 
     private val header = SlimHeader(control.columns)
-    private val rowsPane = SlimRows(control.rows, control.columns, header::columnWidthProperty).apply {
+    private val rowsPane = SlimRows(control.rows, control.columns, header::columnWidthProperty, control.changeListener).apply {
       VBox.setVgrow(this, Priority.ALWAYS)
     }
     private val footer = SlimFooter(control.columns, header::columnWidthProperty)

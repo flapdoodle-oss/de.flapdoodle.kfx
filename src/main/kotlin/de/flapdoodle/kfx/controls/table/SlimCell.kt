@@ -10,6 +10,7 @@ import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.Property
+import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Pos
@@ -23,20 +24,29 @@ import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 
 open class SlimCell<T: Any, C: Any>(
-  var value: C?,
+  val value: C?,
   val converter: StringConverter<C>,
   val editable: Boolean,
   val textAlignment: TextAlignment = TextAlignment.LEFT
 ) : Control() {
 
   private val skin = SlimCellSkin(this)
+  private var changeListener: ((C?) -> Unit)? = null
 
   init {
     isFocusTraversable = true
     cssClassName("slim-cell")
   }
 
-  open fun onChange(value: C?) {}
+  fun onChange(value: C?) {
+    changeListener?.let {
+      it(value)
+    }
+  }
+
+  fun changeListener(listener: (C?) -> Unit) {
+    changeListener = listener
+  }
 
   override fun createDefaultSkin() = skin
 
@@ -119,7 +129,7 @@ open class SlimCell<T: Any, C: Any>(
       value = control.value,
       converter = control.converter,
       commitEdit = {
-        control.value = it
+//        control.value = it
 //        label.text = control.converter.toString(it)
 //        control.fireEvent(SmartEvents.EditDone(control))
         control.onChange(it)

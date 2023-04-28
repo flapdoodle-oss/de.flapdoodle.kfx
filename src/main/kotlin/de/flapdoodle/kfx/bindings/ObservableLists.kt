@@ -10,7 +10,7 @@ object ObservableLists {
 
   fun <S, T> syncWith(source: ObservableList<S>, destination: ObservableList<T>, transformation: (S) -> T): Registration {
     destination.setAll(source.map(transformation))
-    val listener = WeakListChangeListener(MappingListChangeListener(destination, transformation))
+    val listener = MappingListChangeListener(destination, transformation)
     source.addListener(listener)
 
     return Registration {
@@ -20,7 +20,7 @@ object ObservableLists {
 
   fun <S, T> syncWithIndexed(source: ObservableList<S>, destination: ObservableList<T>, transformation: (Int, S) -> T): Registration {
     destination.setAll(source.mapIndexed(transformation))
-    val listener = WeakListChangeListener(IndexedMappingListChangeListener(destination, transformation))
+    val listener = IndexedMappingListChangeListener(destination, transformation)
     source.addListener(listener)
 
     return Registration {

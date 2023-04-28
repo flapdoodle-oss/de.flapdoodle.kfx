@@ -26,7 +26,9 @@ import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
+import javafx.event.EventHandler
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.AnchorPane
 import javafx.scene.text.TextAlignment
@@ -102,6 +104,16 @@ class SlimTableSampler : Application() {
 
         val wrapper = AnchorPane()
         wrapper.children.add(table)
+        wrapper.children.add(Button("toggle").apply {
+            withAnchors(right = 0.0, top = 0.0)
+            onAction = EventHandler {
+                if (columns.contains(ageColumn)) {
+                    columns.remove(ageColumn)
+                } else {
+                    columns.add(ageColumn)
+                }
+            }
+        })
 
         stage.scene = Scene(wrapper, 600.0, 400.0)
         stage.show()

@@ -30,7 +30,7 @@ class RunSamplerIT {
 
     @Start
     private fun createElement(stage: Stage) {
-        val case = 4
+        val case = 3
         when (case) {
             1 -> PanningWindowsSampler().apply {
                 start(stage)

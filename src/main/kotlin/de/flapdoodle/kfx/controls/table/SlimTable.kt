@@ -48,7 +48,7 @@ class SlimTable<T: Any>(
 //    private val rowsPane = SmartRows(control.rows, control.columns).apply {
 //      VBox.setVgrow(this, Priority.ALWAYS)
 //    }
-    private val footer = SlimFooter(control.columns)
+    private val footer = SlimFooter(control.columns, header::columnWidthProperty)
 
     private val scroll = ScrollPane().apply {
 //      style {

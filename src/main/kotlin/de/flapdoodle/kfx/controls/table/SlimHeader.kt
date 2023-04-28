@@ -1,9 +1,13 @@
 package de.flapdoodle.kfx.controls.table
 
+import de.flapdoodle.kfx.bindings.Values
+import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.bindings.syncWith
+import de.flapdoodle.kfx.bindings.valueOf
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
@@ -30,6 +34,9 @@ class SlimHeader<T : Any>(
 //  fun addColumnWidthChangeListener(listener: (Map<Column<T, out Any>, ReadOnlyDoubleProperty>) -> Unit): Registration {
 //    return skin.addColumnWidthChangeListener(listener)
 //  }
+  fun columnWidthProperty(column: Column<T, out Any>): ObservableValue<Number> {
+    return skin.columnWidthProperty(column)
+  }
 
   class SlimHeaderSkin<T : Any>(
     private val src: SlimHeader<T>
@@ -51,6 +58,11 @@ class SlimHeader<T : Any>(
       }
       header.nodes().syncWith(headerColumns) { it }
       columnWidthMap.syncWith(headerColumns, { it.column }) { it.widthProperty() }
+    }
+
+    internal fun columnWidthProperty(column: Column<T, out Any>): ObservableValue<Number> {
+      return columnWidthMap.valueOf(column)
+        .defaultIfNull(Values.constant(1.0))
     }
     
 //    internal fun addColumnWidthChangeListener(listener: (Map<Column<T, out Any>, ReadOnlyDoubleProperty>) -> Unit): Registration {

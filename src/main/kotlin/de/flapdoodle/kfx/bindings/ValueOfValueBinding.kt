@@ -1,11 +1,14 @@
 package de.flapdoodle.kfx.bindings
 
 import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.beans.value.WeakChangeListener
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.collections.WeakListChangeListener
 
 class ValueOfValueBinding<S, T>(
   private val valueBinding: ObservableValue<S?>,
@@ -19,10 +22,11 @@ class ValueOfValueBinding<S, T>(
   private val invalidationFromProperty = InvalidationListener {
     invalidate()
   }
-  private val changeListener = ChangeListener<T> { _, _ , _ ->
+
+  private val changeListener = ChangeListener<T> { _, _, _ ->
     invalidate()
   }
-  
+
   init {
     bind(valueBinding)
   }

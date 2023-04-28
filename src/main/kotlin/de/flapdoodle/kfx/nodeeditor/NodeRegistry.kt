@@ -12,9 +12,9 @@ import javafx.collections.ObservableMap
 
 class NodeRegistry {
   private val nodes: ObservableMap<NodeId, Node> = FXCollections.observableHashMap()
-  private val nodesPropery = ReadOnlyMapWrapper(nodes)
+  private val nodesProperty = ReadOnlyMapWrapper(nodes)
   private val nodeSlots: ObservableMap<NodeSlotId, ObservableValue<AngleAtPoint2D>> = FXCollections.observableHashMap()
-  private val nodeSlotsPropery = ReadOnlyMapWrapper(nodeSlots)
+  private val nodeSlotsProperty = ReadOnlyMapWrapper(nodeSlots)
 
   fun registerNode(node: Node) {
     nodes[node.nodeId] = node
@@ -33,11 +33,11 @@ class NodeRegistry {
   }
 
   private fun nodeByIdProperty(id: NodeId): ObjectBinding<Node?> {
-    return nodesPropery.map { it[id] }
+    return nodesProperty.map { it[id] }
   }
 
   private fun scenePosition(nodeSlotId: NodeSlotId): ObjectBindings.DefaultIfNull<AngleAtPoint2D> {
-    return ValueOfValueBinding.of(nodeSlotsPropery.map { it[nodeSlotId] }) { it }
+    return ValueOfValueBinding.of(nodeSlotsProperty.map { it[nodeSlotId] }) { it }
       .defaultIfNull(Values.constantObject(AngleAtPoint2D(0.0, 0.0, 0.0)))
   }
 

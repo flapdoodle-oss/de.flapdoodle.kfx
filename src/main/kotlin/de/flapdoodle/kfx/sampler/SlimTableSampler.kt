@@ -16,25 +16,26 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.controls.smarttable.SmartCell
-import de.flapdoodle.kfx.controls.smarttable.SmartColumn
-import de.flapdoodle.kfx.controls.smarttable.SmartTable
 import de.flapdoodle.kfx.controls.table.Column
 import de.flapdoodle.kfx.controls.table.SlimCell
 import de.flapdoodle.kfx.controls.table.SlimTable
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.binding.Bindings
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.event.EventHandler
+import javafx.scene.Node
 import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.control.Label
+import javafx.scene.control.*
+import javafx.scene.control.cell.PropertyValueFactory
+import javafx.scene.control.cell.TextFieldTableCell
 import javafx.scene.layout.AnchorPane
-import javafx.scene.text.TextAlignment
+import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import javafx.util.converter.DefaultStringConverter
 import javafx.util.converter.IntegerStringConverter
+
 
 class SlimTableSampler : Application() {
 
@@ -100,10 +101,20 @@ class SlimTableSampler : Application() {
             rows[row] = source
         }
 
-        table.withAnchors(all = 10.0)
+        table//.withAnchors(all = 10.0)
+
+        val splitPane = SplitPane()
+        splitPane.items.add(StackPane().apply {
+            children.add(table)
+        })
+        splitPane.items.add(StackPane().apply {
+            children.add(tableSample(rows))
+        })
+        splitPane.setDividerPositions(0.5)
+
 
         val wrapper = AnchorPane()
-        wrapper.children.add(table)
+        wrapper.children.add(splitPane.withAnchors(all = 10.0))
         wrapper.children.add(Button("toggle").apply {
             withAnchors(right = 0.0, top = 0.0)
             onAction = EventHandler {
@@ -115,8 +126,37 @@ class SlimTableSampler : Application() {
             }
         })
 
-        stage.scene = Scene(wrapper, 600.0, 400.0)
+        stage.scene = Scene(wrapper, 800.0, 600.0)
         stage.show()
+    }
+
+    private fun tableSample(data: ObservableList<Data>): Node {
+        // https://jenkov.com/tutorials/javafx/tableview.html
+        val table = TableView<Data>()
+
+        val column1: TableColumn<Data, String> = TableColumn("Name")
+        column1.setCellValueFactory(PropertyValueFactory("name"))
+        column1.setCellFactory(TextFieldTableCell.forTableColumn())
+
+        val column2: TableColumn<Data, Int> = TableColumn("Age")
+        column2.setCellValueFactory(PropertyValueFactory("age"))
+//        column2.setCellFactory(TextFieldTableCell.forTableColumn())
+
+
+        table.getColumns().add(column1)
+        table.getColumns().add(column2)
+
+        Bindings.bindContent(table.items, data)
+
+//        table.getItems().add(
+//            Person("John", "Doe")
+//        )
+//        tableView.getItems().add(
+//            Person("Jane", "Deer")
+//        )
+        table.isEditable = true
+
+        return table
     }
 
     class Data(var name: String?, var age: Int?) {

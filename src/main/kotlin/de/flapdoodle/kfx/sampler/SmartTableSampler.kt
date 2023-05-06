@@ -23,8 +23,11 @@ import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.collections.FXCollections
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.control.Label
+import javafx.scene.control.SplitPane
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.StackPane
 import javafx.scene.text.TextAlignment
 import javafx.stage.Stage
 import javafx.util.converter.DefaultStringConverter

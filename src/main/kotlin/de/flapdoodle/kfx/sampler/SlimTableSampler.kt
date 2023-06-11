@@ -137,10 +137,16 @@ class SlimTableSampler : Application() {
         val column1: TableColumn<Data, String> = TableColumn("Name")
         column1.setCellValueFactory(PropertyValueFactory("name"))
         column1.setCellFactory(TextFieldTableCell.forTableColumn())
+        column1.setOnEditCommit { event ->
+            event.tableView.items[event.tablePosition.row].name = event.newValue
+        }
 
         val column2: TableColumn<Data, Int> = TableColumn("Age")
         column2.setCellValueFactory(PropertyValueFactory("age"))
-//        column2.setCellFactory(TextFieldTableCell.forTableColumn())
+        column2.setCellFactory(TextFieldTableCell.forTableColumn(IntegerStringConverter()))
+        column2.setOnEditCommit { event ->
+            event.tableView.items[event.tablePosition.row].age = event.newValue
+        }
 
 
         table.getColumns().add(column1)
@@ -155,6 +161,7 @@ class SlimTableSampler : Application() {
 //            Person("Jane", "Deer")
 //        )
         table.isEditable = true
+        
 
         return table
     }

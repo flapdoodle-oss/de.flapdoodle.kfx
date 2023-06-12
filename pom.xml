@@ -245,8 +245,9 @@
                     <validHeader>http://www.company.com/yetAnotherSupportedHeader.txt</validHeader> 
                     </validHeaders> -->
                     <quiet>false</quiet>
-                    <failIfMissing>true</failIfMissing>
-                    <strictCheck>true</strictCheck>
+                    <!-- TODO enable for first release -->
+<!--                    <failIfMissing>true</failIfMissing>-->
+<!--                    <strictCheck>true</strictCheck>-->
                     <aggregate>false</aggregate>
                     <includes>
                         <include>src/**</include>
@@ -393,7 +394,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.6.0</version>
+                <version>2.7.5</version>
                 <executions>
                     <execution>
                         <id>extract</id>
@@ -402,9 +403,7 @@
                         </goals>
                         <configuration>
                             <classifier>app</classifier>
-                            <mainClass>
-                                de.flapdoodle.kfx.App
-                            </mainClass>
+                            <mainClass>de.flapdoodle.kfx.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>
@@ -517,7 +516,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.6.0</version>
                         <executions>
                             <execution>
                                 <goals>

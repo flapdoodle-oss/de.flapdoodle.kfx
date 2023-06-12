@@ -1,8 +1,6 @@
 package de.flapdoodle.kfx.controls.table
 
 import de.flapdoodle.kfx.bindings.ObservableLists
-import de.flapdoodle.kfx.controls.smarttable.Cursor
-import de.flapdoodle.kfx.controls.smarttable.SmartRow
 import de.flapdoodle.kfx.extensions.cssClassName
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList

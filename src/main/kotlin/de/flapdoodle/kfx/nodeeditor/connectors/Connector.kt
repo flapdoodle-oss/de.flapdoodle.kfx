@@ -28,7 +28,7 @@ class Connector(
   private val slot: Slot,
   position: Position
 ) : StackPane() {
-  private val circle = Circle(4.0, if (slot.mode == Slot.Mode.IN) Color.GREEN else Color.RED)
+  private val circle = Circle(4.0, slot.color ?: if (slot.mode == Slot.Mode.IN) Color.GREEN else Color.RED)
 //  private val label = Label(slot.name)
   private val space = Region()
   private val angle = when (position) {

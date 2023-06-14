@@ -14,12 +14,13 @@ import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.layout.AnchorPane
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 
 class NodeEditorSampler : Application() {
   override fun start(stage: Stage) {
     val wrapper = AnchorPane()
-    val slotInA = Slot("a", Slot.Mode.IN, Position.LEFT)
+    val slotInA = Slot("a", Slot.Mode.IN, Position.LEFT, Color.DARKORANGE)
     val slotInB = Slot("b", Slot.Mode.IN, Position.LEFT)
     val slotOutX = Slot("x", Slot.Mode.OUT, Position.RIGHT)
     val slotOutY = Slot("y", Slot.Mode.OUT, Position.RIGHT)

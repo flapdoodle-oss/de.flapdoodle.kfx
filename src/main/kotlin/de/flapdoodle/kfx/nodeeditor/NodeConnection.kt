@@ -12,6 +12,9 @@ import javafx.geometry.Bounds
 import javafx.scene.Parent
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
+import javafx.scene.paint.CycleMethod
+import javafx.scene.paint.LinearGradient
+import javafx.scene.paint.Stop
 
 class NodeConnection(
   val name: String,
@@ -54,12 +57,22 @@ class NodeConnection(
     stylesheets += javaClass.getResource("NodeConnection.css").toExternalForm()
     //isFocusTraversable = false
 
+    val linearGrad = LinearGradient(
+      0.0,  // start X
+      0.0,  // start Y
+      1.0,  // end X
+      1.0,  // end Y
+      true,  // proportional
+      CycleMethod.NO_CYCLE,  // cycle colors
+      // stops
+      Stop(0.1, Color.rgb(255, 0, 0, .991)),
+      Stop(1.0, Color.rgb(0, 255, 0, .991))
+    )
+
     children.add(curve.apply {
-      //Markers.markAsConnection(this, ConnectionId(start, end))
-      styleClass.addAll("path")
+//      styleClass.addAll("path")
       
-//      strokeWidth = 1.0
-//      stroke = Color.RED
+      stroke = linearGrad
       fill = Color.TRANSPARENT
       isPickOnBounds = false
     })

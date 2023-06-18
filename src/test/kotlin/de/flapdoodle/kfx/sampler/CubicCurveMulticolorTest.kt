@@ -7,6 +7,7 @@ import de.flapdoodle.kfx.extensions.minus
 import de.flapdoodle.kfx.extensions.scenePosition
 import de.flapdoodle.kfx.extensions.screenPosition
 import de.flapdoodle.kfx.graph.nodes.Curves
+import de.flapdoodle.kfx.strokes.LinearGradients
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
@@ -32,7 +33,7 @@ class CubicCurveMulticolorTest {
   @Start
   private fun createElement(stage: Stage) {
     val pane = Pane()
-    val start = SimpleObjectProperty(AngleAtPoint2D(50.0, 100.0, 90.0))
+    val start = SimpleObjectProperty(AngleAtPoint2D(150.0, 100.0, 90.0))
     val end = SimpleObjectProperty(AngleAtPoint2D(595.0, 100.0, 180.0))
 
     val acolor = LinearGradient(
@@ -71,24 +72,29 @@ class CubicCurveMulticolorTest {
     b.strokeWidth = 3.0
     b.stroke = bcolor
 
-    val startOffset = start.map { it.copy(point2D = Point2D(it.point2D.x, it.point2D.y + 20.0)) }
-    val endOffset = end.map { it.copy(point2D = Point2D(it.point2D.x, it.point2D.y + 20.0)) }
+    val startOffset = start.map { it.copy(point2D = Point2D(it.point2D.x, it.point2D.y + 50.0)) }
+    val endOffset = end.map { it.copy(point2D = Point2D(it.point2D.x, it.point2D.y + 50.0)) }
 
     val c = Curves.cubicCurve(startOffset, endOffset)
+    val startColor = SimpleObjectProperty(Color.rgb(255, 0, 0, 1.0))
+    val endColor = SimpleObjectProperty(Color.rgb(0, 0, 255, 1.0))
+
     c.fill = Color.TRANSPARENT
     c.stroke = Color.RED
     c.strokeWidth = 3.0
-    c.stroke = LinearGradient(
-      0.0,  // start X
-      0.0,  // start Y
-      1.0,  // end X
-      1.0,  // end Y
-      true,  // proportional
-      CycleMethod.NO_CYCLE,  // cycle colors
-      // stops
-      Stop(0.0, Color.rgb(255, 0, 0, 1.0)),
-      Stop(1.0, Color.rgb(0, 0, 255, 1.0))
-    )
+//    c.stroke = LinearGradient(
+//      0.0,  // start X
+//      0.0,  // start Y
+//      1.0,  // end X
+//      1.0,  // end Y
+//      true,  // proportional
+//       CycleMethod.NO_CYCLE,  // cycle colors
+//     // stops
+//      Stop(0.0, Color.rgb(255, 0, 0, 1.0)),
+//      Stop(1.0, Color.rgb(0, 0, 255, 1.0))
+//    )
+
+    c.strokeProperty().bind(LinearGradients.from(startOffset.map { it.point2D }, endOffset.map { it.point2D }, startColor, endColor))
 
     val lock = SharedLock<Pane>()
 

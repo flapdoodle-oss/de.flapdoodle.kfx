@@ -20,9 +20,9 @@ import javafx.stage.Stage
 class NodeEditorSampler : Application() {
   override fun start(stage: Stage) {
     val wrapper = AnchorPane()
-    val slotInA = Slot("a", Slot.Mode.IN, Position.LEFT, Color.DARKORANGE)
-    val slotInB = Slot("b", Slot.Mode.IN, Position.LEFT)
-    val slotOutX = Slot("x", Slot.Mode.OUT, Position.RIGHT)
+    val slotInA = Slot("a", Slot.Mode.IN, Position.LEFT, Color.DARKRED)
+    val slotInB = Slot("b", Slot.Mode.IN, Position.LEFT, Color.DARKGREEN)
+    val slotOutX = Slot("x", Slot.Mode.OUT, Position.RIGHT, Color.DARKBLUE)
     val slotOutY = Slot("y", Slot.Mode.OUT, Position.RIGHT)
     val slotOutZ = Slot("z", Slot.Mode.OUT, Position.RIGHT)
     val slotAgg1 = Slot("1", Slot.Mode.IN, Position.BOTTOM)

@@ -5,11 +5,13 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.graph.nodes.SizeMode
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
+import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
+import javafx.scene.paint.Color
 
 class NodeEditor : AnchorPane() {
   private val sharedLock = SharedLock<javafx.scene.Node>()
@@ -112,7 +114,7 @@ class NodeEditor : AnchorPane() {
 
             is NodeAction.Connect -> {
               view.nodeConnectionHint()
-                .end(AngleAtPoint2D(event.scenePosition, Point2DMath.angle(action.clickPosition, event.screenPosition) - 180))
+                .end(ColoredAngleAtPoint2D(event.scenePosition, Point2DMath.angle(action.clickPosition, event.screenPosition) - 180, Color.BLACK))
 
               val nextBestGuess = guessAction(event.screenPosition)
               if (nextBestGuess!=null && nextBestGuess is ElementAction.NodeAndAction) {

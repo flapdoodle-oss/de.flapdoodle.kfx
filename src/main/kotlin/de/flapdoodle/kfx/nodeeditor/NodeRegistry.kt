@@ -4,16 +4,18 @@ import de.flapdoodle.kfx.bindings.*
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
+import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyMapWrapper
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableMap
+import javafx.scene.paint.Color
 
 class NodeRegistry {
   private val nodes: ObservableMap<NodeId, Node> = FXCollections.observableHashMap()
   private val nodesProperty = ReadOnlyMapWrapper(nodes)
-  private val nodeSlots: ObservableMap<NodeSlotId, ObservableValue<AngleAtPoint2D>> = FXCollections.observableHashMap()
+  private val nodeSlots: ObservableMap<NodeSlotId, ObservableValue<ColoredAngleAtPoint2D>> = FXCollections.observableHashMap()
   private val nodeSlotsProperty = ReadOnlyMapWrapper(nodeSlots)
 
   fun registerNode(node: Node) {
@@ -36,16 +38,16 @@ class NodeRegistry {
     return nodesProperty.map { it[id] }
   }
 
-  private fun scenePosition(nodeSlotId: NodeSlotId): ObjectBindings.DefaultIfNull<AngleAtPoint2D> {
+  private fun scenePosition(nodeSlotId: NodeSlotId): ObjectBindings.DefaultIfNull<ColoredAngleAtPoint2D> {
     return NestedValueBinding.of(nodeSlotsProperty.map { it[nodeSlotId] }) { it }
-      .defaultIfNull(Values.constantObject(AngleAtPoint2D(0.0, 0.0, 0.0)))
+      .defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
   }
 
-  fun registerSlot(nodeSlotId: NodeSlotId, positionInScene: ObservableValue<AngleAtPoint2D>) {
+  fun registerSlot(nodeSlotId: NodeSlotId, positionInScene: ObservableValue<ColoredAngleAtPoint2D>) {
     nodeSlots[nodeSlotId] = positionInScene
   }
 
-  fun scenePositionOf(source: NodeSlotId): AngleAtPoint2D? {
+  fun scenePositionOf(source: NodeSlotId): ColoredAngleAtPoint2D? {
     return scenePosition(source).value
   }
 }

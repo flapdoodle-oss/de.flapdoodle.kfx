@@ -8,6 +8,7 @@ import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import de.flapdoodle.kfx.nodeeditor.types.NodeSlotId
 import de.flapdoodle.kfx.types.AngleAtPoint2D
+import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
@@ -28,7 +29,8 @@ class Connector(
   private val slot: Slot,
   position: Position
 ) : StackPane() {
-  private val circle = Circle(4.0, slot.color ?: if (slot.mode == Slot.Mode.IN) Color.GREEN else Color.RED)
+  private val color = slot.color ?: if (slot.mode == Slot.Mode.IN) Color.GREEN else Color.RED
+  private val circle = Circle(4.0, color)
 //  private val label = Label(slot.name)
   private val space = Region()
   private val angle = when (position) {
@@ -38,7 +40,7 @@ class Connector(
   }
 
   private val pointInSceneProperty = circle.localToSceneTransformProperty().and(circle.radiusProperty()).map { transform, number ->
-    AngleAtPoint2D(transform.transform(Point2D(0.0, 0.0)), angle)
+    ColoredAngleAtPoint2D(transform.transform(Point2D(0.0, 0.0)), angle, color)
   }
 
   init {

@@ -16,7 +16,9 @@
  */
 package de.flapdoodle.kfx.extensions
 
+import de.flapdoodle.kfx.types.AngleAndPoint2D
 import de.flapdoodle.kfx.types.AngleAtPoint2D
+import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -132,6 +134,13 @@ fun Node.screenToLocal(src: AngleAtPoint2D?): AngleAtPoint2D? {
 fun Node.sceneToLocal(src: AngleAtPoint2D?): AngleAtPoint2D? {
   return if (src != null) {
     val result = sceneToLocal(src.point2D)
-    if (result!=null) AngleAtPoint2D(result, src.angle) else null
+    if (result!=null) src.copy(point2D = result) else null
+  } else null
+}
+
+fun Node.sceneToLocal(src: ColoredAngleAtPoint2D?): ColoredAngleAtPoint2D? {
+  return if (src != null) {
+    val result = sceneToLocal(src.point2D)
+    if (result!=null) src.copy(point2D = result) else null
   } else null
 }

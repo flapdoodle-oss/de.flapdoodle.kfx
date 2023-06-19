@@ -34,11 +34,11 @@ object LinearGradients {
     )
   }
 
-  fun from(
+  fun cardinal(
     start: ObservableValue<Point2D>,
     end: ObservableValue<Point2D>,
     startColor: ObservableValue<Color>,
-    endColor: ObservableValue<Color>,
+    endColor: ObservableValue<Color>
   ): ObservableValue<Paint> {
 
     var cached = KeyedGradient(
@@ -54,6 +54,22 @@ object LinearGradients {
       }
 
       cached.gradient
+    }
+  }
+
+  fun exact(
+    start: ObservableValue<Point2D>,
+            end: ObservableValue<Point2D>,
+            startColor: ObservableValue<Color>,
+            endColor: ObservableValue<Color>
+  ): ObservableValue<Paint> {
+    return ObjectBindings.merge(start, end, startColor, endColor) { s, e, colorAtStart, colorAtEnd ->
+      LinearGradient(
+        s.x, s.y, e.x, e.y,false,
+        CycleMethod.NO_CYCLE,
+        Stop(0.0, colorAtStart),
+        Stop(1.0, colorAtEnd)
+      )
     }
   }
 }

@@ -1,16 +1,12 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.bindings.map
-import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.events.SharedLock
-import de.flapdoodle.kfx.extensions.minus
 import de.flapdoodle.kfx.extensions.scenePosition
-import de.flapdoodle.kfx.extensions.screenPosition
 import de.flapdoodle.kfx.graph.nodes.Curves
 import de.flapdoodle.kfx.strokes.LinearGradients
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.value.ChangeListener
 import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.input.MouseEvent
@@ -33,7 +29,7 @@ class CubicCurveMulticolorTest {
   @Start
   private fun createElement(stage: Stage) {
     val pane = Pane()
-    val start = SimpleObjectProperty(AngleAtPoint2D(150.0, 100.0, 90.0))
+    val start = SimpleObjectProperty(AngleAtPoint2D(400.0, 100.0, 90.0))
     val end = SimpleObjectProperty(AngleAtPoint2D(595.0, 100.0, 180.0))
 
     val acolor = LinearGradient(
@@ -72,33 +68,28 @@ class CubicCurveMulticolorTest {
     b.strokeWidth = 3.0
     b.stroke = bcolor
 
-    val startOffset = start.map { it.copy(point2D = Point2D(it.point2D.x, it.point2D.y + 50.0)) }
-    val endOffset = end.map { it.copy(point2D = Point2D(it.point2D.x, it.point2D.y + 50.0)) }
-
-    val c = Curves.cubicCurve(startOffset, endOffset)
     val startColor = SimpleObjectProperty(Color.rgb(255, 0, 0, 1.0))
     val endColor = SimpleObjectProperty(Color.rgb(0, 0, 255, 1.0))
 
-    c.fill = Color.TRANSPARENT
-    c.stroke = Color.RED
-    c.strokeWidth = 3.0
-//    c.stroke = LinearGradient(
-//      0.0,  // start X
-//      0.0,  // start Y
-//      1.0,  // end X
-//      1.0,  // end Y
-//      true,  // proportional
-//       CycleMethod.NO_CYCLE,  // cycle colors
-//     // stops
-//      Stop(0.0, Color.rgb(255, 0, 0, 1.0)),
-//      Stop(1.0, Color.rgb(0, 0, 255, 1.0))
-//    )
+    val startC = start.map { it.copy(point2D = Point2D(it.point2D.x - 50.0, it.point2D.y + 50.0)) }
+    val endC = end.map { it.copy(point2D = Point2D(it.point2D.x - 50.0, it.point2D.y + 50.0)) }
 
-    c.strokeProperty().bind(LinearGradients.from(startOffset.map { it.point2D }, endOffset.map { it.point2D }, startColor, endColor))
+    val c = Curves.cubicCurve(startC, endC)
+    c.fill = Color.TRANSPARENT
+    c.strokeWidth = 3.0
+    c.strokeProperty().bind(LinearGradients.cardinal(startC.map(AngleAtPoint2D::point2D), endC.map(AngleAtPoint2D::point2D), startColor, endColor))
+
+    val startD = start.map { it.copy(point2D = Point2D(it.point2D.x - 100.0, it.point2D.y + 100.0)) }
+    val endD = end.map { it.copy(point2D = Point2D(it.point2D.x - 100.0, it.point2D.y + 100.0)) }
+
+    val d = Curves.cubicCurve(startD, endD)
+    d.fill = Color.TRANSPARENT
+    d.strokeWidth = 3.0
+    d.strokeProperty().bind(LinearGradients.exact(startD.map(AngleAtPoint2D::point2D), endD.map(AngleAtPoint2D::point2D), startColor, endColor))
 
     val lock = SharedLock<Pane>()
 
-    pane.children.addAll(a, b, c)
+    pane.children.addAll(a, b, c, d)
     pane.addEventFilter(MouseEvent.MOUSE_PRESSED) { event ->
       lock.tryLock(pane) { event.scenePosition }
     }

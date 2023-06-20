@@ -17,14 +17,19 @@
 .nodeConnection > .path{
     -fx-stroke-width: 1.0;
     /*-fx-stroke: linear-gradient(to right, #ff7f50, #6a5acd);*/
-    -fx-stroke: red;
+    /*-fx-stroke: red;*/
 }
 
 .nodeConnection:focused > .path {
-    -fx-stroke: green;
-    -fx-stroke-width: 2.0;
+    /*-fx-stroke: green;*/
+    -fx-stroke-width: 3.0;
 }
 
 .nodeConnection:selected > .path {
     -fx-stroke-dash-array: 2 4;
+    -fx-stroke-width: 2.0;
+}
+
+.nodeConnection:selected:focused > .path {
+    -fx-stroke-width: 3.0;
 }

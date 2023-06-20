@@ -72,7 +72,7 @@ class NodeConnection(
 //    )
 
     children.add(curve.apply {
-//      styleClass.addAll("path")
+      styleClass.addAll("path")
       
 //      stroke = linearGrad
       strokeProperty().bind(LinearGradients.exact(

@@ -7,6 +7,7 @@ import de.flapdoodle.kfx.nodeeditor.model.Slot
 import de.flapdoodle.kfx.nodeeditor.types.NodeId
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
+import javafx.geometry.Pos
 import javafx.scene.layout.*
 
 class ConnectorsPane(

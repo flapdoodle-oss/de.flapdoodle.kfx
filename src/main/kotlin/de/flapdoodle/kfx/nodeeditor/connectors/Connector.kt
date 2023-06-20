@@ -30,7 +30,9 @@ class Connector(
   position: Position
 ) : StackPane() {
   private val color = slot.color ?: if (slot.mode == Slot.Mode.IN) Color.GREEN else Color.RED
-  private val circle = Circle(4.0, color)
+  private val circle = Circle(5.0, color).apply {
+    Tooltip.install(this, Tooltip(slot.name))
+  }
 //  private val label = Label(slot.name)
   private val space = Region()
   private val angle = when (position) {

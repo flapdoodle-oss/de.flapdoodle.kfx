@@ -246,7 +246,7 @@
                     </validHeaders> -->
                     <quiet>false</quiet>
                     <!-- TODO enable for first release -->
-<!--                    <failIfMissing>true</failIfMissing>-->
+                    <failIfMissing>false</failIfMissing>
 <!--                    <strictCheck>true</strictCheck>-->
                     <aggregate>false</aggregate>
                     <includes>

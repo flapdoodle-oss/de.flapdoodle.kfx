@@ -660,7 +660,7 @@
         <javafx.version>16</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 
-        <kotlin.version>1.8.20</kotlin.version>
+        <kotlin.version>1.8.22</kotlin.version>
         <main.class>kotlin.KotlinHelloKt</main.class>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.compiler.languageVersion>1.8</kotlin.compiler.languageVersion>

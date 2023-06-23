@@ -26,7 +26,7 @@
 }
 
 .nodeConnection:selected > .path {
-    -fx-stroke-dash-array: 2 4;
+    -fx-stroke-dash-array: 8.0 8.0;
     -fx-stroke-width: 2.0;
 }
 

@@ -104,6 +104,12 @@ class SlimTableSampler : Application() {
   }
 
   private fun slimTableSample(data: ObservableList<Data>, toggle: ObservableValue<Boolean>): Node {
+    val backGroundToogled = toggle.map {
+      if (it)
+        Background(BackgroundFill(Color.rgb(255, 0, 0, 0.2), CornerRadii.EMPTY, Insets.EMPTY))
+      else null
+    }
+
     val nameColumn = Column<Data, String>(
       header = { Label("name") },
       cell = { it ->
@@ -117,13 +123,17 @@ class SlimTableSampler : Application() {
     )
 
     val ageColumn = Column<Data, Int>(
-      header = { Label("age") },
+      header = { Label("age").apply {
+        this.backgroundProperty().bind(backGroundToogled)
+      } },
       cell = { it ->
         SlimCell<Data, Int>(
           it.age,
           IntegerStringConverter(),
           true
-        )
+        ).apply {
+          this.backgroundProperty().bind(backGroundToogled)
+        }
       },
       footer = { Label("A") }
     )

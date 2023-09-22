@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.controls.table
 
 import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction
+import com.sun.javafx.scene.traversal.TraversalMethod
 import de.flapdoodle.kfx.events.handleEvent
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
@@ -74,19 +75,19 @@ open class SlimCell<T: Any, C: Any>(
           matching { !it.isShortcutDown } then {
             consume { it.code == KeyCode.LEFT } by {
               logEvent(it)
-              NodeHelper.traverse(control, Direction.LEFT)
+              NodeHelper.traverse(control, Direction.LEFT, TraversalMethod.DEFAULT)
             }
             consume { it.code == KeyCode.RIGHT } by {
               logEvent(it)
-              NodeHelper.traverse(control, Direction.RIGHT)
+              NodeHelper.traverse(control, Direction.RIGHT, TraversalMethod.DEFAULT)
             }
             consume { it.code == KeyCode.UP } by {
               logEvent(it)
-              NodeHelper.traverse(control, Direction.UP)
+              NodeHelper.traverse(control, Direction.UP, TraversalMethod.DEFAULT)
             }
             consume { it.code == KeyCode.DOWN } by {
               logEvent(it)
-              NodeHelper.traverse(control, Direction.DOWN)
+              NodeHelper.traverse(control, Direction.DOWN, TraversalMethod.DEFAULT)
             }
 
             consume { it.code == KeyCode.ENTER } by {

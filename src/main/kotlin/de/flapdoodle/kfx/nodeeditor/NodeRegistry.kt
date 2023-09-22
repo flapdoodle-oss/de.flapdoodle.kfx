@@ -34,7 +34,7 @@ class NodeRegistry {
     connection.dispose()
   }
 
-  private fun nodeByIdProperty(id: NodeId): ObjectBinding<Node?> {
+  private fun nodeByIdProperty(id: NodeId): ObservableValue<Node?> {
     return nodesProperty.map { it[id] }
   }
 

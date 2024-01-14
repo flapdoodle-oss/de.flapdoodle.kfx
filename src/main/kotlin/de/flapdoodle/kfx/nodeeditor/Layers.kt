@@ -57,6 +57,17 @@ class Layers(private val nodeRegistry: NodeRegistry) : Region() {
     }
   }
 
+  fun allConnections(): List<NodeConnection> {
+    return connections.children.filterIsInstance(NodeConnection::class.java)
+  }
+
+  fun removeConnections(list: List<NodeConnection>) {
+    connections.remove(*list.toTypedArray())
+    list.forEach {
+      nodeRegistry.unregisterConnection(it)
+    }
+  }
+
   fun addHints(vararg list: Node) {
     hints.add(*list)
   }

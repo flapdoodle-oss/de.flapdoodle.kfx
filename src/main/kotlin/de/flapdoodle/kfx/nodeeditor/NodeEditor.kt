@@ -9,6 +9,8 @@ import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 import javafx.scene.paint.Color
@@ -20,6 +22,7 @@ class NodeEditor : AnchorPane() {
   init {
     children.add(view)
     addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
+    addEventFilter(KeyEvent.ANY, this::filterKeyEvents)
   }
 
   fun layers() = view.layers()
@@ -33,7 +36,7 @@ class NodeEditor : AnchorPane() {
           Node.Style.Active.enable(target)
         }
         if (target is NodeConnection) {
-          NodeConnection.Style.Focused.enable(target)
+          target.focus()
         }
       }
       MouseEvent.MOUSE_EXITED_TARGET -> sharedLock.ifUnlocked {
@@ -41,7 +44,7 @@ class NodeEditor : AnchorPane() {
           Node.Style.Active.disable(target)
         }
         if (target is NodeConnection) {
-          NodeConnection.Style.Focused.disable(target)
+          target.blur()
         }
       }
       MouseEvent.MOUSE_MOVED -> sharedLock.ifUnlocked {
@@ -158,9 +161,21 @@ class NodeEditor : AnchorPane() {
         sharedLock.ifLocked(NodeConnection::class.java, ConnectionAction::class.java) { lock ->
           event.consume()
           println("select ${lock.owner}")
-          NodeConnection.Style.Selected.swap(lock.owner)
+          lock.owner.toggleSelect()
+
 //          cursor = null
           lock.releaseLock()
+        }
+      }
+    }
+  }
+  private fun filterKeyEvents(event: KeyEvent) {
+    when (event.eventType) {
+      KeyEvent.KEY_RELEASED -> sharedLock.ifUnlocked {
+//        println("event--> code: ${event.code}, char: ${event.character}")
+        if (event.code==KeyCode.DELETE) {
+          val selected = layers().allConnections().filter { it -> it.isSelected() }
+          layers().removeConnections(selected)
         }
       }
     }

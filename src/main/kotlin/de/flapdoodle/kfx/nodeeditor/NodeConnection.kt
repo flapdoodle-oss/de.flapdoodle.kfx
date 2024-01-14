@@ -21,7 +21,8 @@ import javafx.scene.paint.Stop
 class NodeConnection(
   val name: String,
   val start: NodeSlotId,
-  val end: NodeSlotId
+  val end: NodeSlotId,
+  private var selected: Boolean = false
 ): Region() {
   companion object {
     fun onlyConnections(node: javafx.scene.Node): List<NodeConnection> {
@@ -33,7 +34,7 @@ class NodeConnection(
     }
   }
 
-  object Style {
+  private object Style {
     val Focused = PseudoClassWrapper<NodeConnection>(PseudoClass.getPseudoClass("focused"))
     val Selected = PseudoClassWrapper<NodeConnection>(PseudoClass.getPseudoClass("selected"))
   }
@@ -99,6 +100,23 @@ class NodeConnection(
 
   fun boundsInParent(): Bounds {
     return curve.boundsInParent
+  }
+
+  fun isSelected(): Boolean {
+    return selected
+  }
+
+  fun toggleSelect() {
+    Style.Selected.swap(this)
+    selected = !selected
+  }
+
+  fun focus() {
+    Style.Focused.enable(this)
+  }
+
+  fun blur() {
+    Style.Focused.disable(this)
   }
 
 }

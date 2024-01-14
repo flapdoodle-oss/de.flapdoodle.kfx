@@ -192,7 +192,7 @@ internal class ChildsInParentBoundsExtensionIT {
             .hasBounds(LayoutBounds(-15.0, -15.0, 30.0, 30.0))
 
         assertThat(movedUpPane.containerlessBoundsInLocal())
-            .hasBounds(LayoutBounds(-25.0, -40.0, 30.0, 30.0))
+            .hasBounds(LayoutBounds(-35.0, -35.0, 30.0, 30.0))
         assertThat(movedUpPane.containerlessBoundsInParent())
             .hasBounds(LayoutBounds(-25.0, -40.0, 30.0, 30.0))
 

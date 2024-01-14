@@ -659,7 +659,7 @@
 
     <properties>
         <maven.compiler.release>11</maven.compiler.release>
-        <javafx.version>16</javafx.version>
+        <javafx.version>17.0.9</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 
         <kotlin.version>1.8.22</kotlin.version>

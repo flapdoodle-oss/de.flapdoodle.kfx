@@ -37,7 +37,7 @@ class Node(val name: String) : BorderPane() {
     }
   }
 
-  object Style {
+  private object Style {
     val Active = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("active"))
   }
 
@@ -105,4 +105,13 @@ class Node(val name: String) : BorderPane() {
       })
     }
   }
+
+  fun focus() {
+    Style.Active.enable(this)
+  }
+
+  fun blur() {
+    Style.Active.disable(this)
+  }
+
 }

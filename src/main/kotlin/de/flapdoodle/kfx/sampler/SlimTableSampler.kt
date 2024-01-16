@@ -41,6 +41,10 @@ import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.converter.DefaultStringConverter
 import javafx.util.converter.IntegerStringConverter
+import org.controlsfx.control.spreadsheet.SpreadsheetView
+import org.controlsfx.control.tableview2.TableColumn2
+import org.controlsfx.control.tableview2.TableView2
+import org.controlsfx.control.tableview2.cell.TextField2TableCell
 
 
 class SlimTableSampler : Application() {
@@ -80,7 +84,9 @@ class SlimTableSampler : Application() {
       children.add(slimTableSample(rows, toogle))
     })
     splitPane.items.add(StackPane().apply {
-      children.add(tableSample(rows, toogle))
+//      children.add(tableSample(rows, toogle))
+//      children.add(spreadsheet(rows, toogle))
+      children.add(tableView2(rows, toogle))
     })
     splitPane.setDividerPositions(0.5)
 
@@ -101,6 +107,47 @@ class SlimTableSampler : Application() {
 
     stage.scene = Scene(wrapper, 800.0, 600.0)
     stage.show()
+  }
+
+  private fun spreadsheet(data: ObservableList<Data>, toggle: ObservableValue<Boolean>): Node {
+    val backGroundToogled = toggle.map {
+      if (it)
+        Background(BackgroundFill(Color.rgb(255, 0, 0, 0.2), CornerRadii.EMPTY, Insets.EMPTY))
+      else null
+    }
+
+    val nameColumn = Column<Data, String>(
+      header = { Label("name") },
+      cell = { it ->
+        SlimCell<Data, String>(
+          it.name,
+          DefaultStringConverter(),
+          true
+        )
+      },
+      footer = { Label("N") }
+    )
+
+    val ageColumn = Column<Data, Int>(
+      header = { Label("age").apply {
+        this.backgroundProperty().bind(backGroundToogled)
+      } },
+      cell = { it ->
+        SlimCell<Data, Int>(
+          it.age,
+          IntegerStringConverter(),
+          true
+        ).apply {
+          this.backgroundProperty().bind(backGroundToogled)
+        }
+      },
+      footer = { Label("A") }
+    )
+    val columns = FXCollections.observableArrayList(nameColumn, ageColumn)
+
+    val table = SpreadsheetView()
+//    table.columns = columns
+    return table
   }
 
   private fun slimTableSample(data: ObservableList<Data>, toggle: ObservableValue<Boolean>): Node {
@@ -200,6 +247,65 @@ class SlimTableSampler : Application() {
 //            Person("Jane", "Deer")
 //        )
     table.isEditable = true
+    table.isTableMenuButtonVisible = true
+
+
+    return table
+  }
+
+  private fun tableView2(data: ObservableList<Data>, toggle: ObservableValue<Boolean>): Node {
+    val table = TableView2<Data>()
+
+    val backGroundToogled = toggle.map {
+      if (it)
+        Background(BackgroundFill(Color.rgb(255, 0, 0, 0.2), CornerRadii.EMPTY, Insets.EMPTY))
+      else null
+    }
+
+    val nameColumn: TableColumn2<Data, String> = TableColumn2("Name")
+    nameColumn.isSortable = false
+    nameColumn.cellValueFactory = PropertyValueFactory("name")
+    nameColumn.cellFactory = TextField2TableCell.forTableColumn()
+    nameColumn.setOnEditCommit { event ->
+      event.tableView.items[event.tablePosition.row].name = event.newValue
+    }
+    val labelFirstName=Label()
+    labelFirstName.textProperty()
+      .bind(Bindings.createStringBinding({ "#1: " + table.items.filtered { n -> n.age == 21 }.count()}, table.items))
+    nameColumn.southNode = labelFirstName
+
+    val ageColumn: TableColumn2<Data, Int> = TableColumn2("Age")
+    ageColumn.isSortable = false
+    ageColumn.cellValueFactory = PropertyValueFactory("age")
+    ageColumn.cellFactory = TextField2TableCell.forTableColumn<Data?, Int?>(IntegerStringConverter()).andThen {
+      it.backgroundProperty().bind(backGroundToogled)
+    }
+    ageColumn.setOnEditCommit { event ->
+      event.tableView.items[event.tablePosition.row].age = event.newValue
+    }
+
+    ageColumn.graphic = Pane().apply {
+      children.add(Label("!!"))
+      backgroundProperty().bind(backGroundToogled)
+    }
+
+//    ageColumn.style = "-fx-background-color: red"
+
+    table.columns.add(nameColumn)
+    table.columns.add(ageColumn)
+
+    Bindings.bindContent(table.items, data)
+//    table.fixedRows.setAll(2,4)
+
+//        table.getItems().add(
+//            Person("John", "Doe")
+//        )
+//        tableView.getItems().add(
+//            Person("Jane", "Deer")
+//        )
+    table.isEditable = true
+    table.isRowHeaderVisible = true
+//    table.rowHeader = ageColumn
 
 
     return table

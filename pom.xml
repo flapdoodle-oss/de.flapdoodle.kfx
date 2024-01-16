@@ -464,6 +464,9 @@
                             <option>javafx.graphics/javafx.scene=ALL-UNNAMED</option>
                             <option>--add-opens</option>
                             <option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
+                            <option>--add-opens</option>
+                            <option>javafx.controls/javafx.scene.control.skin=ALL-UNNAMED</option>
+                            <!-- <option>javafx.controls/javafx.scene.control.skin=org.controlsfx.controls</option>-->
                             <option>--add-exports</option>
                             <option>javafx.controls/com.sun.javafx.scene=ALL-UNNAMED</option>
                             <option>--add-exports</option>

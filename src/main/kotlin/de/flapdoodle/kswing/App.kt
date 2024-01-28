@@ -30,11 +30,12 @@ object App {
 
     val center = JPanel()
     val layout = WeightGridLayout()
+    layout.debugLayoutLevel(1)
     layout.setColumnWeight(0, 1.0)
     layout.setColumnWeight(1, 2.0)
     layout.setRowWeight(0, 1.0)
     layout.setRowWeight(1, 1.0)
-    center.layout = layout // DebugLayoutDelegate(layout)
+    center.layout = layout.logCalls() // DebugLayoutDelegate(layout)
     frame.contentPane.add(center, BorderLayout.CENTER)
     center.add(JButton("A").also { it.maximumSize = Dimension(100, 100) }, GridConstraint(0,0))
     center.add(JButton("B"), GridConstraint(1,0, HPos.RIGHT, VPos.BOTTOM))

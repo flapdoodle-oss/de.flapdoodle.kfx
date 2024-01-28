@@ -14,4 +14,8 @@ interface AbstractLayoutManager<T: Any> : LayoutManager2 {
   }
 
   abstract fun addComponent(component: Component, attribute: T?)
+
+  fun logCalls(): DebugLayoutDelegate<T> {
+    return DebugLayoutDelegate(this)
+  }
 }

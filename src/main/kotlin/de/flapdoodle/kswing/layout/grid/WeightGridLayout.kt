@@ -17,6 +17,11 @@ class WeightGridLayout : AbstractLayoutManager<GridConstraint>, Serializable {
   private var map: Map<Component, GridConstraint> = emptyMap()
   private var rowWeights = AutoArray.empty<Double>()
   private var columnWeights = AutoArray.empty<Double>()
+  private var debugLayoutLevel = 0
+
+  fun debugLayoutLevel(level: Int = 0) {
+    this.debugLayoutLevel = level
+  }
 
   fun setRowWeight(row: Int, weight: Double) {
     require(row >= 0) { "invalid row: $row" }
@@ -80,8 +85,9 @@ class WeightGridLayout : AbstractLayoutManager<GridConstraint>, Serializable {
       val colWidths = WeightedSize.distribute(contentWidth - hSpaces, columnSizes)
       val rowHeights = WeightedSize.distribute(contentHeight - vSpaces, rowSizes)
 
-//      println("colWidth: $colWidths")
-//      println("rowHeights: $rowHeights")
+      if (debugLayoutLevel>0) println("----")
+      if (debugLayoutLevel>0) println("colWidth: $colWidths")
+      if (debugLayoutLevel>0) println("rowHeights: $rowHeights")
 
       gridMap.rows().forEachIndexed { r_idx, r ->
         gridMap.columns().forEachIndexed { c_idx, c ->
@@ -122,7 +128,16 @@ class WeightGridLayout : AbstractLayoutManager<GridConstraint>, Serializable {
       VPos.BASELINE -> spaceH
       VPos.TOP -> 0.0
     }
-    node.setBounds((areaX+ offsetX).toInt(), (areaY+offsetY).toInt(), width.toInt(), height.toInt())
+
+    if (debugLayoutLevel>1) println("--------------------")
+    if (debugLayoutLevel>1) println("${map[node]}")
+    if (debugLayoutLevel>1) println("size.min ${node.minimumSize}, size.max: $max")
+    if (debugLayoutLevel>1) println("area: ($areaX,$areaY,$areaW,$areaH)")
+    if (debugLayoutLevel>1) println("space: $spaceW,$spaceH -> offset: $offsetX, $offsetY, size: $width,$height")
+    val x = (areaX + offsetX).toInt()
+    val y = (areaY + offsetY).toInt()
+    if (debugLayoutLevel>1) println("setBounds($x,$y,$width,$height)")
+    node.setBounds(x, y, width.toInt(), height.toInt())
   }
 
   private fun verticalSpace(): Double = 0.0
@@ -172,10 +187,10 @@ class WeightGridLayout : AbstractLayoutManager<GridConstraint>, Serializable {
   override fun preferredLayoutSize(target: Container): Dimension {
     val gridMap = gridMap(target)
     val width = gridMap.mapColumns { _, list ->
-      list.map { it.preferredSize.width }.maxOrNull() ?: 0
+      list.map { it.preferredSize.width }.maxOrNull() ?: Int.MAX_VALUE
     }.sumWithSpaceBetween(horizontalSpace()) { it.toDouble() }
     val height = gridMap.mapColumns { _, list ->
-      list.map { it.preferredSize.height }.maxOrNull() ?: 0
+      list.map { it.preferredSize.height }.maxOrNull() ?: Int.MAX_VALUE
     }.sumWithSpaceBetween(verticalSpace()) { it.toDouble() }
     return Dimension(width.toInt(), height.toInt())
   }

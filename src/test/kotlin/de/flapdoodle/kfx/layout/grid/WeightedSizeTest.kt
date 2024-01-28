@@ -89,6 +89,21 @@ internal class WeightedSizeTest {
 
         assertThat(WeightedSize.distribute(100.0, src)).containsExactly(24.0, 100.0-24.0)
         assertThat(WeightedSize.distribute(400.0, src)).containsExactly(24.0, 100.0)
+
+        // 87x148
+    }
+
+    @Test
+    fun `sample bug2`() {
+        val src = listOf(
+            WeightedSize(weight = 1.0, min = 43.0, max = 43.0),
+            WeightedSize(weight = 2.0, min = 43.0, max = 100.0)
+        )
+
+        assertThat(WeightedSize.distribute(87.0, src)).containsExactly(43.0, 44.0)
+        assertThat(WeightedSize.distribute(88.0, src)).containsExactly(43.0, 45.0)
+
+        // 87x148
     }
 
 }

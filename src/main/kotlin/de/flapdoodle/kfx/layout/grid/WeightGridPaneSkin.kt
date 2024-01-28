@@ -87,7 +87,7 @@ class WeightGridPaneSkin(
         val max = Math.max(min, limits.map { it.second }.maxOrNull() ?: Double.MAX_VALUE)
 
 //      require(max >= min) { "invalid min/max for $list -> $min ? $max" }
-        WeightedSize(control.columnWeights.get(index) ?: 1.0, min, max)
+        WeightedSize(control.rowWeights.get(index) ?: 1.0, min, max)
     }
 
     override fun computeMinWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {

@@ -185,6 +185,7 @@
                                         <!-- <ignoreClass>org.apache.commons.logging.*</ignoreClass> -->
                                         <ignoreClass>javafx.*</ignoreClass>
                                         <ignoreClass>com.sun.*</ignoreClass>
+                                        <ignoreClass>org.hamcrest.*</ignoreClass>
                                     </ignoreClasses>
                                     <findAllDuplicates>true</findAllDuplicates>
                                 </banDuplicateClasses>

@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.layout.grid
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class WeightedSizeTest {
@@ -78,4 +79,16 @@ internal class WeightedSizeTest {
         }
 //    assertThat(WeightedSize.distribute(300.0, src)).containsExactly(30.0, 310.0, 60.0)
     }
+
+    @Test
+    fun `sample bug`() {
+        val src = listOf(
+            WeightedSize(weight = 4.0, min = 24.0, max = 24.0),
+            WeightedSize(weight = 1.0, min = 24.0, max = 100.0)
+        )
+
+        assertThat(WeightedSize.distribute(100.0, src)).containsExactly(24.0, 100.0-24.0)
+        assertThat(WeightedSize.distribute(400.0, src)).containsExactly(24.0, 100.0)
+    }
+
 }

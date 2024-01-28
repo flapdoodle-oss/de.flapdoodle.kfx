@@ -68,7 +68,7 @@ data class WeightedSize(
                 if (!it.limitReached()) {
                     val spaceNeeded = space * it.src.weight / sumOfWeights
                     when {
-                        spaceNeeded <= it.src.min -> it.setSize(it.src.min, true)
+                        spaceNeeded <= it.src.min -> it.setSize(it.src.min, false)
                         spaceNeeded >= it.src.max -> it.setSize(it.src.max, true)
                         else -> it.setSize(spaceNeeded)
                     }

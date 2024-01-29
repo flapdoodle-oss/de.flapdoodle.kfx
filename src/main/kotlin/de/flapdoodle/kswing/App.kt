@@ -11,11 +11,14 @@ import java.awt.Dimension
 import javax.swing.JButton
 import javax.swing.JFrame
 import javax.swing.JPanel
+import javax.swing.UIManager
 
 
 object App {
   @JvmStatic
   fun main(vararg args: String) {
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
     val frame = JFrame("My First GUI")
     frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     frame.setSize(300, 300)
@@ -30,12 +33,12 @@ object App {
 
     val center = JPanel()
     val layout = WeightGridLayout()
-    layout.debugLayoutLevel(1)
+    layout.debugLayoutLevel(0)
     layout.setColumnWeight(0, 1.0)
     layout.setColumnWeight(1, 2.0)
     layout.setRowWeight(0, 1.0)
     layout.setRowWeight(1, 1.0)
-    center.layout = layout.logCalls() // DebugLayoutDelegate(layout)
+    center.layout = layout//.logCalls()
     frame.contentPane.add(center, BorderLayout.CENTER)
     center.add(JButton("A").also { it.maximumSize = Dimension(100, 100) }, GridConstraint(0,0))
     center.add(JButton("B"), GridConstraint(1,0, HPos.RIGHT, VPos.BOTTOM))

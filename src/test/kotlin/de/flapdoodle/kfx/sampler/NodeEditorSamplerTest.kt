@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.sampler
 
+import javafx.application.Application
 import javafx.stage.Stage
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
@@ -28,4 +29,12 @@ class NodeEditorSamplerTest {
     println("running for one minute... (${System.getProperty("prism.forceGPU")})")
     Thread.sleep(2 * 60 * 1000)
   }
+
+  companion object {
+    @JvmStatic
+    fun main(args: Array<String>) {
+      Application.launch(NodeEditorSampler::class.java, *args)
+    }
+  }
+
 }

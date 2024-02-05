@@ -232,9 +232,9 @@
                     <systemPropertyVariables>
                         <de.flapdoodle.testdoc.destination>${project.basedir}</de.flapdoodle.testdoc.destination>
                     </systemPropertyVariables>
-                    <argLine>
-                        --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED,org.testfx
-                    </argLine>
+<!--                    <argLine>-->
+<!--                        &#45;&#45;add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED,org.testfx-->
+<!--                    </argLine>-->
                 </configuration>
             </plugin>
 
@@ -385,6 +385,7 @@
                     <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
+<!--            https://stackoverflow.com/questions/67854139/javafx-warning-unsupported-javafx-configuration-classes-were-loaded-from-unna-->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

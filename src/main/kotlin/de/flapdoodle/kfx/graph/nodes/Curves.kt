@@ -70,8 +70,8 @@ object Curves {
 
       distance.dispose()
 
-      endPointProperty.dispose()
-      startPointProperty.dispose()
+      //endPointProperty.dispose()
+      //startPointProperty.dispose()
     }
   }
 

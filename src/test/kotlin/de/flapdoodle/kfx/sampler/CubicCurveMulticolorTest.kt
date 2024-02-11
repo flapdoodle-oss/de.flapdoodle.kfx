@@ -6,6 +6,7 @@ import de.flapdoodle.kfx.extensions.scenePosition
 import de.flapdoodle.kfx.graph.nodes.Curves
 import de.flapdoodle.kfx.strokes.LinearGradients
 import de.flapdoodle.kfx.types.AngleAtPoint2D
+import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D
 import javafx.scene.Scene
@@ -115,5 +116,4 @@ class CubicCurveMulticolorTest {
     println("running for one minute...")
     Thread.sleep(2 * 60 * 1000)
   }
-
 }

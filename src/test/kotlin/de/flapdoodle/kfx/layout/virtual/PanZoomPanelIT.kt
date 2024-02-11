@@ -16,18 +16,23 @@
  */
 package de.flapdoodle.kfx.layout.virtual
 
+import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.input.MouseButton
 import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ThrowingConsumer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
+import java.awt.image.BufferedImage
+import java.nio.file.Files
+import javax.imageio.ImageIO
 
 @ExtendWith(ApplicationExtension::class)
 internal class PanZoomPanelIT {
@@ -53,11 +58,11 @@ internal class PanZoomPanelIT {
         val testee = robot.lookup(".pan-zoom-panel")
             .queryAs(PanZoomPanel::class.java)
 
-        Assertions.assertThat(content)
+        assertThat(content)
             .satisfies(ThrowingConsumer {
                 val point = it.localToScene(Point2D(0.0, 0.0))
-                Assertions.assertThat(point.x).isEqualTo(0.0)
-                Assertions.assertThat(point.y).isEqualTo(0.0)
+                assertThat(point.x).isEqualTo(0.0)
+                assertThat(point.y).isEqualTo(0.0)
             })
 
         robot.moveTo(testee)
@@ -65,22 +70,31 @@ internal class PanZoomPanelIT {
             .moveBy(20.0, 20.0)
             .release(MouseButton.PRIMARY)
 
-        Assertions.assertThat(content)
+        assertThat(content)
             .satisfies(ThrowingConsumer {
                 val point = it.localToScene(Point2D(0.0, 0.0))
-                Assertions.assertThat(point.x).isEqualTo(20.0)
-                Assertions.assertThat(point.y).isEqualTo(20.0)
+                assertThat(point.x).isEqualTo(20.0)
+                assertThat(point.y).isEqualTo(20.0)
             })
 
         robot.interact {
             testee.zoom(2.0)
         }
 
-        Assertions.assertThat(content)
+        assertThat(content)
             .satisfies(ThrowingConsumer {
                 val point = it.localToScene(Point2D(0.0, 0.0))
-                Assertions.assertThat(point.x).isEqualTo(30.0)
-                Assertions.assertThat(point.y).isEqualTo(30.0)
+                assertThat(point.x).isEqualTo(30.0)
+                assertThat(point.y).isEqualTo(30.0)
             })
+
+        if (false) {
+            val image = robot.capture(testee).image
+            val destination = BufferedImage(image.width.toInt(), image.height.toInt(), BufferedImage.TYPE_INT_RGB)
+            SwingFXUtils.fromFXImage(image, destination)
+            val tempFile = Files.createTempFile("javafx", ".png").toFile()
+            ImageIO.write(destination, "png", tempFile)
+            println("--> $tempFile")
+        }
     }
 }

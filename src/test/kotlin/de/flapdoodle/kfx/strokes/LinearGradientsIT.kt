@@ -25,21 +25,8 @@ class LinearGradientsIT {
 
   @Start
   private fun createElement(stage: Stage) {
-    val width = 400.0
-    val height = 400.0
-
-    val center = SimpleObjectProperty(
-      AngleAtPoint2D(width/2.0, height/2.0, 0.0)
-    )
-
     val pane = Pane()
     pane.background = Background.fill(Color.WHITE)
-    pane.children.addAll(
-      curve(center, SimpleObjectProperty(AngleAtPoint2D(400.0, 400.0, 180.0))),
-      curve(center, SimpleObjectProperty(AngleAtPoint2D(0.0, 400.0, 0.0))),
-      curve(center, SimpleObjectProperty(AngleAtPoint2D(400.0, 0.0, 180.0))),
-      curve(center, SimpleObjectProperty(AngleAtPoint2D(0.0, 0.0, 0.0))),
-    )
     pane.styleClass.addAll("all")
 
     stage.scene = Scene(pane, 400.0, 400.0)
@@ -49,7 +36,7 @@ class LinearGradientsIT {
   private fun curve(start: SimpleObjectProperty<AngleAtPoint2D>, destination: SimpleObjectProperty<AngleAtPoint2D>): CubicCurve {
     return Curves.cubicCurve(start, destination).apply {
       fill = Color.TRANSPARENT
-      strokeWidth = 3.0
+      strokeWidth = 2.0
       strokeProperty().bind(LinearGradients.cardinal(start.map { it.point2D }, destination.map { it.point2D }, startColor, endColor))
     }
   }
@@ -58,6 +45,26 @@ class LinearGradientsIT {
   fun correctStartAndEndColorInAnyDirection(robot: FxRobot) {
     val pane = robot.lookup(".all")
       .queryAs(Pane::class.java)
+
+    robot.interact {
+      val width = pane.width
+      val height = pane.height
+
+      val center = SimpleObjectProperty(
+        AngleAtPoint2D(width/2.0, height/2.0, 45.0)
+      )
+      pane.children.addAll(
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(0.0, 0.0, 0.0))),
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(width, 0.0, 180.0))),
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(width, height, 180.0))),
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(0.0, height, 0.0))),
+
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(width/2.0, 0.0, 90.0))),
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(width, height/2.0, 180.0))),
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(width/2.0, height, -90.0))),
+        curve(center, SimpleObjectProperty(AngleAtPoint2D(0.0, height/2.0, 0.0))),
+      )
+    }
 
     robot.capture(pane)
       .matches(javaClass, "gradientInAnyDirection.png")

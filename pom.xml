@@ -664,20 +664,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>javafx-run-nodeeditor</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.openjfx</groupId>
-                        <artifactId>javafx-maven-plugin</artifactId>
-                        <configuration>
-                            <mainClass>de.flapdoodle.kfx.sampler.NodeEditorSampler</mainClass>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <properties>

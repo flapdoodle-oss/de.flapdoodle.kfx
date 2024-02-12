@@ -29,10 +29,12 @@ object FxRobotExtensions {
       val current = bufferedImage(capture)
       val diff = diff(expected, current)
       if (diff != null) {
+        val enhancedDiff = enhance(diff)
         val tempDir = tempDir()
         val currentInTemp = write(tempDir, "current-$baseName", current)
         val diffInTemp = write(tempDir, "diff-$baseName", diff)
-        Assert.fail("current $currentInTemp does not match $resource, see diff in $diffInTemp")
+        val enhancedDiffInTemp = write(tempDir, "enhanced-diff-$baseName", enhancedDiff)
+        Assert.fail("current $currentInTemp does not match $resource, see diff in $diffInTemp ($enhancedDiffInTemp)")
       }
     } else {
       val current = bufferedImage(capture)
@@ -69,6 +71,34 @@ object FxRobotExtensions {
       }
     }
     return if (diff) ret else null
+  }
+
+  private fun enhance(diff: BufferedImage): BufferedImage {
+    val ret = bufferedImage(diff.width, diff.height)
+    var maxR = 0
+    var maxG = 0
+    var maxB = 0
+    (0.until(ret.width)).forEach { x ->
+      (0.until(ret.height)).forEach { y ->
+        val pixel = getRGB(diff, x, y)
+        maxR = max(maxR, (pixel shr 16) and 0xFF)
+        maxG = max(maxG, (pixel shr 8) and 0xFF)
+        maxB = max(maxB, pixel and 0xFF)
+      }
+    }
+    val factorR = 255 / maxR
+    val factorG = 255 / maxG
+    val factorB = 255 / maxB
+    (0.until(ret.width)).forEach { x ->
+      (0.until(ret.height)).forEach { y ->
+        val pixel = getRGB(diff, x, y)
+        val r = ((pixel shr 16) and 0xFF) * factorR
+        val g = ((pixel shr 8) and 0xFF) * factorG
+        val b = (pixel and 0xFF) * factorB
+        ret.setRGB(x, y, (r shl 16) + (g shl 8) + b)
+      }
+    }
+    return ret
   }
 
   private fun getRGB(image: BufferedImage, x: Int, y: Int): Int {

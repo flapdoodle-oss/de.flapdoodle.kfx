@@ -5,16 +5,17 @@ import de.flapdoodle.kfx.matches
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Scene
+import javafx.scene.layout.Background
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
 import javafx.stage.Stage
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
-import org.testfx.framework.junit5.utils.FXUtils
 
 @ExtendWith(ApplicationExtension::class)
 class LinearGradientsIT {
@@ -32,6 +33,7 @@ class LinearGradientsIT {
     )
 
     val pane = Pane()
+    pane.background = Background.fill(Color.WHITE)
     pane.children.addAll(
       curve(center, SimpleObjectProperty(AngleAtPoint2D(400.0, 400.0, 180.0))),
       curve(center, SimpleObjectProperty(AngleAtPoint2D(0.0, 400.0, 0.0))),

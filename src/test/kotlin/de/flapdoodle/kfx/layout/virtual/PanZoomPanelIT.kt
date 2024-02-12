@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.layout.virtual
 
+import de.flapdoodle.kfx.matches
 import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Point2D
 import javafx.scene.Scene
@@ -25,6 +26,7 @@ import javafx.stage.Stage
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ThrowingConsumer
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
@@ -88,13 +90,6 @@ internal class PanZoomPanelIT {
                 assertThat(point.y).isEqualTo(30.0)
             })
 
-        if (false) {
-            val image = robot.capture(testee).image
-            val destination = BufferedImage(image.width.toInt(), image.height.toInt(), BufferedImage.TYPE_INT_RGB)
-            SwingFXUtils.fromFXImage(image, destination)
-            val tempFile = Files.createTempFile("javafx", ".png").toFile()
-            ImageIO.write(destination, "png", tempFile)
-            println("--> $tempFile")
-        }
+        robot.capture(testee).matches(PanZoomPanelIT::class.java, "panZoomPanel.png")
     }
 }

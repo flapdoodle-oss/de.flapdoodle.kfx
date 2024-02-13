@@ -2,7 +2,7 @@ package de.flapdoodle.kfx
 
 import javafx.embed.swing.SwingFXUtils
 import org.assertj.core.api.Assertions
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions.fail
 import org.testfx.service.support.Capture
 import java.awt.image.BufferedImage
 import java.nio.file.Files
@@ -34,12 +34,12 @@ object FxRobotExtensions {
         val currentInTemp = write(tempDir, "current-$baseName", current)
         val diffInTemp = write(tempDir, "diff-$baseName", diff)
         val enhancedDiffInTemp = write(tempDir, "enhanced-diff-$baseName", enhancedDiff)
-        Assert.fail("current $currentInTemp does not match $resource, see diff in $diffInTemp ($enhancedDiffInTemp)")
+        Assertions.fail<Unit>("current $currentInTemp does not match $resource, see diff in $diffInTemp ($enhancedDiffInTemp)")
       }
     } else {
       val current = bufferedImage(capture)
       val destination = write(imageName, current)
-      Assertions.fail("expected image for $javaClass/$imageName: $destination")
+      Assertions.fail<Unit>("expected image for $javaClass/$imageName: $destination")
     }
   }
 

@@ -101,6 +101,7 @@
                         <goals> <goal>test-compile</goal> </goals>
                         <configuration>
                             <sourceDirs>
+                                <source>src/test/java</source>
                                 <source>src/test/kotlin</source>
                                 <source>target/generated-test-sources/test-annotations</source>
                             </sourceDirs>

@@ -65,7 +65,7 @@ class NodeEditorSampler {
         addConnector(slotAgg1)
       }
 
-      val nodeEditor = NodeEditor().withAnchors(all = 10.0)
+      val nodeEditor = NodeEditor().withAnchors(all = 10.0) //.withAnchors(all = 10.0)
       nodeEditor.layers().addNodes(nodeOne, nodeTwo, node3)
       nodeEditor.layers().addConnections(
         NodeConnection("one2two", NodeSlotId(nodeOne.nodeId, slotOutX.id), NodeSlotId(nodeTwo.nodeId, slotInA.id))

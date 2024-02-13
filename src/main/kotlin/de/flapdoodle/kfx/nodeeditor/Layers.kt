@@ -2,38 +2,44 @@ package de.flapdoodle.kfx.nodeeditor
 
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.extensions.BoundingBoxes
-import de.flapdoodle.kfx.nodeeditor.hints.NodeConnectionHint
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.layout.Background
+import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 
 class Layers(private val nodeRegistry: NodeRegistry) : Region() {
   private val nodesBoundsMapping = BoundingBoxes.BoundMapping(de.flapdoodle.kfx.nodeeditor.Node::onlyNodes, Node::getBoundsInParent)
   private val connectionBoundsMapping = BoundingBoxes.BoundMapping(NodeConnection::onlyConnections, NodeConnection::boundsInParent)
-  private val hintsBoundsMapping = BoundingBoxes.BoundMapping<Node>({ if (it is Parent) it.childrenUnmodifiable else emptyList() }, Node::getBoundsInParent)
+  private val nativeNodeBoundsMapping = BoundingBoxes.BoundMapping<Node>({ if (it is Parent) it.childrenUnmodifiable else emptyList() }, Node::getBoundsInParent)
 
+  private val background = de.flapdoodle.kfx.nodeeditor.Background()
   private val nodes = Layer(de.flapdoodle.kfx.nodeeditor.Node::class.java, nodesBoundsMapping)
   private val connections = Layer(NodeConnection::class.java, connectionBoundsMapping)
-  private val hints = Layer(Node::class.java, hintsBoundsMapping)
+  private val hints = Layer(Node::class.java, nativeNodeBoundsMapping)
 
   init {
     isManaged = false
     width = 10.0
     height = 10.0
 
-    children.add(hints)
+    children.add(background)
     children.add(connections)
     children.add(nodes)
+    children.add(hints)
   }
 
   // TODO remove??
   fun nodes() = nodes
   fun connections() = connections
   fun hints() = hints
+  fun background() = background
 
   fun boundingBoxProperty(): ObservableValue<Bounds> {
     return nodes.boundingBoxProperty()

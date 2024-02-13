@@ -41,6 +41,11 @@ class NodeView(
   private val zoomedBounds = nodeBoundingBoxProperty.and(zoom.mapToDouble()).map(BoundingBoxes::multiply)
   private val scrollXBounds = widthProperty().and(zoomedBounds).and(layers.layoutXProperty()).map(ScrollBounds.Companion::widthOf)
   private val scrollYBounds = heightProperty().and(zoomedBounds).and(layers.layoutYProperty()).map(ScrollBounds.Companion::heightOf)
+  private val viewBounds = layoutBoundsProperty()
+    .and(layers.layoutXProperty())
+    .and(layers.layoutYProperty())
+    .map { b,x,y -> layers.parentToLocal(b) }
+
   private val nodeConnectionHint = NodeConnectionHint().apply {
     isVisible = false
   }
@@ -66,6 +71,7 @@ class NodeView(
       xProperty().bind(zoom)
       yProperty().bind(zoom)
     })
+    layers.background().bind(viewBounds)
     children.add(layers)
 
     scrollX.orientation = Orientation.HORIZONTAL
@@ -81,8 +87,8 @@ class NodeView(
 
     clip = Bounds.sizeRectangle(this)
 
-    addEventHandler(MouseEvent.ANY, this::handleMouseEvent)
 
+    addEventHandler(MouseEvent.ANY, this::handleMouseEvent)
     addEventHandler(ZoomEvent.ANY, this::handleZoom)
     addEventHandler(ScrollEvent.SCROLL, this::handleScroll)
   }
@@ -99,6 +105,9 @@ class NodeView(
 
     scrollX.resizeRelocate(0.0, snapPositionY(height - h), snapSizeX(width - w), h)
     scrollY.resizeRelocate(snapPositionX(width - w), 0.0, w, snapSizeY(height - h))
+
+//    println("view: ${layers.parentToLocal(layoutBounds)}")
+//    layers.background().resizeRelocate()
   }
 
   fun zoom(zoom: Double) {

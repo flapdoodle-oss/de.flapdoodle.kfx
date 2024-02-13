@@ -608,20 +608,6 @@
         		</plugins>
         	</build>
         </profile>
-        <profile>
-            <id>javafx-run-bounds-demo</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.openjfx</groupId>
-                        <artifactId>javafx-maven-plugin</artifactId>
-                        <configuration>
-                            <mainClass>de.flapdoodle.kfx.demo.BoundsPlayground</mainClass>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <properties>

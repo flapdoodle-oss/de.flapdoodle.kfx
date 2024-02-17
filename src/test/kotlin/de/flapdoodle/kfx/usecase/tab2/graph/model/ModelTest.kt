@@ -30,8 +30,8 @@ class ModelTest {
 
     testee = testee.add(edge)
 
-    assertThat(testee.edgeList)
-      .hasSize(1)
+    assertThat(testee.edgeSet)
       .containsExactly(edge)
+      .hasSize(1)
   }
 }

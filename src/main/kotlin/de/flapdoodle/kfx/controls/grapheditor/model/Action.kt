@@ -9,11 +9,10 @@ sealed class Action<V> {
 
   data class ChangeVertex<V>(val vertex: VertexId<V>, val change: Vertex<V>): Action<V>()
   data class ChangeSlot<V>(val vertex: VertexId<V>, val slot: SlotId, val change: Slot): Action<V>()
-  data class ChangeEdge<V>(val edge: EdgeId<V>, val change: Edge<V>): Action<V>()
 
   data class RemoveVertex<V>(val vertex: VertexId<V>): Action<V>()
   data class RemoveSlot<V>(val vertex: VertexId<V>, val slot: SlotId): Action<V>()
-  data class RemoveEdge<V>(val edge: EdgeId<V>): Action<V>()
+  data class RemoveEdge<V>(val edge: Edge<V>): Action<V>()
 
   companion object {
     fun <V> syncActions(old: Model<V>, current: Model<V>): List<Action<V>> {
@@ -25,7 +24,7 @@ sealed class Action<V> {
         val edgeChanges = Model.edgeChanges(old, current)
 
         actions = actions + edgeChanges.removed.map { edge ->
-          RemoveEdge(edge.id)
+          RemoveEdge(edge)
         }
 
         actions = actions + vertexChanges.removed.flatMap { vertex ->
@@ -50,10 +49,6 @@ sealed class Action<V> {
 
           }
           vertexActions
-        }
-
-        actions = actions + edgeChanges.modified.map { (oldEdge, currentEdge) ->
-          ChangeEdge(oldEdge.id, currentEdge)
         }
 
         actions = actions + edgeChanges.added.map { edge ->

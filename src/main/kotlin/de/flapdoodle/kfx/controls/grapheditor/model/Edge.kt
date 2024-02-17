@@ -6,8 +6,7 @@ data class Edge<T>(
   val startVertex: VertexId<T>,
   val startSlot: SlotId,
   val endVertex: VertexId<T>,
-  val endSlot: SlotId,
-  val id: EdgeId<T> = EdgeId(),
+  val endSlot: SlotId
 ) {
   init {
     val startPair = startVertex to startSlot

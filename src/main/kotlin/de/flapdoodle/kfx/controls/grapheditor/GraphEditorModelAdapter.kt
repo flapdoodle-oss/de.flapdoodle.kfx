@@ -24,8 +24,8 @@ class GraphEditorModelAdapter<V>(
   private var reverseVertexIdMapping = emptyMap<VertexId, de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>>()
   private var vertexIdContentMapping = emptyMap<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>, VertexContent<V>>()
 
-  private var edgeIdMapping = emptyMap<de.flapdoodle.kfx.controls.grapheditor.model.EdgeId<V>, Edge>()
-  private var reverseEdgeIdMapping = emptyMap<EdgeId, de.flapdoodle.kfx.controls.grapheditor.model.EdgeId<V>>()
+  private var edgeIdMapping = emptyMap<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>, Edge>()
+  private var reverseEdgeIdMapping = emptyMap<EdgeId, de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>()
 
   private val selectedVertices = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>>>(emptySet())
 //  private val selectedEdges = SimpleObjectProperty<Set<Id<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>>>(emptySet())
@@ -73,8 +73,8 @@ class GraphEditorModelAdapter<V>(
           val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)
           val end = VertexSlotId(vertexId(action.edge.endVertex), action.edge.endSlot)
           graphEditor.addEdge(Edge("dummy",start, end).also { edge ->
-            edgeIdMapping = edgeIdMapping + (action.edge.id to edge)
-            reverseEdgeIdMapping = reverseEdgeIdMapping + (edge.edgeId to action.edge.id)
+            edgeIdMapping = edgeIdMapping + (action.edge to edge)
+            reverseEdgeIdMapping = reverseEdgeIdMapping + (edge.edgeId to action.edge)
           })
         }
         is Action.ChangeVertex -> {

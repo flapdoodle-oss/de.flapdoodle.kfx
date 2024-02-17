@@ -16,7 +16,7 @@ data class Model<V>(
   }.toSet()
 
   fun vertex(id: VertexId<V>) = requireNotNull(vertexMap[id]) { "could not get vertex $id"}
-  fun add(vertex: Vertex<V>): Model<V> {
+  fun add(vararg vertex: Vertex<V>): Model<V> {
     return copy(vertexList = vertexList + vertex)
   }
 

@@ -72,7 +72,7 @@ class GraphEditorModelAdapter<V>(
         is Action.AddEdge -> {
           val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)
           val end = VertexSlotId(vertexId(action.edge.endVertex), action.edge.endSlot)
-          graphEditor.addEdge(Edge("dummy",start, end).also { edge ->
+          graphEditor.addEdge(Edge(start, end).also { edge ->
             edgeIdMapping = edgeIdMapping + (action.edge to edge)
             reverseEdgeIdMapping = reverseEdgeIdMapping + (edge.edgeId to action.edge)
           })

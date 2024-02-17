@@ -15,14 +15,33 @@ class ActionTest {
   @Test
   fun addVertex() {
     val vertex = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT)))
-    
+
     val actions = Action.syncActions(emptyModel(), emptyModel().add(vertex))
-    
+
     assertThat(actions)
       .hasSize(2)
       .containsExactly(
         Action.AddVertex(vertex),
         Action.AddSlot(vertex.id, vertex.slots[0])
+      )
+  }
+
+  @Test
+  fun addVertexAndEdge() {
+    val start = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT)))
+    val end = Vertex("b", 2, listOf(Slot("y", Slot.Mode.IN, Position.LEFT)))
+    val edge = Edge(start.id, start.slots[0].id, end.id, end.slots[0].id)
+
+    val actions = Action.syncActions(emptyModel(), emptyModel().add(start, end).add(edge))
+
+    assertThat(actions)
+      .hasSize(5)
+      .containsExactly(
+        Action.AddVertex(start),
+        Action.AddSlot(start.id, start.slots[0]),
+        Action.AddVertex(end),
+        Action.AddSlot(end.id, end.slots[0]),
+        Action.AddEdge(edge),
       )
   }
 
@@ -40,6 +59,24 @@ class ActionTest {
       )
   }
 
+  @Test
+  fun removeVertexAndEdge() {
+    val start = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT)))
+    val end = Vertex("b", 2, listOf(Slot("y", Slot.Mode.IN, Position.LEFT)))
+    val edge = Edge(start.id, start.slots[0].id, end.id, end.slots[0].id)
+
+    val actions = Action.syncActions(emptyModel().add(start, end).add(edge), emptyModel())
+
+    assertThat(actions)
+      .hasSize(5)
+      .containsExactly(
+        Action.RemoveEdge(edge),
+        Action.RemoveSlot(start.id, start.slots[0].id),
+        Action.RemoveVertex(start.id),
+        Action.RemoveSlot(end.id, end.slots[0].id),
+        Action.RemoveVertex(end.id),
+      )
+  }
   @Test
   fun changeVertex() {
     val oldSlot = Slot("x", Slot.Mode.IN, Position.LEFT)

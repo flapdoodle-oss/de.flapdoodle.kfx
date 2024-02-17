@@ -18,7 +18,6 @@ import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 
 class Edge(
-  val name: String,
   val start: VertexSlotId,
   val end: VertexSlotId
 ): Region(), IsSelectable {

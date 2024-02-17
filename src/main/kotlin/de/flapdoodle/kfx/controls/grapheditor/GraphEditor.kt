@@ -20,7 +20,7 @@ import javafx.scene.paint.Color
 class GraphEditor(
   private val eventListener: EventListener = EventListener { editor, event ->
     if (event is Event.ConnectTo) {
-      editor.addEdge(Edge("edge", event.start, event.end))
+      editor.addEdge(Edge(event.start, event.end))
     }
     true
   }

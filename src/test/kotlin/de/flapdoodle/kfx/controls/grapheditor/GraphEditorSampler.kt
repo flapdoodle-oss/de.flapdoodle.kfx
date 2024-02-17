@@ -84,7 +84,7 @@ class GraphEditorSampler {
             else true
           }
           is Event.ConnectTo -> {
-            editor.addEdge(Edge("edge", event.start, event.end))
+            editor.addEdge(Edge(event.start, event.end))
             true
           }
           else -> {
@@ -95,7 +95,7 @@ class GraphEditorSampler {
       val graphEditor = GraphEditor(listener) //.withAnchors(all = 10.0)
       graphEditor.addVertex(vertexOne, vertexTwo, vertex3)
       graphEditor.addEdge(
-        Edge("one2two", VertexSlotId(vertexOne.vertexId, slotOutX.id), VertexSlotId(vertexTwo.vertexId, slotInA.id))
+        Edge(VertexSlotId(vertexOne.vertexId, slotOutX.id), VertexSlotId(vertexTwo.vertexId, slotInA.id))
       )
 
       var lastAddedVertex: Vertex? = null

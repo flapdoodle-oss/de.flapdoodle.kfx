@@ -1,9 +1,7 @@
 package de.flapdoodle.kfx.types
 
 import de.flapdoodle.kfx.isEqualTo
-import de.flapdoodle.kfx.isNearlyEqualTo
 import javafx.geometry.Point2D
-import javafx.scene.transform.Affine
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

@@ -1,7 +1,6 @@
 package de.flapdoodle.kfx.bindings
 
 import de.flapdoodle.kfx.bindings.list.IndexedMappingListChangeListener
-import de.flapdoodle.kfx.bindings.list.MappingListChangeListener
 import javafx.collections.FXCollections
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

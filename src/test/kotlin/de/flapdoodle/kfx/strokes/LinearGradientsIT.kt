@@ -1,7 +1,7 @@
 package de.flapdoodle.kfx.strokes
 
-import de.flapdoodle.kfx.shapes.Curves
 import de.flapdoodle.kfx.matches
+import de.flapdoodle.kfx.shapes.Curves
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Scene

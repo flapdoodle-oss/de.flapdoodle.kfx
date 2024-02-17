@@ -1,12 +1,11 @@
 package de.flapdoodle.kfx.controls.grapheditor
 
 import de.flapdoodle.kfx.controls.grapheditor.model.*
-import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
+import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.extensions.plus
 import de.flapdoodle.kfx.extensions.withAnchors
-import de.flapdoodle.kfx.types.Id
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty

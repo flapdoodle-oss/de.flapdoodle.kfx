@@ -1,7 +1,6 @@
 package de.flapdoodle.kfx.controls.grapheditor.model
 
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
-import de.flapdoodle.kfx.types.Id
 
 data class Model<V>(
   val vertexList: List<Vertex<V>> = emptyList(),

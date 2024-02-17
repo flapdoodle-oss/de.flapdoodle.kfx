@@ -4,7 +4,6 @@ import de.flapdoodle.kfx.controls.grapheditor.GraphEditorModelAdapter
 import de.flapdoodle.kfx.controls.grapheditor.model.*
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
-import de.flapdoodle.kfx.types.Id
 import de.flapdoodle.kfx.usecase.tab2.graph.DummyVertexContentFactory
 import de.flapdoodle.kfx.usecase.tab2.graph.Models
 import javafx.beans.property.SimpleObjectProperty

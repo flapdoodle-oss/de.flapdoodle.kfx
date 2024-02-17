@@ -2,7 +2,6 @@ package de.flapdoodle.kfx
 
 import javafx.embed.swing.SwingFXUtils
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Assertions.fail
 import org.testfx.service.support.Capture
 import java.awt.image.BufferedImage
 import java.nio.file.Files

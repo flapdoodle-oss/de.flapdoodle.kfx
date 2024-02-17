@@ -17,24 +17,18 @@
 package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.matches
-import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.input.MouseButton
 import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ThrowingConsumer
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
-import java.awt.image.BufferedImage
-import java.nio.file.Files
-import javax.imageio.ImageIO
 
 @ExtendWith(ApplicationExtension::class)
 internal class PanZoomPanelIT {

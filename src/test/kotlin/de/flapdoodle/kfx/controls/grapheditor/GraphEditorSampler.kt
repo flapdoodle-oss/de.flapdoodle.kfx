@@ -2,10 +2,10 @@ package de.flapdoodle.kfx.controls.grapheditor
 
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
 import de.flapdoodle.kfx.controls.grapheditor.events.EventListener
-import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.controls.grapheditor.model.Position
 import de.flapdoodle.kfx.controls.grapheditor.model.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
+import de.flapdoodle.kfx.extensions.layoutPosition
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Point2D

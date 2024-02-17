@@ -1,9 +1,9 @@
 package de.flapdoodle.kfx.layout.virtual
 
+import de.flapdoodle.kfx.controls.grapheditor.SizeMode
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.sampler.AbsolutePane
-import de.flapdoodle.kfx.controls.grapheditor.SizeMode
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.geometry.Point2D
 import javafx.scene.Node

@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.controls.table
 
 import de.flapdoodle.kfx.extensions.withAnchors
-import de.flapdoodle.kfx.sampler.ComponentsBehaviorSampler
 import javafx.application.Application
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleObjectProperty

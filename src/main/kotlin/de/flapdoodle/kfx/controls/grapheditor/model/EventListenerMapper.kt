@@ -4,7 +4,6 @@ import de.flapdoodle.kfx.controls.grapheditor.GraphEditor
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
 import de.flapdoodle.kfx.controls.grapheditor.events.EventListener
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
-import de.flapdoodle.kfx.types.Id
 
 class EventListenerMapper<T>(
   private val delegate: ModelEventListener<T>,

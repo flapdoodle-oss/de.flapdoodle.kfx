@@ -2,7 +2,6 @@ package de.flapdoodle.kfx.extensions
 
 import de.flapdoodle.kfx.extensions.Point2DMath.CardinalDirections.cardinalDirection
 import de.flapdoodle.kfx.extensions.Point2DMath.angle
-import de.flapdoodle.kfx.extensions.Point2DMath.cardinalDirection
 import de.flapdoodle.kfx.types.CardinalDirection
 import javafx.geometry.Point2D
 import org.assertj.core.api.Assertions.assertThat

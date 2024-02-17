@@ -16,13 +16,8 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.clone.AutoScrollingWindow
-import de.flapdoodle.kfx.clone.BoxFactory
-import de.flapdoodle.kfx.clone.GraphEditorView
 import de.flapdoodle.kfx.demo.HelloSpreadsheetView
 import javafx.application.Application
-import javafx.scene.Scene
-import javafx.stage.Stage
 
 class SpreadsheetSampler {
 

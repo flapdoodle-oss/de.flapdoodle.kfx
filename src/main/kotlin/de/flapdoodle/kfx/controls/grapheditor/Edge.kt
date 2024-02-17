@@ -86,6 +86,7 @@ class Edge(
       isPickOnBounds = false
     })
     isPickOnBounds = false
+
     selected.subscribe { it ->
       if (it) Style.Selected.enable(this) else Style.Selected.disable(this)
     }

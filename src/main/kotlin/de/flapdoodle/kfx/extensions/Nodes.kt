@@ -1,8 +1,11 @@
 package de.flapdoodle.kfx.extensions
 
+import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.Scene
+import javafx.util.Subscription
 
 object Nodes {
 
@@ -60,5 +63,42 @@ object Nodes {
         center.add(half, half),
         center.add(-half, half)
       )
+  }
+
+  fun onAttach(node: Node, onAttach: () -> Unit): WithOnAttach {
+    return WithOnAttach(node, onAttach)
+  }
+
+  fun onAttachDetach(node: Node, onAttach: () -> Unit, onDetach: () -> Unit) {
+    val listener: (observable: ObservableValue<out Scene>, oldValue: Scene?, newValue: Scene?) -> Unit = { observable, oldValue, newValue ->
+      if (oldValue==null && newValue!=null) {
+        onAttach()
+      }
+      if (oldValue!=null && newValue == null) {
+        onDetach()
+      }
+    }
+    node.sceneProperty().addListener(listener)
+  }
+
+  fun onAttach(node: Node, action: () -> Subscription) {
+    val listener: (observable: ObservableValue<out Scene>, oldValue: Scene?, newValue: Scene?) -> Unit = { observable, oldValue, newValue ->
+      if (oldValue==null && newValue!=null) {
+        val old = node.property[Subscription::class]
+        val new = action()
+        node.property[Subscription::class] = if (old!=null) old.and(new) else new
+      }
+      if (oldValue!=null && newValue == null) {
+        node.property[Subscription::class]?.unsubscribe()
+        node.property[Subscription::class] = null
+      }
+    }
+    node.sceneProperty().addListener(listener)
+  }
+
+  class WithOnAttach(val node: Node, val onAttach: () -> Unit) {
+    fun onDetach(onDetach: () -> Unit) {
+      Nodes.onAttachDetach(node, onAttach, onDetach)
+    }
   }
 }

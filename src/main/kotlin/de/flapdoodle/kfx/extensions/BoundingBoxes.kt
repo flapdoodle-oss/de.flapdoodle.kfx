@@ -61,7 +61,7 @@ object BoundingBoxes {
     }
 
     fun boundsInParentProperty(parent: Node, filter: Predicate<Node>): ReadOnlyObjectProperty<Bounds> {
-        return parent.property.computeIfAbsend(BoundsInParentProperty::class) {
+        return parent.property.computeIfAbsent(BoundsInParentProperty::class) {
             BoundsInParentProperty(parent, filter)
         }
     }

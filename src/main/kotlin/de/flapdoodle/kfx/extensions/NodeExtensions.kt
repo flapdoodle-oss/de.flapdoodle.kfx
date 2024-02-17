@@ -18,9 +18,11 @@ package de.flapdoodle.kfx.extensions
 
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
+import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.Scene
 import javafx.util.Subscription
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
@@ -145,10 +147,15 @@ fun Node.sceneToLocal(src: ColoredAngleAtPoint2D?): ColoredAngleAtPoint2D? {
   } else null
 }
 
-fun Node.onAttach(action: () -> Unit): Subscription {
-  return sceneProperty().subscribe { old,new -> action() }
+fun Node.onAttach(action: () -> Unit): Nodes.WithOnAttach {
+//  return sceneProperty().subscribe { old,new -> action() }
+  return Nodes.onAttach(this, action)
 }
 
-fun Node.onDetach(action: () -> Unit): Subscription {
-  return sceneProperty().subscribe { old,new -> if (new == null) action() }
+//fun Node.onDetach(action: () -> Unit): Subscription {
+//  return sceneProperty().subscribe { old,new -> if (new == null) action() }
+//}
+
+fun Node.onAttachX(action: () -> Subscription) {
+  Nodes.onAttach(this,action)
 }

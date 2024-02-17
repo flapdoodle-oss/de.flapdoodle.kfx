@@ -61,7 +61,7 @@ object ChildsInParentBoundsExtension {
     }
 
     fun containerlessBoundsInParentProperty(parent: Node): ContainerlessBoundsInParentProperty {
-        return parent.property.computeIfAbsend(ContainerlessBoundsInParentProperty::class) {
+        return parent.property.computeIfAbsent(ContainerlessBoundsInParentProperty::class) {
             ContainerlessBoundsInParentProperty(parent)
         }
     }
@@ -91,7 +91,7 @@ object ChildsInParentBoundsExtension {
     }
 
     fun containerlessBoundsInLocalProperty(parent: Node): ContainerlessBoundsInLocalProperty {
-        return parent.property.computeIfAbsend(ContainerlessBoundsInLocalProperty::class) {
+        return parent.property.computeIfAbsent(ContainerlessBoundsInLocalProperty::class) {
             ContainerlessBoundsInLocalProperty(parent)
         }
     }
@@ -159,7 +159,7 @@ object ChildsInParentBoundsExtension {
     }
 
     fun childsInParentBoundsProperty(parent: Node): ChildsInParentBoundsProperty {
-        return parent.property.computeIfAbsend(ChildsInParentBoundsProperty::class) {
+        return parent.property.computeIfAbsent(ChildsInParentBoundsProperty::class) {
             ChildsInParentBoundsProperty(parent)
         }
     }
@@ -186,7 +186,7 @@ object ChildsInParentBoundsExtension {
     }
 
     fun childsInLocalBoundsProperty(parent: Node): ChildsInLocalBoundsProperty {
-        return parent.property.computeIfAbsend(ChildsInLocalBoundsProperty::class) {
+        return parent.property.computeIfAbsent(ChildsInLocalBoundsProperty::class) {
             ChildsInLocalBoundsProperty(parent)
         }
     }

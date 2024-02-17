@@ -63,9 +63,12 @@ class Connector(
 
     children.addAll(wrapper)
 
-    subscriptions += onAttach {
+    onAttach {
       registry.value?.registerSlot(VertexSlotId(vertexId, slot.id), pointInSceneProperty)
+    }.onDetach {
+      registry.value?.unregisterSlot(VertexSlotId(vertexId, slot.id))
     }
+
     subscriptions += registry.subscribe { oldValue, newValue ->
       oldValue?.unregisterSlot(VertexSlotId(vertexId, slot.id))
       newValue?.registerSlot(VertexSlotId(vertexId, slot.id), pointInSceneProperty)

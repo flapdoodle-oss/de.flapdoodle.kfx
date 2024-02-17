@@ -27,4 +27,9 @@ class Tab2 : Application() {
     stage.scene= Scene(root, 800.0, 600.0)
     stage.show()
   }
+
+  override fun stop() {
+    
+    super.stop()
+  }
 }

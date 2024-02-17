@@ -34,7 +34,7 @@ object ObservableMapExtensions {
       map.remove(key) as T?
   }
 
-  fun <K: Any, T: Any> computeIfAbsend(map: ObservableMap<Any, Any>, key: Key<K>, mapping: Function<in Key<K>, out T>): T {
+  fun <K: Any, T: Any> computeIfAbsent(map: ObservableMap<Any, Any>, key: Key<K>, mapping: Function<in Key<K>, out T>): T {
     @Suppress("UNCHECKED_CAST")
     return map.computeIfAbsent(key) { k -> mapping.apply(k as Key<K>) } as T
   }
@@ -51,7 +51,7 @@ object ObservableMapExtensions {
     }
 
     fun <K: Any, T: Any> computeIfAbsent(key: Key<K>, mapping: Function<in Key<K>, out T>): T {
-      return computeIfAbsend(map, key, mapping)
+      return computeIfAbsent(map, key, mapping)
     }
 
     open operator fun <T: Any> set(type: KClass<T>, value: T?): T? {
@@ -62,8 +62,8 @@ object ObservableMapExtensions {
       return get(map, Key.ofType(type))
     }
 
-    fun <T: Any> computeIfAbsend(type: KClass<T>, mapping: Function<in Key<T>, out T>): T {
-      return computeIfAbsend(map, Key.ofType(type), mapping)
+    fun <T: Any> computeIfAbsent(type: KClass<T>, mapping: Function<in Key<T>, out T>): T {
+      return computeIfAbsent(map, Key.ofType(type), mapping)
     }
   }
 }

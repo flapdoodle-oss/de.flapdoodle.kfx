@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.controls.grapheditor
 
+import de.flapdoodle.kfx.bindings.Subscriptions
 import de.flapdoodle.kfx.controls.grapheditor.model.*
 import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
@@ -75,17 +76,15 @@ class GraphEditorModelAdapter<V>(
           graphEditor.addEdge(Edge(start, end).also { edge ->
             edgeIdMapping = edgeIdMapping + (action.edge to edge)
             reverseEdgeIdMapping = reverseEdgeIdMapping + (edge.edgeId to action.edge)
-            edge.selectedProperty().subscribe { it -> changeSelection(action.edge, it) }
+            Subscriptions.add(edge, edge.selectedProperty().subscribe { it -> changeSelection(action.edge, it) })
           })
         }
         is Action.RemoveEdge -> {
-          val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)
-          val end = VertexSlotId(vertexId(action.edge.endVertex), action.edge.endSlot)
           val edge = requireNotNull(edgeIdMapping.get(action.edge)) {"edge not found: ${action.edge}"}
           graphEditor.removeEdge(edge)
           edgeIdMapping = edgeIdMapping - action.edge
           reverseEdgeIdMapping = reverseEdgeIdMapping - edge.edgeId
-          // TODO cleanup listener??
+          Subscriptions.unsubscribeAll(edge)
         }
         is Action.ChangeVertex -> {
           val vertex = requireNotNull(vertexIdMapping.get(action.vertex)) {"could not get vertex for ${action.vertex}"}

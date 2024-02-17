@@ -1,6 +1,5 @@
-package de.flapdoodle.kfx.usecase.tab2.graph.actions
+package de.flapdoodle.kfx.controls.grapheditor.model
 
-import de.flapdoodle.kfx.controls.grapheditor.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

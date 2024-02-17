@@ -28,7 +28,7 @@ class GraphEditorModelAdapter<V>(
   private var reverseEdgeIdMapping = emptyMap<EdgeId, de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>()
 
   private val selectedVertices = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>>>(emptySet())
-//  private val selectedEdges = SimpleObjectProperty<Set<Id<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>>>(emptySet())
+  private val selectedEdges = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>>(emptySet())
 
   init {
     children.add(graphEditor)
@@ -40,7 +40,7 @@ class GraphEditorModelAdapter<V>(
   }
 
   fun selectedVerticesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>>> = selectedVertices
-//  fun selectedEdgesProperty(): ReadOnlyProperty<Set<Id<de.flapdoodle.kfx.controls.grapheditor.model.Vertex<V>>>> = selectedVertices
+  fun selectedEdgesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>> = selectedEdges
 
   private fun vertexId(id: VertexId): de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V> {
     return requireNotNull(reverseVertexIdMapping[id]) { "could not get vertex id for $id" }
@@ -75,7 +75,17 @@ class GraphEditorModelAdapter<V>(
           graphEditor.addEdge(Edge(start, end).also { edge ->
             edgeIdMapping = edgeIdMapping + (action.edge to edge)
             reverseEdgeIdMapping = reverseEdgeIdMapping + (edge.edgeId to action.edge)
+            edge.selectedProperty().subscribe { it -> changeSelection(action.edge, it) }
           })
+        }
+        is Action.RemoveEdge -> {
+          val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)
+          val end = VertexSlotId(vertexId(action.edge.endVertex), action.edge.endSlot)
+          val edge = requireNotNull(edgeIdMapping.get(action.edge)) {"edge not found: ${action.edge}"}
+          graphEditor.removeEdge(edge)
+          edgeIdMapping = edgeIdMapping - action.edge
+          reverseEdgeIdMapping = reverseEdgeIdMapping - edge.edgeId
+          // TODO cleanup listener??
         }
         is Action.ChangeVertex -> {
           val vertex = requireNotNull(vertexIdMapping.get(action.vertex)) {"could not get vertex for ${action.vertex}"}
@@ -88,13 +98,22 @@ class GraphEditorModelAdapter<V>(
       }
     }
   }
-  
+
   private fun changeSelection(vertex: de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>, selection: Boolean) {
     val current = selectedVertices.get()
     selectedVertices.value = if (selection) {
       current + vertex
     } else {
       current - vertex
+    }
+  }
+
+  private fun changeSelection(egde: de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>, selection: Boolean) {
+    val current = selectedEdges.get()
+    selectedEdges.value = if (selection) {
+      current + egde
+    } else {
+      current - egde
     }
   }
 }

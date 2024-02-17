@@ -42,6 +42,9 @@ class GraphEditor(
     view.layers().addEdge(*list)
   }
 
+  fun removeEdge(vararg list: Edge) {
+    view.layers().removeEdges(listOf(*list))
+  }
 
   private fun filterMouseEvents(event: MouseEvent) {
     val target = event.target

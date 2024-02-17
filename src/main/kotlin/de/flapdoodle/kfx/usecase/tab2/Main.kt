@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class Main() : BorderPane() {
   private val model = SimpleObjectProperty(Models.testModel())
   private val selectedVertex = SimpleObjectProperty<VertexId<String>>()
+  private val selectedEdge = SimpleObjectProperty<Edge<String>>()
   private val vertexCounter = AtomicInteger(0)
   private val slotCounter = AtomicInteger(0)
 
@@ -47,6 +48,13 @@ class Main() : BorderPane() {
               selectedVertex.value = selection.first()
             } else {
               selectedVertex.value = null
+            }
+          }
+          editor.selectedEdgesProperty().subscribe { selection ->
+            if (selection.size == 1) {
+              selectedEdge.value = selection.first()
+            } else {
+              selectedEdge.value = null
             }
           }
           WeightGridPane.setPosition(editor, 0, 0)
@@ -85,6 +93,13 @@ class Main() : BorderPane() {
             val vertexId = selectedVertex.value
             val vertex = model.get().vertex(vertexId)
             model.set(model.get().replace(vertex, vertex.add(Slot("y#"+slotCounter.incrementAndGet(), Slot.Mode.OUT, Position.RIGHT))))
+          }
+        },
+        Button("X").also { button ->
+          button.visibleProperty().bind(selectedEdge.map { it != null })
+          button.onAction = EventHandler {
+            val egde = selectedEdge.value
+            model.set(model.get().remove(egde))
           }
         }
       )

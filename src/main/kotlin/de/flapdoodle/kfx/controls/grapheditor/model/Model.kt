@@ -35,6 +35,11 @@ data class Model<V>(
     return copy(edgeSet = edgeSet + edge)
   }
 
+  fun remove(edge: Edge<V>): Model<V> {
+    require(edgeSet.contains(edge)) { "edge not found" }
+    return copy(edgeSet = edgeSet - edge)
+  }
+
   companion object {
     fun <T> vertexChanges(old: Model<T>, new: Model<T>): Change<Vertex<T>> {
       val removed = (old.vertexMap.keys - new.vertexMap.keys).map { old.vertex(it) }.toSet()

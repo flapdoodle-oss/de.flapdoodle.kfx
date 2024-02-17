@@ -16,12 +16,12 @@
  */
 package de.flapdoodle.kfx.extensions
 
-import de.flapdoodle.kfx.types.AngleAndPoint2D
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.util.Subscription
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
 
@@ -143,4 +143,12 @@ fun Node.sceneToLocal(src: ColoredAngleAtPoint2D?): ColoredAngleAtPoint2D? {
     val result = sceneToLocal(src.point2D)
     if (result!=null) src.copy(point2D = result) else null
   } else null
+}
+
+fun Node.onAttach(action: () -> Unit): Subscription {
+  return sceneProperty().subscribe { old,new -> action() }
+}
+
+fun Node.onDetach(action: () -> Unit): Subscription {
+  return sceneProperty().subscribe { old,new -> if (new == null) action() }
 }

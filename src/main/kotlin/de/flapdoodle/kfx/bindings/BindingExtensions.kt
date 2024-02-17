@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.bindings
 
+import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
 
 fun <T> ObservableValue<T?>.defaultIfNull(other: ObservableValue<T>): ObjectBindings.DefaultIfNull<T> {
@@ -22,3 +23,10 @@ fun <A, B> ObservableValue<A>.and(other: ObservableValue<B>): ObjectBindings.Wit
   return ObjectBindings.with(this).and(other)
 }
 
+fun <T> Property<T>.bindTo(source: ObservableValue<T>) {
+  bind(source)
+}
+
+fun <T> ObservableValue<T>.storeTo(destination: Property<T>) {
+  destination.bindTo(this)
+}

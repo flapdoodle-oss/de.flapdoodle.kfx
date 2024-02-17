@@ -1,33 +1,35 @@
 package de.flapdoodle.kfx.bindings
 
-import de.flapdoodle.kfx.Registration
 import javafx.beans.InvalidationListener
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.collections.*
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.collections.ObservableMap
+import javafx.util.Subscription
 
 object ObservableMaps {
-  fun <S, K, V> syncWith(source: ObservableList<S>, destination: ObservableMap<K, V>, keyOf: (S) -> K, valueOf: (S) -> V): Registration {
+  fun <S, K, V> syncWith(source: ObservableList<S>, destination: ObservableMap<K, V>, keyOf: (S) -> K, valueOf: (S) -> V): Subscription {
     source.forEach {
       destination[keyOf(it)] = valueOf(it)
     }
     val listener = MapKVListChangeListener(destination, keyOf, valueOf)
     source.addListener(listener)
 
-    return Registration {
+    return Subscription {
       source.removeListener(listener)
     }
   }
 
-  fun <K, S, T> syncWith(source: ObservableMap<K, S>, destination: ObservableMap<K, T>, transformation: (S) -> T): Registration {
+  fun <K, S, T> syncWith(source: ObservableMap<K, S>, destination: ObservableMap<K, T>, transformation: (S) -> T): Subscription {
     source.forEach { (key, value) ->
       destination[key] = transformation(value)
     }
     val listener = MappingMapChangeListener(destination, transformation)
     source.addListener(listener)
 
-    return Registration {
+    return Subscription {
       source.removeListener(listener)
     }
   }

@@ -1,8 +1,10 @@
 package de.flapdoodle.kfx.layout.backgrounds
 
+import de.flapdoodle.kfx.bindings.bindTo
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.extensions.containerlessBoundsInParentProperty
 import javafx.beans.InvalidationListener
+import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.geometry.Bounds
@@ -59,4 +61,13 @@ object Bounds {
         widthProperty().bind(region.widthProperty())
         heightProperty().bind(region.heightProperty())
     }
+
+  fun sizeRectangle(region: ObjectProperty<Bounds>): Rectangle {
+    return Rectangle().apply {
+      xProperty().bind(region.map(Bounds::getMinX))
+      yProperty().bind(region.map(Bounds::getMinY))
+      widthProperty().bind(region.map(Bounds::getWidth))
+      heightProperty().bindTo(region.map(Bounds::getHeight))
+    }
+  }
 }

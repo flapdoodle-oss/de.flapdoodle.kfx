@@ -2,15 +2,10 @@ package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.events.SharedEventLock
 import de.flapdoodle.kfx.extensions.size
-import de.flapdoodle.kfx.graph.nodes.ConnectionPath
-import de.flapdoodle.kfx.graph.nodes.Connector
-import de.flapdoodle.kfx.graph.nodes.Movable
-import de.flapdoodle.kfx.graph.nodes.Movables
 import de.flapdoodle.kfx.layout.decoration.Base
 import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.decoration.Position
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
-import de.flapdoodle.kfx.layout.layer.LayerPane
 import de.flapdoodle.kfx.sampler.NonResizablePane
 import de.flapdoodle.kfx.types.UnitInterval
 import javafx.application.Application

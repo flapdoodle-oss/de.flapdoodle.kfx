@@ -1,6 +1,6 @@
 package de.flapdoodle.kfx.strokes
 
-import de.flapdoodle.kfx.graph.nodes.Curves
+import de.flapdoodle.kfx.shapes.Curves
 import de.flapdoodle.kfx.matches
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.beans.property.SimpleObjectProperty
@@ -10,7 +10,6 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
 import javafx.stage.Stage
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot

@@ -1,12 +1,10 @@
 package de.flapdoodle.kfx.layout.splitpane
 
-import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.minus
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
 import javafx.geometry.HPos
 import javafx.geometry.Point2D
 import javafx.geometry.VPos

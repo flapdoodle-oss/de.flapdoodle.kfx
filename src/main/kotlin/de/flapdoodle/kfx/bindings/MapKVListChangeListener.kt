@@ -1,7 +1,6 @@
 package de.flapdoodle.kfx.bindings
 
 import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
 import javafx.collections.ObservableMap
 
 class MapKVListChangeListener<S, K, V>(

@@ -10,6 +10,16 @@ class SharedLock<T> {
     }
   }
 
+  @Synchronized
+  fun tryIfLock(owner: T, lockFactory: () -> Any?) {
+    if (current == null) {
+      val lock = lockFactory()
+      if (lock != null) {
+        current = owner to lock
+      }
+    }
+  }
+
   fun <K: Any> ifLocked(owner: T, lockType: Class<K>, onLocked: (Lock<T,T,K>) -> Unit) {
     withLock(owner, lockType, onLocked)
   }

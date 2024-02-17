@@ -89,7 +89,7 @@
                         </goals>
                         <configuration>
                             <sourceDirs>
-                                <source>src/main/java</source>
+<!--                                <source>src/main/java</source>-->
                                 <source>src/main/kotlin</source>
                                 <source>target/generated-sources/annotations</source>
                             </sourceDirs>
@@ -619,7 +619,7 @@
         <kotlin.version>1.9.22</kotlin.version>
         <main.class>kotlin.KotlinHelloKt</main.class>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <kotlin.compiler.languageVersion>1.8</kotlin.compiler.languageVersion>
+        <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
 
         <junit.version>5.10.0</junit.version>

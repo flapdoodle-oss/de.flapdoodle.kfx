@@ -2,7 +2,7 @@ package de.flapdoodle.kfx.strokes
 
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.scenePosition
-import de.flapdoodle.kfx.graph.nodes.Curves
+import de.flapdoodle.kfx.shapes.Curves
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty

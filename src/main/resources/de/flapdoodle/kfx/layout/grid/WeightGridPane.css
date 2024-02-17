@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 .weight-grid-pane {
-    -fx-border-width: 1;
+    -fx-border-width: 0;
     -fx-border-color: red;
     -fx-border-style: dashed;
 }

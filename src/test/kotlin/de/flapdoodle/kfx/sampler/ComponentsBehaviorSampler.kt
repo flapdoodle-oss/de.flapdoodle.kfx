@@ -1,8 +1,6 @@
 package de.flapdoodle.kfx.sampler
 
 import de.flapdoodle.kfx.extensions.property
-import de.flapdoodle.kfx.layout.absolute.AbsolutePane
-import de.flapdoodle.kfx.layout.absolute.KGroup
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.PanZoomPanel
 import javafx.application.Application

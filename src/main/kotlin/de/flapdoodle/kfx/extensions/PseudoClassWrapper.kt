@@ -10,6 +10,10 @@ class PseudoClassWrapper<T: Node>(
     node.pseudoClassStateChanged(wrapped, true)
   }
 
+  fun enabled(node: T): Boolean {
+    return node.pseudoClassStates.contains(wrapped)
+  }
+
   fun disable(node: T) {
     node.pseudoClassStateChanged(wrapped, false)
   }

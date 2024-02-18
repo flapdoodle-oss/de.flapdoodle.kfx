@@ -25,10 +25,13 @@ class GraphEditorModelAdapter<V>(
 ) : AnchorPane() {
   private val graphEditor = GraphEditor(eventListener = EventListenerMapper(modelEventListener, ::vertexId)).withAnchors(all = 10.0)
   private var subscriptions = Subscription.EMPTY
-  
-  private var vertexIdMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, Vertex>()
-  private var reverseVertexIdMapping = emptyMap<VertexId, de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>()
-  private var vertexIdContentMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, VertexContent<V>>()
+
+  private class VertexAndContent<V>(val vertex: Vertex, val content: VertexContent<V>)
+  private val vertexMapping = Mapping<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, VertexId, VertexAndContent<V>>()
+
+//  private var vertexIdMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, Vertex>()
+//  private var reverseVertexIdMapping = emptyMap<VertexId, de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>()
+//  private var vertexIdContentMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, VertexContent<V>>()
 
   private var edgeIdMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>, Edge>()
   private var reverseEdgeIdMapping = emptyMap<EdgeId, de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>()
@@ -49,11 +52,11 @@ class GraphEditorModelAdapter<V>(
   fun selectedEdgesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>> = selectedEdges
 
   private fun vertexId(id: VertexId): de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V> {
-    return requireNotNull(reverseVertexIdMapping[id]) { "could not get vertex id for $id" }
+    return requireNotNull(vertexMapping.key(id)) { "could not get vertex id for $id" }
   }
 
   private fun vertexId(id: de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>): VertexId {
-    return requireNotNull(vertexIdMapping[id]) { "could not get vertex id for $id" }.vertexId
+    return requireNotNull(vertexMapping.reverseKey(id)) { "could not get vertex id for $id" }
   }
 
   private fun apply(action: List<Action<V>>) {
@@ -63,37 +66,43 @@ class GraphEditorModelAdapter<V>(
       when (action) {
         is Action.AddVertex -> {
           graphEditor.addVertex(Vertex(action.vertex.name).also { vertex ->
-            vertexIdMapping = vertexIdMapping + (action.vertex.id to vertex)
-            reverseVertexIdMapping = reverseVertexIdMapping + (vertex.vertexId to action.vertex.id)
             val vertexContent = vertexFactory.vertexContent(action.vertex.data)
-            vertexIdContentMapping = vertexIdContentMapping + (action.vertex.id to vertexContent)
             vertex.content = vertexContent.node
+            vertexMapping.add(action.vertex.id, vertex.vertexId, VertexAndContent(vertex, vertexContent))
+//            vertexIdMapping = vertexIdMapping + (action.vertex.id to vertex)
+//            reverseVertexIdMapping = reverseVertexIdMapping + (vertex.vertexId to action.vertex.id)
+//            vertexIdContentMapping = vertexIdContentMapping + (action.vertex.id to vertexContent)
             Subscriptions.add(vertex, vertex.selectedProperty().subscribe { it -> changeSelection(action.vertex.id, it) })
           })
         }
         is Action.ChangeVertex -> {
-          val vertex = requireNotNull(vertexIdMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
-          vertex.nameProperty().value = action.change.name
-
-          val vertexContent = requireNotNull(vertexIdContentMapping.get(action.vertex)) {"could not get vertexContent for ${action.vertex}"}
-          vertexContent.valueModel.value = action.change.data
+          val vertexAndContent = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
+          vertexAndContent.vertex.nameProperty().value = action.change.name
+          vertexAndContent.content.valueModel.value = action.change.data
         }
         is Action.RemoveVertex -> {
-          val vertex = requireNotNull(vertexIdMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
-          graphEditor.removeVertex(vertex)
-          vertexIdMapping = vertexIdMapping - action.vertex
-          reverseVertexIdMapping = reverseVertexIdMapping - vertex.vertexId
-          vertexIdContentMapping = vertexIdContentMapping - action.vertex
+          val vertex = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
+          graphEditor.removeVertex(vertex.vertex)
+          vertexMapping.remove(action.vertex)
+//          vertexIdMapping = vertexIdMapping - action.vertex
+//          reverseVertexIdMapping = reverseVertexIdMapping - vertex.vertexId
+//          vertexIdContentMapping = vertexIdContentMapping - action.vertex
           changeSelection(action.vertex, false)
           Subscriptions.unsubscribeAll(vertex)
         }
         is Action.AddSlot -> {
-          val vertex = requireNotNull(vertexIdMapping.get(action.vertex)) {"could not get vertex for ${action.vertex}"}
-          vertex.addConnector(action.slot)
+          vertexMapping.with(action.vertex) {
+            it.vertex.addConnector(action.slot)
+          }
+//          val vertex = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
+//          vertex.vertex.addConnector(action.slot)
         }
         is Action.RemoveSlot -> {
-          val vertex = requireNotNull(vertexIdMapping.get(action.vertex)) {"could not get vertex for ${action.vertex}"}
-          vertex.removeConnector(action.slot)
+          vertexMapping.with(action.vertex) {
+            it.vertex.removeConnector(action.slot)
+          }
+//          val vertex = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
+//          vertex.vertex.removeConnector(action.slot)
         }
         is Action.AddEdge -> {
           val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)

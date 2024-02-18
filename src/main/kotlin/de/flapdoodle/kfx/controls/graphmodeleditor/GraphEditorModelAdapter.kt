@@ -69,40 +69,31 @@ class GraphEditorModelAdapter<V>(
             val vertexContent = vertexFactory.vertexContent(action.vertex.data)
             vertex.content = vertexContent.node
             vertexMapping.add(action.vertex.id, vertex.vertexId, VertexAndContent(vertex, vertexContent))
-//            vertexIdMapping = vertexIdMapping + (action.vertex.id to vertex)
-//            reverseVertexIdMapping = reverseVertexIdMapping + (vertex.vertexId to action.vertex.id)
-//            vertexIdContentMapping = vertexIdContentMapping + (action.vertex.id to vertexContent)
             Subscriptions.add(vertex, vertex.selectedProperty().subscribe { it -> changeSelection(action.vertex.id, it) })
           })
         }
         is Action.ChangeVertex -> {
-          val vertexAndContent = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
-          vertexAndContent.vertex.nameProperty().value = action.change.name
-          vertexAndContent.content.valueModel.value = action.change.data
+          vertexMapping.with(action.vertex) {
+            it.vertex.nameProperty().value = action.change.name
+            it.content.valueModel.value = action.change.data
+          }
         }
         is Action.RemoveVertex -> {
-          val vertex = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
-          graphEditor.removeVertex(vertex.vertex)
-          vertexMapping.remove(action.vertex)
-//          vertexIdMapping = vertexIdMapping - action.vertex
-//          reverseVertexIdMapping = reverseVertexIdMapping - vertex.vertexId
-//          vertexIdContentMapping = vertexIdContentMapping - action.vertex
-          changeSelection(action.vertex, false)
-          Subscriptions.unsubscribeAll(vertex)
+          vertexMapping.remove(action.vertex) {
+            graphEditor.removeVertex(it.vertex)
+            changeSelection(action.vertex, false)
+            Subscriptions.unsubscribeAll(it.vertex)
+          }
         }
         is Action.AddSlot -> {
           vertexMapping.with(action.vertex) {
             it.vertex.addConnector(action.slot)
           }
-//          val vertex = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
-//          vertex.vertex.addConnector(action.slot)
         }
         is Action.RemoveSlot -> {
           vertexMapping.with(action.vertex) {
             it.vertex.removeConnector(action.slot)
           }
-//          val vertex = requireNotNull(vertexMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
-//          vertex.vertex.removeConnector(action.slot)
         }
         is Action.AddEdge -> {
           val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)

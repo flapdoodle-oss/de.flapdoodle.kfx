@@ -76,6 +76,13 @@ class Layers(private val registry: Registry) : Region() {
     return connections.children.filterIsInstance(Edge::class.java)
   }
 
+  fun removeVertex(list: List<Vertex>) {
+    nodes.remove(*list.toTypedArray())
+    list.forEach {
+      registry.unregisterNode(it)
+    }
+  }
+
   fun removeEdges(list: List<Edge>) {
     connections.remove(*list.toTypedArray())
     list.forEach {

@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.usecase.tab2
 
 import de.flapdoodle.kfx.controls.grapheditor.GraphEditorModelAdapter
 import de.flapdoodle.kfx.controls.grapheditor.model.*
+import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.usecase.tab2.graph.DummyVertexContentFactory
@@ -79,8 +80,17 @@ class Main() : BorderPane() {
             model.set(model.get().add(Vertex("Name#"+vertexCounter.incrementAndGet(), "X")))
           }
         },
+        Button("-").also { button ->
+          button.visibleProperty().bind(selectedVertex.map { it != null })
+          button.managedProperty().bind(button.visibleProperty())
+          button.onAction = EventHandler {
+            val vertexId = selectedVertex.value
+            model.set(model.get().remove(vertexId))
+          }
+        },
         Button("-->").also { button ->
           button.visibleProperty().bind(selectedVertex.map { it != null })
+          button.managedProperty().bind(button.visibleProperty())
           button.onAction = EventHandler {
             val vertexId = selectedVertex.value
             val vertex = model.get().vertex(vertexId)
@@ -89,6 +99,7 @@ class Main() : BorderPane() {
         },
         Button("<--").also { button ->
           button.visibleProperty().bind(selectedVertex.map { it != null })
+          button.managedProperty().bind(button.visibleProperty())
           button.onAction = EventHandler {
             val vertexId = selectedVertex.value
             val vertex = model.get().vertex(vertexId)
@@ -97,6 +108,7 @@ class Main() : BorderPane() {
         },
         Button("X").also { button ->
           button.visibleProperty().bind(selectedEdge.map { it != null })
+          button.managedProperty().bind(button.visibleProperty())
           button.onAction = EventHandler {
             val egde = selectedEdge.value
             model.set(model.get().remove(egde))

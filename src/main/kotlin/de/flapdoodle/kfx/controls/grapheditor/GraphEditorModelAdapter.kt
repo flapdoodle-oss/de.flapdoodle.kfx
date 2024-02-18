@@ -65,12 +65,32 @@ class GraphEditorModelAdapter<V>(
             val vertexContent = vertexFactory.vertexContent(action.vertex.data)
             vertexIdContentMapping = vertexIdContentMapping + (action.vertex.id to vertexContent)
             vertex.content = vertexContent.node
-            vertex.selectedProperty().subscribe { it -> changeSelection(action.vertex.id, it) }
+            Subscriptions.add(vertex, vertex.selectedProperty().subscribe { it -> changeSelection(action.vertex.id, it) })
           })
+        }
+        is Action.ChangeVertex -> {
+          val vertex = requireNotNull(vertexIdMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
+          vertex.nameProperty().value = action.change.name
+
+          val vertexContent = requireNotNull(vertexIdContentMapping.get(action.vertex)) {"could not get vertexContent for ${action.vertex}"}
+          vertexContent.valueModel.value = action.change.data
+        }
+        is Action.RemoveVertex -> {
+          val vertex = requireNotNull(vertexIdMapping[action.vertex]) {"could not get vertex for ${action.vertex}"}
+          graphEditor.removeVertex(vertex)
+          vertexIdMapping = vertexIdMapping - action.vertex
+          reverseVertexIdMapping = reverseVertexIdMapping - vertex.vertexId
+          vertexIdContentMapping = vertexIdContentMapping - action.vertex
+          changeSelection(action.vertex, false)
+          Subscriptions.unsubscribeAll(vertex)
         }
         is Action.AddSlot -> {
           val vertex = requireNotNull(vertexIdMapping.get(action.vertex)) {"could not get vertex for ${action.vertex}"}
           vertex.addConnector(action.slot)
+        }
+        is Action.RemoveSlot -> {
+          val vertex = requireNotNull(vertexIdMapping.get(action.vertex)) {"could not get vertex for ${action.vertex}"}
+          vertex.removeConnector(action.slot)
         }
         is Action.AddEdge -> {
           val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)
@@ -88,13 +108,6 @@ class GraphEditorModelAdapter<V>(
           reverseEdgeIdMapping = reverseEdgeIdMapping - edge.edgeId
           changeSelection(action.edge, false)
           Subscriptions.unsubscribeAll(edge)
-        }
-        is Action.ChangeVertex -> {
-          val vertex = requireNotNull(vertexIdMapping.get(action.vertex)) {"could not get vertex for ${action.vertex}"}
-          vertex.nameProperty().value = action.change.name
-
-          val vertexContent = requireNotNull(vertexIdContentMapping.get(action.vertex)) {"could not get vertexContent for ${action.vertex}"}
-          vertexContent.valueModel.value = action.change.data
         }
         else -> println("not implemented: $action")
       }

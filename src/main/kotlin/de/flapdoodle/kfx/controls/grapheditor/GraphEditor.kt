@@ -38,6 +38,10 @@ class GraphEditor(
     view.layers().addVertex(*list)
   }
 
+  fun removeVertex(vararg list: Vertex) {
+    view.layers().removeVertex(listOf(*list))
+  }
+
   fun addEdge(vararg list: Edge) {
     view.layers().addEdge(*list)
   }

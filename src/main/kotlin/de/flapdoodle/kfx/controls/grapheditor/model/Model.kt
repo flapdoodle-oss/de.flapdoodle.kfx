@@ -28,6 +28,14 @@ data class Model<V>(
     return copy(vertexList = vertexList - old + new)
   }
 
+  fun remove(id: VertexId<V>): Model<V> {
+    val vertex = vertex(id)
+    val changes = Vertex.slotChanges(vertex, vertex.copy(slots = emptyList()))
+    val removedButUsedProperties = usedPropertySets.intersect(changes.removed.map { vertex.id to it.id }.toSet())
+    require(removedButUsedProperties.isEmpty()) {"can not remove used properties: $removedButUsedProperties"}
+    return copy(vertexList = vertexList - vertex)
+  }
+
   fun add(edge: Edge<V>): Model<V> {
     require(!edgeSet.contains(edge)) { "edge already there" }
     require(vertexSlotSet.contains(edge.startVertex to edge.startSlot)) { "could not find start vertex ${edge.startVertex}, property ${edge.startSlot}"}

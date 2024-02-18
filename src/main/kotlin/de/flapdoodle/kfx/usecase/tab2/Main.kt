@@ -15,6 +15,8 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.scene.control.Button
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
 import java.util.concurrent.atomic.AtomicInteger
@@ -63,6 +65,12 @@ class Main() : BorderPane() {
   init {
 //    background = Background.fill(Color.DARKGRAY)
 //    children.add(Button("Hi"))
+    addEventFilter(KeyEvent.KEY_RELEASED) { event ->
+      if (event.code == KeyCode.ESCAPE && modelChangeAfterClick != null) {
+        editorAdapter.cancelAskForClick()
+        modelChangeAfterClick = null
+      }
+    }
 
     center = WeightGridPane()
       .withAnchors(all = 0.0)
@@ -85,7 +93,7 @@ class Main() : BorderPane() {
           button.onAction = EventHandler {
             editorAdapter.askForClick()
             modelChangeAfterClick = { pos ->
-              model.set(model.get().add(Vertex("Name#"+vertexCounter.incrementAndGet(), "X")))
+              model.set(model.get().add(Vertex("Name#"+vertexCounter.incrementAndGet(), "X", position = pos)))
             }
           }
         },

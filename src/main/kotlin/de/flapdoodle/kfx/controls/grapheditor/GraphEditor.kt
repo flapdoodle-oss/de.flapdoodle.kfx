@@ -63,6 +63,10 @@ class GraphEditor(
     askForClick.value = true
   }
 
+  fun cancelAskForClick() {
+    askForClick.value = false
+  }
+
   private fun filterMouseEvents(event: MouseEvent) {
     val target = event.target
 
@@ -78,9 +82,11 @@ class GraphEditor(
       }
     } else {
       if (event.eventType == MouseEvent.MOUSE_RELEASED) {
-        eventListener.onEvent(this, Event.Click(event.localPosition))
+        val layerLocal = view.layers().screenToLocal(event.screenPosition)
+        eventListener.onEvent(this, Event.Click(layerLocal))
         askForClick.value = false
       }
+      event.consume()
     }
   }
 

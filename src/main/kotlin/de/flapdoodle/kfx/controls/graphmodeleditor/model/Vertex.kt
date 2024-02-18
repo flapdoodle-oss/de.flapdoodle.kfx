@@ -1,14 +1,17 @@
 package de.flapdoodle.kfx.controls.graphmodeleditor.model
 
+import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId
 import de.flapdoodle.kfx.types.Id
+import javafx.geometry.Point2D
 
 data class Vertex<T>(
   val name: String,
   val data: T,
   val slots: List<Slot> = emptyList(),
+  val position: Point2D = Point2D(0.0, 0.0),
   val id: VertexId<T> = VertexId()
 ) {
 

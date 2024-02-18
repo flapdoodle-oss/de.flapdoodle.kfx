@@ -90,7 +90,7 @@ class ActionTest {
     val unchangedSlot = Slot("x", Slot.Mode.IN, Position.LEFT)
 
     val old = Vertex("A", 1, listOf(oldSlot, stillThereSlot, unchangedSlot))
-    val new = Vertex("B", 2, listOf(unchangedSlot, newSlot, stillThereSlot.copy(name = "X")), old.id)
+    val new = old.copy(name = "B", data = 2, slots = listOf(unchangedSlot, newSlot, stillThereSlot.copy(name = "X")))
 
     val actions = Action.syncActions(emptyModel().add(old), emptyModel().add(new))
 

@@ -10,6 +10,7 @@ import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.EventListenerMapper
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEventListener
 import de.flapdoodle.kfx.controls.graphmodeleditor.model.*
+import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.plus
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.beans.property.ObjectProperty
@@ -49,6 +50,10 @@ class GraphEditorModelAdapter<V>(
     graphEditor.askForClick()
   }
 
+  fun cancelAskForClick() {
+    graphEditor.cancelAskForClick()
+  }
+
   private fun vertexId(id: VertexId): de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V> {
     return requireNotNull(vertexMapping.key(id)) { "could not get vertex id for $id" }
   }
@@ -65,6 +70,7 @@ class GraphEditorModelAdapter<V>(
         is Action.AddVertex -> {
           graphEditor.addVertex(Vertex(action.vertex.name).also { vertex ->
             val vertexContent = vertexFactory.vertexContent(action.vertex.data)
+            vertex.layoutPosition = action.vertex.position
             vertex.content = vertexContent.node
             vertexMapping.add(action.vertex.id, vertex.vertexId, VertexAndContent(vertex, vertexContent))
             Subscriptions.add(vertex, vertex.selectedProperty().subscribe { it -> changeSelection(action.vertex.id, it) })

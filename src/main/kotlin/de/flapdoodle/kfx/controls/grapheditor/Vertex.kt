@@ -3,7 +3,7 @@ package de.flapdoodle.kfx.controls.grapheditor
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
-import de.flapdoodle.kfx.controls.grapheditor.connectors.ConnectorsPane
+import de.flapdoodle.kfx.controls.grapheditor.connectors.SlotsPane
 import de.flapdoodle.kfx.controls.grapheditor.model.Position
 import de.flapdoodle.kfx.controls.grapheditor.model.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
@@ -76,9 +76,9 @@ class Vertex(
     top = NodeHeader(name).apply {
       Markers.markAsDragBar(this)
     }
-    left = ConnectorsPane(registry, vertexId, connectors, Position.LEFT)
-    right = ConnectorsPane(registry, vertexId, connectors, Position.RIGHT)
-    bottom = ConnectorsPane(registry, vertexId, connectors, Position.BOTTOM)
+    left = SlotsPane(registry, vertexId, connectors, Position.LEFT)
+    right = SlotsPane(registry, vertexId, connectors, Position.RIGHT)
+    bottom = SlotsPane(registry, vertexId, connectors, Position.BOTTOM)
 
     selected.subscribe { it ->
       if (it) Style.Selected.enable(this) else Style.Selected.disable(this)

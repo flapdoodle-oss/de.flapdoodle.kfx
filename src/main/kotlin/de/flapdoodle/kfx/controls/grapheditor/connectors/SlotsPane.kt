@@ -5,16 +5,14 @@ import de.flapdoodle.kfx.controls.grapheditor.Registry
 import de.flapdoodle.kfx.controls.grapheditor.model.Position
 import de.flapdoodle.kfx.controls.grapheditor.model.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
-import de.flapdoodle.kfx.extensions.onAttach
 import de.flapdoodle.kfx.extensions.unsubscribeOnDetach
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
-import javafx.util.Subscription
 
-class ConnectorsPane(
+class SlotsPane(
   private val registry: ObservableValue<Registry>,
   private val vertexId: VertexId,
   slots: ObservableList<Slot>,
@@ -32,7 +30,7 @@ class ConnectorsPane(
 
     unsubscribeOnDetach {
       ObservableLists.syncWith(filtered, wrapper.children) { c ->
-        Connector(registry, vertexId, c, position)
+        SlotPane(registry, vertexId, c, position)
       }
     }
 

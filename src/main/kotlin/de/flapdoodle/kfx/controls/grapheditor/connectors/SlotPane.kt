@@ -19,7 +19,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.util.Subscription
 
-class Connector(
+class SlotPane(
   registry: ObservableValue<Registry>,
   private val vertexId: VertexId,
   private val slot: Slot,

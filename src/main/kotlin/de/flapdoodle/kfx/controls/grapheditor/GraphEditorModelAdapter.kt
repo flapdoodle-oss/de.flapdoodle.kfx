@@ -84,6 +84,7 @@ class GraphEditorModelAdapter<V>(
           graphEditor.removeEdge(edge)
           edgeIdMapping = edgeIdMapping - action.edge
           reverseEdgeIdMapping = reverseEdgeIdMapping - edge.edgeId
+          changeSelection(action.edge, false)
           Subscriptions.unsubscribeAll(edge)
         }
         is Action.ChangeVertex -> {

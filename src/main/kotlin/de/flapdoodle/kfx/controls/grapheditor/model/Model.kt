@@ -23,7 +23,7 @@ data class Model<V>(
   fun replace(old: Vertex<V>, new: Vertex<V>): Model<V> {
     require(old.id == new.id) {"id does not match: ${old.id} != ${new.id}"}
     val changes = Vertex.slotChanges(old, new)
-    val removedButUsedProperties = usedPropertySets.intersect(changes.removed.map { old.id to it.id })
+    val removedButUsedProperties = usedPropertySets.intersect(changes.removed.map { old.id to it.id }.toSet())
     require(removedButUsedProperties.isEmpty()) {"can not remove used properties: $removedButUsedProperties"}
     return copy(vertexList = vertexList - old + new)
   }

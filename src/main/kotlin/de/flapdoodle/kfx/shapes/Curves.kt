@@ -26,17 +26,19 @@ object Curves {
     val endPointProperty = end.map(AngleAndPoint2D::point2D)
 
     val distance = startPointProperty.and(endPointProperty)
-      .map { s, e -> e.distance(s).div(2) }
+      .map { s, e -> e.distance(s) }
+    val startDistance = distance.map { it.div(2) }
+    val endDistance = distance.map { it.div(3) }
 
     startXProperty().bind(startPointProperty.mapToDouble(Point2D::getX))
     startYProperty().bind(startPointProperty.mapToDouble(Point2D::getY))
 
-    val startWithDist = start.and(distance).map(AngleAndPoint2D::withDistance)
+    val startWithDist = start.and(startDistance).map(AngleAndPoint2D::withDistance)
 
     controlX1Property().bind(startWithDist.mapToDouble(Point2D::getX))
     controlY1Property().bind(startWithDist.mapToDouble(Point2D::getY))
 
-    val endWithDist = end.and(distance).map(AngleAndPoint2D::withDistance)
+    val endWithDist = end.and(endDistance).map(AngleAndPoint2D::withDistance)
 
     controlX2Property().bind(endWithDist.mapToDouble(Point2D::getX))
     controlY2Property().bind(endWithDist.mapToDouble(Point2D::getY))

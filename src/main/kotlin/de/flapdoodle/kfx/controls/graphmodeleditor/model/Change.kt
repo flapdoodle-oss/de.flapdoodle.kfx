@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.grapheditor.model
+package de.flapdoodle.kfx.controls.graphmodeleditor.model
 
 data class Change<T>(
   val removed: Set<T>,

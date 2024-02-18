@@ -1,5 +1,9 @@
 package de.flapdoodle.kfx.controls.grapheditor.model
 
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.Action
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.Model
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.Vertex
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

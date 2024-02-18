@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.grapheditor.model
+package de.flapdoodle.kfx.controls.graphmodeleditor.types
 
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 

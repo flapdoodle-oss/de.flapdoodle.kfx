@@ -31,7 +31,6 @@ class GraphEditor(
   init {
     children.add(view)
     addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
-//    addEventFilter(KeyEvent.ANY, this::filterKeyEvents)
   }
 
   fun addVertex(vararg list: Vertex) {
@@ -61,18 +60,6 @@ class GraphEditor(
       MouseEvent.MOUSE_PRESSED -> onMousePressed(event)
       MouseEvent.MOUSE_DRAGGED -> onMouseDragged(event)
       MouseEvent.MOUSE_RELEASED -> onMouseReleased(event)
-    }
-  }
-
-  private fun filterKeyEvents(event: KeyEvent) {
-    when (event.eventType) {
-      KeyEvent.KEY_RELEASED -> sharedLock.ifUnlocked {
-//        println("event--> code: ${event.code}, char: ${event.character}")
-        if (event.code==KeyCode.DELETE) {
-          val selected = view.layers().edges().filter { it -> it.isSelected() }
-          view.layers().removeEdges(selected)
-        }
-      }
     }
   }
 

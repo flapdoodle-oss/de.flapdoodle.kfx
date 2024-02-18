@@ -1,8 +1,11 @@
 package de.flapdoodle.kfx.usecase.tab2
 
-import de.flapdoodle.kfx.controls.grapheditor.GraphEditorModelAdapter
+import de.flapdoodle.kfx.controls.graphmodeleditor.GraphEditorModelAdapter
 import de.flapdoodle.kfx.controls.grapheditor.model.*
-import de.flapdoodle.kfx.extensions.hide
+import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEvent
+import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEventListener
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.*
+import de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.usecase.tab2.graph.DummyVertexContentFactory

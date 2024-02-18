@@ -1,6 +1,8 @@
-package de.flapdoodle.kfx.controls.grapheditor.model
+package de.flapdoodle.kfx.controls.graphmodeleditor.model
 
+import de.flapdoodle.kfx.controls.grapheditor.model.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
+import de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId
 
 sealed class Action<V> {
   data class AddVertex<V>(val vertex: Vertex<V>): Action<V>()

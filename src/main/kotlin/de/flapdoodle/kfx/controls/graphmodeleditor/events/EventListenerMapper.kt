@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.grapheditor.model
+package de.flapdoodle.kfx.controls.graphmodeleditor.events
 
 import de.flapdoodle.kfx.controls.grapheditor.GraphEditor
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
@@ -7,7 +7,7 @@ import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 
 class EventListenerMapper<T>(
   private val delegate: ModelEventListener<T>,
-  private val vertexIdMapper: (VertexId) -> de.flapdoodle.kfx.controls.grapheditor.model.VertexId<T>
+  private val vertexIdMapper: (VertexId) -> de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<T>
 ) : EventListener {
   override fun onEvent(graphEditor: GraphEditor, event: Event): Boolean {
     return when (event) {

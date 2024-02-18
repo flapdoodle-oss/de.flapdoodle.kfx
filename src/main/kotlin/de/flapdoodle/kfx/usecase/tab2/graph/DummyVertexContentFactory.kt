@@ -1,7 +1,7 @@
 package de.flapdoodle.kfx.usecase.tab2.graph
 
-import de.flapdoodle.kfx.controls.grapheditor.model.VertexContent
-import de.flapdoodle.kfx.controls.grapheditor.model.VertexContentFactory
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.VertexContent
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.VertexContentFactory
 import javafx.scene.control.Button
 
 object DummyVertexContentFactory : VertexContentFactory<String> {

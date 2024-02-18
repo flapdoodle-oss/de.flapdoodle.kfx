@@ -1,6 +1,7 @@
-package de.flapdoodle.kfx.controls.grapheditor.model
+package de.flapdoodle.kfx.controls.graphmodeleditor.events
 
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
+import de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId
 
 sealed class ModelEvent<T> {
   data class TryToConnect<T>(val vertex: VertexId<T>, val slot:  SlotId): ModelEvent<T>()

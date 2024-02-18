@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.grapheditor.model
+package de.flapdoodle.kfx.controls.graphmodeleditor.model
 
 import javafx.beans.property.Property
 import javafx.scene.Node

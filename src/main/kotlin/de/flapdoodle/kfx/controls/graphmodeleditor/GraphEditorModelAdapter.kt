@@ -1,17 +1,20 @@
-package de.flapdoodle.kfx.controls.grapheditor
+package de.flapdoodle.kfx.controls.graphmodeleditor
 
 import de.flapdoodle.kfx.bindings.Subscriptions
-import de.flapdoodle.kfx.controls.grapheditor.model.*
+import de.flapdoodle.kfx.controls.grapheditor.Edge
+import de.flapdoodle.kfx.controls.grapheditor.GraphEditor
+import de.flapdoodle.kfx.controls.grapheditor.Vertex
 import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
+import de.flapdoodle.kfx.controls.graphmodeleditor.events.EventListenerMapper
+import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEventListener
+import de.flapdoodle.kfx.controls.graphmodeleditor.model.*
 import de.flapdoodle.kfx.extensions.plus
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 import javafx.util.Subscription
 
@@ -23,15 +26,15 @@ class GraphEditorModelAdapter<V>(
   private val graphEditor = GraphEditor(eventListener = EventListenerMapper(modelEventListener, ::vertexId)).withAnchors(all = 10.0)
   private var subscriptions = Subscription.EMPTY
   
-  private var vertexIdMapping = emptyMap<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>, Vertex>()
-  private var reverseVertexIdMapping = emptyMap<VertexId, de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>>()
-  private var vertexIdContentMapping = emptyMap<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>, VertexContent<V>>()
+  private var vertexIdMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, Vertex>()
+  private var reverseVertexIdMapping = emptyMap<VertexId, de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>()
+  private var vertexIdContentMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, VertexContent<V>>()
 
-  private var edgeIdMapping = emptyMap<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>, Edge>()
-  private var reverseEdgeIdMapping = emptyMap<EdgeId, de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>()
+  private var edgeIdMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>, Edge>()
+  private var reverseEdgeIdMapping = emptyMap<EdgeId, de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>()
 
-  private val selectedVertices = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>>>(emptySet())
-  private val selectedEdges = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>>(emptySet())
+  private val selectedVertices = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>>(emptySet())
+  private val selectedEdges = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>>(emptySet())
 
   init {
     children.add(graphEditor)
@@ -42,14 +45,14 @@ class GraphEditorModelAdapter<V>(
     }
   }
 
-  fun selectedVerticesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>>> = selectedVertices
-  fun selectedEdgesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>>> = selectedEdges
+  fun selectedVerticesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>> = selectedVertices
+  fun selectedEdgesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>> = selectedEdges
 
-  private fun vertexId(id: VertexId): de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V> {
+  private fun vertexId(id: VertexId): de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V> {
     return requireNotNull(reverseVertexIdMapping[id]) { "could not get vertex id for $id" }
   }
 
-  private fun vertexId(id: de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>): VertexId {
+  private fun vertexId(id: de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>): VertexId {
     return requireNotNull(vertexIdMapping[id]) { "could not get vertex id for $id" }.vertexId
   }
 
@@ -114,7 +117,7 @@ class GraphEditorModelAdapter<V>(
     }
   }
 
-  private fun changeSelection(vertex: de.flapdoodle.kfx.controls.grapheditor.model.VertexId<V>, selection: Boolean) {
+  private fun changeSelection(vertex: de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, selection: Boolean) {
     val current = selectedVertices.get()
     selectedVertices.value = if (selection) {
       current + vertex
@@ -123,7 +126,7 @@ class GraphEditorModelAdapter<V>(
     }
   }
 
-  private fun changeSelection(egde: de.flapdoodle.kfx.controls.grapheditor.model.Edge<V>, selection: Boolean) {
+  private fun changeSelection(egde: de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>, selection: Boolean) {
     val current = selectedEdges.get()
     selectedEdges.value = if (selection) {
       current + egde

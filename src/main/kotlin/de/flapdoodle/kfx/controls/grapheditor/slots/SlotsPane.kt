@@ -1,9 +1,7 @@
-package de.flapdoodle.kfx.controls.grapheditor.connectors
+package de.flapdoodle.kfx.controls.grapheditor.slots
 
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.controls.grapheditor.Registry
-import de.flapdoodle.kfx.controls.grapheditor.model.Position
-import de.flapdoodle.kfx.controls.grapheditor.model.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.extensions.unsubscribeOnDetach
 import javafx.beans.value.ObservableValue

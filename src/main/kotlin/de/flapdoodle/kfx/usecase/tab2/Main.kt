@@ -1,7 +1,8 @@
 package de.flapdoodle.kfx.usecase.tab2
 
 import de.flapdoodle.kfx.controls.graphmodeleditor.GraphEditorModelAdapter
-import de.flapdoodle.kfx.controls.grapheditor.model.*
+import de.flapdoodle.kfx.controls.grapheditor.slots.Position
+import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEvent
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEventListener
 import de.flapdoodle.kfx.controls.graphmodeleditor.model.*

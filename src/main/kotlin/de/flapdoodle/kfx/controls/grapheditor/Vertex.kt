@@ -3,9 +3,9 @@ package de.flapdoodle.kfx.controls.grapheditor
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
-import de.flapdoodle.kfx.controls.grapheditor.connectors.SlotsPane
-import de.flapdoodle.kfx.controls.grapheditor.model.Position
-import de.flapdoodle.kfx.controls.grapheditor.model.Slot
+import de.flapdoodle.kfx.controls.grapheditor.slots.SlotsPane
+import de.flapdoodle.kfx.controls.grapheditor.slots.Position
+import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId

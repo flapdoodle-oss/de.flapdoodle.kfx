@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.grapheditor.model
+package de.flapdoodle.kfx.controls.grapheditor.slots
 
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import javafx.scene.paint.Color
@@ -22,7 +22,7 @@ data class Slot(
     )
     private val colors = colorsNames.map(Color::web)
 
-    fun hashedColor(name: String, mode: Slot.Mode): Color? {
+    fun hashedColor(name: String, mode: Mode): Color? {
       val hash = name.hashCode() + mode.hashCode()
       val index = hash % colors.size
       return colors[index]

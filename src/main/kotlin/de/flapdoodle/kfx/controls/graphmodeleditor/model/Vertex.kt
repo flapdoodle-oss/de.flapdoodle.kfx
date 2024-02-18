@@ -1,6 +1,6 @@
 package de.flapdoodle.kfx.controls.graphmodeleditor.model
 
-import de.flapdoodle.kfx.controls.grapheditor.model.Slot
+import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId
 import de.flapdoodle.kfx.types.Id

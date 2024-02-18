@@ -22,7 +22,7 @@ import javafx.scene.layout.Region
 import javafx.scene.transform.Scale
 
 class View(
-  val sharedEventLock: SharedLock<Node> = SharedLock(),
+  private val sharedEventLock: SharedLock<Node> = SharedLock(),
   registry: Registry
 ) : Region() {
 
@@ -97,9 +97,6 @@ class View(
 
     scrollX.resizeRelocate(0.0, snapPositionY(height - h), snapSizeX(width - w), h)
     scrollY.resizeRelocate(snapPositionX(width - w), 0.0, w, snapSizeY(height - h))
-
-//    println("view: ${layers.parentToLocal(layoutBounds)}")
-//    layers.background().resizeRelocate()
   }
 
   fun zoom(zoom: Double) {
@@ -112,7 +109,6 @@ class View(
 
 
   private fun handleMouseEvent(event: MouseEvent) {
-//    println("NodeView.handleMouseEvent")
     when (event.eventType) {
       MouseEvent.MOUSE_PRESSED -> {
         sharedEventLock.tryLock(this) {

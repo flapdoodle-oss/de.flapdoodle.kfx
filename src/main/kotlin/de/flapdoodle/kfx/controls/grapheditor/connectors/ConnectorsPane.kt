@@ -22,8 +22,6 @@ class ConnectorsPane(
   private val syncJob: Subscription
 
   init {
-//    border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii(1.0), BorderWidths.DEFAULT))
-
     val filtered = slots.filtered { it.position == position }
 
     val wrapper = when (position) {

@@ -55,8 +55,8 @@ class GraphEditorModelAdapter<V>(
 
   private fun apply(action: List<Action<V>>) {
     action.forEach { action ->
-      println("-------------------------------")
-      println("action -> $action")
+//      println("-------------------------------")
+//      println("action -> $action")
       when (action) {
         is Action.AddVertex -> {
           graphEditor.addVertex(Vertex(action.vertex.name).also { vertex ->

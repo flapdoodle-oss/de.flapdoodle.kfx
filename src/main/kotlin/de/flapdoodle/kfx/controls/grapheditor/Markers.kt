@@ -7,9 +7,8 @@ import de.flapdoodle.kfx.extensions.constraint
 import javafx.scene.Node
 
 object Markers {
-  val IsDragBar = Key.ofType(Boolean::class)
-  val nodeSlot = Key.ofType(VertexSlotId::class)
-  val connection = Key.ofType(EdgeId::class)
+  private val IsDragBar = Key.ofType(Boolean::class)
+  private val nodeSlot = Key.ofType(VertexSlotId::class)
 
   fun isDragBar(node: Node): Boolean {
     return node.constraint[IsDragBar] ?: false
@@ -21,18 +20,6 @@ object Markers {
 
   fun unmarkAsDragBar(node: Node) {
     node.constraint[IsDragBar] = null
-  }
-
-  fun connection(node: Node): EdgeId? {
-    return node.constraint[connection]
-  }
-
-  fun markAsConnection(node: Node, edgeId: EdgeId) {
-    node.constraint[connection] = edgeId
-  }
-
-  fun unmarkAsConnection(node: Node) {
-    node.constraint[connection] = null
   }
 
   fun nodeSlot(node: Node): VertexSlotId? {

@@ -61,11 +61,14 @@ class GraphEditor(
   }
 
   private fun filterKeyEvents(event: KeyEvent) {
+    println("key event: $event")
     when (event.eventType) {
       KeyEvent.KEY_RELEASED -> sharedLock.ifUnlocked {
 //        println("event--> code: ${event.code}, char: ${event.character}")
         if (event.code==KeyCode.DELETE) {
+          println("delete...")
           val selected = view.layers().edges().filter { it -> it.isSelected() }
+          println("delete $selected")
           view.layers().removeEdges(selected)
         }
       }

@@ -27,17 +27,17 @@ import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
 
 @ExtendWith(ApplicationExtension::class)
-internal class WeightGridPaneITBounds {
+internal class WeightGridControlITBounds {
 
     @Start
     private fun createElement(stage: Stage) {
-        stage.scene = Scene(WeightGridPane(),200.0,200.0)
+        stage.scene = Scene(WeightGridControl(),200.0,200.0)
         stage.show()
     }
 
     @Test
     fun justShow(robot: FxRobot) {
-        assertThat(robot.lookup(".root").queryAs(WeightGridPane::class.java))
+        assertThat(robot.lookup(".root").queryAs(WeightGridControl::class.java))
             .satisfies(ThrowingConsumer {
                 assertThat(it.verticalSpace.value).isEqualTo(0.0)
                 assertThat(it.horizontalSpace.value).isEqualTo(0.0)

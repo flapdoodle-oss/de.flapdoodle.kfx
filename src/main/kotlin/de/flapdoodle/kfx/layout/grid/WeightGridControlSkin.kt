@@ -25,9 +25,9 @@ import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.control.SkinBase
 
-class WeightGridPaneSkin(
-    private val control: WeightGridPane
-) : SkinBase<WeightGridPane>(control) {
+class WeightGridControlSkin(
+    private val control: WeightGridControl
+) : SkinBase<WeightGridControl>(control) {
 
     private var gridMap: GridMap<Node> = GridMap()
 

@@ -22,24 +22,24 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.stage.Stage
 
-class WeightGridPaneSampler {
+class WeightGridControlSampler {
   class Sample : Application() {
 
     override fun start(stage: Stage) {
-      stage.scene = Scene(WeightGridPane().apply {
+      stage.scene = Scene(WeightGridControl().apply {
         verticalSpace.set(10.0)
         horizontalSpace.set(20.0)
 
         children.add(Button("test").apply {
           minWidth = 20.0
           maxWidth = 100.0
-          WeightGridPane.setPosition(this, 0, 0)
+          WeightGridControl.setPosition(this, 0, 0)
         })
         children.add(Button("test-1").apply {
-          WeightGridPane.setPosition(this, 1, 0, horizontalPosition = HPos.RIGHT)
+          WeightGridControl.setPosition(this, 1, 0, horizontalPosition = HPos.RIGHT)
         })
         children.add(Button("test-11").apply {
-          WeightGridPane.setPosition(this, 1, 1)
+          WeightGridControl.setPosition(this, 1, 1)
           maxHeight = 100.0
         })
 

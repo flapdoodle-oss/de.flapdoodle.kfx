@@ -10,6 +10,8 @@ import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 import javafx.util.Subscription
 

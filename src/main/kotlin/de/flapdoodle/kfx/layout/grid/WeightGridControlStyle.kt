@@ -20,19 +20,19 @@ import javafx.css.CssMetaData
 import javafx.css.StyleablePropertyFactory
 import javafx.scene.control.Control
 
-class WeightGridPaneStyle {
+class WeightGridControlStyle {
     companion object {
         internal val CSS_HSPACE_NAME = "weighted-grid-horizontal-space"
         internal val CSS_VSPACE_NAME = "weighted-grid-vertical-space"
 
-        private val FACTORY = StyleablePropertyFactory<WeightGridPane>(Control.getClassCssMetaData())
+        private val FACTORY = StyleablePropertyFactory<WeightGridControl>(Control.getClassCssMetaData())
 
-        internal val CSS_HSPACE: CssMetaData<WeightGridPane, Number> = FACTORY.createSizeCssMetaData(
+        internal val CSS_HSPACE: CssMetaData<WeightGridControl, Number> = FACTORY.createSizeCssMetaData(
             CSS_HSPACE_NAME,
             { it.horizontalSpace },
             2.0)
 
-        internal val CSS_VSPACE: CssMetaData<WeightGridPane, Number> = FACTORY.createSizeCssMetaData(
+        internal val CSS_VSPACE: CssMetaData<WeightGridControl, Number> = FACTORY.createSizeCssMetaData(
             CSS_VSPACE_NAME,
             { it.verticalSpace },
             2.0)

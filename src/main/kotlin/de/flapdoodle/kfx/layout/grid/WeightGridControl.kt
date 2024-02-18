@@ -27,7 +27,7 @@ import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.control.Control
 
-class WeightGridPane : Control() {
+class WeightGridControl : Control() {
 
     companion object {
         fun setPosition(
@@ -52,13 +52,13 @@ class WeightGridPane : Control() {
         }
     }
 
-    internal val horizontalSpace = object : SimpleStyleableDoubleProperty(WeightGridPaneStyle.CSS_HSPACE, this, "hspace") {
+    internal val horizontalSpace = object : SimpleStyleableDoubleProperty(WeightGridControlStyle.CSS_HSPACE, this, "hspace") {
         override fun invalidated() {
             requestLayout()
         }
     }
 
-    internal val verticalSpace = object : SimpleStyleableDoubleProperty(WeightGridPaneStyle.CSS_VSPACE, this, "vspace") {
+    internal val verticalSpace = object : SimpleStyleableDoubleProperty(WeightGridControlStyle.CSS_VSPACE, this, "vspace") {
         override fun invalidated() {
             requestLayout()
         }
@@ -72,7 +72,7 @@ class WeightGridPane : Control() {
         stylesheets += javaClass.getResource("WeightGridPane.css").toExternalForm();
     }
 
-    private val skin = WeightGridPaneSkin(this)
+    private val skin = WeightGridControlSkin(this)
     override fun createDefaultSkin() = skin
 
     fun setRowWeight(row: Int, weight: Double) {
@@ -106,7 +106,7 @@ class WeightGridPane : Control() {
     }
 
     override fun getControlCssMetaData(): List<CssMetaData<out Styleable, *>> {
-        return WeightGridPaneStyle.CONTROL_CSS_META_DATA
+        return WeightGridControlStyle.CONTROL_CSS_META_DATA
     }
 
 }

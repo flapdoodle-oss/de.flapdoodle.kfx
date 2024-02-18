@@ -28,13 +28,7 @@ class GraphEditorModelAdapter<V>(
 
   private class VertexAndContent<V>(val vertex: Vertex, val content: VertexContent<V>)
   private val vertexMapping = Mapping<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, VertexId, VertexAndContent<V>>()
-
-//  private var vertexIdMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, Vertex>()
-//  private var reverseVertexIdMapping = emptyMap<VertexId, de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>()
-//  private var vertexIdContentMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>, VertexContent<V>>()
-
-  private var edgeIdMapping = emptyMap<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>, Edge>()
-  private var reverseEdgeIdMapping = emptyMap<EdgeId, de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>()
+  private val edgeMapping = Mapping<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>, EdgeId, Edge>()
 
   private val selectedVertices = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>>(emptySet())
   private val selectedEdges = SimpleObjectProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>>(emptySet())
@@ -99,18 +93,16 @@ class GraphEditorModelAdapter<V>(
           val start = VertexSlotId(vertexId(action.edge.startVertex), action.edge.startSlot)
           val end = VertexSlotId(vertexId(action.edge.endVertex), action.edge.endSlot)
           graphEditor.addEdge(Edge(start, end).also { edge ->
-            edgeIdMapping = edgeIdMapping + (action.edge to edge)
-            reverseEdgeIdMapping = reverseEdgeIdMapping + (edge.edgeId to action.edge)
+            edgeMapping.add(action.edge, edge.edgeId, edge)
             Subscriptions.add(edge, edge.selectedProperty().subscribe { it -> changeSelection(action.edge, it) })
           })
         }
         is Action.RemoveEdge -> {
-          val edge = requireNotNull(edgeIdMapping.get(action.edge)) {"edge not found: ${action.edge}"}
-          graphEditor.removeEdge(edge)
-          edgeIdMapping = edgeIdMapping - action.edge
-          reverseEdgeIdMapping = reverseEdgeIdMapping - edge.edgeId
-          changeSelection(action.edge, false)
-          Subscriptions.unsubscribeAll(edge)
+          edgeMapping.remove(action.edge) {
+            graphEditor.removeEdge(it)
+            changeSelection(action.edge, false)
+            Subscriptions.unsubscribeAll(it)
+          }
         }
         else -> println("not implemented: $action")
       }

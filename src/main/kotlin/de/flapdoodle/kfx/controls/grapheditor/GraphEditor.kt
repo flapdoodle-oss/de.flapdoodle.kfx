@@ -8,6 +8,7 @@ import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.event.EventTarget
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -28,9 +29,18 @@ class GraphEditor(
   private val sharedLock = SharedLock<javafx.scene.Node>()
   private val registry = Registry()
   private val view = View(sharedLock, registry).withAnchors(all = 0.0)
+  private var askForClick = SimpleBooleanProperty(false)
+
   init {
     children.add(view)
     addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
+    askForClick.subscribe { active ->
+      if (active) {
+        cursor = Cursor.CROSSHAIR
+      } else {
+        cursor = null
+      }
+    }
   }
 
   fun addVertex(vararg list: Vertex) {
@@ -49,17 +59,28 @@ class GraphEditor(
     view.layers().removeEdges(listOf(*list))
   }
 
+  fun askForClick() {
+    askForClick.value = true
+  }
+
   private fun filterMouseEvents(event: MouseEvent) {
     val target = event.target
 
-    when (event.eventType) {
-      MouseEvent.MOUSE_ENTERED_TARGET -> focus(target)
-      MouseEvent.MOUSE_EXITED_TARGET -> blur(target)
-      MouseEvent.MOUSE_MOVED -> updateCursor(event)
+    if (!askForClick.value) {
+      when (event.eventType) {
+        MouseEvent.MOUSE_ENTERED_TARGET -> focus(target)
+        MouseEvent.MOUSE_EXITED_TARGET -> blur(target)
+        MouseEvent.MOUSE_MOVED -> updateCursor(event)
 
-      MouseEvent.MOUSE_PRESSED -> onMousePressed(event)
-      MouseEvent.MOUSE_DRAGGED -> onMouseDragged(event)
-      MouseEvent.MOUSE_RELEASED -> onMouseReleased(event)
+        MouseEvent.MOUSE_PRESSED -> onMousePressed(event)
+        MouseEvent.MOUSE_DRAGGED -> onMouseDragged(event)
+        MouseEvent.MOUSE_RELEASED -> onMouseReleased(event)
+      }
+    } else {
+      if (event.eventType == MouseEvent.MOUSE_RELEASED) {
+        eventListener.onEvent(this, Event.Click(event.localPosition))
+        askForClick.value = false
+      }
     }
   }
 

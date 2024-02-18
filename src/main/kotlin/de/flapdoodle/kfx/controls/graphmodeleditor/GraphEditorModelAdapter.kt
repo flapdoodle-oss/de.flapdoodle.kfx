@@ -45,6 +45,10 @@ class GraphEditorModelAdapter<V>(
   fun selectedVerticesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>> = selectedVertices
   fun selectedEdgesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>> = selectedEdges
 
+  fun askForClick() {
+    graphEditor.askForClick()
+  }
+
   private fun vertexId(id: VertexId): de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V> {
     return requireNotNull(vertexMapping.key(id)) { "could not get vertex id for $id" }
   }

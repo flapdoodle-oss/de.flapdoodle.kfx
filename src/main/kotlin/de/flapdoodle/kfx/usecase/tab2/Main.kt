@@ -13,6 +13,7 @@ import de.flapdoodle.kfx.usecase.tab2.graph.DummyVertexContentFactory
 import de.flapdoodle.kfx.usecase.tab2.graph.Models
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
+import javafx.geometry.Point2D
 import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
@@ -24,11 +25,16 @@ class Main() : BorderPane() {
   private val selectedEdge = SimpleObjectProperty<Edge<String>>()
   private val vertexCounter = AtomicInteger(0)
   private val slotCounter = AtomicInteger(0)
+  private var modelChangeAfterClick: ((Point2D) -> Unit)? = null
 
   private val eventListener = ModelEventListener<String> { event ->
     when (event) {
       is ModelEvent.ConnectTo -> {
         model.value = model.value.add(Edge(event.startVertex, event.startSlot, event.endVertex, event.endSlot))
+      }
+      is ModelEvent.Click -> {
+        modelChangeAfterClick?.let { it(event.position) }
+        modelChangeAfterClick=null
       }
       else -> {
 
@@ -36,10 +42,28 @@ class Main() : BorderPane() {
     }
     true
   }
+  private val editorAdapter = GraphEditorModelAdapter(model, eventListener, DummyVertexContentFactory).also { editor ->
+    editor.selectedVerticesProperty().subscribe { selection ->
+      if (selection.size == 1) {
+        selectedVertex.value = selection.first()
+      } else {
+        selectedVertex.value = null
+      }
+    }
+    editor.selectedEdgesProperty().subscribe { selection ->
+      if (selection.size == 1) {
+        selectedEdge.value = selection.first()
+      } else {
+        selectedEdge.value = null
+      }
+    }
+    WeightGridPane.setPosition(editor, 0, 0)
+  }
 
   init {
 //    background = Background.fill(Color.DARKGRAY)
 //    children.add(Button("Hi"))
+
     center = WeightGridPane()
       .withAnchors(all = 0.0)
       .also { gridPane ->
@@ -47,29 +71,7 @@ class Main() : BorderPane() {
         gridPane.setColumnWeight(1, 1.0)
         gridPane.setRowWeight(1, 1.0)
 
-        gridPane.children.add(GraphEditorModelAdapter(model, eventListener, DummyVertexContentFactory).also { editor ->
-          editor.selectedVerticesProperty().subscribe { selection ->
-            if (selection.size == 1) {
-              selectedVertex.value = selection.first()
-            } else {
-              selectedVertex.value = null
-            }
-          }
-          editor.selectedEdgesProperty().subscribe { selection ->
-            if (selection.size == 1) {
-              selectedEdge.value = selection.first()
-            } else {
-              selectedEdge.value = null
-            }
-          }
-          WeightGridPane.setPosition(editor, 0, 0)
-        })
-//        gridPane.children.add(Button("Hi").also { hi ->
-//          hi.minWidth = 40.0
-//          hi.maxWidth = 1600.0
-//          hi.maxHeight = 800.0
-//          WeightGridPane.setPosition(hi, 0, 0)
-//        })
+        gridPane.children.add(editorAdapter)
         gridPane.children.add(Button("!!").also { button ->
           button.minWidth = 40.0
           button.maxWidth = 80.0
@@ -81,7 +83,10 @@ class Main() : BorderPane() {
       flowPane.children.addAll(
         Button("+").also { button ->
           button.onAction = EventHandler {
-            model.set(model.get().add(Vertex("Name#"+vertexCounter.incrementAndGet(), "X")))
+            editorAdapter.askForClick()
+            modelChangeAfterClick = { pos ->
+              model.set(model.get().add(Vertex("Name#"+vertexCounter.incrementAndGet(), "X")))
+            }
           }
         },
         Button("-").also { button ->

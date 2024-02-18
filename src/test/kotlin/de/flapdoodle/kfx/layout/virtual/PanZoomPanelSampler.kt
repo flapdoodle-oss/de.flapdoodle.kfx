@@ -5,7 +5,7 @@ import de.flapdoodle.kfx.extensions.size
 import de.flapdoodle.kfx.layout.decoration.Base
 import de.flapdoodle.kfx.layout.decoration.Nodes
 import de.flapdoodle.kfx.layout.decoration.Position
-import de.flapdoodle.kfx.layout.grid.WeightGridControl
+import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.sampler.NonResizablePane
 import de.flapdoodle.kfx.types.UnitInterval
 import javafx.application.Application
@@ -26,10 +26,10 @@ class PanZoomPanelSampler {
 
       val testee = PanZoomPanel(sharedEventLock).apply {
         setContent(otherSampleContent(sharedEventLock))
-        WeightGridControl.setPosition(this, 1, 0)
+        WeightGridPane.setPosition(this, 1, 0)
       }
 
-      stage.scene = Scene(WeightGridControl().apply {
+      stage.scene = Scene(WeightGridPane().apply {
 //            children.add(template)
         children.add(testee)
 

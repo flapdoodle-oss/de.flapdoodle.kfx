@@ -3,7 +3,7 @@ package de.flapdoodle.kfx.usecase.tab2
 import de.flapdoodle.kfx.controls.grapheditor.GraphEditorModelAdapter
 import de.flapdoodle.kfx.controls.grapheditor.model.*
 import de.flapdoodle.kfx.extensions.withAnchors
-import de.flapdoodle.kfx.layout.grid.WeightGridControl
+import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.usecase.tab2.graph.DummyVertexContentFactory
 import de.flapdoodle.kfx.usecase.tab2.graph.Models
 import javafx.beans.property.SimpleObjectProperty
@@ -35,7 +35,7 @@ class Main() : BorderPane() {
   init {
 //    background = Background.fill(Color.DARKGRAY)
 //    children.add(Button("Hi"))
-    center = WeightGridControl()
+    center = WeightGridPane()
       .withAnchors(all = 0.0)
       .also { gridPane ->
         gridPane.setColumnWeight(0, 1000.0)
@@ -57,7 +57,7 @@ class Main() : BorderPane() {
               selectedEdge.value = null
             }
           }
-          WeightGridControl.setPosition(editor, 0, 0)
+          WeightGridPane.setPosition(editor, 0, 0)
         })
 //        gridPane.children.add(Button("Hi").also { hi ->
 //          hi.minWidth = 40.0
@@ -69,7 +69,7 @@ class Main() : BorderPane() {
           button.minWidth = 40.0
           button.maxWidth = 80.0
           button.maxHeight = 40.0
-          WeightGridControl.setPosition(button, 1, 0)
+          WeightGridPane.setPosition(button, 1, 0)
         })
       }
     bottom = FlowPane().also { flowPane ->

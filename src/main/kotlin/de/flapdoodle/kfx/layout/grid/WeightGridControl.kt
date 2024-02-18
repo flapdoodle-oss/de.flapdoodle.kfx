@@ -27,6 +27,7 @@ import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.control.Control
 
+@Deprecated("use WeightGridPane")
 class WeightGridControl : Control() {
 
     companion object {

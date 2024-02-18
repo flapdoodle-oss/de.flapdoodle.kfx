@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.usecase.tab2
 import de.flapdoodle.kfx.controls.graphmodeleditor.GraphEditorModelAdapter
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
+import de.flapdoodle.kfx.controls.graphmodeleditor.commands.Command
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEvent
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEventListener
 import de.flapdoodle.kfx.controls.graphmodeleditor.model.*
@@ -27,16 +28,11 @@ class Main() : BorderPane() {
   private val selectedEdge = SimpleObjectProperty<Edge<String>>()
   private val vertexCounter = AtomicInteger(0)
   private val slotCounter = AtomicInteger(0)
-  private var modelChangeAfterClick: ((Point2D) -> Unit)? = null
 
   private val eventListener = ModelEventListener<String> { event ->
     when (event) {
       is ModelEvent.ConnectTo -> {
         model.value = model.value.add(Edge(event.startVertex, event.startSlot, event.endVertex, event.endSlot))
-      }
-      is ModelEvent.Click -> {
-        modelChangeAfterClick?.let { it(event.position) }
-        modelChangeAfterClick=null
       }
       else -> {
 
@@ -66,9 +62,8 @@ class Main() : BorderPane() {
 //    background = Background.fill(Color.DARKGRAY)
 //    children.add(Button("Hi"))
     addEventFilter(KeyEvent.KEY_RELEASED) { event ->
-      if (event.code == KeyCode.ESCAPE && modelChangeAfterClick != null) {
-        editorAdapter.cancelAskForClick()
-        modelChangeAfterClick = null
+      if (event.code == KeyCode.ESCAPE) {
+        editorAdapter.execute(Command.Abort())
       }
     }
 
@@ -91,10 +86,9 @@ class Main() : BorderPane() {
       flowPane.children.addAll(
         Button("+").also { button ->
           button.onAction = EventHandler {
-            editorAdapter.askForClick()
-            modelChangeAfterClick = { pos ->
+            editorAdapter.execute(Command.AskForPosition(onSuccess = { pos ->
               model.set(model.get().add(Vertex("Name#"+vertexCounter.incrementAndGet(), "X", position = pos)))
-            }
+            }))
           }
         },
         Button("-").also { button ->
@@ -103,6 +97,14 @@ class Main() : BorderPane() {
           button.onAction = EventHandler {
             val vertexId = selectedVertex.value
             model.set(model.get().remove(vertexId))
+          }
+        },
+        Button("?").also { button ->
+          button.visibleProperty().bind(selectedVertex.map { it != null })
+          button.managedProperty().bind(button.visibleProperty())
+          button.onAction = EventHandler {
+            val vertexId = selectedVertex.value
+            editorAdapter.execute(Command.FindVertex(vertexId) { println("found:)") })
           }
         },
         Button("-->").also { button ->

@@ -7,20 +7,21 @@ import de.flapdoodle.kfx.controls.grapheditor.Vertex
 import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
+import de.flapdoodle.kfx.controls.graphmodeleditor.commands.Command
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.EventListenerMapper
 import de.flapdoodle.kfx.controls.graphmodeleditor.events.ModelEventListener
 import de.flapdoodle.kfx.controls.graphmodeleditor.model.*
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.extensions.plus
 import de.flapdoodle.kfx.extensions.withAnchors
-import javafx.beans.property.ObjectProperty
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.layout.AnchorPane
 import javafx.util.Subscription
 
 class GraphEditorModelAdapter<V>(
-  model: ObjectProperty<Model<V>>,
+  model: ReadOnlyObjectProperty<Model<V>>,
   modelEventListener: ModelEventListener<V>,
   private val vertexFactory: VertexContentFactory<V>
 ) : AnchorPane() {
@@ -46,12 +47,16 @@ class GraphEditorModelAdapter<V>(
   fun selectedVerticesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V>>> = selectedVertices
   fun selectedEdgesProperty(): ReadOnlyProperty<Set<de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge<V>>> = selectedEdges
 
-  fun askForClick() {
-    graphEditor.askForClick()
-  }
-
-  fun cancelAskForClick() {
-    graphEditor.cancelAskForClick()
+  fun execute(command: Command<V>) {
+    val mapped = when (command) {
+      is Command.Abort -> de.flapdoodle.kfx.controls.grapheditor.commands.Command.Abort()
+      is Command.AskForPosition -> de.flapdoodle.kfx.controls.grapheditor.commands.Command.AskForPosition(command.onSuccess)
+      is Command.FindVertex -> {
+        val pos = vertexMapping[command.vertex]!!.vertex.layoutPosition
+        de.flapdoodle.kfx.controls.grapheditor.commands.Command.PanTo(pos,command.onSuccess)
+      }
+    }
+    graphEditor.execute(mapped)
   }
 
   private fun vertexId(id: VertexId): de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId<V> {

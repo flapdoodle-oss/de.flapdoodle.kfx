@@ -24,10 +24,6 @@ class EventListenerMapper<T>(
       is Event.ConnectTo -> {
         delegate.onEvent(ModelEvent.ConnectTo(vertexIdMapper(event.start.vertexId), event.start.slotId, vertexIdMapper(event.end.vertexId), event.end.slotId))
       }
-
-      is Event.Click -> {
-        delegate.onEvent(ModelEvent.Click(event.position))
-      }
     }
   }
 }

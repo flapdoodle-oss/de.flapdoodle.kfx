@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.controls.grapheditor
 
+import de.flapdoodle.kfx.controls.grapheditor.commands.Command
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
 import de.flapdoodle.kfx.controls.grapheditor.events.EventListener
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
@@ -9,6 +10,7 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventTarget
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
@@ -29,16 +31,22 @@ class GraphEditor(
   private val sharedLock = SharedLock<javafx.scene.Node>()
   private val registry = Registry()
   private val view = View(sharedLock, registry).withAnchors(all = 0.0)
-  private var askForClick = SimpleBooleanProperty(false)
+//  private var askForClick = SimpleBooleanProperty(false)
+  private val currentCommand = SimpleObjectProperty<Command>(null)
 
   init {
     children.add(view)
     addEventFilter(MouseEvent.ANY, this::filterMouseEvents)
-    askForClick.subscribe { active ->
-      if (active) {
-        cursor = Cursor.CROSSHAIR
-      } else {
-        cursor = null
+    currentCommand.subscribe { command ->
+      when (command) {
+        is Command.AskForPosition -> cursor = Cursor.CROSSHAIR
+        is Command.PanTo -> {
+          view.panTo(command.position.x, command.position.y)
+          command.onSuccess()
+        }
+        else -> {
+          cursor = null
+        }
       }
     }
   }
@@ -59,34 +67,39 @@ class GraphEditor(
     view.layers().removeEdges(listOf(*list))
   }
 
-  fun askForClick() {
-    askForClick.value = true
-  }
-
-  fun cancelAskForClick() {
-    askForClick.value = false
+  fun execute(command: Command) {
+    if (command is Command.Abort) {
+      currentCommand.value = null
+    } else {
+      currentCommand.value = command
+    }
   }
 
   private fun filterMouseEvents(event: MouseEvent) {
     val target = event.target
 
-    if (!askForClick.value) {
-      when (event.eventType) {
-        MouseEvent.MOUSE_ENTERED_TARGET -> focus(target)
-        MouseEvent.MOUSE_EXITED_TARGET -> blur(target)
-        MouseEvent.MOUSE_MOVED -> updateCursor(event)
+    val command = currentCommand.value
+    when (command) {
+      is Command.AskForPosition -> {
+        if (event.eventType == MouseEvent.MOUSE_RELEASED) {
+          val layerLocal = view.layers().screenToLocal(event.screenPosition)
+          //eventListener.onEvent(this, Event.Click(layerLocal))
+          command.onSuccess(layerLocal)
+          currentCommand.value = null
+        }
+        event.consume()
+      }
+      else -> {
+        when (event.eventType) {
+          MouseEvent.MOUSE_ENTERED_TARGET -> focus(target)
+          MouseEvent.MOUSE_EXITED_TARGET -> blur(target)
+          MouseEvent.MOUSE_MOVED -> updateCursor(event)
 
-        MouseEvent.MOUSE_PRESSED -> onMousePressed(event)
-        MouseEvent.MOUSE_DRAGGED -> onMouseDragged(event)
-        MouseEvent.MOUSE_RELEASED -> onMouseReleased(event)
+          MouseEvent.MOUSE_PRESSED -> onMousePressed(event)
+          MouseEvent.MOUSE_DRAGGED -> onMouseDragged(event)
+          MouseEvent.MOUSE_RELEASED -> onMouseReleased(event)
+        }
       }
-    } else {
-      if (event.eventType == MouseEvent.MOUSE_RELEASED) {
-        val layerLocal = view.layers().screenToLocal(event.screenPosition)
-        eventListener.onEvent(this, Event.Click(layerLocal))
-        askForClick.value = false
-      }
-      event.consume()
     }
   }
 

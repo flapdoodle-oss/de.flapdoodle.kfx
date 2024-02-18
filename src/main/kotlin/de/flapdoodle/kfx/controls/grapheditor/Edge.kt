@@ -4,6 +4,7 @@ import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.extensions.PseudoClassWrapper
+import de.flapdoodle.kfx.shapes.Arrow
 import de.flapdoodle.kfx.shapes.Curves
 import de.flapdoodle.kfx.strokes.LinearGradients
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
@@ -54,6 +55,7 @@ class Edge(
   private val selected = SimpleBooleanProperty(false)
 
   private val curve = Curves.cubicCurve(startConnector, endConnector)
+  private val arrow = Arrow(endConnector)
 
   init {
     styleClass.addAll("edge")
@@ -72,17 +74,25 @@ class Edge(
 //      Stop(1.0, Color.rgb(0, 255, 0, .991))
 //    )
 
+    val colorGradient = LinearGradients.exact(
+      startConnector.map { it.point2D },
+      endConnector.map { it.point2D },
+      startConnector.map { it.color },
+      endConnector.map { it.color }
+    )
+
     children.add(curve.apply {
       styleClass.addAll("path")
       
 //      stroke = linearGrad
-      strokeProperty().bind(LinearGradients.exact(
-        startConnector.map { it.point2D },
-        endConnector.map { it.point2D },
-        startConnector.map { it.color },
-        endConnector.map { it.color }
-      ))
+      strokeProperty().bind(colorGradient)
       fill = Color.TRANSPARENT
+      isPickOnBounds = false
+    })
+    children.add(arrow.apply {
+      styleClass.addAll("path")
+      strokeProperty().bind(colorGradient)
+      fillProperty().bind(colorGradient)
       isPickOnBounds = false
     })
     isPickOnBounds = false

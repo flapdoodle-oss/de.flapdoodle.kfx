@@ -96,9 +96,13 @@ object Nodes {
     node.sceneProperty().addListener(listener)
   }
 
+  fun unsubscribeOnDetach(node: Node, action: () -> Subscription) {
+    onAttachDetach(node ,action) { it?.unsubscribe() }
+  }
+
   class WithOnAttach<T>(val node: Node, val onAttach: () -> T) {
     fun onDetach(onDetach: (T?) -> Unit) {
-      Nodes.onAttachDetach(node, onAttach, onDetach)
+      onAttachDetach(node, onAttach, onDetach)
     }
   }
 }

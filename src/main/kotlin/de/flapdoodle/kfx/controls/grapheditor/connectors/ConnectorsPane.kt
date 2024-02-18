@@ -6,6 +6,7 @@ import de.flapdoodle.kfx.controls.grapheditor.model.Position
 import de.flapdoodle.kfx.controls.grapheditor.model.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.extensions.onAttach
+import de.flapdoodle.kfx.extensions.unsubscribeOnDetach
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.scene.layout.HBox
@@ -29,12 +30,10 @@ class ConnectorsPane(
       Position.BOTTOM -> HBox().apply { spacing = 2.0 }
     }
 
-    onAttach {
+    unsubscribeOnDetach {
       ObservableLists.syncWith(filtered, wrapper.children) { c ->
         Connector(registry, vertexId, c, position)
       }
-    }.onDetach {
-      it?.unsubscribe()
     }
 
     children.add(wrapper)

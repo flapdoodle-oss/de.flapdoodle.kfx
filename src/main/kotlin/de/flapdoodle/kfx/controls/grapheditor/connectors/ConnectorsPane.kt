@@ -5,6 +5,7 @@ import de.flapdoodle.kfx.controls.grapheditor.Registry
 import de.flapdoodle.kfx.controls.grapheditor.model.Position
 import de.flapdoodle.kfx.controls.grapheditor.model.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
+import de.flapdoodle.kfx.extensions.onAttach
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.scene.layout.HBox
@@ -19,8 +20,6 @@ class ConnectorsPane(
   private val position: Position
 ) : Pane() {
 
-  private val syncJob: Subscription
-
   init {
     val filtered = slots.filtered { it.position == position }
 
@@ -30,9 +29,14 @@ class ConnectorsPane(
       Position.BOTTOM -> HBox().apply { spacing = 2.0 }
     }
 
-    syncJob = ObservableLists.syncWith(filtered, wrapper.children) { c ->
-      Connector(registry, vertexId, c, position)
+    onAttach {
+      ObservableLists.syncWith(filtered, wrapper.children) { c ->
+        Connector(registry, vertexId, c, position)
+      }
+    }.onDetach {
+      it?.unsubscribe()
     }
+
     children.add(wrapper)
   }
 

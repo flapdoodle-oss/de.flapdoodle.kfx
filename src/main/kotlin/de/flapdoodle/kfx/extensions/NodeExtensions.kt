@@ -147,15 +147,6 @@ fun Node.sceneToLocal(src: ColoredAngleAtPoint2D?): ColoredAngleAtPoint2D? {
   } else null
 }
 
-fun Node.onAttach(action: () -> Unit): Nodes.WithOnAttach {
-//  return sceneProperty().subscribe { old,new -> action() }
+fun <T> Node.onAttach(action: () -> T): Nodes.WithOnAttach<T> {
   return Nodes.onAttach(this, action)
-}
-
-//fun Node.onDetach(action: () -> Unit): Subscription {
-//  return sceneProperty().subscribe { old,new -> if (new == null) action() }
-//}
-
-fun Node.onAttachX(action: () -> Subscription) {
-  Nodes.onAttach(this,action)
 }

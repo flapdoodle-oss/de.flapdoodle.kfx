@@ -5,7 +5,6 @@ import javafx.scene.control.Button
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import javafx.util.Subscription
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

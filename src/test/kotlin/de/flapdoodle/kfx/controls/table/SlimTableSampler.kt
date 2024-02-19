@@ -83,7 +83,10 @@ class SlimTableSampler {
 //      children.add(spreadsheet(rows, toogle))
         children.add(tableView2(rows, toogle))
       })
-      splitPane.setDividerPositions(0.5)
+      splitPane.items.add(StackPane().apply {
+        children.add(tableSample(rows, toogle))
+      })
+      splitPane.setDividerPositions(0.33, 0.66)
 
 
       val wrapper = AnchorPane()

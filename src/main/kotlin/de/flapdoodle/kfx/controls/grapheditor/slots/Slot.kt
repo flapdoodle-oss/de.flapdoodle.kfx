@@ -24,7 +24,7 @@ data class Slot(
 
     fun hashedColor(name: String, mode: Mode): Color? {
       val hash = name.hashCode() + mode.hashCode()
-      val index = hash % colors.size
+      val index = (if (hash > 0) hash else -hash) % colors.size
       return colors[index]
     }
   }

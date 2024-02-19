@@ -227,12 +227,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-<!--                <version>3.1.2</version>-->
                 <configuration>
-<!--                    <jvm>${env.JAVA_HOME}/bin/java</jvm>-->
-<!--                    <jdkToolchain>-->
-<!--                        <version>17</version>-->
-<!--                    </jdkToolchain>-->
                     <excludes>
                         <exclude>**/live/**</exclude>
                     </excludes>
@@ -372,25 +367,6 @@
                 </executions>
             </plugin>
             
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-toolchains-plugin</artifactId>-->
-<!--                <version>3.0.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>toolchain</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <toolchains>-->
-<!--                        <jdk>-->
-<!--                            <version>[11,)</version>-->
-<!--                        </jdk>-->
-<!--                    </toolchains>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
 <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -401,14 +377,14 @@
                 </configuration>
             </plugin>
 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <release>${maven.compiler.release}</release>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>3.8.1</version>-->
+<!--                <configuration>-->
+<!--                    <release>${maven.compiler.release}</release>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 <!--            https://stackoverflow.com/questions/67854139/javafx-warning-unsupported-javafx-configuration-classes-were-loaded-from-unna-->
             <plugin>
                 <groupId>org.openjfx</groupId>

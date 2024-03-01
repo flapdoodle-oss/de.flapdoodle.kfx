@@ -25,6 +25,7 @@ import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.control.SkinBase
 
+@Deprecated("use WeightGridPane")
 class WeightGridControlSkin(
     private val control: WeightGridControl
 ) : SkinBase<WeightGridControl>(control) {

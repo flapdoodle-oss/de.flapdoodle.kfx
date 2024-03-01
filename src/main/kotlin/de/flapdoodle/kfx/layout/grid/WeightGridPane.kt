@@ -30,6 +30,7 @@ class WeightGridPane : javafx.scene.layout.Region() {
       node.constraint[GridMap.Pos::class] = GridMap.Pos(column, row)
       node.constraint[HPos::class] = horizontalPosition
       node.constraint[VPos::class] = verticalPosition
+      node.parent?.requestLayout()
     }
 
     fun updatePosition(
@@ -39,6 +40,7 @@ class WeightGridPane : javafx.scene.layout.Region() {
       val current = node.constraint[GridMap.Pos::class]
       require(current != null) { "no position found for $node" }
       node.constraint[GridMap.Pos::class] = change(current)
+      node.parent?.requestLayout()
     }
   }
 
@@ -139,11 +141,11 @@ class WeightGridPane : javafx.scene.layout.Region() {
   }
 
   private fun <T : Any> List<T>.sumWithSpaceBetween(space: Double, selector: (T) -> Double): Double {
-    return sumByDouble(selector) + if (isEmpty()) 0.0 else (size - 1) * space
+    return sumOf(selector) + if (isEmpty()) 0.0 else (size - 1) * space
   }
 
   private fun <T : Any> List<T>.sumWithSpaceAfter(space: Double, selector: (T) -> Double): Double {
-    return sumByDouble(selector) + size * space
+    return sumOf(selector) + size * space
   }
 
   private fun columnSizes() = gridMap.mapColumns { index, list ->

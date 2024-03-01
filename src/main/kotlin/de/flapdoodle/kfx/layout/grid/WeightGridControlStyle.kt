@@ -20,6 +20,7 @@ import javafx.css.CssMetaData
 import javafx.css.StyleablePropertyFactory
 import javafx.scene.control.Control
 
+@Deprecated("use WeightGridPane")
 class WeightGridControlStyle {
     companion object {
         internal val CSS_HSPACE_NAME = "weighted-grid-horizontal-space"

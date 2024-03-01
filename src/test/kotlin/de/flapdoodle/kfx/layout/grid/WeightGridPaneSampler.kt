@@ -33,13 +33,13 @@ class WeightGridPaneSampler {
         children.add(Button("test").apply {
           minWidth = 20.0
           maxWidth = 100.0
-          WeightGridControl.setPosition(this, 0, 0)
+          WeightGridPane.setPosition(this, 0, 0)
         })
         children.add(Button("test-1").apply {
-          WeightGridControl.setPosition(this, 1, 0, horizontalPosition = HPos.RIGHT)
+          WeightGridPane.setPosition(this, 1, 0, horizontalPosition = HPos.RIGHT)
         })
         children.add(Button("test-11").apply {
-          WeightGridControl.setPosition(this, 1, 1)
+          WeightGridPane.setPosition(this, 1, 1)
           maxHeight = 100.0
         })
 

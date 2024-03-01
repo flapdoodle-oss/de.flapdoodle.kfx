@@ -277,14 +277,21 @@ class GraphEditor(
   }
 
   private fun guessAction(screenPosition: Point2D): ElementAction? {
-    val nodesAndMarkers = pickScreen(screenPosition)
+    val allPicks = pickScreen(screenPosition).toList()
+    val nodesAndMarkers = allPicks
       .filter {
-        it is Vertex || it is Edge || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
-      }.toList()
+        it is Vertex || it is Edge || Markers.isDragBar(it) || Markers.isBorder(it) || Markers.nodeSlot(it) != null
+      }
 
     val matchingVertex = nodesAndMarkers.filterIsInstance<Vertex>().firstOrNull()
+    val firstNode = allPicks.firstOrNull()
+    val firstPickIsSomethingDifferent = if (firstNode != null) !nodesAndMarkers.contains(firstNode) else false
 
-    if (matchingVertex!=null) {
+//    println("firstNode: $firstNode")
+//    println("matchingVertex: $matchingVertex")
+//    println("--> something different: $firstPickIsSomethingDifferent")
+//
+    if (matchingVertex!=null && !firstPickIsSomethingDifferent) {
       val bestSizeMode = nodesAndMarkers.map {
         when {
           Markers.isDragBar(it) -> SizeMode.INSIDE

@@ -9,6 +9,7 @@ import javafx.scene.Node
 object Markers {
   private val IsDragBar = Key.ofType(Boolean::class)
   private val nodeSlot = Key.ofType(VertexSlotId::class)
+  private val IsBorder = Key.ofType(Boolean::class)
 
   fun isDragBar(node: Node): Boolean {
     return node.constraint[IsDragBar] ?: false
@@ -20,6 +21,18 @@ object Markers {
 
   fun unmarkAsDragBar(node: Node) {
     node.constraint[IsDragBar] = null
+  }
+
+  fun isBorder(node: Node): Boolean {
+    return node.constraint[IsBorder] ?: false
+  }
+
+  fun markAsBorder(node: Node) {
+    node.constraint[IsBorder] = true
+  }
+
+  fun unmarkAsBorder(node: Node) {
+    node.constraint[IsBorder] = null
   }
 
   fun nodeSlot(node: Node): VertexSlotId? {

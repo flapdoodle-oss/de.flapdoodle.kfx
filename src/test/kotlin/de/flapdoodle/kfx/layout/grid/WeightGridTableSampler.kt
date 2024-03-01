@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.layout.grid
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.stage.Stage
@@ -14,8 +15,8 @@ class WeightGridTableSampler {
 
       val model = SimpleObjectProperty(listOf("Anna", "Bert", "Susi"))
       val columns = listOf(
-        WeightGridTable.Column(nodeFactory = ::Label),
-        WeightGridTable.Column(weight = 2.0, nodeFactory = { TextField(it) })
+        WeightGridTable.Column(nodeFactory = ::Label, headerFactory = { Label("label")}),
+        WeightGridTable.Column(weight = 2.0, nodeFactory = { TextField(it) }, footerFactory = {Button("+")})
       )
       stage.scene = Scene(WeightGridTable(model, columns).apply {
         verticalSpace().set(5.0)

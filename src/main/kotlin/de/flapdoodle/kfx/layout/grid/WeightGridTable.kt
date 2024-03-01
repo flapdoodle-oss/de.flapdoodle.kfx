@@ -25,11 +25,27 @@ class WeightGridTable<T : Any>(
   }
 
   private fun update(value: List<T>) {
+    val anyHeader = columns.any { it.headerFactory!=null }
+    val offset = if (anyHeader) 1 else 0
+    columns.forEachIndexed { column, c ->
+      val header = c.headerFactory?.invoke()
+      if (header!=null) {
+        WeightGridPane.setPosition(header, column, 0, c.horizontalPosition, c.verticalPosition)
+        grid.children.add(header)
+      }
+    }
     value.forEachIndexed { row, t ->
       columns.forEachIndexed { column, c ->
         val node = c.nodeFactory(t)
-        WeightGridPane.setPosition(node, column, row, c.horizontalPosition, c.verticalPosition)
+        WeightGridPane.setPosition(node, column, row + offset, c.horizontalPosition, c.verticalPosition)
         grid.children.add(node)
+      }
+    }
+    columns.forEachIndexed { column, c ->
+      val footer = c.footerFactory?.invoke()
+      if (footer!=null) {
+        WeightGridPane.setPosition(footer, column, value.size + offset, c.horizontalPosition, c.verticalPosition)
+        grid.children.add(footer)
       }
     }
   }
@@ -37,6 +53,8 @@ class WeightGridTable<T : Any>(
   class Column<T : Any>(
     val weight: Double = 1.0,
     val nodeFactory: (T) -> Node,
+    val headerFactory: (() -> Node)? = null,
+    val footerFactory: (() -> Node)? = null,
     val horizontalPosition: HPos? = null,
     val verticalPosition: VPos? = null
   )

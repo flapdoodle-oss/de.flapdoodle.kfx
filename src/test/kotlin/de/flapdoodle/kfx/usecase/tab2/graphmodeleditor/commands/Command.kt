@@ -1,6 +1,6 @@
-package de.flapdoodle.kfx.controls.graphmodeleditor.commands
+package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.commands
 
-import de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
 import javafx.geometry.Point2D
 
 sealed class Command<V> {

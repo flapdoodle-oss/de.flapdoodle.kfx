@@ -1,10 +1,10 @@
-package de.flapdoodle.kfx.usecase.tab2.graph
+package de.flapdoodle.kfx.usecase.tab2.defaults
 
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
-import de.flapdoodle.kfx.controls.graphmodeleditor.model.Edge
-import de.flapdoodle.kfx.controls.graphmodeleditor.model.Model
-import de.flapdoodle.kfx.controls.graphmodeleditor.model.Vertex
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Edge
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Model
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Vertex
 
 object Models {
   fun emptyModel() = Model<String>()

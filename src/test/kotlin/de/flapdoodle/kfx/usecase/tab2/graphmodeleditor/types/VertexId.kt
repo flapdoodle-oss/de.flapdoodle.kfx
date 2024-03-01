@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.graphmodeleditor.types
+package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types
 
 import de.flapdoodle.kfx.types.Key
 

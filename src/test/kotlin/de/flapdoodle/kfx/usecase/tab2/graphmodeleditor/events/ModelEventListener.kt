@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.graphmodeleditor.events
+package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.events
 
 @FunctionalInterface
 fun interface ModelEventListener<T> {

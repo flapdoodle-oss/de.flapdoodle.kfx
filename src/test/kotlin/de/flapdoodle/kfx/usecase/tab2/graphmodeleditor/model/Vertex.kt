@@ -1,9 +1,8 @@
-package de.flapdoodle.kfx.controls.graphmodeleditor.model
+package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model
 
-import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
-import de.flapdoodle.kfx.controls.graphmodeleditor.types.VertexId
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
 import de.flapdoodle.kfx.types.Id
 import javafx.geometry.Point2D
 

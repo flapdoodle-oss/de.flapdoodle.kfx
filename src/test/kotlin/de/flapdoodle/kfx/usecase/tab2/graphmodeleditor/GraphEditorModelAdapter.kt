@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor
 
 import de.flapdoodle.kfx.bindings.Subscriptions
+import de.flapdoodle.kfx.collections.Mapping
 import de.flapdoodle.kfx.controls.grapheditor.Edge
 import de.flapdoodle.kfx.controls.grapheditor.GraphEditor
 import de.flapdoodle.kfx.controls.grapheditor.Vertex

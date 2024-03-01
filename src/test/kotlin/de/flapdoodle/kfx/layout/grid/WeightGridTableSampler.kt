@@ -15,10 +15,15 @@ class WeightGridTableSampler {
 
       val model = SimpleObjectProperty(listOf("Anna", "Bert", "Susi"))
       val columns = listOf(
-        WeightGridTable.Column(nodeFactory = ::Label, headerFactory = { Label("label")}),
-        WeightGridTable.Column(weight = 2.0, nodeFactory = { TextField(it) }, footerFactory = {Button("+")})
+        WeightGridTable.Column(nodeFactory = ::Label),
+        WeightGridTable.Column(weight = 2.0, nodeFactory = { TextField(it) })
       )
-      stage.scene = Scene(WeightGridTable(model, columns).apply {
+      stage.scene = Scene(WeightGridTable(
+        model = model,
+        columns = columns,
+        headerFactory = { listOf(Label("label")) },
+        footerFactory = { listOf(null, Button("+")) }
+      ).apply {
         verticalSpace().set(5.0)
         horizontalSpace().set(10.0)
 //

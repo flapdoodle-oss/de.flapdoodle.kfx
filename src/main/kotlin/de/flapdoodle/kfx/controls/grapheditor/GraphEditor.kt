@@ -9,13 +9,10 @@ import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
-import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventTarget
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 import javafx.scene.paint.Color
@@ -280,18 +277,18 @@ class GraphEditor(
     val allPicks = pickScreen(screenPosition).toList()
     val nodesAndMarkers = allPicks
       .filter {
-        it is Vertex || it is Edge || Markers.isDragBar(it) || Markers.isBorder(it) || Markers.nodeSlot(it) != null
+        it is Vertex || it is Edge || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
       }
 
     val matchingVertex = nodesAndMarkers.filterIsInstance<Vertex>().firstOrNull()
-    val firstNode = allPicks.firstOrNull()
-    val firstPickIsSomethingDifferent = if (firstNode != null) !nodesAndMarkers.contains(firstNode) else false
+    val matchingContent = allPicks.filter { Markers.isContent(it) }.firstOrNull()
+//    val firstPickIsSomethingDifferent = if (firstNode != null) !nodesAndMarkers.contains(firstNode) else false
 
-//    println("firstNode: $firstNode")
+//    println("firstNode: $matchingContent")
 //    println("matchingVertex: $matchingVertex")
 //    println("--> something different: $firstPickIsSomethingDifferent")
-//
-    if (matchingVertex!=null && !firstPickIsSomethingDifferent) {
+
+    if (matchingVertex!=null && matchingContent==null) {
       val bestSizeMode = nodesAndMarkers.map {
         when {
           Markers.isDragBar(it) -> SizeMode.INSIDE

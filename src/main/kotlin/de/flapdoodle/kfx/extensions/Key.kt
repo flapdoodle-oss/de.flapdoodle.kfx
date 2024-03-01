@@ -24,6 +24,10 @@ abstract class Key<T: Any> {
       return TypeKey(type)
     }
 
+    fun <T: Any> ofNamedType(name: String, type: KClass<T>): Key<T> {
+      return NamedTypeKey(name, type)
+    }
+
     fun <T: Any> ofType(scope: KClass<out Any>, type: KClass<T>): Key<T> {
       return Scoped(scope, type)
     }
@@ -34,7 +38,12 @@ abstract class Key<T: Any> {
   }
 
   private data class TypeKey<T: Any>(
-      private val type: KClass<T>
+    private val type: KClass<T>
+  ) : Key<T>()
+
+  private data class NamedTypeKey<T: Any>(
+    private val name: String,
+    private val type: KClass<T>
   ) : Key<T>()
 
   private data class Scoped<T: Any>(

@@ -72,19 +72,15 @@ class Vertex(
 
     setMargin(contentWrapper, Insets(10.0))
 
-    center = contentWrapper
+    center = contentWrapper.apply {
+      Markers.markAsContent(this)
+    }
     top = NodeHeader(name).apply {
       Markers.markAsDragBar(this)
     }
-    left = SlotsPane(registry, vertexId, connectors, Position.LEFT).apply {
-      Markers.markAsBorder(this)
-    }
-    right = SlotsPane(registry, vertexId, connectors, Position.RIGHT).apply {
-      Markers.markAsBorder(this)
-    }
-    bottom = SlotsPane(registry, vertexId, connectors, Position.BOTTOM).apply {
-      Markers.markAsBorder(this)
-    }
+    left = SlotsPane(registry, vertexId, connectors, Position.LEFT)
+    right = SlotsPane(registry, vertexId, connectors, Position.RIGHT)
+    bottom = SlotsPane(registry, vertexId, connectors, Position.BOTTOM)
 
     selected.subscribe { it ->
       if (it) Style.Selected.enable(this) else Style.Selected.disable(this)

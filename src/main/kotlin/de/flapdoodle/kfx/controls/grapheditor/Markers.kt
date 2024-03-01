@@ -1,6 +1,5 @@
 package de.flapdoodle.kfx.controls.grapheditor
 
-import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.extensions.Key
 import de.flapdoodle.kfx.extensions.constraint
@@ -9,7 +8,7 @@ import javafx.scene.Node
 object Markers {
   private val IsDragBar = Key.ofType(Boolean::class)
   private val nodeSlot = Key.ofType(VertexSlotId::class)
-  private val IsBorder = Key.ofType(Boolean::class)
+  private val IsContent = Key.ofNamedType("isContent", Boolean::class)
 
   fun isDragBar(node: Node): Boolean {
     return node.constraint[IsDragBar] ?: false
@@ -23,16 +22,16 @@ object Markers {
     node.constraint[IsDragBar] = null
   }
 
-  fun isBorder(node: Node): Boolean {
-    return node.constraint[IsBorder] ?: false
+  fun isContent(node: Node): Boolean {
+    return node.constraint[IsContent] ?: false
   }
 
-  fun markAsBorder(node: Node) {
-    node.constraint[IsBorder] = true
+  fun markAsContent(node: Node) {
+    node.constraint[IsContent] = true
   }
 
-  fun unmarkAsBorder(node: Node) {
-    node.constraint[IsBorder] = null
+  fun unmarkAsContent(node: Node) {
+    node.constraint[IsContent] = null
   }
 
   fun nodeSlot(node: Node): VertexSlotId? {

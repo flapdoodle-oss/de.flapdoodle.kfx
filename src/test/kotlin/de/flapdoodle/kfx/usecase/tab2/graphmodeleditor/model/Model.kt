@@ -1,5 +1,7 @@
 package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model
 
+import de.flapdoodle.kfx.collections.Change
+import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
 
@@ -51,31 +53,33 @@ data class Model<V>(
 
   companion object {
     fun <T> vertexChanges(old: Model<T>, new: Model<T>): Change<Vertex<T>> {
-      val removed = (old.vertexMap.keys - new.vertexMap.keys).map { old.vertex(it) }.toSet()
-      val sameIds = old.vertexMap.keys.intersect(new.vertexMap.keys).toSet()
-      val notChanged = sameIds.filter { old.vertex(it) == new.vertex(it) }.map { new.vertex(it) }.toSet()
-      val modified = sameIds.filter { old.vertex(it) != new.vertex(it) }.map { old.vertex(it) to new.vertex(it) }.toSet()
-      val added = (new.vertexMap.keys - old.vertexMap.keys).map { new.vertex(it) }.toSet()
-
-      return Change(
-        removed = removed,
-        notChanged = notChanged,
-        modified = modified,
-        added = added
-      )
+      return Diff.between(old.vertexList, new.vertexList, Vertex<T>::id)
+//      val removed = (old.vertexMap.keys - new.vertexMap.keys).map { old.vertex(it) }.toSet()
+//      val sameIds = old.vertexMap.keys.intersect(new.vertexMap.keys).toSet()
+//      val notChanged = sameIds.filter { old.vertex(it) == new.vertex(it) }.map { new.vertex(it) }.toSet()
+//      val modified = sameIds.filter { old.vertex(it) != new.vertex(it) }.map { old.vertex(it) to new.vertex(it) }.toSet()
+//      val added = (new.vertexMap.keys - old.vertexMap.keys).map { new.vertex(it) }.toSet()
+//
+//      return Change(
+//        removed = removed,
+//        notChanged = notChanged,
+//        modified = modified,
+//        added = added
+//      )
     }
 
     fun <T> edgeChanges(old: Model<T>, new: Model<T>): Change<Edge<T>> {
-      val removed = (old.edgeSet - new.edgeSet)
-      val notChanged = old.edgeSet.intersect(new.edgeSet)
-      val added = (new.edgeSet - old.edgeSet)
-
-      return Change(
-        removed = removed,
-        notChanged = notChanged,
-        modified = emptySet(),
-        added = added
-      )
+      return Diff.between(old.edgeSet, new.edgeSet, { it} )
+//      val removed = (old.edgeSet - new.edgeSet)
+//      val notChanged = old.edgeSet.intersect(new.edgeSet)
+//      val added = (new.edgeSet - old.edgeSet)
+//
+//      return Change(
+//        removed = removed,
+//        notChanged = notChanged,
+//        modified = emptySet(),
+//        added = added
+//      )
     }
   }
 }

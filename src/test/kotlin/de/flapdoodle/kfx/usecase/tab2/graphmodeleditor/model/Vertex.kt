@@ -1,5 +1,7 @@
 package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model
 
+import de.flapdoodle.kfx.collections.Change
+import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
@@ -35,19 +37,20 @@ data class Vertex<T>(
 
     fun <T> slotChanges(old: Vertex<T>, new: Vertex<T>): Change<Slot> {
       require(old.id == new.id) {"id does not match: ${old.id} != ${new.id}"}
+      return Diff.between(old.slots, new.slots, Slot::id)
 
-      val removed = (old.slotIds() - new.slotIds()).map { old.slot(it) }.toSet()
-      val sameIds = old.slotIds().intersect(new.slotIds()).toSet()
-      val notChanged = sameIds.filter { old.slot(it) == new.slot(it) }.map { new.slot(it) }.toSet()
-      val modified = sameIds.filter { old.slot(it) != new.slot(it) }.map { old.slot(it) to new.slot(it) }.toSet()
-      val added = (new.slotIds() - old.slotIds()).map { new.slot(it) }.toSet()
-
-      return Change(
-        removed = removed,
-        notChanged = notChanged,
-        modified = modified,
-        added = added
-      )
+//      val removed = (old.slotIds() - new.slotIds()).map { old.slot(it) }.toSet()
+//      val sameIds = old.slotIds().intersect(new.slotIds()).toSet()
+//      val notChanged = sameIds.filter { old.slot(it) == new.slot(it) }.map { new.slot(it) }.toSet()
+//      val modified = sameIds.filter { old.slot(it) != new.slot(it) }.map { old.slot(it) to new.slot(it) }.toSet()
+//      val added = (new.slotIds() - old.slotIds()).map { new.slot(it) }.toSet()
+//
+//      return Change(
+//        removed = removed,
+//        notChanged = notChanged,
+//        modified = modified,
+//        added = added
+//      )
     }
 
   }

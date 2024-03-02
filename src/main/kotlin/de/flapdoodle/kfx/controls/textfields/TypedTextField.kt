@@ -1,33 +1,31 @@
 package de.flapdoodle.kfx.controls.textfields
 
+import de.flapdoodle.kfx.converters.CatchingStringConverter
 import de.flapdoodle.kfx.converters.Converters
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.event.EventHandler
 import javafx.scene.control.TextField
 import kotlin.reflect.KClass
 
 class TypedTextField<T: Any>(
   val type: KClass<out T>
 ) : TextField() {
-  private val converter = Converters.converterFor(type)
+
   private val valueProperty = SimpleObjectProperty<T>(null)
+  private val lastExceptionProperty = SimpleObjectProperty<Exception>(null)
+  private val converter = CatchingStringConverter(Converters.converterFor(type), onFromString = {
+    lastExceptionProperty.value = it
+  })
 
   fun valueProperty(): ReadOnlyProperty<T> = valueProperty
+  fun lastExceptionProperty(): ReadOnlyProperty<Exception> = lastExceptionProperty
 
   init {
-    onAction = EventHandler {
-      try {
-        valueProperty.value = converter.fromString(text)
-      } catch (ex: Exception) {
-        valueProperty.value = null
-      }
-    }
+    textProperty().bindBidirectional(valueProperty, converter)
   }
 
   fun set(v: T?) {
     valueProperty.value = v
-    text = if (v!=null) converter.toString(v) else ""
   }
 
   fun get(): T? {

@@ -16,40 +16,59 @@ class WeightGridTableSampler {
 
     override fun start(stage: Stage) {
 
-      val model = SimpleObjectProperty(listOf<Person>(
-        Person("Anna", 24),
-        Person("Peter", 19),
-        Person("Susi", 21)
-      ))
-      val columns = listOf(
-        WeightGridTable.Column<Person>(nodeFactory = { Label(it.name) to WeightGridTable.ChangeListener {  } }),
-        WeightGridTable.Column<Person>(weight = 2.0, nodeFactory = {
-          val textField = TypedTextField(Int::class).apply {
-            set(it.age)
-            valueProperty().addListener { observable, oldValue, newValue ->
-              model.value = model.value.map { p -> if (p.id == it.id) it.copy(age = get()) else p }
-            }
-          }
+      val model = SimpleObjectProperty(
+        listOf<Person>(
+          Person("Anna", 24),
+          Person("Peter", 19),
+          Person("Susi", 21)
+        )                             
+      )
 
-          textField to WeightGridTable.ChangeListener { textField.set(it.age) }
-        })
+      val nameColumn = WeightGridTable.Column<Person>(nodeFactory = { Label(it.name) to WeightGridTable.ChangeListener { } })
+      val ageColumn = WeightGridTable.Column<Person>(weight = 2.0, nodeFactory = {
+        val textField = TypedTextField(Int::class).apply {
+          set(it.age)
+          valueProperty().addListener { observable, oldValue, newValue ->
+            model.value = model.value.map { p -> if (p.id == it.id) it.copy(age = get()) else p }
+          }
+        }
+
+        textField to WeightGridTable.ChangeListener { textField.set(it.age) }
+      })
+      val actionColumn = WeightGridTable.Column<Person>(weight = 1.0, nodeFactory = { t ->
+        val button = Button("-").apply {
+          onAction = EventHandler {
+            model.value = model.value.filter { p -> p.id != t.id }
+          }
+        }
+        button to WeightGridTable.ChangeListener {
+
+        }
+      })
+
+      val columns = listOf(
+        nameColumn,
+        ageColumn,
+        actionColumn
       )
       stage.scene = Scene(WeightGridTable(
         model = model,
         indexOf = Person::id,
         columns = columns,
-        headerFactory = { listOf(Label("Name"), Label("Age")) },
-        footerFactory = {
+        headerFactory = { values, columns ->
+          mapOf(nameColumn to Label("Name"), ageColumn to Label("Age"))
+        },
+        footerFactory = { values, columns ->
           val name = TextField("")
           val age = TypedTextField(Int::class)
           val add = Button("+").apply {
             onAction = EventHandler {
-              if (name.text != null &&  name.text.isNotBlank()) {
+              if (name.text != null && name.text.isNotBlank()) {
                 model.value = model.value + Person(name.text, age.get())
               }
             }
           }
-          listOf(name, age, add)
+          mapOf(nameColumn to name, ageColumn to age, actionColumn to add)
         }
       ).apply {
         verticalSpace().set(5.0)

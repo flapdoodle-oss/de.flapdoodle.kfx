@@ -121,8 +121,9 @@ class Vertex(
 
   class NodeHeader(label: String) : HBox() {
     init {
+      styleClass.addAll("header")
       isMouseTransparent = false
-      background = Background(BackgroundFill(Color.GREY, CornerRadii(2.0), Insets(1.0)))
+//      background = Background(BackgroundFill(Color.GREY, CornerRadii(2.0), Insets(1.0)))
       children.add(Label(label).apply {
         setHgrow(this, Priority.ALWAYS)
       })

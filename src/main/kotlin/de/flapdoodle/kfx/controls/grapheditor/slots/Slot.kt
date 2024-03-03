@@ -23,7 +23,7 @@ data class Slot(
     private val colors = colorsNames.map(Color::web)
 
     fun hashedColor(name: String, mode: Mode): Color? {
-      val hash = name.hashCode() + mode.hashCode()
+      val hash = name.hashCode() + mode.ordinal
       val index = (if (hash > 0) hash else -hash) % colors.size
       return colors[index]
     }

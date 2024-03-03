@@ -1,7 +1,10 @@
 package de.flapdoodle.kfx.layout.grid
 
+import de.flapdoodle.kfx.controls.textfields.TypedTextField
+import de.flapdoodle.kfx.types.Id
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
+import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -13,41 +16,50 @@ class WeightGridTableSampler {
 
     override fun start(stage: Stage) {
 
-      val model = SimpleObjectProperty(listOf("Anna", "Bert", "Susi"))
+      val model = SimpleObjectProperty(listOf<Person>(
+        Person("Anna", 24),
+        Person("Peter", 19),
+        Person("Susi", 21)
+      ))
       val columns = listOf(
-        WeightGridTable.Column(nodeFactory = ::Label),
-        WeightGridTable.Column(weight = 2.0, nodeFactory = { TextField(it) })
+        WeightGridTable.Column<Person>(nodeFactory = { Label(it.name) to WeightGridTable.ChangeListener {  } }),
+        WeightGridTable.Column<Person>(weight = 2.0, nodeFactory = {
+          val textField = TypedTextField(Int::class).apply {
+            set(it.age)
+            valueProperty().addListener { observable, oldValue, newValue ->
+              model.value = model.value.map { p -> if (p.id == it.id) it.copy(age = get()) else p }
+            }
+          }
+
+          textField to WeightGridTable.ChangeListener { textField.set(it.age) }
+        })
       )
       stage.scene = Scene(WeightGridTable(
         model = model,
+        indexOf = Person::id,
         columns = columns,
-        headerFactory = { listOf(Label("label")) },
-        footerFactory = { listOf(null, Button("+")) }
+        headerFactory = { listOf(Label("Name"), Label("Age")) },
+        footerFactory = {
+          val name = TextField("")
+          val age = TypedTextField(Int::class)
+          val add = Button("+").apply {
+            onAction = EventHandler {
+              if (name.text != null &&  name.text.isNotBlank()) {
+                model.value = model.value + Person(name.text, age.get())
+              }
+            }
+          }
+          listOf(name, age, add)
+        }
       ).apply {
         verticalSpace().set(5.0)
         horizontalSpace().set(10.0)
-//
-//        children.add(Button("test").apply {
-//          minWidth = 20.0
-//          maxWidth = 100.0
-//          WeightGridPane.setPosition(this, 0, 0)
-//        })
-//        children.add(Button("test-1").apply {
-//          WeightGridPane.setPosition(this, 1, 0, horizontalPosition = HPos.RIGHT)
-//        })
-//        children.add(Button("test-11").apply {
-//          WeightGridPane.setPosition(this, 1, 1)
-//          maxHeight = 100.0
-//        })
-//
-//        setColumnWeight(0, 1.0)
-//        setColumnWeight(1, 2.0)
-//        setRowWeight(0, 4.0)
-//        setRowWeight(1, 1.0)
       })
       stage.show()
     }
   }
+
+  data class Person(val name: String, val age: Int?, val id: Id<Person> = Id.nextId(Person::class))
 
   companion object {
     @JvmStatic

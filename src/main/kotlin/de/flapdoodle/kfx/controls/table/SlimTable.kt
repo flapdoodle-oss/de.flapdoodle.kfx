@@ -36,6 +36,11 @@ class SlimTable<T: Any>(
     }
     private val footer = SlimFooter(control.columns, header::columnWidthProperty)
 
+//    private val wrapper = ScrollPane().apply {
+//      hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
+//      vbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+//    }
+
     private val scroll = ScrollPane().apply {
       hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
       content = rowsPane

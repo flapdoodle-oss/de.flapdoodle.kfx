@@ -65,7 +65,6 @@ class SlimTable2Sampler {
       })
       splitPane.items.add(StackPane().apply {
         children.add(slimTableSample(rows(100), toogle))
-//        clip = de.flapdoodle.kfx.layout.backgrounds.Bounds.sizeRectangle(this)
       })
       splitPane.setDividerPositions(0.33, 0.66)
 

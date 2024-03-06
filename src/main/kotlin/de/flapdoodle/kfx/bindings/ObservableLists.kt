@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.bindings
 
 import de.flapdoodle.kfx.bindings.list.IndexedMappingListChangeListener
 import de.flapdoodle.kfx.bindings.list.MappingListChangeListener
+import javafx.beans.property.ReadOnlyProperty
 import javafx.collections.ObservableList
 import javafx.util.Subscription
 

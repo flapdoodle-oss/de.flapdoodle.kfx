@@ -18,6 +18,7 @@ class SlimRows<T : Any>(
 
   init {
     cssClassName("slim-rows")
+    isFocusTraversable = false
   }
 
   override fun createDefaultSkin() = skin

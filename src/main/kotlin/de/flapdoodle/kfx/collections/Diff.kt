@@ -1,7 +1,7 @@
 package de.flapdoodle.kfx.collections
 
 object Diff {
-  fun <K: Any, T: Any> between(old: Collection<T>, new: Collection<T>, keyOf: (T) -> K): Change<T> {
+  fun <K, T> between(old: Collection<T>, new: Collection<T>, keyOf: (T) -> K): Change<T> {
     val oldByKey = old.associateBy(keyOf)
     val newByKey = new.associateBy(keyOf)
 

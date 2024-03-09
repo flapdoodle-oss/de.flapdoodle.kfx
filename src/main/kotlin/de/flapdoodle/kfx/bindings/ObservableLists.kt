@@ -1,12 +1,22 @@
 package de.flapdoodle.kfx.bindings
 
 import de.flapdoodle.kfx.bindings.list.IndexedMappingListChangeListener
+import de.flapdoodle.kfx.bindings.list.List2ObservableListChangeListener
 import de.flapdoodle.kfx.bindings.list.MappingListChangeListener
 import javafx.beans.property.ReadOnlyProperty
 import javafx.collections.ObservableList
 import javafx.util.Subscription
 
 object ObservableLists {
+
+  fun <S, T> syncWith(source: ReadOnlyProperty<List<S>>, destination: ObservableList<T>, transformation: (S) -> T): Subscription {
+    destination.setAll(source.value.map(transformation))
+    val listener = List2ObservableListChangeListener(destination, transformation)
+    source.addListener(listener)
+    return Subscription {
+      source.removeListener(listener)
+    }
+  }
 
   fun <S, T> syncWith(source: ObservableList<S>, destination: ObservableList<T>, transformation: (S) -> T): Subscription {
     destination.setAll(source.map(transformation))

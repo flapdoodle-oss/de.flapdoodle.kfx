@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.control.Button
@@ -9,7 +10,11 @@ import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Region
 
-class Table<T: Any>() : Region() {
+class Table<T: Any>(
+  internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+) : Region() {
+
+  val header = Header(columns)
 
   val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -39,7 +44,7 @@ class Table<T: Any>() : Region() {
 //      fill = Color.RED
 //    })
 
-    val header = Label("---Header---")
+//    val header = Label("---Header---")
     val footer = Label("---Footer---")
     WeightGridPane.setPosition(header, 0,0, HPos.CENTER)
     WeightGridPane.setPosition(button,0,1, HPos.CENTER)

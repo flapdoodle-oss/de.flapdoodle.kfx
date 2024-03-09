@@ -4,17 +4,17 @@
     -fx-background-color: white;
 }
 
-.better-table .slim-header {
+.better-table .header {
     -fx-background-color: rgba(0, 0, 0, 0.15);
     -fx-border-width: 2px;
 }
 
-.better-table .slim-header .slim-header-column {
+.better-table .header .header-column {
     -fx-padding: 4px;
     -fx-font-weight: bold;
 }
 
-.better-table .slim-header .slim-header-column:focused {
+.better-table .header .header-column:focused {
     -fx-border-color: -fx-focus-color;
     -fx-border-width: -fx-focus-border;
 }

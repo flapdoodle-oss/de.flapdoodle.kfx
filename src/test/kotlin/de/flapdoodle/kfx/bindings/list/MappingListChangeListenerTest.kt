@@ -102,6 +102,24 @@ class MappingListChangeListenerTest {
         .hasSize(3)
         .containsExactly(">1<", ">a<", ">3<")
     }
+
+    @Test
+    fun replaceOneWithTwo() {
+      source.addAll("1")
+      source.setAll("1", "2")
+      assertThat(destination)
+        .hasSize(2)
+        .containsExactly(">1<", ">2<")
+    }
+
+    @Test
+    fun replaceTwoWithOne() {
+      source.addAll("1","2")
+      source.setAll("1")
+      assertThat(destination)
+        .hasSize(1)
+        .containsExactly(">1<")
+    }
   }
 
   @Nested

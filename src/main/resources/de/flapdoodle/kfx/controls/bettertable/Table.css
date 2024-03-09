@@ -1,0 +1,62 @@
+.better-table {
+    -fx-border-width: 1px 1px 1px 1px;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-background-color: white;
+}
+
+.better-table .slim-header {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+    -fx-border-width: 2px;
+}
+
+.better-table .slim-header .slim-header-column {
+    -fx-padding: 4px;
+    -fx-font-weight: bold;
+}
+
+.better-table .slim-header .slim-header-column:focused {
+    -fx-border-color: -fx-focus-color;
+    -fx-border-width: -fx-focus-border;
+}
+
+.better-table .slim-rows {
+    -fx-background-color: white;
+}
+
+.better-table .slim-rows .slim-row {
+    -fx-border-width: 0px 1px 0px 0px;
+    -fx-border-color: rgba(0,0,0,0.3);
+}
+
+.better-table .slim-rows .slim-row:even {
+    -fx-background-color: rgba(0,0,0,0.03);
+}
+
+.better-table .slim-rows .slim-row:hover {
+    -fx-background-color: rgba(0,0,0,0.06);
+}
+
+.better-table .slim-rows .slim-row:hover:even {
+    -fx-background-color: rgba(0,0,0,0.09);
+}
+
+.slim-cell {
+    -fx-border-color: rgba(0,0,0,0.1);
+    -fx-border-width: 1px 1px 0px 0px;
+}
+
+.slim-cell:focused {
+    -fx-border-color: -fx-focus-color;
+    -fx-border: -fx-focus-border;
+    -fx-border-width: 1px;
+}
+
+.better-table .slim-footer {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+    -fx-border-width: 2px;
+}
+
+.better-table .slim-footer:focused {
+    -fx-border-color: -fx-focus-color;
+    -fx-border-width: -fx-focus-border;
+}

@@ -27,15 +27,10 @@ class Cell<T: Any, C: Any>(
 ): Control() {
 
   private val skin = Skin(this)
-  private var changeListener: ((C?) -> Unit)? = null
 
   init {
     isFocusTraversable = true
     cssClassName("slim-cell")
-
-//    addEventHandler(CellNavigator.EVENT_TYPE) {
-//      println("got $it")
-//    }
   }
 
   fun setEventListener(eventListener: TableEventListener<T>) {
@@ -46,18 +41,8 @@ class Cell<T: Any, C: Any>(
     skin.setColumn(column)
   }
 
-  fun onTableEvent(event: TableEvent<T>) {
+  fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
     skin.onTableEvent(event)
-  }
-
-  fun onChange(value: C?) {
-    changeListener?.let {
-      it(value)
-    }
-  }
-
-  fun changeListener(listener: (C?) -> Unit) {
-    changeListener = listener
   }
 
   override fun createDefaultSkin() = skin
@@ -204,24 +189,77 @@ class Cell<T: Any, C: Any>(
       this.eventListener = eventListener
       control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
         if (it.clickCount == 1) {
-          eventListener.fireEvent(TableEvent.Focus(control.row, control))
+          eventListener.fireEvent(TableEvent.RequestFocus(control.row, column))
         }
         if (it.clickCount == 2) {
-          eventListener.fireEvent(TableEvent.StartEdit(control.row, control))
+          eventListener.fireEvent(TableEvent.RequestEdit(control.row, column))
         }
         it.consume()
       }
+
+      control.addEventFilter(KeyEvent.KEY_RELEASED) {
+        if (!it.isShortcutDown && it.code==KeyCode.TAB) {
+          it.consume()
+        }
+      }
+      control.addEventHandler(KeyEvent.KEY_RELEASED) {
+        if (!it.isShortcutDown) {
+          val direction = when (it.code) {
+            KeyCode.LEFT -> TableEvent.Direction.LEFT
+            KeyCode.RIGHT -> TableEvent.Direction.RIGHT
+            KeyCode.UP -> TableEvent.Direction.UP
+            KeyCode.DOWN -> TableEvent.Direction.DOWN
+            KeyCode.TAB -> TableEvent.Direction.NEXT
+            else -> null
+          }
+          if (direction!=null) {
+            it.consume()
+            if (field.isVisible) {
+              // just w
+            } else {
+              eventListener.fireEvent(TableEvent.NextCell(control.row, column, direction))
+            }
+          } else {
+            if (it.code == KeyCode.ENTER) {
+              it.consume()
+              eventListener.fireEvent(TableEvent.RequestEdit(control.row, column))
+            }
+          }
+        }
+      }
+
+//      control.handleEvent(KeyEvent.KEY_RELEASED) {
+//        matching { !it.isShortcutDown } then {
+//          consume { it.code == KeyCode.LEFT } by {
+//            NodeHelper.traverse(control, Direction.LEFT, TraversalMethod.DEFAULT)
+//          }
+//          consume { it.code == KeyCode.RIGHT } by {
+//            NodeHelper.traverse(control, Direction.RIGHT, TraversalMethod.DEFAULT)
+//          }
+//          consume { it.code == KeyCode.UP } by {
+//            NodeHelper.traverse(control, Direction.UP, TraversalMethod.DEFAULT)
+//          }
+//          consume { it.code == KeyCode.DOWN } by {
+//            NodeHelper.traverse(control, Direction.DOWN, TraversalMethod.DEFAULT)
+//          }
+//
+//          consume { it.code == KeyCode.ENTER } by {
+//            _startEdit()
+//          }
+//        }
+//      }
+
     }
 
-    fun onTableEvent(event: TableEvent<T>) {
+    fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
       when (event) {
-        is TableEvent.Focus -> {
-          if (event.row==control.row && event.cell == control) {
+        is TableEvent.Focus<T,out Any> -> {
+          if (event.row==control.row && event.column == column) {
             control.requestFocus()
           }
         }
-        is TableEvent.StartEdit -> {
-          if (event.row==control.row && event.cell == control) {
+        is TableEvent.StartEdit<T,out Any> -> {
+          if (event.row==control.row && event.column == column) {
             _startEdit()
           }
         }

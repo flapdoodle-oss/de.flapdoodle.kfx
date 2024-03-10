@@ -6,7 +6,6 @@ import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.minus
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
 import javafx.geometry.HPos
 import javafx.geometry.Point2D
 import javafx.geometry.VPos
@@ -15,7 +14,9 @@ import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
+import javafx.scene.shape.Rectangle
 import java.lang.Double.max
 import java.lang.Double.min
 
@@ -42,7 +43,7 @@ class BetterSplitPane(
   fun nodes() = nodes
 
   class Skin(
-      private val control: BetterSplitPane
+    private val control: BetterSplitPane
   ) : SkinBase<BetterSplitPane>(control) {
 
     private val handles = FXCollections.observableArrayList<SplitHandle>()
@@ -58,50 +59,37 @@ class BetterSplitPane(
         control.requestLayout()
       })
 
-//      control.nodes.addListener(ListChangeListener {
-////        println("changed: $it")
-//        handles.setAll(control.nodes.map {
-//          SplitHandle(this, it)
-//        })
-//
-//        children.setAll(
-//            control.nodes + handles
-//        )
-//        control.requestLayout()
-//      })
-
-      if (true) {
-        var dragStarted: DragStart? = null
-        control.addEventFilter(MouseEvent.MOUSE_PRESSED) { event ->
+      var dragStarted: DragStart? = null
+      control.addEventFilter(MouseEvent.MOUSE_PRESSED) { event ->
 //          println("mouse clicked in parent")
-          val target = event.target
-          if (target is SplitHandle && target.parentSkin == this) {
+        val target = event.target
+        if (target is SplitHandle && target.parentSkin == this) {
 //            println("start")
-            dragStarted = DragStart(Point2D(event.x, event.y), target)
+          dragStarted = DragStart(Point2D(event.x, event.y), target)
 
-            event.isDragDetect = true
-            event.consume()
-          } else {
-//            println("skip ${event.target}")
-          }
-        }
-
-        control.addEventFilter(MouseEvent.DRAG_DETECTED) { event ->
-//        dragStarted = dragStarted?.copy(pos = Point2D(event.x, event.y))
-          control.startFullDrag()
+          event.isDragDetect = true
           event.consume()
+        } else {
+//            println("skip ${event.target}")
         }
+      }
 
-        control.addEventFilter(MouseDragEvent.MOUSE_DRAGGED) { event ->
-          if (dragStarted != null) {
-            val start = dragStarted
-            require(start != null) { "drag not started.." }
-            val current = Point2D(event.x, event.y)
+      control.addEventFilter(MouseEvent.DRAG_DETECTED) { event ->
+//        dragStarted = dragStarted?.copy(pos = Point2D(event.x, event.y))
+        control.startFullDrag()
+        event.consume()
+      }
 
-            val localStart = control.sceneToLocal(start.pos)
-            val localCurrent = control.sceneToLocal(current)
+      control.addEventFilter(MouseDragEvent.MOUSE_DRAGGED) { event ->
+        if (dragStarted != null) {
+          val start = dragStarted
+          require(start != null) { "drag not started.." }
+          val current = Point2D(event.x, event.y)
 
-            val diff = current - start.pos
+          val localStart = control.sceneToLocal(start.pos)
+          val localCurrent = control.sceneToLocal(current)
+
+          val diff = current - start.pos
 
 //            println("${start.handle.node}: from $dragStarted to $current -> $diff (local)")
 
@@ -111,17 +99,16 @@ class BetterSplitPane(
 //              println("# WHAT                            #")
 //              println("###################################")
 //            }
-            start.handle.prefWidthOffset(control.height, start.currentWith + diff.x)
-            start.handle.requestLayout()
-            //        //node.prefWidth = node.layoutBounds.width + diff.x
-            event.consume()
-          }
+          start.handle.prefWidthOffset(control.height, start.currentWith + diff.x)
+          start.handle.requestLayout()
+          //        //node.prefWidth = node.layoutBounds.width + diff.x
+          event.consume()
         }
-        control.addEventFilter(MouseEvent.MOUSE_RELEASED) { event ->
-          if (dragStarted != null) {
-            dragStarted = null
-            event.consume()
-          }
+      }
+      control.addEventFilter(MouseEvent.MOUSE_RELEASED) { event ->
+        if (dragStarted != null) {
+          dragStarted = null
+          event.consume()
         }
       }
     }
@@ -164,14 +151,14 @@ class BetterSplitPane(
   }
 
   private data class DragStart(
-          val pos: Point2D,
-          val handle: SplitHandle,
-          val currentWith: Double = handle.prefWidthOffset()
+    val pos: Point2D,
+    val handle: SplitHandle,
+    val currentWith: Double = handle.prefWidthOffset()
   )
 
   private class SplitHandle(
-          internal val parentSkin: BetterSplitPane.Skin,
-          internal val node: Node
+    val parentSkin: BetterSplitPane.Skin,
+    val node: Node
   ) : Control() {
     private val skin = Skin(this)
     var changedPrefWidth: Double? = null
@@ -189,7 +176,7 @@ class BetterSplitPane(
       val max = node.maxWidth(currentHeight)
 
       val w = pref + offset
-      changedPrefWidth = when  {
+      changedPrefWidth = when {
         (w < min) -> min - pref
         (w > max) -> max - pref
         else -> offset
@@ -213,14 +200,31 @@ class BetterSplitPane(
     }
 
 
-    internal class Skin(control: SplitHandle) : SkinBase<SplitHandle>(control) {
-      init {
-        children.add(StackPane().apply {
-          isMouseTransparent = true
-          cssClassName("stack-pane")
-//          addClass(Style.stackPane)
-        })
+    class Skin(val control: SplitHandle) : SkinBase<SplitHandle>(control) {
+      private val handle = Pane()
 
+      init {
+//        handle.isManaged = false
+//        handle.width = 1.0
+//        handle.heightProperty().bind(control.heightProperty())
+        handle.cssClassName("handle")
+        handle.isMouseTransparent = true
+        handle.isFocusTraversable = true
+
+        children.add(handle)
+
+//        children.add(StackPane().apply {
+//          isMouseTransparent = true
+//          cssClassName("stack-pane")
+////          addClass(Style.stackPane)
+//          children.add(handle)
+//        })
+
+      }
+
+      override fun layoutChildren(contentX: Double, contentY: Double, contentWidth: Double, contentHeight: Double) {
+        val insets = control.insets
+        layoutInArea(handle, insets.left, insets.top, contentWidth, contentHeight, control.baselineOffset, HPos.CENTER, VPos.CENTER)
       }
     }
   }

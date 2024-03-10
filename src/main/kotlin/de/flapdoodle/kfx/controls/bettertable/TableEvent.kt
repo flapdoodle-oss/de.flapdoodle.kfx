@@ -1,9 +1,12 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 sealed class TableEvent<T: Any> {
-  data class Focus<T: Any>(val row: T, val cell: Cell<T, out Any>): TableEvent<T>()
-  data class StartEdit<T: Any>(val row: T, val cell: Cell<T, out Any>): TableEvent<T>()
-  data class CommitChange<T: Any, C: Any>(val row: T, val column: Column<T, C>, val value: C?) : TableEvent<T>() {
+
+  sealed class RequestEvent<T: Any>() : TableEvent<T>()
+  sealed class CellTriggered<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): RequestEvent<T>()
+  data class RequestFocus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column)
+  data class RequestEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C> ): CellTriggered<T, C>(row, column)
+  data class CommitChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val value: C?): CellTriggered<T, C>(row, column) {
     fun asCellChange(): CellChangeListener.Change<T, C> {
       return CellChangeListener.Change(column, value)
     }
@@ -11,5 +14,49 @@ sealed class TableEvent<T: Any> {
     fun stopEvent() = StopEdit(row,column)
   }
 
-  class StopEdit<T: Any, C: Any>(val row: T, val column: Column<T, C>) : TableEvent<T>()
+  sealed class ResponseEvent<T: Any>() : TableEvent<T>()
+  sealed class ToCell<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): ResponseEvent<T>()
+  data class Focus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
+  data class StartEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C> ): ToCell<T, C>(row, column)
+  class StopEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
+
+  class NextCell<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val direction: Direction): CellTriggered<T, C>(row, column) {
+    fun asFocusEvent(rows: List<T>, columns: List<Column<T, out Any>>): Focus<T, out Any>? {
+      val rowIndex = rows.indexOf(row)
+      val columnIndex = columns.indexOf(column)
+      if (rowIndex!=-1 && columnIndex!=-1) {
+        if (direction == Direction.NEXT) {
+          var newColumnIndex = columnIndex + 1
+          var newRowIndex = rowIndex
+          if (newColumnIndex >= columns.size) {
+            newColumnIndex = 0
+            newRowIndex + 1
+            if (newRowIndex >= rows.size) {
+              newRowIndex = rows.size - 1
+            }
+          }
+          return Focus(rows[newRowIndex], columns[newColumnIndex])
+        } else {
+          val newRowIndex = when (direction) {
+            Direction.UP -> (rowIndex - 1).coerceAtLeast(0)
+            Direction.DOWN -> (rowIndex + 1).coerceAtMost(rows.size - 1)
+            else -> rowIndex
+          }
+
+          val newColumnIndex = when (direction) {
+            Direction.LEFT -> (columnIndex - 1).coerceAtLeast(0)
+            Direction.RIGHT -> (columnIndex + 1).coerceAtMost(columns.size - 1)
+            else -> columnIndex
+          }
+
+          return Focus(rows[newRowIndex], columns[newColumnIndex])
+        }
+      }
+      return null
+    }
+  }
+
+  enum class Direction {
+    LEFT, RIGHT, UP, DOWN, NEXT
+  }
 }

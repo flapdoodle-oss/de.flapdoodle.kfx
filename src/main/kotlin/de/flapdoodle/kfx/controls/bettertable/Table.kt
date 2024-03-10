@@ -19,14 +19,29 @@ class Table<T: Any>(
       is TableEvent.CommitChange<T, out Any> -> {
         changeListener.onChange(it.row, it.asCellChange())
         onTableEvent(it.stopEvent())
+        onTableEvent(TableEvent.Focus(it.row, it.column))
       }
-      else -> onTableEvent(it)
+      is TableEvent.NextCell<T, out Any> -> {
+        val nextEvent = it.asFocusEvent(rows.value, columns.value)
+        if (nextEvent!=null) {
+          onTableEvent(nextEvent)
+        }
+      }
+      is TableEvent.RequestEdit<T, out Any> -> {
+        onTableEvent(TableEvent.StartEdit(it.row, it.column))
+      }
+      is TableEvent.RequestFocus<T, out Any> -> {
+        onTableEvent(TableEvent.Focus(it.row, it.column))
+      }
+      else -> {
+        throw IllegalArgumentException("not implemented: $it")
+      }
     }
   }
 
   private val header = Header(columns)
   private val footer = Footer(columns, header::columnWidthProperty)
-  private val _rows = Rows(rows, columns, eventListener, header::columnWidthProperty, changeListener)
+  private val _rows = Rows(rows, columns, eventListener, header::columnWidthProperty)
 
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -67,7 +82,7 @@ class Table<T: Any>(
     children.add(scroll)
   }
 
-  fun onTableEvent(event: TableEvent<T>) {
+  internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
     println("event: $event")
     _rows.onTableEvent(event)
   }

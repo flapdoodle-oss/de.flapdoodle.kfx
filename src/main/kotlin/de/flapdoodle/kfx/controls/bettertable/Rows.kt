@@ -15,8 +15,7 @@ class Rows<T : Any>(
   private val rows: ReadOnlyObjectProperty<List<T>>,
   private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   private val eventListener: TableEventListener<T>,
-  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
-  internal val changeListener: CellChangeListener<T>
+  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : Control() {
   private val skin = Skin(this)
 
@@ -27,7 +26,7 @@ class Rows<T : Any>(
 
   override fun createDefaultSkin() = skin
 
-  fun onTableEvent(event: TableEvent<T>) {
+  fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
     skin.onTableEvent(event)
   }
 
@@ -35,7 +34,7 @@ class Rows<T : Any>(
     private val control: Rows<T>
   ) : SkinBase<Rows<T>>(control) {
 
-    internal fun onTableEvent(event: TableEvent<T>) {
+    internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
       rowPane.children.forEach {
         (it as Row<T>).onTableEvent(event)
       }
@@ -53,7 +52,7 @@ class Rows<T : Any>(
       })
 
       rowPane.children.syncWith(control.rows) {
-        Row(control.eventListener, control.columns, it, control.columnWidthProperties, control.changeListener)
+        Row(control.eventListener, control.columns, it, control.columnWidthProperties)
       }
 
 //      ObservableLists.syncWithIndexed(control.rows, rowPane.children) { index, it ->

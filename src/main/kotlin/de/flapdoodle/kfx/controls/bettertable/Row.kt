@@ -16,8 +16,7 @@ class Row<T : Any>(
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val value: T,
 //  internal val index: Int,
-  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
-  internal val changeListener: CellChangeListener<T>
+  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : Control() {
 
   object Style {
@@ -43,7 +42,7 @@ class Row<T : Any>(
     Style.Even.set(this, index % 2 == 0)
   }
 
-  fun onTableEvent(event: TableEvent<T>) {
+  fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
     skin.onTableEvent(event)
   }
 
@@ -63,27 +62,15 @@ class Row<T : Any>(
       }
     }
 
-    internal fun onTableEvent(event: TableEvent<T>) {
-      when (event) {
-        is TableEvent.Focus -> {
-          if (event.row == control.value) {
-            rowContainer.children.forEach {
-              (it as Cell<T, out Any>).onTableEvent(event)
-            }
-          }
-        }
-        else -> {
-          rowContainer.children.forEach {
-            (it as Cell<T, out Any>).onTableEvent(event)
-          }
-        }
+    internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
+      rowContainer.children.forEach {
+        (it as Cell<T, out Any>).onTableEvent(event)
       }
     }
 
     private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
       return c.cell(value).apply {
         property[Column::class] = c
-        changeListener { control.changeListener.onChange(control.value, CellChangeListener.Change(c, it)) }
         prefWidthProperty().bind(width)
         setColumn(c)
       }

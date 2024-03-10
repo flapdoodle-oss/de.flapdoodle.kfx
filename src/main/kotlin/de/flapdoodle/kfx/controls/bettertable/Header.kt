@@ -1,6 +1,9 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import de.flapdoodle.kfx.bindings.*
+import de.flapdoodle.kfx.bindings.Values
+import de.flapdoodle.kfx.bindings.defaultIfNull
+import de.flapdoodle.kfx.bindings.syncWith
+import de.flapdoodle.kfx.bindings.valueOf
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
@@ -13,14 +16,16 @@ import javafx.scene.layout.StackPane
 
 class Header<T : Any>(
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
-): Control() {
+) : Control() {
 
   private val skin = Skin(this)
 
   init {
     cssClassName("header")
-
     isFocusTraversable = false
+    columns.addListener { observable, oldValue, newValue ->
+      require(newValue.toSet().size == newValue.size) { "column added more than once" }
+    }
   }
 
   override fun createDefaultSkin() = skin
@@ -51,7 +56,7 @@ class Header<T : Any>(
     }
   }
 
-  inner class HeaderColumn<T: Any>(
+  inner class HeaderColumn<T : Any>(
     internal val column: Column<T, out Any>
   ) : StackPane() {
     init {

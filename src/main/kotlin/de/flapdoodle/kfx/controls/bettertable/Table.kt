@@ -15,6 +15,7 @@ class Table<T: Any>(
 ) : Region() {
 
   val header = Header(columns)
+  val footer = Footer(columns, header::columnWidthProperty)
 
   val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -45,7 +46,7 @@ class Table<T: Any>(
 //    })
 
 //    val header = Label("---Header---")
-    val footer = Label("---Footer---")
+//    val footer = Label("---Footer---")
     WeightGridPane.setPosition(header, 0,0, HPos.CENTER)
     WeightGridPane.setPosition(button,0,1, HPos.CENTER)
     WeightGridPane.setPosition(footer, 0,2, HPos.CENTER)

@@ -16,32 +16,46 @@ class TableSampler {
   class Sample : Application() {
     override fun start(stage: Stage) {
 
-      val columns = SimpleObjectProperty<List<Column<String, out Any>>>(listOf(
+      val columns = SimpleObjectProperty<List<Column<Row, out Any>>>(listOf(
         Column(
           header = { Label("A") },
           cell = {
             Cell(
-              value = 1,
+              value = it.age,
               converter = Converters.converterFor(Int::class),
             )
           },
           footer = { Label("a") }
       )))
 
+      val rows = SimpleObjectProperty(listOf(
+        Row(20, "Klaus", 1.89),
+        Row(30, "Susi", 1.79),
+        Row(28, "Peter", 1.67),
+        Row(17, "Claudia", 1.93),
+        Row(19, "Joane", 1.88),
+        Row(44, "Achim", 1.82),
+        Row(67, "Thorsten", 1.78),
+      ))
+
+      val changeListener = CellChangeListener<Row> { row, change ->
+        println("change: $row -> $change")
+      }
+      
       val content = AnchorPane(
-        Table(columns).withAnchors(all = 10.0, bottom = 50.0),
+        Table(rows, columns, changeListener).withAnchors(all = 10.0, bottom = 50.0),
         HBox(Button("B").apply {
           onAction = EventHandler {
             columns.value = columns.value + Column(
               header = { Label("B")},
-              cell = { Cell("", Converters.converterFor(String::class))}
+              cell = { Cell(it.name, Converters.converterFor(String::class))}
             )
           }
         }, Button("C").apply {
             onAction = EventHandler {
               columns.value = columns.value + Column(
                 header = { Label("C")},
-                cell = { Cell("", Converters.converterFor(String::class))},
+                cell = { Cell(it.size, Converters.converterFor(Double::class))},
                 footer = { Label("c")}
               )
             }
@@ -52,6 +66,12 @@ class TableSampler {
     }
 
   }
+
+  data class Row(
+    val age: Int,
+    val name: String,
+    val size: Double,
+  )
 
   companion object {
     @JvmStatic

@@ -102,6 +102,24 @@ class IndexedMappingListChangeListenerTest {
         .hasSize(3)
         .containsExactly("0:>1<", "1:>a<", "2:>3<")
     }
+
+    @Test
+    fun replaceOneWithTwo() {
+      source.addAll("1")
+      source.setAll("1", "2")
+      assertThat(destination)
+        .hasSize(2)
+        .containsExactly("0:>1<", "1:>2<")
+    }
+
+    @Test
+    fun replaceTwoWithOne() {
+      source.addAll("1","2")
+      source.setAll("1")
+      assertThat(destination)
+        .hasSize(1)
+        .containsExactly("0:>1<")
+    }
   }
 
   @Nested

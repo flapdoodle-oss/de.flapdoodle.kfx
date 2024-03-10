@@ -39,24 +39,24 @@
     -fx-border-width: -fx-focus-border;
 }
 
-.better-table .slim-rows {
+.better-table .rows {
     -fx-background-color: white;
 }
 
-.better-table .slim-rows .slim-row {
+.better-table .rows .row {
     -fx-border-width: 0px 1px 0px 0px;
     -fx-border-color: rgba(0, 0, 0, 0.3);
 }
 
-.better-table .slim-rows .slim-row:even {
+.better-table .rows .row:even {
     -fx-background-color: rgba(0, 0, 0, 0.03);
 }
 
-.better-table .slim-rows .slim-row:hover {
+.better-table .rows .row:hover {
     -fx-background-color: rgba(0, 0, 0, 0.06);
 }
 
-.better-table .slim-rows .slim-row:hover:even {
+.better-table .rows .row:hover:even {
     -fx-background-color: rgba(0, 0, 0, 0.09);
 }
 

@@ -7,7 +7,7 @@ class PseudoClassWrapper<T: Node>(
   private val wrapped: PseudoClass
 ) {
   fun enable(node: T) {
-    node.pseudoClassStateChanged(wrapped, true)
+    set(node, true)
   }
 
   fun enabled(node: T): Boolean {
@@ -15,7 +15,11 @@ class PseudoClassWrapper<T: Node>(
   }
 
   fun disable(node: T) {
-    node.pseudoClassStateChanged(wrapped, false)
+    set(node, false)
+  }
+
+  fun set(node: T, active: Boolean) {
+    node.pseudoClassStateChanged(wrapped, active)
   }
 
   fun swap(node: T) {

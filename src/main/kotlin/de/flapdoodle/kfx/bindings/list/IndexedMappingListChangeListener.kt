@@ -25,12 +25,18 @@ class IndexedMappingListChangeListener<S, T>(
         }
         // wasReplaced -> wasAdded && wasRemoved
         change.wasReplaced() -> {
-//          println("wasReplaced ${change.from}-${change.to}")
-          val replaced = change.list.subList(change.from, change.to)
-//          replaced.forEach { println("-> $it") }
-          replaced.forEachIndexed { index, s ->
-            destination[index+change.from] = transformation(index+change.from, s)
+          destination.remove(change.from, change.from + change.removedSize)
+
+          val added = change.list.subList(change.from, change.to)
+          added.forEachIndexed { index, s ->
+            destination.add(index+change.from, transformation(index+change.from, s))
           }
+////          println("wasReplaced ${change.from}-${change.to}")
+//          val replaced = change.list.subList(change.from, change.to)
+////          replaced.forEach { println("-> $it") }
+//          replaced.forEachIndexed { index, s ->
+//            destination[index+change.from] = transformation(index+change.from, s)
+//          }
         }
         change.wasAdded() -> {
 //          println("wasAdded ${change.from}-${change.to}")

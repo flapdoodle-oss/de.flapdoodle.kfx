@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox
 class Rows<T : Any>(
   private val rows: ReadOnlyObjectProperty<List<T>>,
   private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  private val navigator: CellNavigator<T>,
   private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
   internal val changeListener: CellChangeListener<T>
 ) : Control() {
@@ -26,9 +27,20 @@ class Rows<T : Any>(
 
   override fun createDefaultSkin() = skin
 
+  fun onTableEvent(event: TableEvent<T>) {
+    skin.onTableEvent(event)
+  }
+
   class Skin<T : Any>(
     private val control: Rows<T>
   ) : SkinBase<Rows<T>>(control) {
+
+    internal fun onTableEvent(event: TableEvent<T>) {
+      rowPane.children.forEach {
+        (it as Row<T>).onTableEvent(event)
+      }
+    }
+
     private val rowPane = VBox()
 
     init {
@@ -41,7 +53,7 @@ class Rows<T : Any>(
       })
 
       rowPane.children.syncWith(control.rows) {
-        Row(control.columns, it, control.columnWidthProperties, control.changeListener)
+        Row(control.navigator.withRow(it), control.columns, it, control.columnWidthProperties, control.changeListener)
       }
 
 //      ObservableLists.syncWithIndexed(control.rows, rowPane.children) { index, it ->

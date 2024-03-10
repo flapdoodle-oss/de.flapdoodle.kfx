@@ -6,14 +6,13 @@ import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.property
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
-import javafx.collections.ObservableList
 import javafx.css.PseudoClass
 import javafx.scene.control.Control
-import javafx.scene.control.Skin
 import javafx.scene.control.SkinBase
 import javafx.scene.layout.HBox
 
 class Row<T : Any>(
+  internal val navigator: CellNavigator.RowNavigator<T>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val value: T,
 //  internal val index: Int,
@@ -25,7 +24,7 @@ class Row<T : Any>(
     val Even = PseudoClassWrapper<Row<out Any>>(PseudoClass.getPseudoClass("even"))
   }
 
-  private val skin = SmartRowSkin(this)
+  private val skin = Skin(this)
 
   init {
     isFocusTraversable = false
@@ -36,7 +35,7 @@ class Row<T : Any>(
 //    }
   }
 
-  override fun createDefaultSkin(): Skin<*> {
+  override fun createDefaultSkin(): javafx.scene.control.Skin<*> {
     return skin
   }
 
@@ -44,23 +43,47 @@ class Row<T : Any>(
     Style.Even.set(this, index % 2 == 0)
   }
 
-  class SmartRowSkin<T : Any>(
-    private val row: Row<T>
-  ) : SkinBase<Row<T>>(row) {
+  fun onTableEvent(event: TableEvent<T>) {
+    skin.onTableEvent(event)
+  }
+
+  class Skin<T : Any>(
+    private val control: Row<T>
+  ) : SkinBase<Row<T>>(control) {
     private val rowContainer = HBox()
 
     init {
       children.add(rowContainer)
 
-      ObservableLists.syncWith(row.columns, rowContainer.children) {
-        cell(it, row.value, row.columnWidthProperties(it))
+      ObservableLists.syncWith(control.columns, rowContainer.children) {
+        cell(it, control.value, control.columnWidthProperties(it)).apply {
+          property[Row::class] = control
+          setNavigator(control.navigator.withColumn(it))
+        }
+      }
+    }
+
+    internal fun onTableEvent(event: TableEvent<T>) {
+      when (event) {
+        is TableEvent.Focus -> {
+          if (event.row == control.value) {
+            rowContainer.children.forEach {
+              (it as Cell<T, out Any>).onTableEvent(event)
+            }
+          }
+        }
+        else -> {
+          rowContainer.children.forEach {
+            (it as Cell<T, out Any>).onTableEvent(event)
+          }
+        }
       }
     }
 
     private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
       return c.cell(value).apply {
         property[Column::class] = c
-        changeListener { row.changeListener.onChange(row.value, CellChangeListener.Change(c, it)) }
+        changeListener { control.changeListener.onChange(control.value, CellChangeListener.Change(c, it)) }
         prefWidthProperty().bind(width)
       }
     }

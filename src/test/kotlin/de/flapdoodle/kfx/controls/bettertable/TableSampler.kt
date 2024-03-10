@@ -21,11 +21,13 @@ class TableSampler {
           header = { Label("A") },
           cell = {
             Cell(
+              row = it,
               value = it.age,
               converter = Converters.converterFor(Int::class),
+              editable = true
             )
           },
-          footer = { Label("a") }
+          footer = { Label("a") },
       )))
 
       val rows = SimpleObjectProperty(listOf(
@@ -48,14 +50,14 @@ class TableSampler {
           onAction = EventHandler {
             columns.value = columns.value + Column(
               header = { Label("B")},
-              cell = { Cell(it.name, Converters.converterFor(String::class))}
+              cell = { Cell(it, it.name, Converters.converterFor(String::class), true)}
             )
           }
         }, Button("C").apply {
             onAction = EventHandler {
               columns.value = columns.value + Column(
                 header = { Label("C")},
-                cell = { Cell(it.size, Converters.converterFor(Double::class))},
+                cell = { Cell(it, it.size, Converters.converterFor(Double::class), true)},
                 footer = { Label("c")}
               )
             }

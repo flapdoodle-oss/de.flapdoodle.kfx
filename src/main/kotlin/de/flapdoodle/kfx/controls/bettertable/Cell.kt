@@ -3,7 +3,6 @@ package de.flapdoodle.kfx.controls.bettertable
 import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction
 import com.sun.javafx.scene.traversal.TraversalMethod
-import de.flapdoodle.kfx.controls.table.SlimCell
 import de.flapdoodle.kfx.events.handleEvent
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
@@ -20,9 +19,10 @@ import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 
 class Cell<T: Any, C: Any>(
+  val row: T,
   val value: C?,
   val converter: StringConverter<C>,
-  val editable: Boolean = false,
+  val editable: Boolean,
   val textAlignment: TextAlignment = TextAlignment.LEFT
 ): Control() {
 
@@ -32,6 +32,18 @@ class Cell<T: Any, C: Any>(
   init {
     isFocusTraversable = true
     cssClassName("slim-cell")
+
+//    addEventHandler(CellNavigator.EVENT_TYPE) {
+//      println("got $it")
+//    }
+  }
+
+  fun setNavigator(navigator: CellNavigator.ColumnNavigator<T>) {
+    skin.setNavigator(navigator)
+  }
+
+  fun onTableEvent(event: TableEvent<T>) {
+    skin.onTableEvent(event)
   }
 
   fun onChange(value: C?) {
@@ -55,7 +67,9 @@ class Cell<T: Any, C: Any>(
       prefWidth = Double.MAX_VALUE
       alignment = asPosition(control.textAlignment)
       text = control.converter.toString(control.value)
-      if (control.editable) {
+
+
+      if (control.editable && false) {
         control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
           if (it.clickCount == 1) {
             control.requestFocus()
@@ -173,6 +187,43 @@ class Cell<T: Any, C: Any>(
 
 //      control.prefWidthProperty().bind(control.column.widthProperty())
     }
+
+    var navigator: CellNavigator.ColumnNavigator<T>? = null
+
+    internal fun setNavigator(navigator: CellNavigator.ColumnNavigator<T>) {
+      this.navigator = navigator
+
+      control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
+        if (it.clickCount == 1) {
+          navigator.requestFocus()
+//          fireEvent(Events.)
+//          control.requestFocus()
+        }
+        if (it.clickCount == 2) {
+//          navigator.requestFocus()
+        }
+        it.consume()
+      }
+
+//
+//      if (control.editable) {
+//
+//      }
+    }
+
+    fun onTableEvent(event: TableEvent<T>) {
+      navigator?.let {
+        when (event) {
+          is TableEvent.Focus -> {
+            
+          }
+          else -> {
+            println("ignore: $event")
+          }
+        }
+      }
+    }
+
 
     override fun computeMinWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
       return java.lang.Double.max(label.minWidth(height), field.minWidth(height))

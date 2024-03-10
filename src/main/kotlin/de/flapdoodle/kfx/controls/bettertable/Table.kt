@@ -5,7 +5,6 @@ import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
 import javafx.geometry.VPos
-import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Region
 
@@ -15,9 +14,11 @@ class Table<T: Any>(
   internal val changeListener: CellChangeListener<T>
 ) : Region() {
 
+  private val navigator = CellNavigator(this, rows, columns, changeListener)
+
   private val header = Header(columns)
   private val footer = Footer(columns, header::columnWidthProperty)
-  private val _rows = Rows(rows, columns, header::columnWidthProperty, changeListener)
+  private val _rows = Rows(rows, columns, navigator, header::columnWidthProperty, changeListener)
 
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -56,6 +57,10 @@ class Table<T: Any>(
     scroll.content = content
 
     children.add(scroll)
+  }
+
+  fun onTableEvent(event: TableEvent<T>) {
+    _rows.onTableEvent(event)
   }
 
   override fun layoutChildren() {

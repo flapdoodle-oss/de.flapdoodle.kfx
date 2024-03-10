@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox
 class Rows<T : Any>(
   private val rows: ReadOnlyObjectProperty<List<T>>,
   private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
-  private val navigator: CellNavigator<T>,
+  private val eventListener: TableEventListener<T>,
   private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
   internal val changeListener: CellChangeListener<T>
 ) : Control() {
@@ -53,7 +53,7 @@ class Rows<T : Any>(
       })
 
       rowPane.children.syncWith(control.rows) {
-        Row(control.navigator.withRow(it), control.columns, it, control.columnWidthProperties, control.changeListener)
+        Row(control.eventListener, control.columns, it, control.columnWidthProperties, control.changeListener)
       }
 
 //      ObservableLists.syncWithIndexed(control.rows, rowPane.children) { index, it ->

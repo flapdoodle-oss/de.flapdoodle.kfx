@@ -38,8 +38,12 @@ class Cell<T: Any, C: Any>(
 //    }
   }
 
-  fun setNavigator(navigator: CellNavigator.ColumnNavigator<T>) {
-    skin.setNavigator(navigator)
+  fun setEventListener(eventListener: TableEventListener<T>) {
+    skin.setEventListener(eventListener)
+  }
+
+  fun setColumn(column: Column<T, C>) {
+    skin.setColumn(column)
   }
 
   fun onTableEvent(event: TableEvent<T>) {
@@ -61,6 +65,9 @@ class Cell<T: Any, C: Any>(
   inner class Skin<T : Any, C : Any>(
     private val control: Cell<T, C>
   ) : SkinBase<Cell<T, C>>(control) {
+
+    private lateinit var column: Column<T, C>
+    private lateinit var eventListener: TableEventListener<T>
 
     private val label = Label().apply {
       isWrapText = false
@@ -117,9 +124,9 @@ class Cell<T: Any, C: Any>(
             if (focused) {
 //              fireEvent(SmartEvents.CellFocused(control))
             } else {
-              if (!editInProgress) {
-//                fireEvent(SmartEvents.CellBlur(control))
-              }
+//              if (!editInProgress) {
+////                fireEvent(SmartEvents.CellBlur(control))
+//              }
             }
           }
         }
@@ -142,8 +149,9 @@ class Cell<T: Any, C: Any>(
 //        control.value = it
 //        label.text = control.converter.toString(it)
 //        control.fireEvent(SmartEvents.EditDone(control))
-        control.onChange(it)
-        _editDone()
+//        control.onChange(it)
+//        _editDone()
+        eventListener.fireEvent(TableEvent.CommitChange(control.row, column, it))
       },
       cancelEdit = this::_cancelEdit
     ).apply {
@@ -156,14 +164,14 @@ class Cell<T: Any, C: Any>(
       }
     }
 
-    internal fun _editDone() {
-      _cancelEdit()
-    }
+//    internal fun _editDone() {
+//      _cancelEdit()
+//    }
 
-    var editInProgress: Boolean = false
+//    var editInProgress: Boolean = false
 
     internal fun _cancelEdit() {
-      editInProgress=false
+//      editInProgress=false
 
       label.show()
       field.hide()
@@ -172,7 +180,7 @@ class Cell<T: Any, C: Any>(
 
     internal fun _startEdit() {
 //      RuntimeException("startEdit called").printStackTrace()
-      editInProgress=true
+//      editInProgress=true
 
       label.hide()
       field.show()
@@ -188,38 +196,42 @@ class Cell<T: Any, C: Any>(
 //      control.prefWidthProperty().bind(control.column.widthProperty())
     }
 
-    var navigator: CellNavigator.ColumnNavigator<T>? = null
+    fun setColumn(column: Column<T, C>) {
+      this.column = column
+    }
 
-    internal fun setNavigator(navigator: CellNavigator.ColumnNavigator<T>) {
-      this.navigator = navigator
-
+    fun setEventListener(eventListener: TableEventListener<T>) {
+      this.eventListener = eventListener
       control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
         if (it.clickCount == 1) {
-          navigator.requestFocus()
-//          fireEvent(Events.)
-//          control.requestFocus()
+          eventListener.fireEvent(TableEvent.Focus(control.row, control))
         }
         if (it.clickCount == 2) {
-//          navigator.requestFocus()
+          eventListener.fireEvent(TableEvent.StartEdit(control.row, control))
         }
         it.consume()
       }
-
-//
-//      if (control.editable) {
-//
-//      }
     }
 
     fun onTableEvent(event: TableEvent<T>) {
-      navigator?.let {
-        when (event) {
-          is TableEvent.Focus -> {
-            
+      when (event) {
+        is TableEvent.Focus -> {
+          if (event.row==control.row && event.cell == control) {
+            control.requestFocus()
           }
-          else -> {
-            println("ignore: $event")
+        }
+        is TableEvent.StartEdit -> {
+          if (event.row==control.row && event.cell == control) {
+            _startEdit()
           }
+        }
+        is TableEvent.StopEdit<T,out Any> -> {
+          if (event.row==control.row && event.column == column) {
+            _cancelEdit()
+          }
+        }
+        else -> {
+          println("ignore: $event")
         }
       }
     }

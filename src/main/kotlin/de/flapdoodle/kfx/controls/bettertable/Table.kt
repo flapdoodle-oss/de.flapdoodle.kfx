@@ -14,11 +14,19 @@ class Table<T: Any>(
   internal val changeListener: CellChangeListener<T>
 ) : Region() {
 
-  private val navigator = CellNavigator(this, rows, columns, changeListener)
+  private val eventListener = TableEventListener<T> {
+    when (it) {
+      is TableEvent.CommitChange<T, out Any> -> {
+        changeListener.onChange(it.row, it.asCellChange())
+        onTableEvent(it.stopEvent())
+      }
+      else -> onTableEvent(it)
+    }
+  }
 
   private val header = Header(columns)
   private val footer = Footer(columns, header::columnWidthProperty)
-  private val _rows = Rows(rows, columns, navigator, header::columnWidthProperty, changeListener)
+  private val _rows = Rows(rows, columns, eventListener, header::columnWidthProperty, changeListener)
 
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -60,6 +68,7 @@ class Table<T: Any>(
   }
 
   fun onTableEvent(event: TableEvent<T>) {
+    println("event: $event")
     _rows.onTableEvent(event)
   }
 

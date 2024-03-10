@@ -12,7 +12,7 @@ import javafx.scene.control.SkinBase
 import javafx.scene.layout.HBox
 
 class Row<T : Any>(
-  internal val navigator: CellNavigator.RowNavigator<T>,
+  internal val eventListener: TableEventListener<T>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val value: T,
 //  internal val index: Int,
@@ -58,7 +58,7 @@ class Row<T : Any>(
       ObservableLists.syncWith(control.columns, rowContainer.children) {
         cell(it, control.value, control.columnWidthProperties(it)).apply {
           property[Row::class] = control
-          setNavigator(control.navigator.withColumn(it))
+          setEventListener(control.eventListener)
         }
       }
     }
@@ -85,6 +85,7 @@ class Row<T : Any>(
         property[Column::class] = c
         changeListener { control.changeListener.onChange(control.value, CellChangeListener.Change(c, it)) }
         prefWidthProperty().bind(width)
+        setColumn(c)
       }
     }
 

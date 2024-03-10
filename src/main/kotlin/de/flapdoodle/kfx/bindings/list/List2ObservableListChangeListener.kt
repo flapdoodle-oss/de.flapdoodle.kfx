@@ -16,18 +16,20 @@ class List2ObservableListChangeListener<S, T>(
     val addItems = changes.filterIsInstance<IndexedDiff.Change.Add<S>>()
     val moves = changes.filterIsInstance<IndexedDiff.Change.Move<S>>()
 
-    if (moves.isNotEmpty()) {
+    val realMoves = moves.count { it.source != it.destination } != 0
+
+    if (realMoves) {
       val copy = ArrayList<T>()
       removeItems.reversed().forEach {
         destination.remove(it.index, it.index + 1)
       }
       changes.forEach {
-        when(it) {
+        when (it) {
           is IndexedDiff.Change.Move<S> -> copy.add(destination[it.source])
           is IndexedDiff.Change.Add<S> -> copy.add(transformation(it.value))
-          else -> { }
+          else -> {}
         }
-       }
+      }
       destination.setAll(copy)
     } else {
       removeItems.reversed().forEach {

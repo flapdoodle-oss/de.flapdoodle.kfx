@@ -9,7 +9,6 @@ class MappingListChangeListener<S, T>(
 ) : ListChangeListener<S> {
   override fun onChanged(change: ListChangeListener.Change<out S>) {
     while (change.next()) {
-//      println("change: $change")
       when {
         change.wasUpdated() -> {
 //          println("wasUpdated ${change.from}-${change.to}")

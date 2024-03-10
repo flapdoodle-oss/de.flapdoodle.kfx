@@ -1,10 +1,12 @@
 package de.flapdoodle.kfx.layout.splitpane
 
+import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.minus
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.geometry.HPos
 import javafx.geometry.Point2D
 import javafx.geometry.VPos
@@ -46,17 +48,27 @@ class BetterSplitPane(
     private val handles = FXCollections.observableArrayList<SplitHandle>()
 
     init {
-      control.nodes.addListener(ListChangeListener {
-//        println("changed: $it")
-        handles.setAll(control.nodes.map {
-          SplitHandle(this, it)
-        })
-
+      handles.syncWith(control.nodes) {
+        SplitHandle(this, it)
+      }
+      handles.addListener(ListChangeListener {
         children.setAll(
-            control.nodes + handles
+          control.nodes + handles
         )
         control.requestLayout()
       })
+
+//      control.nodes.addListener(ListChangeListener {
+////        println("changed: $it")
+//        handles.setAll(control.nodes.map {
+//          SplitHandle(this, it)
+//        })
+//
+//        children.setAll(
+//            control.nodes + handles
+//        )
+//        control.requestLayout()
+//      })
 
       if (true) {
         var dragStarted: DragStart? = null

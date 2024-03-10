@@ -6,13 +6,16 @@
 
 .better-table .header {
     /*-fx-background-color: rgba(0, 0, 0, 0.15);*/
-    -fx-border-width: 2px;
+    /*-fx-border-width: 2px;*/
 }
 
 .better-table .header .header-column {
     -fx-padding: 4px;
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(0, 0, 0, 0.05) 100%);
+
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-color: rgba(0, 0, 0, 0.2);
 }
 
 .better-table .header .header-column:focused {
@@ -23,15 +26,15 @@
 .better-table .footer {
     /*-fx-background-color: rgba(0, 0, 0, 0.15);*/
     /*-fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));*/
-    -fx-border-width: 2px;
+    /*-fx-border-width: 2px;*/
 }
 
 .better-table .footer .footer-column {
     -fx-padding: 4px;
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(0, 0, 0, 0.05) 100%);
-    -fx-border-width: 0 1px 0 0;
-    -fx-border-color: rgba(0, 0, 0, 0.15);
+    -fx-border-width: 1px 1px 0px 0px;
+    -fx-border-color: rgba(0, 0, 0, 0.2);
 }
 
 .better-table .footer .footer-column:focused {
@@ -39,13 +42,33 @@
     -fx-border-width: -fx-focus-border;
 }
 
+
+
+.better-table .rows-scroll-pane {
+    /*https://jojorabbitjavafxblog.wordpress.com/2011/07/11/javafx-2-0-css-styling-part-1/*/
+    /*-fx-background-color: green, red, blue;*/
+    -fx-background-insets: 0;
+}
+
+/*.better-table .rows-scroll-pane:focused {*/
+/*    -fx-background-insets: 3px 3px 3px 3px;*/
+/*}*/
+
+/*.better-table .rows-scroll-pane:focused {*/
+/*    -fx-border-color: yellow;*/
+/*}*/
+
+/*.better-table .scroll-pane .rows {*/
+/*    -fx-border-width: 0px;*/
+/*}*/
+
 .better-table .rows {
     -fx-background-color: white;
 }
 
 .better-table .rows .row {
-    -fx-border-width: 0px 1px 0px 0px;
-    -fx-border-color: rgba(0, 0, 0, 0.3);
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-color: rgba(0, 0, 0, 0.2);
 }
 
 .better-table .rows .row:even {
@@ -62,7 +85,17 @@
 
 .slim-cell {
     -fx-border-color: rgba(0, 0, 0, 0.1);
-    -fx-border-width: 1px 1px 0px 0px;
+    -fx-border-width: 0px  1px 0px 0px;
+    -fx-padding: 0px 4px 0px 4px;
+
+    /*-fx-background-color: skyblue, derive(skyblue, 25%), derive(skyblue, 50%), derive(skyblue, 75%); !* set background to skyblue *!*/
+    /*-fx-background-insets: 20, 40, 60, 80;*/
+    /*-fx-background-radius: 20 0 0 0, 0 20 0 0, 0 0 20 0, 0 0 0 20;*/
+    /*-fx-border-color: red, yellow, green, blue; !* set border to red*!*/
+    /*-fx-border-insets: 20, 40, 60, 80;*/
+    /*-fx-border-radius: 20 0 0 0, 0 20 0 0, 0 0 20 0, 0 0 0 20;*/
+    /*-fx-border-width: 3; !* border width 3px *!*/
+
 }
 
 .slim-cell:focused {

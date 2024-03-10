@@ -9,7 +9,7 @@
 
 .better-split-pane .better-split-pane-handle .handle {
     -fx-min-width: 2px;
-    -fx-border-width: 0 0 0 1px;
+    -fx-border-width: 0 1px 0 0px;
     -fx-border-color: rgba(0, 0, 0, 0.15);
 }
 

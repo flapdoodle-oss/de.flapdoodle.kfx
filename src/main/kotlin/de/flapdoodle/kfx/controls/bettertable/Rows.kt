@@ -3,12 +3,16 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
+import javafx.geometry.HPos
+import javafx.geometry.VPos
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
+import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 
 class Rows<T : Any>(
@@ -20,7 +24,6 @@ class Rows<T : Any>(
   private val skin = Skin(this)
 
   init {
-    cssClassName("rows")
     isFocusTraversable = false
   }
 
@@ -40,8 +43,10 @@ class Rows<T : Any>(
       }
     }
 
-    private val rowPane = VBox()
-
+    private val rowPane = VBox().apply {
+      cssClassName("rows")
+    }
+    
     init {
       children.add(rowPane)
 

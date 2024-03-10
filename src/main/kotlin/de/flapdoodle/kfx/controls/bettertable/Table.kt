@@ -1,11 +1,13 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.control.ScrollPane
+import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 
 class Table<T: Any>(
@@ -46,11 +48,14 @@ class Table<T: Any>(
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
     vbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
+    isFocusTraversable = false
     isPannable = true
     isFitToHeight = true
   }
 
   private val rowsWrapper = ScrollPane().apply {
+    cssClassName("rows-scroll-pane")
+
 //    val button = Button("hi").apply {
 //      minHeight = 100.0
 //      maxHeight = Double.MAX_VALUE
@@ -58,7 +63,9 @@ class Table<T: Any>(
 //    }
 
     hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+    isFocusTraversable = false
     isPannable = true
+    isFitToHeight = true
     content = _rows
   }
 
@@ -67,12 +74,13 @@ class Table<T: Any>(
     val content = WeightGridPane().apply {
       setRowWeight(0, 0.0)
       setRowWeight(1, 1.0)
-      setRowWeight(2, 0.0)
+      setRowWeight(2, 0.001)
+      setRowWeight(3, 0.0)
     }
 
     WeightGridPane.setPosition(header, 0,0, HPos.CENTER)
     WeightGridPane.setPosition(rowsWrapper,0,1, HPos.CENTER)
-    WeightGridPane.setPosition(footer, 0,2, HPos.CENTER)
+    WeightGridPane.setPosition(footer, 0,3, HPos.CENTER)
     content.children.add(header)
     content.children.add(rowsWrapper)
     content.children.add(footer)

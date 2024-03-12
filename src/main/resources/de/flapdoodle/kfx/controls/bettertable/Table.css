@@ -83,6 +83,14 @@
     -fx-background-color: rgba(0, 0, 0, 0.09);
 }
 
+
+.better-table .rows .row-insert-top, .better-table .rows .row-insert-bottom {
+    /*-fx-border-color: red;*/
+    /*-fx-border-width: 1px;*/
+    -fx-min-height: 2px;
+    -fx-background-color: -fx-focus-color;
+}
+
 .slim-cell {
     -fx-border-color: rgba(0, 0, 0, 0.1);
     -fx-border-width: 0px  1px 0px 0px;

@@ -45,8 +45,9 @@ class Footer<T : Any>(
       isFocusTraversable = true
       cssClassName("footer-column")
 
-      if (column.footer!=null) {
-        children.add(column.footer.invoke())
+      val footer = column.footer?.invoke()
+      if (footer!=null) {
+        children.add(footer)
       }
     }
   }

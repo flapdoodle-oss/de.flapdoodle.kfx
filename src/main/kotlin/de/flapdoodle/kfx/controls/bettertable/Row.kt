@@ -1,20 +1,16 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.bindings.ObservableLists
-import de.flapdoodle.kfx.bindings.Subscriptions
 import de.flapdoodle.kfx.extensions.PseudoClassWrapper
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
-import de.flapdoodle.kfx.transitions.DelayedAction
 import de.flapdoodle.kfx.transitions.DelayedMouseAction
-import javafx.animation.Animation
-import javafx.animation.ScaleTransition
-import javafx.animation.Transition
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.css.PseudoClass
 import javafx.scene.Node
+import javafx.scene.control.Button
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseEvent
@@ -67,9 +63,11 @@ class Row<T : Any>(
     init {
       insertRowOnTopContainer.cssClassName("row-insert-top")
       insertRowOnTopContainer.hide()
+//      insertRowOnTopContainer.children.add(Button("+"))
       rowContainer.cssClassName("row")
       insertRowBottomContainer.cssClassName("row-insert-bottom")
       insertRowBottomContainer.hide()
+//      insertRowBottomContainer.children.add(Button("+"))
 
       all.children.add(insertRowOnTopContainer)
       all.children.add(rowContainer)
@@ -77,11 +75,13 @@ class Row<T : Any>(
       children.add(all)
 
       DelayedMouseAction.delay(all, Duration.millis(700.0), {
-        insertRowOnTopContainer.show()
-        insertRowBottomContainer.show()
+//        insertRowOnTopContainer.show()
+//        insertRowBottomContainer.show()
+        control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
       }, {
-        insertRowOnTopContainer.hide()
-        insertRowBottomContainer.hide()
+//        insertRowOnTopContainer.hide()
+//        insertRowBottomContainer.hide()
+        control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
       })
 
       insertRowOnTopContainer.addEventHandler(MouseEvent.MOUSE_RELEASED) {
@@ -107,8 +107,32 @@ class Row<T : Any>(
     }
 
     internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
-      rowContainer.children.forEach {
-        (it as Cell<T, out Any>).onTableEvent(event)
+      when (event) {
+        is TableEvent.ToRow<T> -> {
+          when (event) {
+            is TableEvent.ShowInsertRow<T> -> {
+              if (event.row == control.value) {
+                insertRowOnTopContainer.show()
+                insertRowBottomContainer.show()
+//              } else {
+//                insertRowOnTopContainer.hide()
+//                insertRowBottomContainer.hide()
+              }
+            }
+            is TableEvent.HideInsertRow -> {
+              if (event.row == control.value) {
+                insertRowOnTopContainer.hide()
+                insertRowBottomContainer.hide()
+              }
+            }
+          }
+        }
+
+        else -> {
+          rowContainer.children.forEach {
+            (it as Cell<T, out Any>).onTableEvent(event)
+          }
+        }
       }
     }
 

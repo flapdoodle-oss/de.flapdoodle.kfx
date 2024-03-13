@@ -10,7 +10,7 @@ import javafx.util.Subscription
 class DelayedMouseAction(
   triggerDelay: Duration,
   val action: () -> Unit,
-  val undo: () -> Unit
+  val undo: (() -> Unit)?
 ) : Transition() {
 
   var finished = false
@@ -31,7 +31,7 @@ class DelayedMouseAction(
 
   override fun stop() {
     if (finished) {
-      undo()
+      undo?.invoke()
       finished = false
     }
     super.stop()
@@ -47,7 +47,9 @@ class DelayedMouseAction(
             delayedAction.playFromStart()
           }
           MouseEvent.MOUSE_MOVED -> {
-            delayedAction.playFromStart()
+            if (!delayedAction.finished) {
+              delayedAction.playFromStart()
+            }
           }
 
           MouseEvent.MOUSE_EXITED -> {

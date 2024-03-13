@@ -35,6 +35,12 @@ class Table<T: Any>(
       is TableEvent.RequestFocus<T, out Any> -> {
         onTableEvent(TableEvent.Focus(it.row, it.column))
       }
+      is TableEvent.RequestInsertRow<T> -> {
+        onTableEvent(it.ok())
+      }
+      is TableEvent.AbortInsertRow<T> -> {
+        onTableEvent(it.ok())
+      }
       else -> {
         throw IllegalArgumentException("not implemented: $it")
       }

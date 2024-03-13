@@ -3,6 +3,14 @@ package de.flapdoodle.kfx.controls.bettertable
 sealed class TableEvent<T: Any> {
 
   sealed class RequestEvent<T: Any>() : TableEvent<T>()
+  sealed class RowTriggered<T: Any>(open val row: T): RequestEvent<T>()
+  data class RequestInsertRow<T: Any>(override val row: T): RowTriggered<T>(row) {
+    fun ok(): ResponseEvent<T> = ShowInsertRow(row)
+  }
+  data class AbortInsertRow<T: Any>(override val row: T): RowTriggered<T>(row) {
+    fun ok(): ResponseEvent<T> = HideInsertRow(row)
+  }
+
   sealed class CellTriggered<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): RequestEvent<T>()
   data class RequestFocus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column)
   data class RequestEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C> ): CellTriggered<T, C>(row, column)
@@ -15,6 +23,10 @@ sealed class TableEvent<T: Any> {
   }
 
   sealed class ResponseEvent<T: Any>() : TableEvent<T>()
+  sealed class ToRow<T: Any>(open val row: T): ResponseEvent<T>()
+  data class ShowInsertRow<T: Any>(override val row: T): ToRow<T>(row)
+  data class HideInsertRow<T: Any>(override val row: T): ToRow<T>(row)
+
   sealed class ToCell<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): ResponseEvent<T>()
   data class Focus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
   data class StartEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C> ): ToCell<T, C>(row, column)

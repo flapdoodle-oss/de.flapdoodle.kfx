@@ -1,22 +1,17 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.bindings.ObservableLists
-import de.flapdoodle.kfx.extensions.PseudoClassWrapper
-import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.hide
-import de.flapdoodle.kfx.extensions.show
-import de.flapdoodle.kfx.transitions.DelayedMouseAction
+import de.flapdoodle.kfx.extensions.*
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.css.PseudoClass
+import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.control.Button
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.util.Duration
 
 class Row<T : Any>(
   internal val eventListener: TableEventListener<T>,
@@ -76,21 +71,10 @@ class Row<T : Any>(
 
       all.addEventFilter(MouseEvent.ANY) {
         when (it.eventType) {
-          MouseEvent.MOUSE_ENTERED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
-          MouseEvent.MOUSE_MOVED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
+          MouseEvent.MOUSE_ENTERED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value, guessPosition(it.localPosition, all.height)))
+          MouseEvent.MOUSE_MOVED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value, guessPosition(it.localPosition, all.height)))
           MouseEvent.MOUSE_EXITED -> control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
         }
-      }
-      if (false) {
-        DelayedMouseAction.delay(all, Duration.millis(700.0), {
-//        insertRowOnTopContainer.show()
-//        insertRowBottomContainer.show()
-          control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
-        }, {
-//        insertRowOnTopContainer.hide()
-//        insertRowBottomContainer.hide()
-          control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
-        })
       }
 
       insertRowOnTopContainer.addEventHandler(MouseEvent.MOUSE_RELEASED) {
@@ -111,6 +95,13 @@ class Row<T : Any>(
       }
     }
 
+    private fun guessPosition(localPosition: Point2D, height: Double): TableEvent.InsertPosition {
+      return if (localPosition.y < height / 2.0)
+        TableEvent.InsertPosition.ABOVE
+      else
+        TableEvent.InsertPosition.BELOW
+    }
+
     fun setIndex(index: Int) {
       Style.Even.set(rowContainer, index % 2 == 0)
     }
@@ -121,13 +112,19 @@ class Row<T : Any>(
           when (event) {
             is TableEvent.ShowInsertRow<T> -> {
               if (event.row == control.value) {
-                insertRowOnTopContainer.show()
-                insertRowBottomContainer.show()
-//              } else {
-//                insertRowOnTopContainer.hide()
-//                insertRowBottomContainer.hide()
+                when (event.position) {
+                  TableEvent.InsertPosition.ABOVE -> {
+                    insertRowOnTopContainer.show()
+                    insertRowBottomContainer.hide()
+                  }
+                  TableEvent.InsertPosition.BELOW -> {
+                    insertRowBottomContainer.show()
+                    insertRowOnTopContainer.hide()
+                  }
+                }
               }
             }
+
             is TableEvent.HideInsertRow -> {
               if (event.row == control.value) {
                 insertRowOnTopContainer.hide()

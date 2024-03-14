@@ -1,16 +1,13 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import com.sun.javafx.tk.Toolkit
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.transitions.DelayAction
-import de.flapdoodle.kfx.transitions.DelayedAction
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.control.ScrollPane
-import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.util.Duration
 

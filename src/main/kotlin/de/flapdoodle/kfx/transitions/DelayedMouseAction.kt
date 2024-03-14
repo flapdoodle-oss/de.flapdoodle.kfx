@@ -7,6 +7,7 @@ import javafx.scene.input.MouseEvent
 import javafx.util.Duration
 import javafx.util.Subscription
 
+@Deprecated("put stuff like that in an event handler")
 class DelayedMouseAction(
   triggerDelay: Duration,
   val action: () -> Unit,

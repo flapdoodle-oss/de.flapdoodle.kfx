@@ -74,15 +74,24 @@ class Row<T : Any>(
       all.children.add(insertRowBottomContainer)
       children.add(all)
 
-      DelayedMouseAction.delay(all, Duration.millis(700.0), {
+      all.addEventFilter(MouseEvent.ANY) {
+        when (it.eventType) {
+          MouseEvent.MOUSE_ENTERED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
+          MouseEvent.MOUSE_MOVED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
+          MouseEvent.MOUSE_EXITED -> control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
+        }
+      }
+      if (false) {
+        DelayedMouseAction.delay(all, Duration.millis(700.0), {
 //        insertRowOnTopContainer.show()
 //        insertRowBottomContainer.show()
-        control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
-      }, {
+          control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value))
+        }, {
 //        insertRowOnTopContainer.hide()
 //        insertRowBottomContainer.hide()
-        control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
-      })
+          control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
+        })
+      }
 
       insertRowOnTopContainer.addEventHandler(MouseEvent.MOUSE_RELEASED) {
         println("insert new row above")

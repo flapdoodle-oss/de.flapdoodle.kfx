@@ -3,18 +3,25 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
+import de.flapdoodle.kfx.transitions.DelayedAction
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
+import javafx.util.Duration
 
 class Table<T: Any>(
   internal val rows: ReadOnlyObjectProperty<List<T>>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val changeListener: CellChangeListener<T>
 ) : Region() {
+
+  private var delayedAction: () -> Unit = {}
+  private val delayedActionTrigger = DelayedAction(Duration.millis(700.0)) {
+    delayedAction.invoke()
+  }
 
   private val eventListener = TableEventListener<T> {
     when (it) {
@@ -36,7 +43,10 @@ class Table<T: Any>(
         onTableEvent(TableEvent.Focus(it.row, it.column))
       }
       is TableEvent.RequestInsertRow<T> -> {
-        onTableEvent(it.ok())
+        delayedActionTrigger.playFromStart()
+        delayedAction = {
+          onTableEvent(it.ok())
+        }
       }
       is TableEvent.AbortInsertRow<T> -> {
         onTableEvent(it.ok())

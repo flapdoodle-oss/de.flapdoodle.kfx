@@ -3,6 +3,8 @@ package de.flapdoodle.kfx.controls.bettertable
 import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction
 import com.sun.javafx.scene.traversal.TraversalMethod
+import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
+import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.events.handleEvent
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide

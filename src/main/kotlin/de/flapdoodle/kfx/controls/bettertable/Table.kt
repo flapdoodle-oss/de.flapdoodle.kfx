@@ -1,5 +1,7 @@
 package de.flapdoodle.kfx.controls.bettertable
 
+import de.flapdoodle.kfx.controls.bettertable.events.EditableTableEventListener
+import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
@@ -21,9 +23,9 @@ class Table<T: Any>(
 //  private val delayedActionTrigger = DelayedAction(Duration.millis(700.0)) {
 //    delayedAction.invoke()
 //  }
-  private val delayAction = DelayAction(Duration.millis(700.0))
+//  private val delayAction = DelayAction(Duration.millis(700.0))
 
-  private val eventListener = EditableTableEventListener(rows,columns,changeListener) {
+  private val eventListener = EditableTableEventListener.eventListener(rows,columns,changeListener) {
     onTableEvent(it)
   }
 //  private val eventListener = TableRequestEventListener<T> { event ->

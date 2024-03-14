@@ -1,6 +1,8 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.bindings.ObservableLists
+import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
+import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue

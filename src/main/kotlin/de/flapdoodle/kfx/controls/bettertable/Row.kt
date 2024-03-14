@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 
 class Row<T : Any>(
-  internal val eventListener: TableEventListener<T>,
+  internal val eventListener: TableRequestEventListener<T>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val value: T,
 //  internal val index: Int,
@@ -73,7 +73,7 @@ class Row<T : Any>(
         when (it.eventType) {
           MouseEvent.MOUSE_ENTERED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value, guessPosition(it.localPosition, all.height)))
           MouseEvent.MOUSE_MOVED -> control.eventListener.fireEvent(TableEvent.RequestInsertRow(control.value, guessPosition(it.localPosition, all.height)))
-          MouseEvent.MOUSE_EXITED -> control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
+//          MouseEvent.MOUSE_EXITED -> control.eventListener.fireEvent(TableEvent.AbortInsertRow(control.value))
         }
       }
 

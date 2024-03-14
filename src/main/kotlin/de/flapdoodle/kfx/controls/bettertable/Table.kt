@@ -23,37 +23,40 @@ class Table<T: Any>(
 //  }
   private val delayAction = DelayAction(Duration.millis(700.0))
 
-  private val eventListener = TableEventListener<T> {
-    when (it) {
-      is TableEvent.CommitChange<T, out Any> -> {
-        changeListener.onChange(it.row, it.asCellChange())
-        onTableEvent(it.stopEvent())
-        onTableEvent(TableEvent.Focus(it.row, it.column))
-      }
-      is TableEvent.NextCell<T, out Any> -> {
-        val nextEvent = it.asFocusEvent(rows.value, columns.value)
-        if (nextEvent!=null) {
-          onTableEvent(nextEvent)
-        }
-      }
-      is TableEvent.RequestEdit<T, out Any> -> {
-        onTableEvent(TableEvent.StartEdit(it.row, it.column))
-      }
-      is TableEvent.RequestFocus<T, out Any> -> {
-        onTableEvent(TableEvent.Focus(it.row, it.column))
-      }
-      is TableEvent.RequestInsertRow<T> -> {
-        delayAction.call { onTableEvent(it.ok()) }
-      }
-      is TableEvent.AbortInsertRow<T> -> {
-        delayAction.stop()
-        onTableEvent(it.ok())
-      }
-      else -> {
-        throw IllegalArgumentException("not implemented: $it")
-      }
-    }
+  private val eventListener = EditableTableEventListener(rows,columns,changeListener) {
+    onTableEvent(it)
   }
+//  private val eventListener = TableRequestEventListener<T> { event ->
+//    when (event) {
+//      is TableEvent.CommitChange<T, out Any> -> {
+//        changeListener.onChange(event.row, event.asCellChange())
+//        onTableEvent(event.stopEvent())
+//        onTableEvent(TableEvent.Focus(event.row, event.column))
+//      }
+//      is TableEvent.NextCell<T, out Any> -> {
+//        val nextEvent = event.asFocusEvent(rows.value, columns.value)
+//        if (nextEvent!=null) {
+//          onTableEvent(nextEvent)
+//        }
+//      }
+//      is TableEvent.RequestEdit<T, out Any> -> {
+//        onTableEvent(TableEvent.StartEdit(event.row, event.column))
+//      }
+//      is TableEvent.RequestFocus<T, out Any> -> {
+//        onTableEvent(TableEvent.Focus(event.row, event.column))
+//      }
+//      is TableEvent.RequestInsertRow<T> -> {
+//        delayAction.call { onTableEvent(event.ok()) }
+//      }
+//      is TableEvent.AbortInsertRow<T> -> {
+//        delayAction.stop()
+//        onTableEvent(event.ok())
+//      }
+//      else -> {
+//        throw IllegalArgumentException("not implemented: $event")
+//      }
+//    }
+//  }
 
   private val header = Header(columns)
   private val footer = Footer(columns, header::columnWidthProperty)

@@ -1,24 +1,19 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
-import javafx.geometry.HPos
-import javafx.geometry.VPos
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
-import javafx.scene.layout.Pane
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
 
 class Rows<T : Any>(
   private val rows: ReadOnlyObjectProperty<List<T>>,
   private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
-  private val eventListener: TableEventListener<T>,
+  private val eventListener: TableRequestEventListener<T>,
   private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : Control() {
   private val skin = Skin(this)
@@ -58,6 +53,10 @@ class Rows<T : Any>(
 
       rowPane.children.syncWith(control.rows) {
         Row(control.eventListener, control.columns, it, control.columnWidthProperties)
+      }
+
+      rowPane.addEventFilter(MouseEvent.MOUSE_EXITED) {
+        control.eventListener.fireEvent(TableEvent.MouseExitRows())
       }
 
 //      ObservableLists.syncWithIndexed(control.rows, rowPane.children) { index, it ->

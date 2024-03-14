@@ -33,7 +33,7 @@ class Cell<T: Any, C: Any>(
     cssClassName("slim-cell")
   }
 
-  fun setEventListener(eventListener: TableEventListener<T>) {
+  fun setEventListener(eventListener: TableRequestEventListener<T>) {
     skin.setEventListener(eventListener)
   }
 
@@ -52,7 +52,7 @@ class Cell<T: Any, C: Any>(
   ) : SkinBase<Cell<T, C>>(control) {
 
     private lateinit var column: Column<T, C>
-    private lateinit var eventListener: TableEventListener<T>
+    private lateinit var eventListener: TableRequestEventListener<T>
 
     private val label = Label().apply {
       isWrapText = false
@@ -185,7 +185,7 @@ class Cell<T: Any, C: Any>(
       this.column = column
     }
 
-    fun setEventListener(eventListener: TableEventListener<T>) {
+    fun setEventListener(eventListener: TableRequestEventListener<T>) {
       this.eventListener = eventListener
       control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
         if (it.clickCount == 1) {

@@ -3,12 +3,12 @@ package de.flapdoodle.kfx.controls.bettertable
 sealed class TableEvent<T: Any> {
 
   sealed class RequestEvent<T: Any>() : TableEvent<T>()
+  class MouseExitRows<T: Any>(): RequestEvent<T>()
+
   sealed class RowTriggered<T: Any>(open val row: T): RequestEvent<T>()
   data class RequestInsertRow<T: Any>(override val row: T, val position: InsertPosition): RowTriggered<T>(row) {
     fun ok(): ResponseEvent<T> = ShowInsertRow(row, position)
-  }
-  data class AbortInsertRow<T: Any>(override val row: T): RowTriggered<T>(row) {
-    fun ok(): ResponseEvent<T> = HideInsertRow(row)
+    fun undo(): ResponseEvent<T> = HideInsertRow(row)
   }
 
   sealed class CellTriggered<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): RequestEvent<T>()

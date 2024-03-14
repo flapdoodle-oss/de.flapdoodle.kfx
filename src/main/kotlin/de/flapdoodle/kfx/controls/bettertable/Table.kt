@@ -1,8 +1,10 @@
 package de.flapdoodle.kfx.controls.bettertable
 
+import com.sun.javafx.tk.Toolkit
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
+import de.flapdoodle.kfx.transitions.DelayAction
 import de.flapdoodle.kfx.transitions.DelayedAction
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
@@ -18,10 +20,11 @@ class Table<T: Any>(
   internal val changeListener: CellChangeListener<T>
 ) : Region() {
 
-  private var delayedAction: () -> Unit = {}
-  private val delayedActionTrigger = DelayedAction(Duration.millis(700.0)) {
-    delayedAction.invoke()
-  }
+//  private var delayedAction: () -> Unit = {}
+//  private val delayedActionTrigger = DelayedAction(Duration.millis(700.0)) {
+//    delayedAction.invoke()
+//  }
+  private val delayAction = DelayAction(Duration.millis(700.0))
 
   private val eventListener = TableEventListener<T> {
     when (it) {
@@ -43,12 +46,10 @@ class Table<T: Any>(
         onTableEvent(TableEvent.Focus(it.row, it.column))
       }
       is TableEvent.RequestInsertRow<T> -> {
-        delayedActionTrigger.playFromStart()
-        delayedAction = {
-          onTableEvent(it.ok())
-        }
+        delayAction.call { onTableEvent(it.ok()) }
       }
       is TableEvent.AbortInsertRow<T> -> {
+        delayAction.stop()
         onTableEvent(it.ok())
       }
       else -> {

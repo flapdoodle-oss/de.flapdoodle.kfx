@@ -32,8 +32,11 @@ class Cell<T: Any, C: Any>(
 
   init {
     isFocusTraversable = true
-    cssClassName("slim-cell")
-
+    if (editable) {
+      cssClassName("slim-cell")
+    } else {
+      cssClassName("slim-cell", "cell-readonly")
+    }
 //    println("cell $row created")
   }
 
@@ -166,19 +169,21 @@ class Cell<T: Any, C: Any>(
 
     internal fun _cancelEdit() {
 //      editInProgress=false
-
-      label.show()
-      field.hide()
-      field.text = label.text
+      if (editable) {
+        label.show()
+        field.hide()
+        field.text = label.text
+      }
     }
 
     internal fun _startEdit() {
 //      RuntimeException("startEdit called").printStackTrace()
 //      editInProgress=true
-
-      label.hide()
-      field.show()
-      field.requestFocus()
+      if (editable) {
+        label.hide()
+        field.show()
+        field.requestFocus()
+      }
     }
 
     init {

@@ -91,6 +91,14 @@ class TableSampler {
               setter = { row, v -> row.copy(name = v ?: "") }
             )
           }
+        }, Button("B(r)").apply {
+          onAction = EventHandler {
+            columns.value += CustomColumn(
+              header = { LabelHeaderColumn(it,"B*", false) },
+              cell = { Cell(it, it.name, Converters.converterFor(String::class), false) },
+              setter = { row, v -> row.copy(name = v ?: "") }
+            )
+          }
         }, Button("C").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
@@ -102,6 +110,20 @@ class TableSampler {
               } },
               setter = { row, v -> row.copy(size = v ?: 1.5) },
               footer = { LabelFooterColumn(it,"c").apply {
+                backgroundProperty().bind(backGroundToggled)
+              } }
+            )
+          }
+        }, Button("C(r)").apply {
+          onAction = EventHandler {
+            columns.value += Column(
+              header = { LabelHeaderColumn(it,"C*", false).apply {
+                backgroundProperty().bind(backGroundToggled)
+              } },
+              cell = { Cell(it, it.size, Converters.converterFor(Double::class), false).apply {
+                backgroundProperty().bind(backGroundToggled)
+              } },
+              footer = { LabelFooterColumn(it,"c*", false).apply {
                 backgroundProperty().bind(backGroundToggled)
               } }
             )
@@ -126,8 +148,9 @@ class TableSampler {
 
   class LabelHeaderColumn(
     override val column: Column<Row, out Any>,
-    label: String
-  ) : HeaderColumn<Row>(column) {
+    label: String,
+    editable: Boolean = true
+  ) : HeaderColumn<Row>(column, editable) {
     init {
       setContent(Label(label))
     }
@@ -135,8 +158,9 @@ class TableSampler {
 
   class LabelFooterColumn(
     override val column: Column<Row, out Any>,
-    label: String
-  ) : FooterColumn<Row>(column) {
+    label: String,
+    editable: Boolean = true
+  ) : FooterColumn<Row>(column, editable) {
     init {
       setContent(Label(label))
     }

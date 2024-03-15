@@ -9,14 +9,19 @@ import de.flapdoodle.kfx.events.handleEvent
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
+import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.event.EventHandler
+import javafx.geometry.HPos
 import javafx.geometry.Pos
+import javafx.geometry.VPos
 import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.control.SkinBase
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
 import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 
@@ -32,12 +37,8 @@ class Cell<T: Any, C: Any>(
 
   init {
     isFocusTraversable = true
-    if (editable) {
-      cssClassName("slim-cell")
-    } else {
-      cssClassName("slim-cell", "cell-readonly")
-    }
-//    println("cell $row created")
+    cssClassName("cell")
+    Styles.Readonly.set(this, !editable)
   }
 
   fun setEventListener(eventListener: TableRequestEventListener<T>) {
@@ -66,63 +67,6 @@ class Cell<T: Any, C: Any>(
       prefWidth = Double.MAX_VALUE
       alignment = asPosition(control.textAlignment)
       text = control.converter.toString(control.value)
-
-
-      if (control.editable && false) {
-        control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
-          if (it.clickCount == 1) {
-            control.requestFocus()
-          }
-          if (it.clickCount == 2) {
-            _startEdit()
-          }
-          it.consume()
-        }
-
-        val logEvent = { it: KeyEvent ->
-//          println("#############################")
-//          println("event $it -> ${it.isConsumed} --> ${it.target} ? $control")
-//          println("#############################")
-        }
-
-        control.handleEvent(KeyEvent.KEY_RELEASED) {
-          matching { !it.isShortcutDown } then {
-            consume { it.code == KeyCode.LEFT } by {
-              logEvent(it)
-              NodeHelper.traverse(control, Direction.LEFT, TraversalMethod.DEFAULT)
-            }
-            consume { it.code == KeyCode.RIGHT } by {
-              logEvent(it)
-              NodeHelper.traverse(control, Direction.RIGHT, TraversalMethod.DEFAULT)
-            }
-            consume { it.code == KeyCode.UP } by {
-              logEvent(it)
-              NodeHelper.traverse(control, Direction.UP, TraversalMethod.DEFAULT)
-            }
-            consume { it.code == KeyCode.DOWN } by {
-              logEvent(it)
-              NodeHelper.traverse(control, Direction.DOWN, TraversalMethod.DEFAULT)
-            }
-
-            consume { it.code == KeyCode.ENTER } by {
-              logEvent(it)
-              _startEdit()
-            }
-          }
-        }
-
-        control.focusedProperty().addListener { _, old, focused ->
-          if (old!=focused) {
-            if (focused) {
-//              fireEvent(SmartEvents.CellFocused(control))
-            } else {
-//              if (!editInProgress) {
-////                fireEvent(SmartEvents.CellBlur(control))
-//              }
-            }
-          }
-        }
-      }
     }
 
     private fun asPosition(textAlignment: TextAlignment): Pos {
@@ -187,12 +131,14 @@ class Cell<T: Any, C: Any>(
     }
 
     init {
-      children.add(field)
-      children.add(label)
+      val wrapper = StackPane().apply {
+        cssClassName("background")
+      }
+      wrapper.children.add(field)
+      wrapper.children.add(label)
+      children.add(wrapper)
 
       consumeMouseEvents(false)
-
-//      control.prefWidthProperty().bind(control.column.widthProperty())
     }
 
     fun setColumn(column: Column<T, C>) {
@@ -206,7 +152,9 @@ class Cell<T: Any, C: Any>(
           eventListener.fireEvent(TableEvent.RequestFocus(control.row, column))
         }
         if (it.clickCount == 2) {
-          eventListener.fireEvent(TableEvent.RequestEdit(control.row, column))
+          if (editable) {
+            eventListener.fireEvent(TableEvent.RequestEdit(control.row, column))
+          }
         }
         it.consume()
       }

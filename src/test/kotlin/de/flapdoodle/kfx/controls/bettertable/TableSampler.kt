@@ -126,7 +126,7 @@ class TableSampler {
     header: (Column<Row, out Any>) -> HeaderColumn<Row>,
     cell: (Row) -> Cell<Row, C>,
     val setter: (Row, C?) -> Row,
-    footer: (() -> Node)? = null
+    footer: ((Column<Row, out Any>) -> Node)? = null
   ) : Column<Row, C>(header, cell, footer) {
     fun change(row: Row, change: CellChangeListener.Change<Row, out Any>): Row {
       return if (change.column == this) {

@@ -30,25 +30,12 @@ class Footer<T : Any>(
     init {
       ObservableLists.syncWith(src.columns, footer.children) {
         FooterColumn(it).apply {
+          val c = it.footer?.invoke(it)
+          if (c!=null) setContent(c)
           prefWidthProperty().bind(src.columnWidthProperties(it))
         }
       }
       children.add(footer)
-    }
-  }
-
-  inner class FooterColumn<T: Any>(
-    internal val column: Column<T, out Any>
-  ) : StackPane() {
-
-    init {
-      isFocusTraversable = true
-      cssClassName("footer-column")
-
-      val footer = column.footer?.invoke()
-      if (footer!=null) {
-        children.add(footer)
-      }
     }
   }
 }

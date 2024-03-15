@@ -37,11 +37,14 @@
 }
 
 .better-table .footer .footer-column {
+    -fx-border-width: 1px 1px 0px 0px;
+    -fx-border-color: rgba(0, 0, 0, 0.2);
+}
+
+.better-table .footer .footer-column .background {
     -fx-padding: 4px;
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(0, 0, 0, 0.05) 100%);
-    -fx-border-width: 1px 1px 0px 0px;
-    -fx-border-color: rgba(0, 0, 0, 0.2);
 }
 
 .better-table .footer .footer-column:focused {

@@ -10,11 +10,15 @@ class EditState<T : Any>(
         onTableEvent(TableEvent.StartEdit(event.row, event.column))
       }
       is TableEvent.CommitChange<T, out Any> -> {
-        onChange(event.row, event.asCellChange())
         onTableEvent(event.stopEvent())
-        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
+        val changed = onChange(event.row, event.asCellChange())
+        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))
       }
       is TableEvent.AbortChange<T, out Any> -> {
+        onTableEvent(event.ok())
+        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
+      }
+      is TableEvent.EditLostFocus<T, out Any> -> {
         onTableEvent(event.ok())
         return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
       }

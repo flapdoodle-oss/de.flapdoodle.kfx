@@ -29,6 +29,9 @@ sealed class TableEvent<T: Any> {
   data class AbortChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column) {
     fun ok() = StopEdit(row,column)
   }
+  data class EditLostFocus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column) {
+    fun ok() = StopEdit(row,column)
+  }
 
   sealed class ResponseEvent<T: Any>() : TableEvent<T>()
   sealed class ToRow<T: Any>(open val row: T): ResponseEvent<T>()

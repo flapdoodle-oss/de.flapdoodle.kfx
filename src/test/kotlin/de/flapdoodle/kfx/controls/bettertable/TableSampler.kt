@@ -10,6 +10,7 @@ import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
+import javafx.scene.control.SplitPane
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
@@ -70,10 +71,16 @@ class TableSampler {
         val index = list.indexOf(row)
 
         rows.value = list.subList(0, index) + changed + list.subList(index+1, list.size)
+        
+        changed
       }
 
+      val splitPane = SplitPane(
+        Table(rows, columns, changeListener)
+      )
+
       val content = AnchorPane(
-        Table(rows, columns, changeListener).withAnchors(all = 10.0, bottom = 50.0),
+        splitPane.withAnchors(all = 10.0, bottom = 50.0),
         HBox(Button("B").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(

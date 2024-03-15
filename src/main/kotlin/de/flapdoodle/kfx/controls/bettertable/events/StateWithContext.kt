@@ -9,7 +9,7 @@ abstract class StateWithContext<T: Any>(
     context.onTableEvent(event)
   }
 
-  protected fun onChange(row: T, change: CellChangeListener.Change<T, out Any>) {
-    context.changeListener.onChange(row, change)
+  protected fun onChange(row: T, change: CellChangeListener.Change<T, out Any>): T {
+    return context.changeListener.onChange(row, change)
   }
 }

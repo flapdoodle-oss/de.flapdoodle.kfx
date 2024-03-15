@@ -33,6 +33,8 @@ class Cell<T: Any, C: Any>(
   init {
     isFocusTraversable = true
     cssClassName("slim-cell")
+
+    println("cell $row created")
   }
 
   fun setEventListener(eventListener: TableRequestEventListener<T>) {
@@ -147,10 +149,11 @@ class Cell<T: Any, C: Any>(
     ).apply {
       isVisible = false
       isEditable = true
-      focusedProperty().addListener { _, _, focused ->
+      focusedProperty().addListener { _, old, focused ->
         if (!focused) {
-//          _cancelEdit()
-          eventListener.fireEvent(TableEvent.AbortChange(control.row, column))
+          if (isVisible) {
+            eventListener.fireEvent(TableEvent.EditLostFocus(control.row, column))
+          }
         }
       }
     }

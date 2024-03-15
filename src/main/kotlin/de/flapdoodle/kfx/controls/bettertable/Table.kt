@@ -1,17 +1,15 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import de.flapdoodle.kfx.controls.bettertable.events.EditableTableEventListener
+import de.flapdoodle.kfx.controls.bettertable.events.DefaultState
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
-import de.flapdoodle.kfx.transitions.DelayAction
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Region
-import javafx.util.Duration
 
 class Table<T: Any>(
   internal val rows: ReadOnlyObjectProperty<List<T>>,
@@ -25,7 +23,7 @@ class Table<T: Any>(
 //  }
 //  private val delayAction = DelayAction(Duration.millis(700.0))
 
-  private val eventListener = EditableTableEventListener.eventListener(rows,columns,changeListener) {
+  private val eventListener = DefaultState.eventListener(rows, columns, changeListener) { it: TableEvent.ResponseEvent<T> ->
     onTableEvent(it)
   }
 //  private val eventListener = TableRequestEventListener<T> { event ->

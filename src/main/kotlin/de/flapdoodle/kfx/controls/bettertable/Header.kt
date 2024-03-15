@@ -5,6 +5,7 @@ import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.bindings.valueOf
 import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.extensions.property
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyObjectProperty
@@ -44,7 +45,7 @@ class Header<T : Any>(
     init {
       children.add(splitPane)
       headerColumns.syncWith(src.columns) {
-        HeaderColumn(it)
+        it.header(it)
       }
       splitPane.nodes().syncWith(headerColumns) { it }
       columnWidthMap.syncWith(headerColumns, { it.column }) { it.widthProperty() }
@@ -55,16 +56,4 @@ class Header<T : Any>(
         .defaultIfNull(Values.constant(1.0))
     }
   }
-
-  inner class HeaderColumn<T : Any>(
-    internal val column: Column<T, out Any>
-  ) : StackPane() {
-    init {
-      isFocusTraversable = true
-
-      children.add(column.header())
-      cssClassName("header-column")
-    }
-  }
-
 }

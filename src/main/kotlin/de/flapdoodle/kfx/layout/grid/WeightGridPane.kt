@@ -4,18 +4,12 @@ import de.flapdoodle.kfx.extensions.constraint
 import de.flapdoodle.kfx.extensions.heightLimits
 import de.flapdoodle.kfx.extensions.widthLimits
 import de.flapdoodle.kfx.types.AutoArray
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.css.CssMetaData
 import javafx.css.SimpleStyleableDoubleProperty
-import javafx.css.Styleable
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.Node
-import javafx.scene.control.Skin
-import javafx.scene.control.Skinnable
 
 class WeightGridPane : javafx.scene.layout.Region() {
 
@@ -102,10 +96,6 @@ class WeightGridPane : javafx.scene.layout.Region() {
 //  }
 
 
-
-
-
-
   private var gridMap: GridMap<Node> = GridMap()
 
   init {
@@ -125,7 +115,8 @@ class WeightGridPane : javafx.scene.layout.Region() {
       .map { it: Node ->
         (it.constraint[GridMap.Pos::class]
           ?: GridMap.Pos(0, 0)) to it
-      }.toMap())
+      }.toMap()
+    )
   }
 
   private fun updateState() {
@@ -136,8 +127,8 @@ class WeightGridPane : javafx.scene.layout.Region() {
   private fun horizontalSpace(): Double = limit(horizontalSpace.value)
 
   private fun limit(value: Double, min: Double = 0.0, max: Double = Double.MAX_VALUE): Double {
-    require(min<=max) {"min ($min) > max ($max)"}
-    return if (min>value) min else if (max<value) max else value
+    require(min <= max) { "min ($min) > max ($max)" }
+    return if (min > value) min else if (max < value) max else value
   }
 
   private fun <T : Any> List<T>.sumWithSpaceBetween(space: Double, selector: (T) -> Double): Double {
@@ -169,41 +160,51 @@ class WeightGridPane : javafx.scene.layout.Region() {
 
   override fun computeMinWidth(height: Double): Double {
     val width = columnSizes().sumWithSpaceBetween(horizontalSpace()) { it.min }
-    return width
+    return width + insets.left + insets.right
   }
 
   override fun computeMinHeight(width: Double): Double {
     val ret = rowSizes().sumWithSpaceBetween(verticalSpace()) { it.min }
-    return ret
+    return ret + insets.top + insets.bottom
   }
 
   override fun computePrefWidth(height: Double): Double {
     val ret = gridMap.mapColumns { _, list ->
       list.map { it.prefWidth(-1.0) }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(horizontalSpace()) { it }
-    return ret
+    return ret + insets.left + insets.right
   }
 
   override fun computePrefHeight(width: Double): Double {
     val ret = gridMap.mapRows { _, list ->
       list.map { it.prefHeight(-1.0) }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(verticalSpace()) { it }
-    return ret
+    return ret + insets.top + insets.bottom
   }
 
   override fun layoutChildren() {
     layoutChildren(layoutX, layoutY, width, height)
   }
-  
-  fun layoutChildren(contentX: Double, contentY: Double, contentWidth: Double, contentHeight: Double) {
+
+  private fun layoutChildren(_contentX: Double, _contentY: Double, _contentWidth: Double, _contentHeight: Double) {
+    val top = insets.top
+    val right = insets.right
+    val left = insets.left
+    val bottom = insets.bottom
+
+    val contentX = _contentX + left
+    val contentY = _contentY + top
+    val contentWidth = _contentWidth - left - right
+    val contentHeight = _contentHeight - top - bottom
+
 //      println("-------------------------")
 
 //      println("hspace: ${horizontalSpace.value}")
     val columnSizes = columnSizes()
     val rowSizes = rowSizes()
 
-    val hSpaces = if (columnSizes.isEmpty()) 0.0 else (columnSizes.size-1) * horizontalSpace()
-    val vSpaces = if (rowSizes.isEmpty()) 0.0 else (rowSizes.size-1) * verticalSpace()
+    val hSpaces = if (columnSizes.isEmpty()) 0.0 else (columnSizes.size - 1) * horizontalSpace()
+    val vSpaces = if (rowSizes.isEmpty()) 0.0 else (rowSizes.size - 1) * verticalSpace()
 
 //      println("columns")
 //      columnSizes.forEach { println(it) }

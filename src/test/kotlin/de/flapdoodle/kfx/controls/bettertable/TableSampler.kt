@@ -28,7 +28,7 @@ class TableSampler {
       val columns = SimpleObjectProperty<List<Column<Row, out Any>>>(
         listOf(
           CustomColumn(
-            header = { Label("A") },
+            header = { it -> LabelHeaderColumn(it,"A") },
             cell = {
               Cell(
                 row = it,
@@ -77,7 +77,7 @@ class TableSampler {
         HBox(Button("B").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
-              header = { Label("B").apply {
+              header = { LabelHeaderColumn(it,"B").apply {
                 backgroundProperty().bind(backGroundToggled)
               } },
               cell = { Cell(it, it.name, Converters.converterFor(String::class), true).apply {
@@ -89,7 +89,7 @@ class TableSampler {
         }, Button("C").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
-              header = { Label("C") },
+              header = { LabelHeaderColumn(it,"C") },
               cell = { Cell(it, it.size, Converters.converterFor(Double::class), true) },
               setter = { row, v -> row.copy(size = v ?: 1.5) },
               footer = { Label("c") }
@@ -113,8 +113,17 @@ class TableSampler {
     val size: Double,
   )
 
+  class LabelHeaderColumn(
+    override val column: Column<Row, out Any>,
+    label: String
+  ) : HeaderColumn<Row>(column) {
+    init {
+      setContent(Label(label))
+    }
+  }
+
   class CustomColumn<C : Any>(
-    header: () -> Node,
+    header: (Column<Row, out Any>) -> HeaderColumn<Row>,
     cell: (Row) -> Cell<Row, C>,
     val setter: (Row, C?) -> Row,
     footer: (() -> Node)? = null

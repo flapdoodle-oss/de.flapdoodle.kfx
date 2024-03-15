@@ -260,6 +260,15 @@ class Cell<T: Any, C: Any>(
             control.requestFocus()
           }
         }
+        is TableEvent.Blur<T,out Any> -> {
+          if (event.row==control.row && event.column == column) {
+            // focus another element to remove focus from this control
+            val temp = Label()
+            children.add(temp)
+            temp.requestFocus()
+            children.remove(temp)
+          }
+        }
         is TableEvent.StartEdit<T,out Any> -> {
           if (event.row==control.row && event.column == column) {
             _startEdit()

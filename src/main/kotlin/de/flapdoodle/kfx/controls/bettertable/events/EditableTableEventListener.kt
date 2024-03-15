@@ -101,8 +101,7 @@ class EditableTableEventListener<T : Any>(
           return FocusState(context).onEvent(TableEvent.RequestFocus(event.row, event.column))
         }
         else -> {
-          println("Ignore: $event")
-//          throw IllegalArgumentException("not implemented: $event")
+          println("EDIT MODE - Ignore: $event")
         }
       }
       return this
@@ -110,20 +109,43 @@ class EditableTableEventListener<T : Any>(
   }
 
   class FocusState<T : Any>(
+    // TODO pass defaultState as instance in each derived state
     private val context: Context<T>
   ) : State<T> {
+    private var lastFocusEvent: TableEvent.Focus<T, out Any>? = null
+
     override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
       when (event) {
         is TableEvent.RequestFocus<T, out Any> -> {
+          lastFocusEvent = event.ok()
           context.onTableEvent(event.ok())
+        }
+        is TableEvent.NextCell<T, out Any> -> {
+          val nextEvent = event.asFocusEvent(context.rows.value, context.columns.value)
+          if (nextEvent != null) {
+            lastFocusEvent = nextEvent
+            context.onTableEvent(nextEvent)
+          }
         }
         is TableEvent.RequestEdit<T, out Any> -> {
           return EditState(context).onEvent(event)
         }
 
+        is TableEvent.RequestInsertRow<T> -> {
+          if (event.row != lastFocusEvent?.row) {
+            return DelayedState(this) {
+              lastFocusEvent?.let {
+                context.onTableEvent(TableEvent.Blur(it.row, it.column))
+              }
+              InsertRowState(context).onEvent(event)
+            }
+          }
+        }
         else -> {
-          println("Ignore: $event")
-//          throw IllegalArgumentException("not implemented: $event")
+          lastFocusEvent?.let {
+            context.onTableEvent(TableEvent.Blur(it.row, it.column))
+          }
+          return DefaultState(context).onEvent(event)
         }
       }
       return this
@@ -143,21 +165,8 @@ class EditableTableEventListener<T : Any>(
           }
           lastInsertRowRequest = event
           context.onTableEvent(event.ok())
-//            delayAction.call {
-//              lastInsertRowRequest = event
-//              context.onTableEvent(event.ok())
-//            }
-//          } else {
-//            lastInsertRowRequest?.let {
-//              onTableEvent(it.undo())
-//            }
-//            lastInsertRowRequest = event
-//            onTableEvent(event.ok())
-//          }
         }
-
         else -> {
-//          throw IllegalArgumentException("not implemented: $event")
           lastInsertRowRequest?.let {
             context.onTableEvent(it.undo())
           }
@@ -170,15 +179,14 @@ class EditableTableEventListener<T : Any>(
 
   class DelayedState<T : Any>(
     private val base: State<T>,
-    private val delayedState: State<T>,
-    private val delayedEvent: TableEvent.RequestEvent<T>,
+    private val delayedState: () -> State<T>,
   ) : State<T> {
     private val delayAction = DelayAction(Duration.millis(700.0))
     private var current = base
 
     init {
       delayAction.call {
-        current = delayedState.onEvent(delayedEvent)
+        current = delayedState()
       }
     }
 
@@ -198,7 +206,9 @@ class EditableTableEventListener<T : Any>(
         }
 
         is TableEvent.RequestInsertRow<T> -> {
-          return DelayedState(this, InsertRowState(context), event)
+          return DelayedState(this) {
+            InsertRowState(context).onEvent(event)
+          }
         }
         is TableEvent.MouseExitRows<T> -> {
           // do nothing

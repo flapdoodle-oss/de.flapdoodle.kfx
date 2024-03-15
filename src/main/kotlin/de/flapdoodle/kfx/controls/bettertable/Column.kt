@@ -5,6 +5,6 @@ import javafx.scene.Node
 open class Column<T: Any, C: Any>(
   internal val header: (Column<T, out Any>) -> HeaderColumn<T>,
   internal val cell: (T) -> Cell<T, C>,
-  internal val footer: ((Column<T, out Any>) -> Node)? = null
+  internal val footer: ((Column<T, out Any>) -> FooterColumn<T>)? = null
 ) {
 }

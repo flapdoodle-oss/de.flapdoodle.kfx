@@ -29,11 +29,9 @@ class Footer<T : Any>(
     private val footer = HBox()
     init {
       ObservableLists.syncWith(src.columns, footer.children) {
-        FooterColumn(it).apply {
-          val c = it.footer?.invoke(it)
-          if (c!=null) setContent(c)
-          prefWidthProperty().bind(src.columnWidthProperties(it))
-        }
+        val footerColumn = it.footer?.invoke(it) ?: FooterColumn(it)
+        footerColumn.prefWidthProperty().bind(src.columnWidthProperties(it))
+        footerColumn
       }
       children.add(footer)
     }

@@ -38,7 +38,7 @@ class TableSampler {
               )
             },
             setter = { row, v -> row.copy(age = v ?: 0) },
-            footer = { Label("a") },
+            footer = { LabelFooterColumn(it, "a") },
           )
         )
       )
@@ -77,22 +77,24 @@ class TableSampler {
         HBox(Button("B").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
-              header = { LabelHeaderColumn(it,"B").apply {
-                backgroundProperty().bind(backGroundToggled)
-              } },
-              cell = { Cell(it, it.name, Converters.converterFor(String::class), true).apply {
-                backgroundProperty().bind(backGroundToggled)
-              } },
+              header = { LabelHeaderColumn(it,"B") },
+              cell = { Cell(it, it.name, Converters.converterFor(String::class), true) },
               setter = { row, v -> row.copy(name = v ?: "") }
             )
           }
         }, Button("C").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
-              header = { LabelHeaderColumn(it,"C") },
-              cell = { Cell(it, it.size, Converters.converterFor(Double::class), true) },
+              header = { LabelHeaderColumn(it,"C").apply {
+                backgroundProperty().bind(backGroundToggled)
+              } },
+              cell = { Cell(it, it.size, Converters.converterFor(Double::class), true).apply {
+                backgroundProperty().bind(backGroundToggled)
+              } },
               setter = { row, v -> row.copy(size = v ?: 1.5) },
-              footer = { Label("c") }
+              footer = { LabelFooterColumn(it,"c").apply {
+                backgroundProperty().bind(backGroundToggled)
+              } }
             )
           }
         }, Button("toggle").apply {
@@ -122,11 +124,20 @@ class TableSampler {
     }
   }
 
+  class LabelFooterColumn(
+    override val column: Column<Row, out Any>,
+    label: String
+  ) : FooterColumn<Row>(column) {
+    init {
+      setContent(Label(label))
+    }
+  }
+
   class CustomColumn<C : Any>(
     header: (Column<Row, out Any>) -> HeaderColumn<Row>,
     cell: (Row) -> Cell<Row, C>,
     val setter: (Row, C?) -> Row,
-    footer: ((Column<Row, out Any>) -> Node)? = null
+    footer: ((Column<Row, out Any>) -> FooterColumn<Row>)? = null
   ) : Column<Row, C>(header, cell, footer) {
     fun change(row: Row, change: CellChangeListener.Change<Row, out Any>): Row {
       return if (change.column == this) {

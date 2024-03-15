@@ -5,17 +5,25 @@ import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
+import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
-import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.HBox
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 
 class TableSampler {
   class Sample : Application() {
     override fun start(stage: Stage) {
+
+      val toggle = SimpleObjectProperty(false)
+      val backGroundToggled = toggle.map {
+        if (it)
+          Background(BackgroundFill(Color.rgb(255, 0, 0, 0.2), CornerRadii.EMPTY, Insets.EMPTY))
+        else null
+      }
 
       val columns = SimpleObjectProperty<List<Column<Row, out Any>>>(
         listOf(
@@ -68,20 +76,28 @@ class TableSampler {
         Table(rows, columns, changeListener).withAnchors(all = 10.0, bottom = 50.0),
         HBox(Button("B").apply {
           onAction = EventHandler {
-            columns.value = columns.value + CustomColumn(
-              header = { Label("B") },
-              cell = { Cell(it, it.name, Converters.converterFor(String::class), true) },
-              setter = { row, v -> row.copy(name = v ?: "")}
+            columns.value += CustomColumn(
+              header = { Label("B").apply {
+                backgroundProperty().bind(backGroundToggled)
+              } },
+              cell = { Cell(it, it.name, Converters.converterFor(String::class), true).apply {
+                backgroundProperty().bind(backGroundToggled)
+              } },
+              setter = { row, v -> row.copy(name = v ?: "") }
             )
           }
         }, Button("C").apply {
           onAction = EventHandler {
-            columns.value = columns.value + CustomColumn(
+            columns.value += CustomColumn(
               header = { Label("C") },
               cell = { Cell(it, it.size, Converters.converterFor(Double::class), true) },
-              setter = { row, v -> row.copy(size = v ?: 1.5)},
+              setter = { row, v -> row.copy(size = v ?: 1.5) },
               footer = { Label("c") }
             )
+          }
+        }, Button("toggle").apply {
+          onAction = EventHandler {
+            toggle.value = !toggle.value
           }
         }).withAnchors(bottom = 0.0)
       )

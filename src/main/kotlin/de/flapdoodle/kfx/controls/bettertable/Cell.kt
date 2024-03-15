@@ -140,13 +140,17 @@ class Cell<T: Any, C: Any>(
 //        _editDone()
         eventListener.fireEvent(TableEvent.CommitChange(control.row, column, it))
       },
-      cancelEdit = this::_cancelEdit
+      cancelEdit = {
+        eventListener.fireEvent(TableEvent.AbortChange(control.row, column))
+//        this._cancelEdit()
+      }
     ).apply {
       isVisible = false
       isEditable = true
       focusedProperty().addListener { _, _, focused ->
         if (!focused) {
-          _cancelEdit()
+//          _cancelEdit()
+          eventListener.fireEvent(TableEvent.AbortChange(control.row, column))
         }
       }
     }

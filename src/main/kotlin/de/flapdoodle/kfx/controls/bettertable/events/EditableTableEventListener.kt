@@ -87,18 +87,35 @@ class EditableTableEventListener<T : Any>(
     val onTableEvent: (TableEvent.ResponseEvent<T>) -> Unit
   )
 
-  class EditState<T : Any>(
+  abstract class BaseState<T: Any>(
     private val context: Context<T>
   ) : State<T> {
+    protected fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
+      context.onTableEvent(event)
+    }
+
+    protected fun onChange(row: T, change: CellChangeListener.Change<T, out Any>) {
+      context.changeListener.onChange(row, change)
+    }
+  }
+
+  class EditState<T : Any>(
+    private val defaultState: State<T>,
+    private val context: Context<T>
+  ) : BaseState<T>(context) {
     override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
       when (event) {
         is TableEvent.RequestEdit<T, out Any> -> {
-          context.onTableEvent(TableEvent.StartEdit(event.row, event.column))
+          onTableEvent(TableEvent.StartEdit(event.row, event.column))
         }
         is TableEvent.CommitChange<T, out Any> -> {
-          context.changeListener.onChange(event.row, event.asCellChange())
-          context.onTableEvent(event.stopEvent())
-          return FocusState(context).onEvent(TableEvent.RequestFocus(event.row, event.column))
+          onChange(event.row, event.asCellChange())
+          onTableEvent(event.stopEvent())
+          return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
+        }
+        is TableEvent.AbortChange<T, out Any> -> {
+          onTableEvent(event.ok())
+          return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
         }
         else -> {
           println("EDIT MODE - Ignore: $event")
@@ -109,43 +126,43 @@ class EditableTableEventListener<T : Any>(
   }
 
   class FocusState<T : Any>(
-    // TODO pass defaultState as instance in each derived state
+    private val defaultState: State<T>,
     private val context: Context<T>
-  ) : State<T> {
+  ) : BaseState<T>(context) {
     private var lastFocusEvent: TableEvent.Focus<T, out Any>? = null
 
     override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
       when (event) {
         is TableEvent.RequestFocus<T, out Any> -> {
           lastFocusEvent = event.ok()
-          context.onTableEvent(event.ok())
+          onTableEvent(event.ok())
         }
         is TableEvent.NextCell<T, out Any> -> {
           val nextEvent = event.asFocusEvent(context.rows.value, context.columns.value)
           if (nextEvent != null) {
             lastFocusEvent = nextEvent
-            context.onTableEvent(nextEvent)
+            onTableEvent(nextEvent)
           }
         }
         is TableEvent.RequestEdit<T, out Any> -> {
-          return EditState(context).onEvent(event)
+          return EditState(defaultState, context).onEvent(event)
         }
 
         is TableEvent.RequestInsertRow<T> -> {
           if (event.row != lastFocusEvent?.row) {
             return DelayedState(this) {
               lastFocusEvent?.let {
-                context.onTableEvent(TableEvent.Blur(it.row, it.column))
+                onTableEvent(TableEvent.Blur(it.row, it.column))
               }
-              InsertRowState(context).onEvent(event)
+              InsertRowState(defaultState, context).onEvent(event)
             }
           }
         }
         else -> {
           lastFocusEvent?.let {
-            context.onTableEvent(TableEvent.Blur(it.row, it.column))
+            onTableEvent(TableEvent.Blur(it.row, it.column))
           }
-          return DefaultState(context).onEvent(event)
+          return defaultState.onEvent(event)
         }
       }
       return this
@@ -153,24 +170,25 @@ class EditableTableEventListener<T : Any>(
   }
 
   class InsertRowState<T : Any>(
+    private val defaultState: State<T>,
     private val context: Context<T>
-  ) : State<T> {
+  ) : BaseState<T>(context) {
     private var lastInsertRowRequest: TableEvent.RequestInsertRow<T>? = null
 
     override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
       when (event) {
         is TableEvent.RequestInsertRow<T> -> {
           lastInsertRowRequest?.let {
-            context.onTableEvent(it.undo())
+            onTableEvent(it.undo())
           }
           lastInsertRowRequest = event
-          context.onTableEvent(event.ok())
+          onTableEvent(event.ok())
         }
         else -> {
           lastInsertRowRequest?.let {
-            context.onTableEvent(it.undo())
+            onTableEvent(it.undo())
           }
-          return DefaultState(context).onEvent(event)
+          return defaultState.onEvent(event)
         }
       }
       return this
@@ -202,12 +220,12 @@ class EditableTableEventListener<T : Any>(
     override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
       when (event) {
         is TableEvent.RequestFocus<T, out Any> -> {
-          return FocusState(context).onEvent(event)
+          return FocusState(this, context).onEvent(event)
         }
 
         is TableEvent.RequestInsertRow<T> -> {
           return DelayedState(this) {
-            InsertRowState(context).onEvent(event)
+            InsertRowState(this, context).onEvent(event)
           }
         }
         is TableEvent.MouseExitRows<T> -> {

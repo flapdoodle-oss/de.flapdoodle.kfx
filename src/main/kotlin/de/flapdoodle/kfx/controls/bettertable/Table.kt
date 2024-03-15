@@ -1,7 +1,6 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import de.flapdoodle.kfx.controls.bettertable.events.DefaultState
-import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
+import de.flapdoodle.kfx.controls.bettertable.events.*
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
@@ -14,7 +13,8 @@ import javafx.scene.layout.Region
 class Table<T: Any>(
   internal val rows: ReadOnlyObjectProperty<List<T>>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
-  internal val changeListener: CellChangeListener<T>
+  internal val changeListener: CellChangeListener<T>,
+  stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : Region() {
 
 //  private var delayedAction: () -> Unit = {}
@@ -23,9 +23,11 @@ class Table<T: Any>(
 //  }
 //  private val delayAction = DelayAction(Duration.millis(700.0))
 
-  private val eventListener = DefaultState.eventListener(rows, columns, changeListener) { it: TableEvent.ResponseEvent<T> ->
+  private val eventContext = EventContext(rows,columns,changeListener) {
     onTableEvent(it)
   }
+  private val eventListener = StateEventListener(stateFactory(eventContext))
+
 //  private val eventListener = TableRequestEventListener<T> { event ->
 //    when (event) {
 //      is TableEvent.CommitChange<T, out Any> -> {
@@ -108,7 +110,7 @@ class Table<T: Any>(
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
-    println("event: $event")
+//    println("event: $event")
     _rows.onTableEvent(event)
   }
 

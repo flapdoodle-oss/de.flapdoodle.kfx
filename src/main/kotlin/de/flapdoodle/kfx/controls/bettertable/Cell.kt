@@ -34,7 +34,7 @@ class Cell<T: Any, C: Any>(
     isFocusTraversable = true
     cssClassName("slim-cell")
 
-    println("cell $row created")
+//    println("cell $row created")
   }
 
   fun setEventListener(eventListener: TableRequestEventListener<T>) {

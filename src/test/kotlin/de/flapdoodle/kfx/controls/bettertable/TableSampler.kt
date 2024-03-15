@@ -76,7 +76,8 @@ class TableSampler {
       }
 
       val splitPane = SplitPane(
-        Table(rows, columns, changeListener)
+        Table(rows, columns, changeListener),
+        Table(rows, columns, changeListener),
       )
 
       val content = AnchorPane(

@@ -21,6 +21,9 @@ class DefaultState<T : Any>(
       is TableEvent.MouseExitRows<T> -> {
         // do nothing
       }
+      is TableEvent.ResizeColumn<T, out Any> -> {
+        println("TODO: not implemented right now: $event")
+      }
 
       else -> {
         throw IllegalArgumentException("not implemented: $event")

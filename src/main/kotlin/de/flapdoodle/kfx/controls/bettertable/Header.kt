@@ -4,6 +4,8 @@ import de.flapdoodle.kfx.bindings.Values
 import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.bindings.valueOf
+import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
+import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.property
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
@@ -17,6 +19,7 @@ import javafx.scene.layout.StackPane
 
 class Header<T : Any>(
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  private val eventListener: TableRequestEventListener<T>,
 ) : Control() {
 
   private val skin = Skin(this)
@@ -38,7 +41,11 @@ class Header<T : Any>(
   inner class Skin<T : Any>(
     private val src: Header<T>
   ) : SkinBase<Header<T>>(src) {
-    private val splitPane = BetterSplitPane()
+    private val splitPane = BetterSplitPane() { node ->
+      if (node is HeaderColumn<out Any>) {
+        src.eventListener.fireEvent(TableEvent.ResizeColumn((node as HeaderColumn<T>).column))
+      }
+    }
     private val headerColumns = FXCollections.observableArrayList<HeaderColumn<T>>()
     private val columnWidthMap = FXCollections.observableHashMap<Column<T, out Any>, ReadOnlyDoubleProperty>()
 

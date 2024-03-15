@@ -60,7 +60,7 @@ class Table<T: Any>(
 //    }
 //  }
 
-  private val header = Header(columns)
+  private val header = Header(columns, eventListener)
   private val footer = Footer(columns, header::columnWidthProperty)
   private val _rows = Rows(rows, columns, eventListener, header::columnWidthProperty)
 

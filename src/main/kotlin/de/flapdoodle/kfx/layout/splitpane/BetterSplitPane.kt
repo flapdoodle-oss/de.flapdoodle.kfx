@@ -21,7 +21,7 @@ import java.lang.Double.max
 import java.lang.Double.min
 
 class BetterSplitPane(
-
+  internal val onDoubleClick: (Node) -> Unit = {}
 ) : Control() {
 
   private val nodes = FXCollections.observableArrayList<Node>()
@@ -106,6 +106,12 @@ class BetterSplitPane(
         }
       }
       control.addEventFilter(MouseEvent.MOUSE_RELEASED) { event ->
+        dragStarted?.let {
+          if (event.clickCount > 1) {
+            control.onDoubleClick(it.handle.node)
+          }
+        }
+
         if (dragStarted != null) {
           dragStarted = null
           event.consume()

@@ -7,7 +7,6 @@ import de.flapdoodle.kfx.bindings.valueOf
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.property
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyObjectProperty
@@ -15,7 +14,6 @@ import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
-import javafx.scene.layout.StackPane
 
 class Header<T : Any>(
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
@@ -38,12 +36,16 @@ class Header<T : Any>(
     return skin.columnWidthProperty(column)
   }
 
+  fun setColumnSize(column: Column<T, out Any>, columnSize: Double) {
+    skin.setColumnSize(column, columnSize)
+  }
+
   inner class Skin<T : Any>(
     private val src: Header<T>
   ) : SkinBase<Header<T>>(src) {
     private val splitPane = BetterSplitPane() { node ->
       if (node is HeaderColumn<out Any>) {
-        src.eventListener.fireEvent(TableEvent.ResizeColumn((node as HeaderColumn<T>).column))
+        src.eventListener.fireEvent(TableEvent.RequestResizeColumn((node as HeaderColumn<T>).column))
       }
     }
     private val headerColumns = FXCollections.observableArrayList<HeaderColumn<T>>()
@@ -61,6 +63,15 @@ class Header<T : Any>(
     internal fun columnWidthProperty(column: Column<T, out Any>): ObservableValue<Number> {
       return columnWidthMap.valueOf(column)
         .defaultIfNull(Values.constant(1.0))
+    }
+
+    fun setColumnSize(column: Column<T, out Any>, columnSize: Double) {
+      headerColumns.forEach {
+        val c = it as HeaderColumn<T>
+        if (c.column==column) {
+          splitPane.setPaneSize(c, columnSize)
+        }
+      }
     }
   }
 }

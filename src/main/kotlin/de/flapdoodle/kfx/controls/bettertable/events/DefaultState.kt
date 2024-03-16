@@ -21,8 +21,8 @@ class DefaultState<T : Any>(
       is TableEvent.MouseExitRows<T> -> {
         // do nothing
       }
-      is TableEvent.ResizeColumn<T, out Any> -> {
-        println("TODO: not implemented right now: $event")
+      is TableEvent.RequestResizeColumn<T, out Any> -> {
+        context.onTableEvent(event.ok())
       }
 
       else -> {

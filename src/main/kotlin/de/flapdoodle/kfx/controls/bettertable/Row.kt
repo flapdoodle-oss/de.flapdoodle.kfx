@@ -49,6 +49,10 @@ class Row<T : Any>(
     skin.onTableEvent(event)
   }
 
+  fun preferedColumnSize(column: Column<T, out Any>): Double {
+    return skin.preferredColumnSize(column)
+  }
+
   class Skin<T : Any>(
     private val control: Row<T>
   ) : SkinBase<Row<T>>(control) {
@@ -146,10 +150,19 @@ class Row<T : Any>(
 
     private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
       return c.cell(value).apply {
-//        property[Column::class] = c
+        property[Column::class] = c
         prefWidthProperty().bind(width)
         setColumn(c)
       }
+    }
+
+    fun preferredColumnSize(column: Column<T, out Any>): Double {
+      val cells = rowContainer.children.filter {
+        it.property[Column::class] == column
+      }
+      require(cells.size==1) { "more or less than one match for: $column in ${rowContainer.children} "}
+      val cell = cells[0] as Cell<T, out Any>
+      return cell.preferredColumnSize()
     }
 
   }

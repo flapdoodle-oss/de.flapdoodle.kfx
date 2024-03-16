@@ -9,7 +9,9 @@ sealed class TableEvent<T: Any> {
   class MouseExitRows<T: Any>(): RequestEvent<T>()
 
   sealed class ColumnTriggered<T: Any, C: Any>(open val column: Column<T, C>): RequestEvent<T>()
-  data class ResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ColumnTriggered<T, C>(column)
+  data class RequestResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ColumnTriggered<T, C>(column) {
+    fun ok(): ResponseEvent<T> = ResizeColumn(column)
+  }
 
   sealed class RowTriggered<T: Any>(open val row: T): RequestEvent<T>()
   data class RequestInsertRow<T: Any>(override val row: T, val position: InsertPosition): RowTriggered<T>(row) {
@@ -37,6 +39,9 @@ sealed class TableEvent<T: Any> {
   }
 
   sealed class ResponseEvent<T: Any>() : TableEvent<T>()
+  sealed class ToColumn<T: Any, C: Any>(open val column: Column<T, C>): ResponseEvent<T>()
+  data class ResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ToColumn<T, C>(column)
+
   sealed class ToRow<T: Any>(open val row: T): ResponseEvent<T>()
   data class ShowInsertRow<T: Any>(override val row: T, val position: InsertPosition): ToRow<T>(row)
   data class HideInsertRow<T: Any>(override val row: T): ToRow<T>(row)

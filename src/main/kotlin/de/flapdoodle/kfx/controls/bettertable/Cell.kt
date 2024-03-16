@@ -1,26 +1,23 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import com.sun.javafx.scene.NodeHelper
-import com.sun.javafx.scene.traversal.Direction
-import com.sun.javafx.scene.traversal.TraversalMethod
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
-import de.flapdoodle.kfx.events.handleEvent
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
-import de.flapdoodle.kfx.layout.grid.WeightGridPane
+import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.event.EventHandler
 import javafx.geometry.HPos
 import javafx.geometry.Pos
 import javafx.geometry.VPos
+import javafx.scene.Node
 import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.control.SkinBase
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
-import javafx.scene.layout.Pane
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.StackPane
 import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
@@ -55,6 +52,10 @@ class Cell<T: Any, C: Any>(
 
   override fun createDefaultSkin() = skin
 
+  fun preferredColumnSize(): Double {
+    return skin.preferredColumnSize()
+  }
+
   inner class Skin<T : Any, C : Any>(
     private val control: Cell<T, C>
   ) : SkinBase<Cell<T, C>>(control) {
@@ -64,7 +65,7 @@ class Cell<T: Any, C: Any>(
 
     private val label = Label().apply {
       isWrapText = false
-      prefWidth = Double.MAX_VALUE
+//      prefWidth = Double.MAX_VALUE
       alignment = asPosition(control.textAlignment)
       text = control.converter.toString(control.value)
     }
@@ -130,12 +131,13 @@ class Cell<T: Any, C: Any>(
       }
     }
 
+    val wrapper = AnchorPane().apply {
+      cssClassName("background")
+    }
+
     init {
-      val wrapper = StackPane().apply {
-        cssClassName("background")
-      }
-      wrapper.children.add(field)
-      wrapper.children.add(label)
+      wrapper.children.add(field.withAnchors(all = 0.0))
+      wrapper.children.add(label.withAnchors(all = 0.0))
       children.add(wrapper)
 
       consumeMouseEvents(false)
@@ -245,7 +247,6 @@ class Cell<T: Any, C: Any>(
       }
     }
 
-
     override fun computeMinWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
       return java.lang.Double.max(label.minWidth(height), field.minWidth(height))
     }
@@ -262,6 +263,12 @@ class Cell<T: Any, C: Any>(
 
     override fun computePrefHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
       return java.lang.Double.max(label.prefHeight(width), field.prefHeight(width)) + topInset + bottomInset
+    }
+
+    fun preferredColumnSize(): Double {
+      val labelWidth = label.prefWidth(height)
+      val fieldWidth = if (field.isVisible) field.prefWidth(height) else field.minWidth
+      return java.lang.Double.max(labelWidth, fieldWidth) + insets.left + insets.right
     }
 
   }

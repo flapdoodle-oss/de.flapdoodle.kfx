@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.layout.splitpane
 
 import de.flapdoodle.kfx.bindings.syncWith
+import de.flapdoodle.kfx.controls.bettertable.HeaderColumn
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.minus
@@ -41,6 +42,10 @@ class BetterSplitPane(
   }
 
   fun nodes() = nodes
+
+  fun setPaneSize(node: Node, width: Double) {
+    skin.setWidth(node, width)
+  }
 
   class Skin(
     private val control: BetterSplitPane
@@ -119,6 +124,15 @@ class BetterSplitPane(
       }
     }
 
+    fun setWidth(node: Node, width: Double) {
+      handles.forEach {
+        if (it.node==node) {
+          it.prefWidthOffset(control.height, width)
+        }
+      }
+      control.requestLayout()
+    }
+
     override fun computePrefWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
 //      super.computePrefWidth(height,topInset,rightInset,bottomInset,leftInset)
       val ret = handles.filter { it.isNodeManaged() }
@@ -154,6 +168,7 @@ class BetterSplitPane(
         currentX = currentX + w
       }
     }
+
   }
 
   private data class DragStart(

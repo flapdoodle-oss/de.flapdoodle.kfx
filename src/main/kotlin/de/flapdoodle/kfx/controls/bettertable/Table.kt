@@ -111,7 +111,15 @@ class Table<T: Any>(
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
 //    println("event: $event")
-    _rows.onTableEvent(event)
+    when (event) {
+      is TableEvent.ResizeColumn<T, out Any> -> {
+        val columnSize = _rows.preferredColumnSize(event.column)
+        header.setColumnSize(event.column, columnSize)
+      }
+      else -> {
+        _rows.onTableEvent(event)
+      }
+    }
   }
 
   override fun layoutChildren() {

@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.controls.bettertable
 
+import de.flapdoodle.kfx.controls.bettertable.events.EventContext
 import de.flapdoodle.kfx.controls.bettertable.events.ReadOnlyState
 import de.flapdoodle.kfx.converters.Converters
 import de.flapdoodle.kfx.extensions.withAnchors
@@ -78,7 +79,7 @@ class TableSampler {
 
       val splitPane = SplitPane(
         Table(rows, columns, changeListener),
-        Table(rows, columns, changeListener) { ReadOnlyState() },
+        Table(rows, columns, changeListener) { ReadOnlyState(it) },
       )
 
       val content = AnchorPane(

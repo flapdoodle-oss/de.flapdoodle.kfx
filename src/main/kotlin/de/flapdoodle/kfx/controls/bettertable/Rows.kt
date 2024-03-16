@@ -11,6 +11,7 @@ import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
+import kotlin.math.min
 
 class Rows<T : Any>(
   private val rows: ReadOnlyObjectProperty<List<T>>,
@@ -30,6 +31,10 @@ class Rows<T : Any>(
     skin.onTableEvent(event)
   }
 
+  fun preferredColumnSize(column: Column<T, out Any>): Double {
+    return skin.preferredColumnSize(column)
+  }
+
   class Skin<T : Any>(
     private val control: Rows<T>
   ) : SkinBase<Rows<T>>(control) {
@@ -38,6 +43,13 @@ class Rows<T : Any>(
       rowPane.children.forEach {
         (it as Row<T>).onTableEvent(event)
       }
+    }
+
+    fun preferredColumnSize(column: Column<T, out Any>): Double {
+      val size = rowPane.children.map {
+        (it as Row<T>).preferedColumnSize(column)
+      }.max()
+      return min(rowPane.width, size)
     }
 
     private val rowPane = VBox().apply {

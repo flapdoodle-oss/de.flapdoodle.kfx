@@ -20,48 +20,10 @@ class Table<T: Any>(
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : Region() {
 
-//  private var delayedAction: () -> Unit = {}
-//  private val delayedActionTrigger = DelayedAction(Duration.millis(700.0)) {
-//    delayedAction.invoke()
-//  }
-//  private val delayAction = DelayAction(Duration.millis(700.0))
-
   private val eventContext = EventContext(rows,columns,changeListener) {
     onTableEvent(it)
   }
   private val eventListener = StateEventListener(stateFactory(eventContext))
-
-//  private val eventListener = TableRequestEventListener<T> { event ->
-//    when (event) {
-//      is TableEvent.CommitChange<T, out Any> -> {
-//        changeListener.onChange(event.row, event.asCellChange())
-//        onTableEvent(event.stopEvent())
-//        onTableEvent(TableEvent.Focus(event.row, event.column))
-//      }
-//      is TableEvent.NextCell<T, out Any> -> {
-//        val nextEvent = event.asFocusEvent(rows.value, columns.value)
-//        if (nextEvent!=null) {
-//          onTableEvent(nextEvent)
-//        }
-//      }
-//      is TableEvent.RequestEdit<T, out Any> -> {
-//        onTableEvent(TableEvent.StartEdit(event.row, event.column))
-//      }
-//      is TableEvent.RequestFocus<T, out Any> -> {
-//        onTableEvent(TableEvent.Focus(event.row, event.column))
-//      }
-//      is TableEvent.RequestInsertRow<T> -> {
-//        delayAction.call { onTableEvent(event.ok()) }
-//      }
-//      is TableEvent.AbortInsertRow<T> -> {
-//        delayAction.stop()
-//        onTableEvent(event.ok())
-//      }
-//      else -> {
-//        throw IllegalArgumentException("not implemented: $event")
-//      }
-//    }
-//  }
 
   private val header = Header(columns, eventListener, headerColumnFactory)
   private val footer = Footer(columns, header::columnWidthProperty, footerColumnFactory)
@@ -77,12 +39,6 @@ class Table<T: Any>(
 
   private val rowsWrapper = ScrollPane().apply {
     cssClassName("rows-scroll-pane")
-
-//    val button = Button("hi").apply {
-//      minHeight = 100.0
-//      maxHeight = Double.MAX_VALUE
-//      maxWidth = Double.MAX_VALUE
-//    }
 
     hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
     isFocusTraversable = false

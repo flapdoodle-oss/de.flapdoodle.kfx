@@ -127,9 +127,13 @@
 
 }
 
-.cell .background {
+.cell .background .label {
     -fx-padding: 0px 4px 0px 4px;
 }
+
+/*.cell .background .text-field {*/
+/*    -fx-padding: 0px 0px 0px 0px;*/
+/*}*/
 
 .cell:readonly .background {
     -fx-background-color: rgba(230, 230, 230, 0.5);

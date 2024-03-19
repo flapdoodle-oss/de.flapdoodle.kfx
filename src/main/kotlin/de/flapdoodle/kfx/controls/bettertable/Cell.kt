@@ -215,7 +215,6 @@ class Cell<T: Any, C: Any>(
 //    }
 
     fun preferredColumnSize(): Double {
-      control.applyCss()
       val labelWidth = label.prefWidth(height)
       val fieldWidth = if (field.isVisible) field.prefWidth(height) else field.minWidth
       return java.lang.Double.max(labelWidth, fieldWidth) + insets.left + insets.right

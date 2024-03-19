@@ -1,6 +1,5 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import de.flapdoodle.kfx.controls.bettertable.events.EventContext
 import de.flapdoodle.kfx.controls.bettertable.events.ReadOnlyState
 import de.flapdoodle.kfx.converters.Converters
 import de.flapdoodle.kfx.extensions.withAnchors
@@ -8,14 +7,15 @@ import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.geometry.Insets
-import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.SplitPane
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.text.TextAlignment
 import javafx.stage.Stage
+import javafx.util.StringConverter
 
 class TableSampler {
   class Sample : Application() {
@@ -31,17 +31,11 @@ class TableSampler {
       val columns = SimpleObjectProperty<List<Column<Row, out Any>>>(
         listOf(
           CustomColumn(
-            header = { it -> LabelHeaderColumn(it,"A") },
-            cell = {
-              Cell(
-                row = it,
-                value = it.age,
-                converter = Converters.converterFor(Int::class),
-                editable = true
-              )
-            },
+            label = "A",
+            property = { it.age },
+            converter = Converters.converterFor(Int::class),
+            editable = true,
             setter = { row, v -> row.copy(age = v ?: 0) },
-            footer = { LabelFooterColumn(it, "a") },
           )
         )
       )
@@ -77,9 +71,25 @@ class TableSampler {
         changed
       }
 
+      val headerColumnFactory = HeaderColumnFactory.Default<Row>().andThen { column, headerColumn ->
+        if (column.label.contains("*")) {
+          headerColumn.backgroundProperty().bind(backGroundToggled)
+        }
+      }
+      val cellFactory = CellFactory.Default<Row>().andThen { column, cell ->
+        if (column.label.contains("*")) {
+          cell.backgroundProperty().bind(backGroundToggled)
+        }
+      }
+      val footerColumnFactory = FooterColumnFactory.Default<Row>().andThen { column, footerColumn ->
+        if (column.label.contains("*")) {
+          footerColumn.backgroundProperty().bind(backGroundToggled)
+        }
+      }
+
       val splitPane = SplitPane(
-        Table(rows, columns, changeListener),
-        Table(rows, columns, changeListener) { ReadOnlyState(it) },
+        Table(rows, columns, changeListener, headerColumnFactory, cellFactory, footerColumnFactory),
+        Table(rows, columns, changeListener, headerColumnFactory, cellFactory, footerColumnFactory) { ReadOnlyState(it) },
       )
 
       val content = AnchorPane(
@@ -87,46 +97,40 @@ class TableSampler {
         HBox(Button("B").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
-              header = { LabelHeaderColumn(it,"B") },
-              cell = { Cell(it, it.name, Converters.converterFor(String::class), true) },
+              label = "B",
+              property = { it.name },
+              converter = Converters.converterFor(String::class),
+              editable = true,
               setter = { row, v -> row.copy(name = v ?: "") }
             )
           }
         }, Button("B(r)").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
-              header = { LabelHeaderColumn(it,"B*", false) },
-              cell = { Cell(it, it.name, Converters.converterFor(String::class), false) },
+              label = "B*",
+              property = { it.name },
+              converter = Converters.converterFor(String::class),
+              editable = false,
               setter = { row, v -> row.copy(name = v ?: "") }
             )
           }
         }, Button("C").apply {
           onAction = EventHandler {
             columns.value += CustomColumn(
-              header = { LabelHeaderColumn(it,"C").apply {
-                backgroundProperty().bind(backGroundToggled)
-              } },
-              cell = { Cell(it, it.size, Converters.converterFor(Double::class), true).apply {
-                backgroundProperty().bind(backGroundToggled)
-              } },
-              setter = { row, v -> row.copy(size = v ?: 1.5) },
-              footer = { LabelFooterColumn(it,"c").apply {
-                backgroundProperty().bind(backGroundToggled)
-              } }
+              label = "C",
+              property = { it.size },
+              converter = Converters.converterFor(Double::class),
+              editable = true,
+              setter = { row, v -> row.copy(size = v ?: 1.5) }
             )
           }
         }, Button("C(r)").apply {
           onAction = EventHandler {
             columns.value += Column(
-              header = { LabelHeaderColumn(it,"C*", false).apply {
-                backgroundProperty().bind(backGroundToggled)
-              } },
-              cell = { Cell(it, it.size, Converters.converterFor(Double::class), false).apply {
-                backgroundProperty().bind(backGroundToggled)
-              } },
-              footer = { LabelFooterColumn(it,"c*", false).apply {
-                backgroundProperty().bind(backGroundToggled)
-              } }
+              label = "C*",
+              property = { it.size },
+              converter = Converters.converterFor(Double::class),
+              editable = false
             )
           }
         }, Button("toggle").apply {
@@ -147,32 +151,14 @@ class TableSampler {
     val size: Double,
   )
 
-  class LabelHeaderColumn(
-    override val column: Column<Row, out Any>,
-    label: String,
-    editable: Boolean = true
-  ) : HeaderColumn<Row>(column, editable) {
-    init {
-      setContent(Label(label))
-    }
-  }
-
-  class LabelFooterColumn(
-    override val column: Column<Row, out Any>,
-    label: String,
-    editable: Boolean = true
-  ) : FooterColumn<Row>(column, editable) {
-    init {
-      setContent(Label(label))
-    }
-  }
-
   class CustomColumn<C : Any>(
-    header: (Column<Row, out Any>) -> HeaderColumn<Row>,
-    cell: (Row) -> Cell<Row, C>,
-    val setter: (Row, C?) -> Row,
-    footer: ((Column<Row, out Any>) -> FooterColumn<Row>)? = null
-  ) : Column<Row, C>(header, cell, footer) {
+    override val label: String,
+    override val property: (Row) -> C?,
+    override val converter: StringConverter<C>,
+    override val editable: Boolean,
+    override val textAlignment: TextAlignment = TextAlignment.LEFT,
+    val setter: (Row, C?) -> Row
+  ) : Column<Row, C>(label, property, converter, editable, textAlignment) {
     fun change(row: Row, change: CellChangeListener.Change<Row, out Any>): Row {
       return if (change.column == this) {
         setter(row, change.value as C?)

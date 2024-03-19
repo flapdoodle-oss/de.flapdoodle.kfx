@@ -16,6 +16,7 @@ import kotlin.math.min
 class Rows<T : Any>(
   private val rows: ReadOnlyObjectProperty<List<T>>,
   private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  private val cellFactory: CellFactory<T>,
   private val eventListener: TableRequestEventListener<T>,
   private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : Control() {
@@ -66,7 +67,7 @@ class Rows<T : Any>(
       })
 
       rowPane.children.syncWith(control.rows) {
-        Row(control.eventListener, control.columns, it, control.columnWidthProperties)
+        Row(control.eventListener, control.columns, control.cellFactory, it, control.columnWidthProperties)
       }
 
       rowPane.addEventFilter(MouseEvent.MOUSE_EXITED) {

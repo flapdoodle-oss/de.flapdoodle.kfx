@@ -1,10 +1,12 @@
 package de.flapdoodle.kfx.controls.bettertable
 
-import javafx.scene.Node
+import javafx.scene.text.TextAlignment
+import javafx.util.StringConverter
 
 open class Column<T: Any, C: Any>(
-  internal val header: (Column<T, out Any>) -> HeaderColumn<T>,
-  internal val cell: (T) -> Cell<T, C>,
-  internal val footer: ((Column<T, out Any>) -> FooterColumn<T>)? = null
-) {
-}
+  open val label: String,
+  open val property: (T) -> C?,
+  open val converter: StringConverter<C>,
+  open val editable: Boolean,
+  open val textAlignment: TextAlignment = TextAlignment.LEFT
+)

@@ -14,6 +14,9 @@ class Table<T: Any>(
   internal val rows: ReadOnlyObjectProperty<List<T>>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val changeListener: CellChangeListener<T>,
+  headerColumnFactory: HeaderColumnFactory<T> = HeaderColumnFactory.Default(),
+  cellFactory: CellFactory<T> = CellFactory.Default(),
+  footerColumnFactory: FooterColumnFactory<T> = FooterColumnFactory.Default(),
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : Region() {
 
@@ -60,9 +63,9 @@ class Table<T: Any>(
 //    }
 //  }
 
-  private val header = Header(columns, eventListener)
-  private val footer = Footer(columns, header::columnWidthProperty)
-  private val _rows = Rows(rows, columns, eventListener, header::columnWidthProperty)
+  private val header = Header(columns, eventListener, headerColumnFactory)
+  private val footer = Footer(columns, header::columnWidthProperty, footerColumnFactory)
+  private val _rows = Rows(rows, columns, cellFactory, eventListener, header::columnWidthProperty)
 
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED

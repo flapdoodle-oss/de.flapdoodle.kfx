@@ -1,7 +1,5 @@
 package de.flapdoodle.kfx.controls.bettertable.events
 
-import javafx.scene.control.Tab
-
 class EditState<T : Any>(
   private val defaultState: State<T>,
   private val context: EventContext<T>

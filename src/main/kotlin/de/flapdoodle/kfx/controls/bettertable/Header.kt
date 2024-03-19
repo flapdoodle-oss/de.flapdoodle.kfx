@@ -18,6 +18,7 @@ import javafx.scene.control.SkinBase
 class Header<T : Any>(
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   private val eventListener: TableRequestEventListener<T>,
+  private val headerColumnFactory: HeaderColumnFactory<T>
 ) : Control() {
 
   private val skin = Skin(this)
@@ -54,7 +55,7 @@ class Header<T : Any>(
     init {
       children.add(splitPane)
       headerColumns.syncWith(src.columns) {
-        it.header(it)
+        src.headerColumnFactory.headerColumn(it)
       }
       splitPane.nodes().syncWith(headerColumns) { it }
       columnWidthMap.syncWith(headerColumns, { it.column }) { it.widthProperty() }

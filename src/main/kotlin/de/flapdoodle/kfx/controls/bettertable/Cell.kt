@@ -7,10 +7,7 @@ import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.event.EventHandler
-import javafx.geometry.HPos
 import javafx.geometry.Pos
-import javafx.geometry.VPos
-import javafx.scene.Node
 import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.control.SkinBase
@@ -18,7 +15,6 @@ import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.StackPane
 import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 

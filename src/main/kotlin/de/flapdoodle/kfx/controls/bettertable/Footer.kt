@@ -7,11 +7,11 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.layout.HBox
-import javafx.scene.layout.StackPane
 
 class Footer<T : Any>(
   private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
-  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
+  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
+  private val footerColumnFactory: FooterColumnFactory<T>?
 ) : Control() {
 
   private val skin = Skin(this)
@@ -29,7 +29,7 @@ class Footer<T : Any>(
     private val footer = HBox()
     init {
       ObservableLists.syncWith(src.columns, footer.children) {
-        val footerColumn = it.footer?.invoke(it) ?: FooterColumn(it)
+        val footerColumn = src.footerColumnFactory?.footerColumn(it) ?: FooterColumn(it)
         footerColumn.prefWidthProperty().bind(src.columnWidthProperties(it))
         footerColumn
       }

@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox
 class Row<T : Any>(
   internal val eventListener: TableRequestEventListener<T>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  private val cellFactory: CellFactory<T>,
   internal val value: T,
 //  internal val index: Int,
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
@@ -149,7 +150,7 @@ class Row<T : Any>(
     }
 
     private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
-      return c.cell(value).apply {
+      return control.cellFactory.cell(c, value).apply {
         property[Column::class] = c
         prefWidthProperty().bind(width)
         setColumn(c)

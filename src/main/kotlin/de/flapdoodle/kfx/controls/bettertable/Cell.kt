@@ -47,7 +47,6 @@ class Cell<T: Any, C: Any>(
     private val control: Cell<T, C>
   ) : SkinBase<Cell<T, C>>(control) {
 
-    private lateinit var column: Column<T, C>
     private lateinit var eventListener: TableRequestEventListener<T>
 
     private val label = Label().apply {
@@ -57,29 +56,14 @@ class Cell<T: Any, C: Any>(
       text = control.column.converter.toString(control.value)
     }
 
-    private fun asPosition(textAlignment: TextAlignment): Pos {
-      return when (textAlignment) {
-        TextAlignment.RIGHT -> Pos.CENTER_RIGHT
-        TextAlignment.LEFT -> Pos.CENTER_LEFT
-        TextAlignment.CENTER -> Pos.CENTER
-        TextAlignment.JUSTIFY -> Pos.CENTER
-      }
-    }
-
     private val field = createTextField(
       value = control.value,
       converter = control.column.converter,
       commitEdit = {
-//        control.value = it
-//        label.text = control.converter.toString(it)
-//        control.fireEvent(SmartEvents.EditDone(control))
-//        control.onChange(it)
-//        _editDone()
-        eventListener.fireEvent(TableEvent.CommitChange(control.row, column, it))
+        eventListener.fireEvent(TableEvent.CommitChange(control.row, control.column, it))
       },
       cancelEdit = {
-        eventListener.fireEvent(TableEvent.AbortChange(control.row, column))
-//        this._cancelEdit()
+        eventListener.fireEvent(TableEvent.AbortChange(control.row, control.column))
       }
     ).apply {
       isVisible = false
@@ -87,34 +71,9 @@ class Cell<T: Any, C: Any>(
       focusedProperty().addListener { _, old, focused ->
         if (!focused) {
           if (isVisible) {
-            eventListener.fireEvent(TableEvent.EditLostFocus(control.row, column))
+            eventListener.fireEvent(TableEvent.EditLostFocus(control.row, control.column))
           }
         }
-      }
-    }
-
-//    internal fun _editDone() {
-//      _cancelEdit()
-//    }
-
-//    var editInProgress: Boolean = false
-
-    internal fun _cancelEdit() {
-//      editInProgress=false
-      if (column.editable) {
-        label.show()
-        field.hide()
-        field.text = label.text
-      }
-    }
-
-    internal fun _startEdit() {
-//      RuntimeException("startEdit called").printStackTrace()
-//      editInProgress=true
-      if (column.editable) {
-        label.hide()
-        field.show()
-        field.requestFocus()
       }
     }
 
@@ -133,19 +92,40 @@ class Cell<T: Any, C: Any>(
 //      }
     }
 
-    fun setColumn(column: Column<T, C>) {
-      this.column = column
+    private fun asPosition(textAlignment: TextAlignment): Pos {
+      return when (textAlignment) {
+        TextAlignment.RIGHT -> Pos.CENTER_RIGHT
+        TextAlignment.LEFT -> Pos.CENTER_LEFT
+        TextAlignment.CENTER -> Pos.CENTER
+        TextAlignment.JUSTIFY -> Pos.CENTER
+      }
+    }
+
+    private fun _cancelEdit() {
+      if (column.editable) {
+        label.show()
+        field.hide()
+        field.text = label.text
+      }
+    }
+
+    private fun _startEdit() {
+      if (column.editable) {
+        label.hide()
+        field.show()
+        field.requestFocus()
+      }
     }
 
     fun setEventListener(eventListener: TableRequestEventListener<T>) {
       this.eventListener = eventListener
       control.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
         if (it.clickCount == 1) {
-          eventListener.fireEvent(TableEvent.RequestFocus(control.row, column))
+          eventListener.fireEvent(TableEvent.RequestFocus(control.row, control.column))
         }
         if (it.clickCount == 2) {
           if (column.editable) {
-            eventListener.fireEvent(TableEvent.RequestEdit(control.row, column))
+            eventListener.fireEvent(TableEvent.RequestEdit(control.row, control.column))
           }
         }
         it.consume()
@@ -171,37 +151,16 @@ class Cell<T: Any, C: Any>(
             if (field.isVisible) {
               // just w
             } else {
-              eventListener.fireEvent(TableEvent.NextCell(control.row, column, direction))
+              eventListener.fireEvent(TableEvent.NextCell(control.row, control.column, direction))
             }
           } else {
             if (it.code == KeyCode.ENTER) {
               it.consume()
-              eventListener.fireEvent(TableEvent.RequestEdit(control.row, column))
+              eventListener.fireEvent(TableEvent.RequestEdit(control.row, control.column))
             }
           }
         }
       }
-
-//      control.handleEvent(KeyEvent.KEY_RELEASED) {
-//        matching { !it.isShortcutDown } then {
-//          consume { it.code == KeyCode.LEFT } by {
-//            NodeHelper.traverse(control, Direction.LEFT, TraversalMethod.DEFAULT)
-//          }
-//          consume { it.code == KeyCode.RIGHT } by {
-//            NodeHelper.traverse(control, Direction.RIGHT, TraversalMethod.DEFAULT)
-//          }
-//          consume { it.code == KeyCode.UP } by {
-//            NodeHelper.traverse(control, Direction.UP, TraversalMethod.DEFAULT)
-//          }
-//          consume { it.code == KeyCode.DOWN } by {
-//            NodeHelper.traverse(control, Direction.DOWN, TraversalMethod.DEFAULT)
-//          }
-//
-//          consume { it.code == KeyCode.ENTER } by {
-//            _startEdit()
-//          }
-//        }
-//      }
 
     }
 
@@ -273,10 +232,6 @@ class Cell<T: Any, C: Any>(
       val textField = TextField()
       textField.text = converter.toString(value)
 
-//      textField.onAction = EventHandler { event: ActionEvent ->
-//        event.consume()
-//        commitEdit(converter.fromString(textField.text))
-//      }
       textField.onKeyReleased = EventHandler { t: KeyEvent ->
         if (t.code == KeyCode.ENTER) {
           t.consume()

@@ -2,10 +2,7 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
-import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.hide
-import de.flapdoodle.kfx.extensions.show
-import de.flapdoodle.kfx.extensions.withAnchors
+import de.flapdoodle.kfx.extensions.*
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Control
@@ -19,11 +16,9 @@ import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 
 class Cell<T: Any, C: Any>(
+  val column: Column<T, C>,
   val row: T,
-  val value: C?,
-  val converter: StringConverter<C>,
-  val editable: Boolean,
-  val textAlignment: TextAlignment = TextAlignment.LEFT
+  val value: C?
 ): Control() {
 
   private val skin = Skin(this)
@@ -31,15 +26,11 @@ class Cell<T: Any, C: Any>(
   init {
     isFocusTraversable = true
     cssClassName("cell")
-    Styles.Readonly.set(this, !editable)
+    Styles.Readonly.set(this, !column.editable)
   }
 
   fun setEventListener(eventListener: TableRequestEventListener<T>) {
     skin.setEventListener(eventListener)
-  }
-
-  fun setColumn(column: Column<T, C>) {
-    skin.setColumn(column)
   }
 
   fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
@@ -62,8 +53,8 @@ class Cell<T: Any, C: Any>(
     private val label = Label().apply {
       isWrapText = false
 //      prefWidth = Double.MAX_VALUE
-      alignment = asPosition(control.textAlignment)
-      text = control.converter.toString(control.value)
+      alignment = asPosition(control.column.textAlignment)
+      text = control.column.converter.toString(control.value)
     }
 
     private fun asPosition(textAlignment: TextAlignment): Pos {
@@ -77,7 +68,7 @@ class Cell<T: Any, C: Any>(
 
     private val field = createTextField(
       value = control.value,
-      converter = control.converter,
+      converter = control.column.converter,
       commitEdit = {
 //        control.value = it
 //        label.text = control.converter.toString(it)
@@ -110,7 +101,7 @@ class Cell<T: Any, C: Any>(
 
     internal fun _cancelEdit() {
 //      editInProgress=false
-      if (editable) {
+      if (column.editable) {
         label.show()
         field.hide()
         field.text = label.text
@@ -120,7 +111,7 @@ class Cell<T: Any, C: Any>(
     internal fun _startEdit() {
 //      RuntimeException("startEdit called").printStackTrace()
 //      editInProgress=true
-      if (editable) {
+      if (column.editable) {
         label.hide()
         field.show()
         field.requestFocus()
@@ -137,6 +128,9 @@ class Cell<T: Any, C: Any>(
       children.add(wrapper)
 
       consumeMouseEvents(false)
+//      onAttach { println("attach $column") }.onDetach {
+//
+//      }
     }
 
     fun setColumn(column: Column<T, C>) {
@@ -150,7 +144,7 @@ class Cell<T: Any, C: Any>(
           eventListener.fireEvent(TableEvent.RequestFocus(control.row, column))
         }
         if (it.clickCount == 2) {
-          if (editable) {
+          if (column.editable) {
             eventListener.fireEvent(TableEvent.RequestEdit(control.row, column))
           }
         }

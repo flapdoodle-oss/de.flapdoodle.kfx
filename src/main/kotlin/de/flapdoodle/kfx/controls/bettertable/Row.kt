@@ -151,15 +151,13 @@ class Row<T : Any>(
 
     private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
       return control.cellFactory.cell(c, value).apply {
-        property[Column::class] = c
         prefWidthProperty().bind(width)
-        setColumn(c)
       }
     }
 
     fun preferredColumnSize(column: Column<T, out Any>): Double {
       val cells = rowContainer.children.filter {
-        it.property[Column::class] == column
+        (it as Cell<T, out Any>).column == column
       }
       require(cells.size==1) { "more or less than one match for: $column in ${rowContainer.children} "}
       val cell = cells[0] as Cell<T, out Any>

@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
+import javafx.beans.value.ChangeListener
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Control
@@ -87,9 +88,6 @@ class Cell<T: Any, C: Any>(
       children.add(wrapper)
 
       consumeMouseEvents(false)
-//      onAttach { println("attach $column") }.onDetach {
-//
-//      }
     }
 
     private fun asPosition(textAlignment: TextAlignment): Pos {
@@ -196,13 +194,13 @@ class Cell<T: Any, C: Any>(
       }
     }
 
-    override fun computeMinWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
-      return java.lang.Double.max(label.minWidth(height), field.minWidth(height))
-    }
-
-    override fun computeMinHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
-      return java.lang.Double.max(label.minHeight(width), field.minHeight(width))
-    }
+//    override fun computeMinWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
+//      return java.lang.Double.max(label.minWidth(height), field.minWidth(height))
+//    }
+//
+//    override fun computeMinHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
+//      return java.lang.Double.max(label.minHeight(width), field.minHeight(width))
+//    }
 
 //    override fun computePrefWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
 //      var base = if (label.isVisible) label.prefWidth(height) * 2.0 else field.prefWidth(height)
@@ -210,9 +208,9 @@ class Cell<T: Any, C: Any>(
 //      return base + leftInset + rightInset
 //    }
 
-    override fun computePrefHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
-      return java.lang.Double.max(label.prefHeight(width), field.prefHeight(width)) + topInset + bottomInset
-    }
+//    override fun computePrefHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
+//      return java.lang.Double.max(label.prefHeight(width), field.prefHeight(width)) + topInset + bottomInset
+//    }
 
     fun preferredColumnSize(): Double {
       val labelWidth = label.prefWidth(height)

@@ -24,10 +24,6 @@ class Row<T : Any>(
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : Control() {
 
-  object Style {
-    val Even = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("even"))
-  }
-
   private val skin = Skin(this)
 
   init {
@@ -110,7 +106,7 @@ class Row<T : Any>(
     }
 
     fun setIndex(index: Int) {
-      Style.Even.set(rowContainer, index % 2 == 0)
+      Styles.Even.set(rowContainer, index % 2 == 0)
     }
 
     internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {

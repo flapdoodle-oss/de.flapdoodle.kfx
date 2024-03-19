@@ -1,7 +1,6 @@
 package de.flapdoodle.kfx.layout.splitpane
 
 import de.flapdoodle.kfx.bindings.syncWith
-import de.flapdoodle.kfx.controls.bettertable.HeaderColumn
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.minus
@@ -16,8 +15,6 @@ import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
-import javafx.scene.shape.Rectangle
 import java.lang.Double.max
 import java.lang.Double.min
 
@@ -125,11 +122,9 @@ class BetterSplitPane(
     }
 
     fun setWidth(node: Node, width: Double) {
-      handles.forEach {
-        if (it.node==node) {
-          it.prefWidthOffset(control.height, width)
-        }
-      }
+      val handle = handles.find { it.node==node }
+      requireNotNull(handle) { "could not find handle for $node"}
+      handle.prefWidthOffset(control.height, width)
       control.requestLayout()
     }
 

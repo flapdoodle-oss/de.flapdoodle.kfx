@@ -11,7 +11,7 @@ import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
-import kotlin.math.min
+import kotlin.math.max
 
 class Rows<T : Any>(
   private val rows: ReadOnlyObjectProperty<List<T>>,
@@ -32,9 +32,7 @@ class Rows<T : Any>(
     skin.onTableEvent(event)
   }
 
-  fun preferredColumnSize(column: Column<T, out Any>): Double {
-    return skin.preferredColumnSize(column)
-  }
+  fun columnSize(column: Column<T, out Any>) = skin.columnSize(column)
 
   class Skin<T : Any>(
     private val control: Rows<T>
@@ -46,11 +44,12 @@ class Rows<T : Any>(
       }
     }
 
-    fun preferredColumnSize(column: Column<T, out Any>): Double {
-      val size = rowPane.children.map {
-        (it as Row<T>).preferedColumnSize(column)
-      }.max()
-      return min(rowPane.width, size)
+    fun columnSize(column: Column<T, out Any>): ColumnSize {
+      return rowPane.children.map {
+        (it as Row<T>).columnSize(column)
+      }.fold(ColumnSize(0.0, 0.0)) { l, r ->
+        ColumnSize(max(l.min, r.min), max(l.preferred, r.preferred))
+      }
     }
 
     private val rowPane = VBox().apply {
@@ -73,10 +72,6 @@ class Rows<T : Any>(
       rowPane.addEventFilter(MouseEvent.MOUSE_EXITED) {
         control.eventListener.fireEvent(TableEvent.MouseExitRows())
       }
-
-//      ObservableLists.syncWithIndexed(control.rows, rowPane.children) { index, it ->
-//        Row(control.columns, it, index, control.columnWidthProperties, control.changeListener)
-//      }
     }
   }
 

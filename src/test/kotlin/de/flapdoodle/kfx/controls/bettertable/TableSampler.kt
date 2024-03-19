@@ -137,6 +137,12 @@ class TableSampler {
           onAction = EventHandler {
             toggle.value = !toggle.value
           }
+        }, Button("-").apply {
+          onAction = EventHandler {
+            if (columns.value.size>1) {
+              columns.value = columns.value.subList(0, columns.value.size - 1)
+            }
+          }
         }).withAnchors(bottom = 0.0)
       )
       stage.scene = Scene(content, 800.0, 600.0)

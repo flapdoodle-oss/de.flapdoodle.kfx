@@ -44,6 +44,8 @@ class Cell<T: Any, C: Any>(
     return skin.preferredColumnSize()
   }
 
+  fun columnSize() = skin.columnSize()
+
   inner class Skin<T : Any, C : Any>(
     private val control: Cell<T, C>
   ) : SkinBase<Cell<T, C>>(control) {
@@ -213,11 +215,25 @@ class Cell<T: Any, C: Any>(
 //    }
 
     fun preferredColumnSize(): Double {
+      control.applyCss()
       val labelWidth = label.prefWidth(height)
       val fieldWidth = if (field.isVisible) field.prefWidth(height) else field.minWidth
       return java.lang.Double.max(labelWidth, fieldWidth) + insets.left + insets.right
     }
 
+    fun columnSize(): ColumnSize {
+      control.applyCss()
+
+      val labelWidth = label.prefWidth(height)
+      val fieldWidth = if (field.isVisible) field.prefWidth(height) else field.minWidth
+      val width = java.lang.Double.max(labelWidth, fieldWidth) + insets.left + insets.right
+
+      val minLabelWidth = label.minWidth(height)
+      val minFieldWidth = if (field.isVisible) field.minWidth(height) else field.minWidth
+      val minWidth = java.lang.Double.max(minLabelWidth, minFieldWidth) + insets.left + insets.right
+
+      return ColumnSize(minWidth, width)
+    }
   }
 
   companion object {

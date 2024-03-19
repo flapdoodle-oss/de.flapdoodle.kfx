@@ -1,8 +1,10 @@
 package de.flapdoodle.kfx.controls.bettertable
 
+import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.bettertable.events.*
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.extensions.onAttach
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
@@ -26,8 +28,8 @@ class Table<T: Any>(
   private val eventListener = StateEventListener(stateFactory(eventContext))
 
   private val header = Header(columns, eventListener, headerColumnFactory)
-  private val footer = Footer(columns, header::columnWidthProperty, footerColumnFactory)
   private val _rows = Rows(rows, columns, cellFactory, eventListener, header::columnWidthProperty)
+  private val footer = Footer(columns, header::columnWidthProperty, footerColumnFactory)
 
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -66,13 +68,29 @@ class Table<T: Any>(
     scroll.content = content
 
     children.add(scroll)
+
+    // TODO nicht ganz klar, warum das bei _rows funktioniert, aber nicht oberhalb
+    _rows.onAttach {
+      columns.value.forEach {
+        eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
+      }
+    }.onDetach {
+
+    }
+
+    columns.addListener { _, oldValue, newValue ->
+      Diff.between(oldValue,newValue).added.forEach {
+        eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
+      }
+    }
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
 //    println("event: $event")
     when (event) {
       is TableEvent.ResizeColumn<T, out Any> -> {
-        val columnSize = _rows.preferredColumnSize(event.column)
+        val columnSize = _rows.columnSize(event.column)
+//        val columnSize = _rows.preferredColumnSize(event.column)
         header.setColumnSize(event.column, columnSize)
       }
       else -> {

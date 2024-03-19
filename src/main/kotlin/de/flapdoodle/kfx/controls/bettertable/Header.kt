@@ -37,7 +37,7 @@ class Header<T : Any>(
     return skin.columnWidthProperty(column)
   }
 
-  fun setColumnSize(column: Column<T, out Any>, columnSize: Double) {
+  fun setColumnSize(column: Column<T, out Any>, columnSize: ColumnSize) {
     skin.setColumnSize(column, columnSize)
   }
 
@@ -66,11 +66,13 @@ class Header<T : Any>(
         .defaultIfNull(Values.constant(1.0))
     }
 
-    fun setColumnSize(column: Column<T, out Any>, columnSize: Double) {
+    fun setColumnSize(column: Column<T, out Any>, columnSize: ColumnSize) {
       headerColumns.forEach {
         val c = it as HeaderColumn<T>
         if (c.column==column) {
-          splitPane.setPaneSize(c, columnSize)
+          // TODO split pane refactoring
+//          splitPane.setMinPaneSize(c, columnSize.min)
+          splitPane.setPaneSize(c, columnSize.preferred)
         }
       }
     }

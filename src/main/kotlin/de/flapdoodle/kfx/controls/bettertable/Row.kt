@@ -6,9 +6,7 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
-import javafx.css.PseudoClass
 import javafx.geometry.Point2D
-import javafx.scene.Node
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseEvent
@@ -49,6 +47,8 @@ class Row<T : Any>(
   fun preferedColumnSize(column: Column<T, out Any>): Double {
     return skin.preferredColumnSize(column)
   }
+
+  fun columnSize(column: Column<T, out Any>) = skin.columnSize(column)
 
   class Skin<T : Any>(
     private val control: Row<T>
@@ -95,6 +95,14 @@ class Row<T : Any>(
 //          property[Row::class] = control
           setEventListener(control.eventListener)
         }
+      }
+    }
+
+    private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
+      return control.cellFactory.cell(c, value).apply {
+        prefWidthProperty().bind(width)
+//        onAttach { control.columnCellRegistry.register(c, this) }
+//          .onDetach { it?.unsubscribe() }
       }
     }
 
@@ -145,12 +153,6 @@ class Row<T : Any>(
       }
     }
 
-    private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
-      return control.cellFactory.cell(c, value).apply {
-        prefWidthProperty().bind(width)
-      }
-    }
-
     fun preferredColumnSize(column: Column<T, out Any>): Double {
       val cells = rowContainer.children.filter {
         (it as Cell<T, out Any>).column == column
@@ -160,5 +162,13 @@ class Row<T : Any>(
       return cell.preferredColumnSize()
     }
 
+    fun columnSize(column: Column<T, out Any>): ColumnSize {
+      val cells = rowContainer.children.filter {
+        (it as Cell<T, out Any>).column == column
+      }
+      require(cells.size==1) { "more or less than one match for: $column in ${rowContainer.children} "}
+      val cell = cells[0] as Cell<T, out Any>
+      return cell.columnSize()
+    }
   }
 }

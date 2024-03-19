@@ -16,7 +16,7 @@ fun interface HeaderColumnFactory<T : Any> {
 
   class Default<T : Any> : HeaderColumnFactory<T> {
     override fun headerColumn(column: Column<T, out Any>): HeaderColumn<T> {
-      return HeaderColumn(column, column.editable).apply {
+      return HeaderColumn(column).apply {
         setContent(Label(column.label))
       }
     }

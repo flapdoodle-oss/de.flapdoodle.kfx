@@ -11,7 +11,6 @@ import javafx.scene.layout.StackPane
 open abstract class AbstractHeaderColumn<T: Any>(
   internal open val column: Column<T, out Any>,
   val cssClassName: String,
-  editable: Boolean,
 ) : StackPane() {
 
   private val background = WeightGridPane()
@@ -24,7 +23,7 @@ open abstract class AbstractHeaderColumn<T: Any>(
 
     cssClassName(cssClassName)
     background.cssClassName("background")
-    Styles.Readonly.set(this, !editable)
+    Styles.Readonly.set(this, !column.editable)
 
     children.add(background)
     WeightGridPane.setPosition(contentPane, 0, 0, HPos.CENTER, VPos.CENTER)

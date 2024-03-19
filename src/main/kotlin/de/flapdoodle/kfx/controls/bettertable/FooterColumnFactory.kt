@@ -16,7 +16,7 @@ fun interface FooterColumnFactory<T: Any> {
 
   class Default<T : Any> : FooterColumnFactory<T> {
     override fun footerColumn(column: Column<T, out Any>): FooterColumn<T> {
-      return FooterColumn(column, column.editable).apply {
+      return FooterColumn(column).apply {
         setContent(Label(column.label))
       }
     }

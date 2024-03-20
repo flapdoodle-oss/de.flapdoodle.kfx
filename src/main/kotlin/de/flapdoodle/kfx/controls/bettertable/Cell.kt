@@ -40,10 +40,6 @@ class Cell<T: Any, C: Any>(
 
   override fun createDefaultSkin() = skin
 
-  fun preferredColumnSize(): Double {
-    return skin.preferredColumnSize()
-  }
-
   fun columnSize() = skin.columnSize()
 
   inner class Skin<T : Any, C : Any>(
@@ -213,12 +209,6 @@ class Cell<T: Any, C: Any>(
 //    override fun computePrefHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
 //      return java.lang.Double.max(label.prefHeight(width), field.prefHeight(width)) + topInset + bottomInset
 //    }
-
-    fun preferredColumnSize(): Double {
-      val labelWidth = label.prefWidth(height)
-      val fieldWidth = if (field.isVisible) field.prefWidth(height) else field.minWidth
-      return java.lang.Double.max(labelWidth, fieldWidth) + insets.left + insets.right
-    }
 
     fun columnSize(): ColumnSize {
       control.applyCss()

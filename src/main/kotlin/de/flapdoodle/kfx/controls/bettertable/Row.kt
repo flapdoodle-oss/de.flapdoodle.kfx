@@ -44,10 +44,6 @@ class Row<T : Any>(
     skin.onTableEvent(event)
   }
 
-  fun preferedColumnSize(column: Column<T, out Any>): Double {
-    return skin.preferredColumnSize(column)
-  }
-
   fun columnSize(column: Column<T, out Any>) = skin.columnSize(column)
 
   class Skin<T : Any>(
@@ -151,15 +147,6 @@ class Row<T : Any>(
           }
         }
       }
-    }
-
-    fun preferredColumnSize(column: Column<T, out Any>): Double {
-      val cells = rowContainer.children.filter {
-        (it as Cell<T, out Any>).column == column
-      }
-      require(cells.size==1) { "more or less than one match for: $column in ${rowContainer.children} "}
-      val cell = cells[0] as Cell<T, out Any>
-      return cell.preferredColumnSize()
     }
 
     fun columnSize(column: Column<T, out Any>): ColumnSize {

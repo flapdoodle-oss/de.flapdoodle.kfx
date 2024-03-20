@@ -192,11 +192,14 @@ class WeightGridPane : javafx.scene.layout.Region() {
     val left = insets.left
     val bottom = insets.bottom
 
-    val contentX = _contentX + left
-    val contentY = _contentY + top
+    var contentX = _contentX + left
+    var contentY = _contentY + top
     val contentWidth = _contentWidth - left - right
     val contentHeight = _contentHeight - top - bottom
 
+    contentX = left
+    contentY = top
+//    println("grid: $contentX, $contentY -> $contentWidth,$contentHeight")
 //      println("-------------------------")
 
 //      println("hspace: ${horizontalSpace.value}")
@@ -231,6 +234,7 @@ class WeightGridPane : javafx.scene.layout.Region() {
           val hPos = node.constraint[HPos::class] ?: HPos.CENTER
           val vPos = node.constraint[VPos::class] ?: VPos.CENTER
 
+//          println("layoutInArea $node: $areaX, $areaY, $areaW, $areaH")
           layoutInArea(node, areaX, areaY, areaW, areaH, -1.0, hPos, vPos)
         }
       }

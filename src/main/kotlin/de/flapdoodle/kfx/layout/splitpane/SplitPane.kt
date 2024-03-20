@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.layout.splitpane
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.scenePosition
+import de.flapdoodle.kfx.extensions.screenDeltaToLocal
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
@@ -17,6 +18,7 @@ import kotlin.math.max
 
 class SplitPane<T: Node>(
   internal val nodes: ReadOnlyObjectProperty<List<T>>,
+  internal val onDoubleClick: (T) -> Unit = {}
 ) : Region() {
 
   private val sharedLock = SharedLock<Handle<*>>()
@@ -41,9 +43,23 @@ class SplitPane<T: Node>(
 //    })
   }
 
+  fun setSize(node: T, min: Double, preferred: Double) {
+    handleLayer.setSize(node, min, preferred)
+  }
+
+  override fun computeMinHeight(width: Double): Double {
+    val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l,r)}
+    return insets.top + height + insets.bottom
+  }
+
   override fun computeMinWidth(height: Double): Double {
     val width = children.map { it.minWidth(height) }.fold(0.0) { l, r -> max(l,r)}
     return insets.left + width + insets.right
+  }
+
+  override fun computePrefHeight(width: Double): Double {
+    val height = children.map { it.prefHeight(width) }.fold(0.0) { l, r -> max(l,r)}
+    return insets.top + height + insets.bottom
   }
 
   override fun computePrefWidth(height: Double): Double {
@@ -96,8 +112,12 @@ class SplitPane<T: Node>(
       MouseEvent.MOUSE_DRAGGED -> {
         sharedLock.ifLocked(Handle::class.java, Resize::class.java) { lock ->
           event.consume()
+
+          val node = lock.owner.node
           val resize = lock.value
-          val deltaX = event.scenePosition.x - resize.scenePosition.x
+          // TODO unnötiger Aufwand?
+          val deltaX = node.screenDeltaToLocal(Point2D(event.scenePosition.x - resize.scenePosition.x, 0.0)).x
+
           var deltaWidth = resize.deltaWidth + deltaX
           val newWidth = resize.current + deltaWidth
           if (newWidth < resize.min) {
@@ -118,6 +138,10 @@ class SplitPane<T: Node>(
           nodeLayer.requestLayout()
           handleLayer.requestLayout()
           lock.releaseLock()
+
+          if (event.clickCount > 1) {
+            onDoubleClick(lock.owner.node as T)
+          }
         }
       }
     }
@@ -142,9 +166,19 @@ class SplitPane<T: Node>(
       })
     }
 
+    override fun computeMinHeight(width: Double): Double {
+      val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l , r) }
+      return insets.top + height + insets.bottom
+    }
+
     override fun computeMinWidth(height: Double): Double {
       val width = children.map { it.minWidth(height) }.fold(0.0) { l, r -> l + r }
       return insets.left + width + insets.right
+    }
+
+    override fun computePrefHeight(width: Double): Double {
+      val height = children.map { it.prefHeight(width) }.fold(0.0) { l, r -> max(l , r) }
+      return insets.top + height + insets.bottom
     }
 
     override fun computePrefWidth(height: Double): Double {
@@ -178,7 +212,7 @@ class SplitPane<T: Node>(
   }
 
   class HandleLayer<T: Node>(
-    handles: ObservableList<Handle<T>>,
+    internal val handles: ObservableList<Handle<T>>,
   ) : Region() {
 
     init {
@@ -189,6 +223,11 @@ class SplitPane<T: Node>(
       children.addListener(ListChangeListener {
         requestLayout()
       })
+    }
+
+    fun setSize(node: T, min: Double, preferred: Double) {
+      val handle = requireNotNull(handles.find { it.node == node }) { "could not find handle for $node"}
+      handle.setSize(min, preferred)
     }
 
     override fun layoutChildren() {
@@ -214,11 +253,31 @@ class SplitPane<T: Node>(
 
   class Handle<T: Node>(val node: T) : Pane() {
     var deltaWidth: Double = 0.0
+    var min: Double? = null
+
+    fun setSize(min: Double, preferred: Double) {
+      this.min = min
+
+      val minWidth = node.minWidth(height)
+      val width = node.prefWidth(height)
+      val maxWidth = node.maxWidth(height)
+
+      if (preferred > maxWidth) {
+        deltaWidth = maxWidth - width
+      } else if (preferred < minWidth) {
+        deltaWidth = minWidth - width
+      } else {
+        deltaWidth = preferred - width
+      }
+    }
+
 
     init {
-      minWidth = 10.0
-      maxWidth = 10.0
+      styleClass.addAll("split-pane-handle")
+//      minWidth = 10.0
+//      maxWidth = 10.0
     }
+
   }
 
 }

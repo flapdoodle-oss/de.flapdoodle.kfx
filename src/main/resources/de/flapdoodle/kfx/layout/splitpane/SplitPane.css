@@ -1,41 +1,34 @@
 .split-pane {
     /*-fx-background-color: #f4f4f4;*/
+    -fx-border-width: 0px;
+    -fx-padding: 0px;
 }
 
 .split-pane .split-pane-handle {
-    -fx-padding: 0px 5px;
-    -fx-cursor: h_resize;
-}
-
-.split-pane .split-pane-handle .handle {
-    -fx-min-width: 2px;
+    -fx-min-width: 10px;
     -fx-border-width: 0 1px 0 0px;
-    -fx-border-insets: 0 1;
+    /*-fx-border-insets: 0 1;*/
     -fx-border-color: rgba(0, 0, 0, 0.15);
 }
 
-.split-pane .split-pane-handle:hover .handle {
+.split-pane .split-pane-handle:hover {
     -fx-border-color: -fx-focus-color;
+    -fx-cursor: h_resize;
 }
 
-/*.split-pane .split-pane-handle .stack-pane {*/
-/*    -fx-min-width: 1px;*/
-/*    !*-fx-background-color: linear-gradient(from 0% 0% to 0% 100%, rgba(0,0,0,0.05) 0%,  rgba(0,0,0,0.2) 50,  rgba(0,0,0,0.05) 100%);*!*/
-/*    !*-fx-border-color: rgba(0, 0, 0, 0.15);*!*/
-/*    !*-fx-border-width: 0 1px 0 0;*!*/
-/*    !*-fx-border-insets: 0 1px 0 0;*!*/
-/*    -fx-background-color: green;*/
+/*.split-pane .split-pane-handle {*/
+/*    -fx-padding: 0px 5px;*/
+/*    -fx-cursor: h_resize;*/
 /*}*/
 
-/*.split-pane .split-pane-handle .stack-pane .handle {*/
-/*    -fx-background-color: red;*/
+/*.split-pane .split-pane-handle .handle {*/
+/*    -fx-min-width: 2px;*/
+/*    -fx-border-width: 0 1px 0 0px;*/
+/*    -fx-border-insets: 0 1;*/
+/*    -fx-border-color: rgba(0, 0, 0, 0.15);*/
 /*}*/
 
-/*.split-pane .split-pane-handle:hover .stack-pane {*/
-/*    !*-fx-border-color: -fx-focus-color;*!*/
-/*}*/
-
-/*.split-pane .split-pane-handle:hover .stack-pane .handle {*/
+/*.split-pane .split-pane-handle:hover .handle {*/
 /*    -fx-border-color: -fx-focus-color;*/
 /*}*/
 

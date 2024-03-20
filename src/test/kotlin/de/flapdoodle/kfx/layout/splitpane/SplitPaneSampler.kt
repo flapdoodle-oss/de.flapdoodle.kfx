@@ -23,7 +23,7 @@ class SplitPaneSampler {
     override fun start(stage: Stage) {
       val oldSplitPane = BetterSplitPane().apply {
 //        background = Background.fill(Color.rgb(240,240,204))
-        border = Border.stroke(Color.BLUE)
+//        border = Border.stroke(Color.BLUE)
 
         nodes().addAll(LabelContent("A"), ButtonContent("1"), LabelContent("B"))
       }
@@ -32,9 +32,12 @@ class SplitPaneSampler {
         listOf(LabelContent("A"), ButtonContent("1"), LabelContent("B"))
       )
 
-      val splitPane = SplitPane(nodes).apply {
+      val onDoubleClick = { node: Content ->
+        println("clicked on $node")
+      }
+      val splitPane = SplitPane(nodes, onDoubleClick).apply {
 //        background = Background.fill(Color.RED)
-        border = Border.stroke(Color.RED)
+//        border = Border.stroke(Color.RED)
       }
 
       val buttons = SimpleObjectProperty(

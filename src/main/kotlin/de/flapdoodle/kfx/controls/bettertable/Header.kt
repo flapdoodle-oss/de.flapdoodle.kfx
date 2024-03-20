@@ -8,8 +8,10 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
+import de.flapdoodle.kfx.layout.splitpane.SplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.scene.control.Control
@@ -44,35 +46,48 @@ class Header<T : Any>(
   inner class Skin<T : Any>(
     private val src: Header<T>
   ) : SkinBase<Header<T>>(src) {
-    private val splitPane = BetterSplitPane() { node ->
-      if (node is HeaderColumn<out Any>) {
-        src.eventListener.fireEvent(TableEvent.RequestResizeColumn((node as HeaderColumn<T>).column))
-      }
+
+    private val headerColumns2 = SimpleObjectProperty<List<HeaderColumn<T>>>(emptyList())
+    private val splitPane2 = SplitPane(headerColumns2) { node ->
+      src.eventListener.fireEvent(TableEvent.RequestResizeColumn((node).column))
     }
-    private val headerColumns = FXCollections.observableArrayList<HeaderColumn<T>>()
-    private val columnWidthMap = FXCollections.observableHashMap<Column<T, out Any>, ReadOnlyDoubleProperty>()
+    private val columnWidthMap2 = FXCollections.observableHashMap<Column<T, out Any>, ReadOnlyDoubleProperty>()
+
+//    private val splitPane = BetterSplitPane() { node ->
+//      if (node is HeaderColumn<out Any>) {
+//        src.eventListener.fireEvent(TableEvent.RequestResizeColumn((node as HeaderColumn<T>).column))
+//      }
+//    }
+//    private val headerColumns = FXCollections.observableArrayList<HeaderColumn<T>>()
+//    private val columnWidthMap = FXCollections.observableHashMap<Column<T, out Any>, ReadOnlyDoubleProperty>()
 
     init {
-      children.add(splitPane)
-      headerColumns.syncWith(src.columns) {
+//      children.add(splitPane)
+      children.add(splitPane2)
+      headerColumns2.syncWith(src.columns) {
         src.headerColumnFactory.headerColumn(it)
       }
-      splitPane.nodes().syncWith(headerColumns) { it }
-      columnWidthMap.syncWith(headerColumns, { it.column }) { it.widthProperty() }
+      columnWidthMap2.syncWith(headerColumns2, { it.column }) { it.widthProperty() }
+
+//      headerColumns.syncWith(src.columns) {
+//        src.headerColumnFactory.headerColumn(it)
+//      }
+//      splitPane.nodes().syncWith(headerColumns) { it }
+//      columnWidthMap.syncWith(headerColumns, { it.column }) { it.widthProperty() }
     }
 
     internal fun columnWidthProperty(column: Column<T, out Any>): ObservableValue<Number> {
-      return columnWidthMap.valueOf(column)
+      return columnWidthMap2.valueOf(column)
         .defaultIfNull(Values.constant(1.0))
     }
 
     fun setColumnSize(column: Column<T, out Any>, columnSize: ColumnSize) {
-      headerColumns.forEach {
+      headerColumns2.value.forEach {
         val c = it as HeaderColumn<T>
         if (c.column==column) {
           // TODO split pane refactoring
 //          splitPane.setMinPaneSize(c, columnSize.min)
-          splitPane.setPaneSize(c, columnSize.preferred)
+          splitPane2.setSize(c, columnSize.min, columnSize.preferred)
         }
       }
     }

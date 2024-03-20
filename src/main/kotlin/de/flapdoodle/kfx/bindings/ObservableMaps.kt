@@ -10,6 +10,18 @@ import javafx.collections.ObservableMap
 import javafx.util.Subscription
 
 object ObservableMaps {
+  fun <S, K, V> syncWith(source: ObservableValue<List<S>>, destination: ObservableMap<K, V>, keyOf: (S) -> K, valueOf: (S) -> V): Subscription {
+    source.value.forEach {
+      destination[keyOf(it)] = valueOf(it)
+    }
+    val listener = MapKVChangeListener(destination, keyOf, valueOf)
+    source.addListener(listener)
+
+    return Subscription {
+      source.removeListener(listener)
+    }
+  }
+
   fun <S, K, V> syncWith(source: ObservableList<S>, destination: ObservableMap<K, V>, keyOf: (S) -> K, valueOf: (S) -> V): Subscription {
     source.forEach {
       destination[keyOf(it)] = valueOf(it)

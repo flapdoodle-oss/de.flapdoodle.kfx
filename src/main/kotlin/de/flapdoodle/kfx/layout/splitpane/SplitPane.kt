@@ -28,6 +28,8 @@ class SplitPane<T: Node>(
   private val handleLayer = HandleLayer(nodeHandles)
 
   init {
+    isFocusTraversable = false
+
     styleClass.addAll("split-pane")
     stylesheets += javaClass.getResource("SplitPane.css").toExternalForm();
 
@@ -160,6 +162,8 @@ class SplitPane<T: Node>(
     internal val handles: ObservableList<Handle<T>>,
   ) : Region() {
     init {
+      isFocusTraversable = false
+
       children.syncWith(nodes) { it }
       children.addListener(ListChangeListener {
         requestLayout()
@@ -216,10 +220,11 @@ class SplitPane<T: Node>(
   ) : Region() {
 
     init {
-      children.syncWith(handles) { it }
-//      isMouseTransparent = true
       isPickOnBounds = false
       isFocusTraversable = false
+
+      children.syncWith(handles) { it }
+//      isMouseTransparent = true
       children.addListener(ListChangeListener {
         requestLayout()
       })

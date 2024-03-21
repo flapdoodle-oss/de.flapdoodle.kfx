@@ -2,8 +2,10 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
-import de.flapdoodle.kfx.extensions.*
-import javafx.beans.value.ChangeListener
+import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.extensions.hide
+import de.flapdoodle.kfx.extensions.show
+import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Control
@@ -16,11 +18,11 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
 
-class Cell<T: Any, C: Any>(
+class Cell<T : Any, C : Any>(
   val column: Column<T, C>,
   val row: T,
   val value: C?
-): Control() {
+) : Control() {
 
   private val skin = Skin(this)
 
@@ -68,8 +70,8 @@ class Cell<T: Any, C: Any>(
       isVisible = false
       isEditable = true
       focusedProperty().addListener { _, old, focused ->
-        if (!focused) {
-          if (isVisible) {
+        if (isVisible) {
+          if (!focused) {
             eventListener.fireEvent(TableEvent.EditLostFocus(control.row, control.column))
           }
         }
@@ -86,6 +88,13 @@ class Cell<T: Any, C: Any>(
       children.add(wrapper)
 
       consumeMouseEvents(false)
+
+      focusedProperty().addListener { _, old, focused ->
+        if (!old && focused) {
+          // got focus from somewhere
+          eventListener.fireEvent(TableEvent.RequestFocus(control.row, control.column))
+        }
+      }
     }
 
     private fun asPosition(textAlignment: TextAlignment): Pos {
@@ -128,7 +137,7 @@ class Cell<T: Any, C: Any>(
       }
 
       control.addEventFilter(KeyEvent.KEY_RELEASED) {
-        if (!it.isShortcutDown && it.code==KeyCode.TAB) {
+        if (!it.isShortcutDown && it.code == KeyCode.TAB) {
           it.consume()
         }
       }
@@ -142,7 +151,7 @@ class Cell<T: Any, C: Any>(
             KeyCode.TAB -> TableEvent.Direction.NEXT
             else -> null
           }
-          if (direction!=null) {
+          if (direction != null) {
             it.consume()
             if (field.isVisible) {
               // just w
@@ -162,13 +171,14 @@ class Cell<T: Any, C: Any>(
 
     fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
       when (event) {
-        is TableEvent.Focus<T,out Any> -> {
-          if (event.row==control.row && event.column == column) {
+        is TableEvent.Focus<T, out Any> -> {
+          if (event.row == control.row && event.column == column) {
             control.requestFocus()
           }
         }
-        is TableEvent.Blur<T,out Any> -> {
-          if (event.row==control.row && event.column == column) {
+
+        is TableEvent.Blur<T, out Any> -> {
+          if (event.row == control.row && event.column == column) {
             // focus another element to remove focus from this control
             val temp = Label()
             children.add(temp)
@@ -176,16 +186,19 @@ class Cell<T: Any, C: Any>(
             children.remove(temp)
           }
         }
-        is TableEvent.StartEdit<T,out Any> -> {
-          if (event.row==control.row && event.column == column) {
+
+        is TableEvent.StartEdit<T, out Any> -> {
+          if (event.row == control.row && event.column == column) {
             _startEdit()
           }
         }
-        is TableEvent.StopEdit<T,out Any> -> {
-          if (event.row==control.row && event.column == column) {
+
+        is TableEvent.StopEdit<T, out Any> -> {
+          if (event.row == control.row && event.column == column) {
             _cancelEdit()
           }
         }
+
         else -> {
           println("ignore: $event")
         }

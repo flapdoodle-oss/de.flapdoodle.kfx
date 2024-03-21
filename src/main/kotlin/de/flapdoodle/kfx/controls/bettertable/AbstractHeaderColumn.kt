@@ -19,7 +19,7 @@ open abstract class AbstractHeaderColumn<T: Any>(
   private val content = SimpleObjectProperty<Node>()
 
   init {
-    isFocusTraversable = true
+    isFocusTraversable = false
 
     cssClassName(cssClassName)
     background.cssClassName("background")

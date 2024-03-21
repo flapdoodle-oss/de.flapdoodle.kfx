@@ -120,16 +120,18 @@ class SplitPane<T: Node>(
           // TODO unnötiger Aufwand?
           val deltaX = node.screenDeltaToLocal(Point2D(event.scenePosition.x - resize.scenePosition.x, 0.0)).x
 
-          var deltaWidth = resize.deltaWidth + deltaX
-          val newWidth = resize.current + deltaWidth
-          if (newWidth < resize.min) {
-            deltaWidth = resize.min - resize.current
-          } else {
-            if (newWidth > resize.max) {
-              deltaWidth = resize.max - resize.current
-            }
-          }
-          lock.owner.deltaWidth = deltaWidth
+          lock.owner.resize(resize.deltaWidth + deltaX)
+
+//          var deltaWidth = resize.deltaWidth + deltaX
+//          val newWidth = resize.current + deltaWidth
+//          if (newWidth < resize.min) {
+//            deltaWidth = resize.min - resize.current
+//          } else {
+//            if (newWidth > resize.max) {
+//              deltaWidth = resize.max - resize.current
+//            }
+//          }
+//          lock.owner.deltaWidth = deltaWidth
           nodeLayer.requestLayout()
           handleLayer.requestLayout()
         }
@@ -260,6 +262,24 @@ class SplitPane<T: Node>(
     var deltaWidth: Double = 0.0
     var min: Double? = null
 
+    fun resize(preferred: Double) {
+      println("\npref: $preferred")
+      val minWidth = node.minWidth(height)
+      val width = node.prefWidth(height)
+      val maxWidth = node.maxWidth(height)
+      println("width: $width")
+
+      deltaWidth = if (preferred > maxWidth) {
+        maxWidth - width
+      } else if (preferred < max(minWidth,min ?: minWidth)) {
+        max(minWidth,min ?: minWidth) - width
+      } else {
+        preferred - width
+      }
+
+      println("--> $deltaWidth")
+    }
+
     fun setSize(min: Double, preferred: Double) {
       this.min = min
 
@@ -267,12 +287,12 @@ class SplitPane<T: Node>(
       val width = node.prefWidth(height)
       val maxWidth = node.maxWidth(height)
 
-      if (preferred > maxWidth) {
-        deltaWidth = maxWidth - width
+      deltaWidth = if (preferred > maxWidth) {
+        maxWidth - width
       } else if (preferred < minWidth) {
-        deltaWidth = minWidth - width
+        minWidth - width
       } else {
-        deltaWidth = preferred - width
+        preferred - width
       }
     }
 

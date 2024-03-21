@@ -13,6 +13,10 @@ class DefaultState<T : Any>(
         return FocusState(this, context).onEvent(event)
       }
 
+      is TableEvent.HasFocus<T, out Any> -> {
+        return FocusState(this, context).onEvent(event)
+      }
+
       is TableEvent.RequestInsertRow<T> -> {
         return DelayedState(this) {
           InsertRowState(this, context).onEvent(event)

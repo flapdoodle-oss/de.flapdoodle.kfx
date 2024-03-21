@@ -262,12 +262,12 @@ class SplitPane<T: Node>(
     var deltaWidth: Double = 0.0
     var min: Double? = null
 
-    fun resize(preferred: Double) {
-      println("\npref: $preferred")
+    fun resize(newDeltaWidth: Double) {
       val minWidth = node.minWidth(height)
       val width = node.prefWidth(height)
       val maxWidth = node.maxWidth(height)
-      println("width: $width")
+
+      val preferred = width + newDeltaWidth
 
       deltaWidth = if (preferred > maxWidth) {
         maxWidth - width
@@ -276,8 +276,6 @@ class SplitPane<T: Node>(
       } else {
         preferred - width
       }
-
-      println("--> $deltaWidth")
     }
 
     fun setSize(min: Double, preferred: Double) {

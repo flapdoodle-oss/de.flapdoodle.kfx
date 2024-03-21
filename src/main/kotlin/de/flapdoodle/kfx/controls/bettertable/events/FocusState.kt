@@ -8,6 +8,9 @@ class FocusState<T : Any>(
 
   override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
     when (event) {
+      is TableEvent.HasFocus<T, out Any> -> {
+        lastFocusEvent = event.fakedOk()
+      }
       is TableEvent.RequestFocus<T, out Any> -> {
         lastFocusEvent = event.ok()
         onTableEvent(event.ok())
@@ -20,6 +23,7 @@ class FocusState<T : Any>(
         }
       }
       is TableEvent.RequestEdit<T, out Any> -> {
+        require(event.column.editable) {"column is not editable: ${event.column} (${event.row})"}
         return EditState(defaultState, context).onEvent(event)
       }
 
@@ -32,6 +36,9 @@ class FocusState<T : Any>(
             InsertRowState(defaultState, context).onEvent(event)
           }
         }
+      }
+      is TableEvent.MouseExitRows<T> -> {
+        // ignore
       }
       else -> {
         lastFocusEvent?.let {

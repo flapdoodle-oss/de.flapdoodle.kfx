@@ -2,10 +2,7 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
-import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.hide
-import de.flapdoodle.kfx.extensions.show
-import de.flapdoodle.kfx.extensions.withAnchors
+import de.flapdoodle.kfx.extensions.*
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Control
@@ -82,17 +79,23 @@ class Cell<T : Any, C : Any>(
       cssClassName("background")
     }
 
+    var hasFocusAfterInitFired = false
+
     init {
       wrapper.children.add(field.withAnchors(all = 0.0))
       wrapper.children.add(label.withAnchors(all = 0.0))
       children.add(wrapper)
 
+      // TODO notwendig?
       consumeMouseEvents(false)
 
       focusedProperty().addListener { _, old, focused ->
         if (!old && focused) {
           // got focus from somewhere
-          eventListener.fireEvent(TableEvent.RequestFocus(control.row, control.column))
+          if (!hasFocusAfterInitFired) {
+            eventListener.fireEvent(TableEvent.HasFocus(control.row, control.column))
+            hasFocusAfterInitFired = true
+          }
         }
       }
     }
@@ -161,7 +164,9 @@ class Cell<T : Any, C : Any>(
           } else {
             if (it.code == KeyCode.ENTER) {
               it.consume()
-              eventListener.fireEvent(TableEvent.RequestEdit(control.row, control.column))
+              if (column.editable) {
+                eventListener.fireEvent(TableEvent.RequestEdit(control.row, control.column))
+              }
             }
           }
         }
@@ -180,10 +185,12 @@ class Cell<T : Any, C : Any>(
         is TableEvent.Blur<T, out Any> -> {
           if (event.row == control.row && event.column == column) {
             // focus another element to remove focus from this control
-            val temp = Label()
-            children.add(temp)
-            temp.requestFocus()
-            children.remove(temp)
+            // TODO blur will refocus on first element
+            control.blur()
+//            val temp = Label()
+//            children.add(temp)
+//            temp.requestFocus()
+//            children.remove(temp)
           }
         }
 

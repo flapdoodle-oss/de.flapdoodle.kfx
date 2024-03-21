@@ -153,7 +153,7 @@ class Row<T : Any>(
       val cells = rowContainer.children.filter {
         (it as Cell<T, out Any>).column == column
       }
-      require(cells.size==1) { "more or less than one match for: $column in ${rowContainer.children} "}
+      require(cells.size==1) { "more or less than one match for: $column in ${rowContainer.children} -> $cells "}
       val cell = cells[0] as Cell<T, out Any>
       return cell.columnSize()
     }

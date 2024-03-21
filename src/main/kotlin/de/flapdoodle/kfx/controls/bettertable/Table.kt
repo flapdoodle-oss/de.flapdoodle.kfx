@@ -86,7 +86,7 @@ class Table<T: Any>(
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
-//    println("event: $event")
+//    println("table event: $event")
     when (event) {
       is TableEvent.ResizeColumn<T, out Any> -> {
         val columnSize = _rows.columnSize(event.column)

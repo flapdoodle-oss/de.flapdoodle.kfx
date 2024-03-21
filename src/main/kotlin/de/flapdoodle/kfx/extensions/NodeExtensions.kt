@@ -18,11 +18,9 @@ package de.flapdoodle.kfx.extensions
 
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
-import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.Scene
 import javafx.util.Subscription
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
@@ -153,4 +151,8 @@ fun <T> Node.onAttach(action: () -> T): Nodes.WithOnAttach<T> {
 
 fun Node.unsubscribeOnDetach(action: () -> Subscription) {
   Nodes.unsubscribeOnDetach(this, action)
+}
+
+fun Node.blur() {
+  parent?.requestFocus()
 }

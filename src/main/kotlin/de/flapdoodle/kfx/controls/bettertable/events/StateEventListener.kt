@@ -5,7 +5,8 @@ class StateEventListener<T: Any>(
 ): TableRequestEventListener<T> {
   var current = start
   override fun fireEvent(event: TableEvent.RequestEvent<T>) {
-//    println("--> $event")
+//    println("fire event $event to: $current")
     current = current.onEvent(event)
+//    println("is now: $current")
   }
 }

@@ -20,6 +20,10 @@ sealed class TableEvent<T: Any> {
   }
 
   sealed class CellTriggered<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): RequestEvent<T>()
+  data class HasFocus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column) {
+    fun fakedOk(): Focus<T, C> = Focus(row, column)
+  }
+
   data class RequestFocus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column) {
     fun ok(): Focus<T, C> = Focus(row, column)
   }

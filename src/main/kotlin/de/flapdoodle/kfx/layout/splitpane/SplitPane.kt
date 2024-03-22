@@ -1,9 +1,11 @@
 package de.flapdoodle.kfx.layout.splitpane
 
+import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.scenePosition
 import de.flapdoodle.kfx.extensions.screenDeltaToLocal
+import de.flapdoodle.kfx.extensions.snappedToPixel
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
@@ -13,10 +15,12 @@ import javafx.geometry.Point2D
 import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.*
+import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
+import javafx.scene.transform.Scale
 import kotlin.math.max
 
-class SplitPane<T: Node>(
+class SplitPane<T : Node>(
   internal val nodes: ReadOnlyObjectProperty<List<T>>,
   internal val onDoubleClick: (T) -> Unit = {}
 ) : Region() {
@@ -47,25 +51,27 @@ class SplitPane<T: Node>(
 
   fun setSize(node: T, min: Double, preferred: Double) {
     handleLayer.setSize(node, min, preferred)
+    nodeLayer.requestLayout()
+    handleLayer.requestLayout()
   }
 
   override fun computeMinHeight(width: Double): Double {
-    val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l,r)}
+    val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l, r) }
     return insets.top + height + insets.bottom
   }
 
   override fun computeMinWidth(height: Double): Double {
-    val width = children.map { it.minWidth(height) }.fold(0.0) { l, r -> max(l,r)}
+    val width = children.map { it.minWidth(height) }.fold(0.0) { l, r -> max(l, r) }
     return insets.left + width + insets.right
   }
 
   override fun computePrefHeight(width: Double): Double {
-    val height = children.map { it.prefHeight(width) }.fold(0.0) { l, r -> max(l,r)}
+    val height = children.map { it.prefHeight(width) }.fold(0.0) { l, r -> max(l, r) }
     return insets.top + height + insets.bottom
   }
 
   override fun computePrefWidth(height: Double): Double {
-    val width = children.map { it.prefWidth(height) }.fold(0.0) { l, r -> max(l,r)}
+    val width = children.map { it.prefWidth(height) }.fold(0.0) { l, r -> max(l, r) }
     return insets.left + width + insets.right
   }
 
@@ -108,9 +114,11 @@ class SplitPane<T: Node>(
           }
         }
       }
+
       MouseEvent.DRAG_DETECTED -> {
         startFullDrag()
       }
+
       MouseEvent.MOUSE_DRAGGED -> {
         sharedLock.ifLocked(Handle::class.java, Resize::class.java) { lock ->
           event.consume()
@@ -136,6 +144,7 @@ class SplitPane<T: Node>(
           handleLayer.requestLayout()
         }
       }
+
       MouseEvent.MOUSE_RELEASED -> {
         sharedLock.ifLocked(Handle::class.java, Resize::class.java) { lock ->
           event.consume()
@@ -159,7 +168,7 @@ class SplitPane<T: Node>(
     val max: Double
   )
 
-  private class NodesLayer<T: Node>(
+  private class NodesLayer<T : Node>(
     internal val nodes: ReadOnlyObjectProperty<List<T>>,
     internal val handles: ObservableList<Handle<T>>,
   ) : Region() {
@@ -173,7 +182,7 @@ class SplitPane<T: Node>(
     }
 
     override fun computeMinHeight(width: Double): Double {
-      val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l , r) }
+      val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l, r) }
       return insets.top + height + insets.bottom
     }
 
@@ -183,7 +192,7 @@ class SplitPane<T: Node>(
     }
 
     override fun computePrefHeight(width: Double): Double {
-      val height = children.map { it.prefHeight(width) }.fold(0.0) { l, r -> max(l , r) }
+      val height = children.map { it.prefHeight(width) }.fold(0.0) { l, r -> max(l, r) }
       return insets.top + height + insets.bottom
     }
 
@@ -200,6 +209,8 @@ class SplitPane<T: Node>(
     private fun layoutChildren(_contentX: Double, _contentY: Double, _contentWidth: Double, _contentHeight: Double) {
       val deltaWidthMap = handles.map { it.node to it.deltaWidth }.toMap()
 
+//      println("layout: $deltaWidthMap")
+
       val top = insets.top
       val right = insets.right
       val left = insets.left
@@ -209,15 +220,16 @@ class SplitPane<T: Node>(
 
       var x = left
       children.forEach { node ->
-          val width = node.prefWidth(height) + deltaWidthMap[node]!!
-          layoutInArea(node, x, 0.0, width, contentHeight, -1.0, HPos.LEFT, VPos.TOP)
-          x = x + width
+        val width = node.prefWidth(height) + deltaWidthMap[node]!!
+        val fixedWidth = snappedToPixel(width)
+        layoutInArea(node, x, 0.0, fixedWidth, contentHeight, -1.0, HPos.LEFT, VPos.TOP)
+        x = x + fixedWidth
       }
 
     }
   }
 
-  class HandleLayer<T: Node>(
+  class HandleLayer<T : Node>(
     internal val handles: ObservableList<Handle<T>>,
   ) : Region() {
 
@@ -233,7 +245,7 @@ class SplitPane<T: Node>(
     }
 
     fun setSize(node: T, min: Double, preferred: Double) {
-      val handle = requireNotNull(handles.find { it.node == node }) { "could not find handle for $node"}
+      val handle = requireNotNull(handles.find { it.node == node }) { "could not find handle for $node" }
       handle.setSize(min, preferred)
     }
 
@@ -253,12 +265,13 @@ class SplitPane<T: Node>(
         val handle = (it as Handle<T>)
         val node = handle.node
         val bounds = node.boundsInParent
-        layoutInArea(handle,bounds.maxX - 10.0, bounds.minY,10.0, contentHeight, -1.0, HPos.LEFT, VPos.TOP)
+        val width = handle.width
+        layoutInArea(handle, bounds.maxX - width, bounds.minY, width, contentHeight, -1.0, HPos.LEFT, VPos.TOP)
       }
     }
   }
 
-  class Handle<T: Node>(val node: T) : Pane() {
+  class Handle<T : Node>(val node: T) : Pane() {
     var deltaWidth: Double = 0.0
     var min: Double? = null
 
@@ -271,16 +284,18 @@ class SplitPane<T: Node>(
 
       deltaWidth = if (preferred > maxWidth) {
         maxWidth - width
-      } else if (preferred < max(minWidth,min ?: minWidth)) {
-        max(minWidth,min ?: minWidth) - width
+      } else if (preferred < max(minWidth, min ?: minWidth)) {
+        max(minWidth, min ?: minWidth) - width
       } else {
         preferred - width
       }
     }
 
     fun setSize(min: Double, preferred: Double) {
+//      println("$node setSize: $min, $preferred")
       this.min = min
 
+      node.applyCss()
       val minWidth = node.minWidth(height)
       val width = node.prefWidth(height)
       val maxWidth = node.maxWidth(height)
@@ -302,5 +317,4 @@ class SplitPane<T: Node>(
     }
 
   }
-
 }

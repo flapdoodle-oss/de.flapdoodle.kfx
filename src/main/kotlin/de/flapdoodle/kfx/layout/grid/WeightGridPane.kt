@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.layout.grid
 
+import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.extensions.constraint
 import de.flapdoodle.kfx.extensions.heightLimits
 import de.flapdoodle.kfx.extensions.widthLimits
@@ -235,10 +236,13 @@ class WeightGridPane : javafx.scene.layout.Region() {
           val vPos = node.constraint[VPos::class] ?: VPos.CENTER
 
 //          println("layoutInArea $node: $areaX, $areaY, $areaW, $areaH")
-          layoutInArea(node, areaX, areaY, areaW, areaH, -1.0, hPos, vPos)
+          layoutInArea(node, snappedToPixel(areaX), snappedToPixel(areaY), snappedToPixel(areaW), snappedToPixel(areaH), -1.0, hPos, vPos)
         }
       }
     }
   }
 
+  fun snappedToPixel(value: Double): Double {
+    return if (isSnapToPixel) ScaledMath.ceil(value, 1.0) else value
+  }
 }

@@ -139,7 +139,7 @@ class TableSampler {
           }
         }, Button("-").apply {
           onAction = EventHandler {
-            if (columns.value.size>1) {
+            if (columns.value.size>0) {
               columns.value = columns.value.subList(0, columns.value.size - 1)
             }
           }

@@ -16,11 +16,13 @@
  */
 package de.flapdoodle.kfx.extensions
 
+import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.layout.Region
 import javafx.util.Subscription
 import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
@@ -111,6 +113,11 @@ fun Node.heightLimits(): Pair<Double, Double> {
     Pair(minH, minH)
   }
 }
+
+fun Region.snappedToPixel(value: Double): Double {
+  return if (isSnapToPixel) ScaledMath.ceil(value, 1.0) else value
+}
+
 
 fun Node.screenDeltaToLocal(delta: Point2D): Point2D {
   return screenToLocal(delta) - screenToLocal(Point2D.ZERO)

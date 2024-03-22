@@ -52,23 +52,32 @@ class TableSampler {
         )
       )
 
-      val changeListener = CellChangeListener<Row> { row, change ->
-        println("change: $row -> $change")
-        val changed = when (val column = change.column) {
-          is CustomColumn<out Any> -> {
-            column.change(row, change)
+      val changeListener = object : TableChangeListener<Row> {
+        override fun changeCell(row: Row, change: TableChangeListener.CellChange<Row, out Any>): Row {
+          println("change: $row -> $change")
+          val changed = when (val column = change.column) {
+            is CustomColumn<out Any> -> {
+              column.change(row, change)
+            }
+            else -> {
+              row
+            }
           }
-          else -> {
-            row
-          }
+
+          val list = rows.value
+          val index = list.indexOf(row)
+
+          rows.value = list.subList(0, index) + changed + list.subList(index+1, list.size)
+
+          return changed
         }
 
-        val list = rows.value
-        val index = list.indexOf(row)
-
-        rows.value = list.subList(0, index) + changed + list.subList(index+1, list.size)
-        
-        changed
+        override fun removeRow(row: Row) {
+          println("remove $row")
+          val list = rows.value
+          val index = list.indexOf(row)
+          rows.value = list.subList(0, index) + list.subList(index+1, list.size)
+        }
       }
 
       val headerColumnFactory = HeaderColumnFactory.Default<Row>().andThen { column, headerColumn ->
@@ -165,7 +174,7 @@ class TableSampler {
     override val textAlignment: TextAlignment = TextAlignment.LEFT,
     val setter: (Row, C?) -> Row
   ) : Column<Row, C>(label, property, converter, editable, textAlignment) {
-    fun change(row: Row, change: CellChangeListener.Change<Row, out Any>): Row {
+    fun change(row: Row, change: TableChangeListener.CellChange<Row, out Any>): Row {
       return if (change.column == this) {
         setter(row, change.value as C?)
       } else row

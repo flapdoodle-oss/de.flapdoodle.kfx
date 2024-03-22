@@ -79,7 +79,7 @@ class Cell<T : Any, C : Any>(
       cssClassName("background")
     }
 
-    var hasFocusAfterInitFired = false
+//    var hasFocusAfterInitFired = false
 
     init {
       wrapper.children.add(field.withAnchors(all = 0.0))
@@ -92,10 +92,10 @@ class Cell<T : Any, C : Any>(
       focusedProperty().addListener { _, old, focused ->
         if (!old && focused) {
           // got focus from somewhere
-          if (!hasFocusAfterInitFired) {
+//          if (!hasFocusAfterInitFired) {
             eventListener.fireEvent(TableEvent.HasFocus(control.row, control.column))
-            hasFocusAfterInitFired = true
-          }
+//            hasFocusAfterInitFired = true
+//          }
         }
       }
     }
@@ -167,6 +167,10 @@ class Cell<T : Any, C : Any>(
               if (column.editable) {
                 eventListener.fireEvent(TableEvent.RequestEdit(control.row, control.column))
               }
+            }
+            if (it.code == KeyCode.DELETE) {
+              it.consume()
+              eventListener.fireEvent(TableEvent.DeleteRow(control.row))
             }
           }
         }

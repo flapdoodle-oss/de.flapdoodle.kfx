@@ -15,7 +15,7 @@ import javafx.scene.layout.Region
 class Table<T: Any>(
   internal val rows: ReadOnlyObjectProperty<List<T>>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
-  internal val changeListener: CellChangeListener<T>,
+  internal val changeListener: TableChangeListener<T>,
   headerColumnFactory: HeaderColumnFactory<T> = HeaderColumnFactory.Default(),
   cellFactory: CellFactory<T> = CellFactory.Default(),
   footerColumnFactory: FooterColumnFactory<T> = FooterColumnFactory.Default(),

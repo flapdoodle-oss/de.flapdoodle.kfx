@@ -1,6 +1,6 @@
 package de.flapdoodle.kfx.controls.bettertable.events
 
-import de.flapdoodle.kfx.controls.bettertable.CellChangeListener
+import de.flapdoodle.kfx.controls.bettertable.TableChangeListener
 
 abstract class StateWithContext<T: Any>(
   private val context: EventContext<T>
@@ -9,7 +9,11 @@ abstract class StateWithContext<T: Any>(
     context.onTableEvent(event)
   }
 
-  protected fun onChange(row: T, change: CellChangeListener.Change<T, out Any>): T {
-    return context.changeListener.onChange(row, change)
+  protected fun changeCell(row: T, change: TableChangeListener.CellChange<T, out Any>): T {
+    return context.changeListener.changeCell(row, change)
+  }
+
+  protected fun removeRow(row: T) {
+    context.changeListener.removeRow(row)
   }
 }

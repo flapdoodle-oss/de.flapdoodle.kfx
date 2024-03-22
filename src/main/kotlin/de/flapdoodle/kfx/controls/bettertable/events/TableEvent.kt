@@ -2,6 +2,7 @@ package de.flapdoodle.kfx.controls.bettertable.events
 
 import de.flapdoodle.kfx.controls.bettertable.CellChangeListener
 import de.flapdoodle.kfx.controls.bettertable.Column
+import de.flapdoodle.kfx.controls.bettertable.TableChangeListener
 
 sealed class TableEvent<T: Any> {
 
@@ -18,6 +19,7 @@ sealed class TableEvent<T: Any> {
     fun ok(): ResponseEvent<T> = ShowInsertRow(row, position)
     fun undo(): ResponseEvent<T> = HideInsertRow(row)
   }
+  data class DeleteRow<T: Any>(override val row: T): RowTriggered<T>(row)
 
   sealed class CellTriggered<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): RequestEvent<T>()
   data class HasFocus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column) {
@@ -29,8 +31,8 @@ sealed class TableEvent<T: Any> {
   }
   data class RequestEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column)
   data class CommitChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val value: C?): CellTriggered<T, C>(row, column) {
-    fun asCellChange(): CellChangeListener.Change<T, C> {
-      return CellChangeListener.Change(column, value)
+    fun asCellChange(): TableChangeListener.CellChange<T, C> {
+      return TableChangeListener.CellChange(column, value)
     }
 
     fun stopEvent() = StopEdit(row,column)

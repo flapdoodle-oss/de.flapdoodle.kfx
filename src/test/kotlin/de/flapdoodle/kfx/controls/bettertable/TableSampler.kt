@@ -63,13 +63,14 @@ class TableSampler {
               row
             }
           }
+          return changed
+        }
 
+        override fun updateRow(row: Row, changed: Row) {
           val list = rows.value
           val index = list.indexOf(row)
 
           rows.value = list.subList(0, index) + changed + list.subList(index+1, list.size)
-
-          return changed
         }
 
         override fun removeRow(row: Row) {

@@ -17,7 +17,7 @@ class EditState<T : Any>(
       }
       is TableEvent.CommitChange<T, out Any> -> {
         onTableEvent(event.stopEvent())
-        val changed = changeCell(event.row, event.asCellChange())
+        val changed = changeCellAndUpdateRow(event.row, event.asCellChange())
         return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))
       }
       is TableEvent.AbortChange<T, out Any> -> {

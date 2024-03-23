@@ -33,7 +33,7 @@ class FocusState<T : Any>(
             lastFocusEvent?.let {
               onTableEvent(TableEvent.Blur(it.row, it.column))
             }
-            InsertRowState(defaultState, context).onEvent(event)
+            ShowInsertRowState(defaultState, context).onEvent(event)
           }
         }
       }

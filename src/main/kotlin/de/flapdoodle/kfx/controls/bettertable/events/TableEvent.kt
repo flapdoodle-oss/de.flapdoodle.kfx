@@ -1,6 +1,5 @@
 package de.flapdoodle.kfx.controls.bettertable.events
 
-import de.flapdoodle.kfx.controls.bettertable.CellChangeListener
 import de.flapdoodle.kfx.controls.bettertable.Column
 import de.flapdoodle.kfx.controls.bettertable.TableChangeListener
 
@@ -49,11 +48,14 @@ sealed class TableEvent<T: Any> {
   sealed class ToColumn<T: Any, C: Any>(open val column: Column<T, C>): ResponseEvent<T>()
   data class ResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ToColumn<T, C>(column)
 
-  sealed class ToRow<T: Any>(open val row: T?): ResponseEvent<T>()
+  sealed class ToRow<T: Any>(open val row: T): ResponseEvent<T>()
   data class ShowInsertRow<T: Any>(override val row: T, val position: InsertPosition): ToRow<T>(row)
   data class HideInsertRow<T: Any>(override val row: T): ToRow<T>(row)
-  data class InsertRow<T: Any>(override val row: T, val position: InsertPosition, val emptyRow: T): ToRow<T>(row)
-  data class InsertFirstRow<T: Any>(val emptyRow: T): ResponseEvent<T>()
+
+  sealed class ToInsertRow<T: Any>(open val row: T): ResponseEvent<T>()
+  data class InsertRow<T: Any>(override val row: T, val position: InsertPosition, val emptyRow: T): ToInsertRow<T>(row)
+  data class InsertFirstRow<T: Any>(override val row: T): ToInsertRow<T>(row)
+  data class UpdateInsertRow<T: Any>(override val row: T): ToInsertRow<T>(row)
 
   sealed class ToCell<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): ResponseEvent<T>()
   data class Focus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)

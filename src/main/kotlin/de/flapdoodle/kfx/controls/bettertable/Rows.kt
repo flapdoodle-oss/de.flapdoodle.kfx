@@ -10,7 +10,6 @@ import javafx.collections.ListChangeListener
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import kotlin.math.max
 
@@ -42,9 +41,12 @@ class Rows<T : Any>(
     internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
       when (event) {
         is TableEvent.InsertFirstRow<T> -> {
-          insertRowPane.children.add(RowEditor(control.eventListener, control.columns, control.cellFactory, event.emptyRow, control.columnWidthProperties))
+          insertRowPane.children.add(RowEditor(control.eventListener, control.columns, control.cellFactory, event.row, control.columnWidthProperties))
         }
         else -> {
+          insertRowPane.children.forEach {
+            (it as RowEditor<T>).onTableEvent(event)
+          }
           rowPane.children.forEach {
             (it as Row<T>).onTableEvent(event)
           }

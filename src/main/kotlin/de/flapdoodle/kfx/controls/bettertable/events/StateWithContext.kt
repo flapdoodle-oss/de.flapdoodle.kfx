@@ -13,6 +13,12 @@ abstract class StateWithContext<T: Any>(
     return context.changeListener.changeCell(row, change)
   }
 
+  protected fun changeCellAndUpdateRow(row: T, change: TableChangeListener.CellChange<T, out Any>): T {
+    val changed = context.changeListener.changeCell(row, change)
+    context.changeListener.updateRow(row, changed)
+    return changed
+  }
+
   protected fun removeRow(row: T) {
     context.changeListener.removeRow(row)
   }

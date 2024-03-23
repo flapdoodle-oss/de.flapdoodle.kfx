@@ -1,6 +1,5 @@
 package de.flapdoodle.kfx.controls.bettertable.events
 
-import de.flapdoodle.kfx.controls.bettertable.CellChangeListener
 import de.flapdoodle.kfx.controls.bettertable.Column
 import de.flapdoodle.kfx.controls.bettertable.TableChangeListener
 import javafx.beans.property.ReadOnlyObjectProperty
@@ -20,7 +19,7 @@ class DefaultState<T : Any>(
 
       is TableEvent.RequestInsertRow<T> -> {
         return DelayedState(this) {
-          InsertRowState(this, context).onEvent(event)
+          ShowInsertRowState(this, context).onEvent(event)
         }
       }
       is TableEvent.DeleteRow<T> -> {
@@ -34,7 +33,7 @@ class DefaultState<T : Any>(
       }
 
       is TableEvent.EmptyRows<T> -> {
-        onTableEvent(TableEvent.InsertFirstRow(context.changeListener.emptyRow(0)))
+        return InsertRowState(this,context).onEvent(event)
       }
 
       else -> {

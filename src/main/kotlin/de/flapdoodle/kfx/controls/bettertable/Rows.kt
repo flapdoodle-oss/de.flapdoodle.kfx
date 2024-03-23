@@ -10,6 +10,7 @@ import javafx.collections.ListChangeListener
 import javafx.scene.control.Control
 import javafx.scene.control.SkinBase
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import kotlin.math.max
 
@@ -39,8 +40,15 @@ class Rows<T : Any>(
   ) : SkinBase<Rows<T>>(control) {
 
     internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
-      rowPane.children.forEach {
-        (it as Row<T>).onTableEvent(event)
+      when (event) {
+        is TableEvent.InsertFirstRow<T> -> {
+          insertRowPane.children.add(RowEditor(control.eventListener, control.columns, control.cellFactory, event.emptyRow, control.columnWidthProperties))
+        }
+        else -> {
+          rowPane.children.forEach {
+            (it as Row<T>).onTableEvent(event)
+          }
+        }
       }
     }
 
@@ -52,12 +60,20 @@ class Rows<T : Any>(
       }
     }
 
+    private val insertRowPane = VBox().apply {
+      cssClassName("rows")
+    }
+
     private val rowPane = VBox().apply {
       cssClassName("rows")
     }
-    
+
+    val all=VBox()
+
     init {
-      children.add(rowPane)
+      all.children.add(insertRowPane)
+      all.children.add(rowPane)
+      children.add(all)
 
       rowPane.children.addListener(ListChangeListener {
         rowPane.children.forEachIndexed { index, node ->
@@ -72,6 +88,8 @@ class Rows<T : Any>(
       rowPane.addEventFilter(MouseEvent.MOUSE_EXITED) {
         control.eventListener.fireEvent(TableEvent.MouseExitRows())
       }
+
+//      insertRowPane.children.add(RowEditor(control.eventListener, control.columns, control.cellFactory, it, control.columnWidthProperties))
     }
   }
 

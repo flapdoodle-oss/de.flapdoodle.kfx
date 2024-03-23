@@ -138,6 +138,18 @@ class Row<T : Any>(
                 insertRowBottomContainer.hide()
               }
             }
+
+            is TableEvent.InsertRow -> {
+              if (event.row == control.value) {
+                when (event.position) {
+                  TableEvent.InsertPosition.ABOVE -> {
+                  }
+                  TableEvent.InsertPosition.BELOW -> {
+                  }
+                }
+                println("$event not implemented...")
+              }
+            }
           }
         }
 

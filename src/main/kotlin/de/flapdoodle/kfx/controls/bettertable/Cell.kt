@@ -3,17 +3,12 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
-import javafx.event.EventHandler
-import javafx.geometry.Pos
 import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.control.SkinBase
-import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.AnchorPane
-import javafx.scene.text.TextAlignment
-import javafx.util.StringConverter
 
 class Cell<T : Any, C : Any>(
   val column: Column<T, C>,
@@ -50,14 +45,13 @@ class Cell<T : Any, C : Any>(
     private val label = Label().apply {
       isWrapText = false
 //      prefWidth = Double.MAX_VALUE
-      alignment = asPosition(control.column.textAlignment)
+      alignment = Cells.asPosition(control.column.textAlignment)
       text = control.column.converter.toString(control.value)
     }
 
-    private val field = createTextField(
-      value = control.value,
+    private val field = Cells.createTextField(value = control.value,
       converter = control.column.converter,
-      commitEdit = {
+      commitEdit = { it: C? ->
         eventListener.fireEvent(TableEvent.CommitChange(control.row, control.column, it))
       },
       cancelEdit = {
@@ -97,15 +91,6 @@ class Cell<T : Any, C : Any>(
 //            hasFocusAfterInitFired = true
 //          }
         }
-      }
-    }
-
-    private fun asPosition(textAlignment: TextAlignment): Pos {
-      return when (textAlignment) {
-        TextAlignment.RIGHT -> Pos.CENTER_RIGHT
-        TextAlignment.LEFT -> Pos.CENTER_LEFT
-        TextAlignment.CENTER -> Pos.CENTER
-        TextAlignment.JUSTIFY -> Pos.CENTER
       }
     }
 
@@ -188,13 +173,7 @@ class Cell<T : Any, C : Any>(
 
         is TableEvent.Blur<T, out Any> -> {
           if (event.row == control.row && event.column == column) {
-            // focus another element to remove focus from this control
-            // TODO blur will refocus on first element
             control.blur()
-//            val temp = Label()
-//            children.add(temp)
-//            temp.requestFocus()
-//            children.remove(temp)
           }
         }
 
@@ -216,24 +195,6 @@ class Cell<T : Any, C : Any>(
       }
     }
 
-//    override fun computeMinWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
-//      return java.lang.Double.max(label.minWidth(height), field.minWidth(height))
-//    }
-//
-//    override fun computeMinHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
-//      return java.lang.Double.max(label.minHeight(width), field.minHeight(width))
-//    }
-
-//    override fun computePrefWidth(height: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
-//      var base = if (label.isVisible) label.prefWidth(height) * 2.0 else field.prefWidth(height)
-//      base = label.prefWidth(height) * 2.0
-//      return base + leftInset + rightInset
-//    }
-
-//    override fun computePrefHeight(width: Double, topInset: Double, rightInset: Double, bottomInset: Double, leftInset: Double): Double {
-//      return java.lang.Double.max(label.prefHeight(width), field.prefHeight(width)) + topInset + bottomInset
-//    }
-
     fun columnSize(): ColumnSize {
       control.applyCss()
 
@@ -248,29 +209,4 @@ class Cell<T : Any, C : Any>(
       return ColumnSize(minWidth, width)
     }
   }
-
-  companion object {
-    fun <T : Any> createTextField(
-      value: T?,
-      converter: StringConverter<T>,
-      commitEdit: (T?) -> Unit,
-      cancelEdit: () -> Unit
-    ): TextField {
-      val textField = TextField()
-      textField.text = converter.toString(value)
-
-      textField.onKeyReleased = EventHandler { t: KeyEvent ->
-        if (t.code == KeyCode.ENTER) {
-          t.consume()
-          commitEdit(converter.fromString(textField.text))
-        }
-        if (t.code == KeyCode.ESCAPE) {
-          t.consume()
-          cancelEdit()
-        }
-      }
-      return textField
-    }
-  }
-
 }

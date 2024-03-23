@@ -9,7 +9,6 @@ class DefaultState<T : Any>(
   private val context: EventContext<T>
 ) : StateWithContext<T>(context) {
   override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
-    println("event: $event")
     when (event) {
       is TableEvent.RequestFocus<T, out Any> -> {
         return FocusState(this, context).onEvent(event)
@@ -32,6 +31,10 @@ class DefaultState<T : Any>(
       }
       is TableEvent.RequestResizeColumn<T, out Any> -> {
         onTableEvent(event.ok())
+      }
+
+      is TableEvent.EmptyRows<T> -> {
+        onTableEvent(TableEvent.InsertFirstRow(context.changeListener.emptyRow(0)))
       }
 
       else -> {

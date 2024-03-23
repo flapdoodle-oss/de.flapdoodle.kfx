@@ -8,6 +8,7 @@ sealed class TableEvent<T: Any> {
 
   sealed class RequestEvent<T: Any>() : TableEvent<T>()
   class MouseExitRows<T: Any>(): RequestEvent<T>()
+  class EmptyRows<T: Any>(): RequestEvent<T>()
 
   sealed class ColumnTriggered<T: Any, C: Any>(open val column: Column<T, C>): RequestEvent<T>()
   data class RequestResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ColumnTriggered<T, C>(column) {
@@ -48,9 +49,11 @@ sealed class TableEvent<T: Any> {
   sealed class ToColumn<T: Any, C: Any>(open val column: Column<T, C>): ResponseEvent<T>()
   data class ResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ToColumn<T, C>(column)
 
-  sealed class ToRow<T: Any>(open val row: T): ResponseEvent<T>()
+  sealed class ToRow<T: Any>(open val row: T?): ResponseEvent<T>()
   data class ShowInsertRow<T: Any>(override val row: T, val position: InsertPosition): ToRow<T>(row)
   data class HideInsertRow<T: Any>(override val row: T): ToRow<T>(row)
+  data class InsertRow<T: Any>(override val row: T, val position: InsertPosition, val emptyRow: T): ToRow<T>(row)
+  data class InsertFirstRow<T: Any>(val emptyRow: T): ResponseEvent<T>()
 
   sealed class ToCell<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): ResponseEvent<T>()
   data class Focus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)

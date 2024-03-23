@@ -83,6 +83,12 @@ class Table<T: Any>(
         eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
       }
     }
+
+    rows.addListener { observable, oldValue, newValue ->
+      if (newValue.isEmpty()) {
+        eventListener.fireEvent(TableEvent.EmptyRows())
+      }
+    }
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {

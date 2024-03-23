@@ -73,10 +73,21 @@ class TableSampler {
         }
 
         override fun removeRow(row: Row) {
-          println("remove $row")
           val list = rows.value
           val index = list.indexOf(row)
           rows.value = list.subList(0, index) + list.subList(index+1, list.size)
+        }
+
+        override fun insertRow(index: Int, row: Row) {
+          val list = rows.value
+          rows.value = list.subList(0, index) + row + list.subList(index, list.size)
+        }
+
+        override fun emptyRow(index: Int): Row {
+          val list = rows.value
+          val before = if (index>0 && index<list.size) list[index-1] else null
+          val after = if (index<list.size) list[index] else null
+          return Row(((before?.age ?: 0) + (after?.age ?: 0)) / 2,null,null)
         }
       }
 
@@ -152,6 +163,14 @@ class TableSampler {
               columns.value = columns.value.subList(0, columns.value.size - 1)
             }
           }
+        }, Button("delete all").apply {
+          onAction = EventHandler {
+            rows.value = emptyList()
+          }
+        }, Button("+").apply {
+          onAction = EventHandler {
+            rows.value = rows.value + Row(rows.value.size + 20, "Peter", 1.78)
+          }
         }).withAnchors(bottom = 0.0)
       )
       stage.scene = Scene(content, 800.0, 600.0)
@@ -162,8 +181,8 @@ class TableSampler {
 
   data class Row(
     val age: Int,
-    val name: String,
-    val size: Double,
+    val name: String?,
+    val size: Double?,
   )
 
   class CustomColumn<C : Any>(

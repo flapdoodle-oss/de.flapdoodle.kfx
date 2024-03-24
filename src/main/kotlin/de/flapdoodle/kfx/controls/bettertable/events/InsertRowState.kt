@@ -5,6 +5,7 @@ class InsertRowState<T : Any>(
   private val context: EventContext<T>
 ) : StateWithContext<T>(context) {
   private lateinit var currentRow: T
+  private var lastFocusEvent: TableEvent.Focus<T, out Any>? = null
 
   override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
     when (event) {
@@ -21,6 +22,18 @@ class InsertRowState<T : Any>(
 //        val changed = changeCell(event.row, event.asCellChange())
 //        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))
       }
+      is TableEvent.EditLostFocus<T, out Any> -> {
+        // ignore
+        lastFocusEvent = null
+      }
+      is TableEvent.HasFocus<T, out Any> -> {
+        lastFocusEvent = event.fakedOk()
+      }
+
+      is TableEvent.RequestResizeColumn<T, out Any> -> {
+        onTableEvent(event.ok())
+      }
+
       else -> {
 //        println("$this: unknown $event")
 //        return defaultState.onEvent(event)

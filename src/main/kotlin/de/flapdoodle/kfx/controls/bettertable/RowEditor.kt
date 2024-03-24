@@ -35,43 +35,41 @@ class RowEditor<T : Any>(
     ObservableLists.syncWith(columns, rowContainer.children) {
       editor(it, value, columnWidthProperties(it)).apply {
 //          property[Row::class] = control
-//        setEventListener(eventListener)
+        // TODO move to constructor
+        setEventListener(eventListener)
       }
     }
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
+    println("row editor event: $event")
     when (event) {
-      is TableEvent.Focus<T, out Any> -> {
-        if (event.row == value) {
-          
-        }
-      }
       else -> {
-        println("ingnore: $event")
+        rowContainer.children.forEach {
+          (it as RowEditorCell<T, out Any>).onTableEvent(event)
+        }
       }
     }
   }
 
-  private fun <C : Any> editor(column: Column<T, C>, row: T, width: ObservableValue<Number>): TextField {
-    val textField = Cells.createTextField(column.property(row), column.converter, commitEdit = { it: C? ->
-      eventListener.fireEvent(TableEvent.CommitChange(row, column, it))
-    },
-      cancelEdit = {
-        eventListener.fireEvent(TableEvent.AbortChange(row, column))
-      }
-    )
+  private fun <C : Any> editor(column: Column<T, C>, row: T, width: ObservableValue<Number>): RowEditorCell<T, C> {
+    val textField = RowEditorCell(column,row,column.property(row))
     textField.prefWidthProperty().bind(width)
     return textField
-//    return cellFactory.cell(c, value).apply {
-//      prefWidthProperty().bind(width)
-//    }
   }
 
   override fun layoutChildren() {
     layoutInArea(rowContainer, insets.left, insets.top, width - insets.left - insets.right, height - insets.top - insets.bottom, -1.0, HPos.LEFT, VPos.TOP)
   }
 
+  fun columnSize(column: Column<T, out Any>): ColumnSize {
+    val cells = rowContainer.children.filter {
+      (it as RowEditorCell<T, out Any>).column == column
+    }
+    require(cells.size==1) { "more or less than one match for: $column in ${rowContainer.children} -> $cells "}
+    val cell = cells[0] as RowEditorCell<T, out Any>
+    return cell.columnSize()
+  }
 
 //  class Skin<T : Any>(
 //    private val control: RowEditor<T>

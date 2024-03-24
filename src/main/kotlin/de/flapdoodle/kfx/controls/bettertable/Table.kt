@@ -2,9 +2,7 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.bettertable.events.*
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.onAttach
+import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
@@ -78,8 +76,16 @@ class Table<T: Any>(
 
     }
 
+//    onBindToParent {
+//      columns.addChangeListener { _, oldValue, newValue ->
+//        Diff.between(oldValue, newValue).added.forEach {
+//          eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
+//        }
+//      }
+//    }
+
     columns.addListener { _, oldValue, newValue ->
-      Diff.between(oldValue,newValue).added.forEach {
+      Diff.between(oldValue, newValue).added.forEach {
         eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
       }
     }

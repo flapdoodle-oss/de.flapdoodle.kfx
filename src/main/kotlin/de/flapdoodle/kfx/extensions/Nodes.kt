@@ -91,6 +91,7 @@ object Nodes {
       }
       if (oldValue!=null && newValue == null) {
         onDetach(result)
+        result=null
       }
     }
     node.sceneProperty().addListener(listener)
@@ -103,6 +104,22 @@ object Nodes {
   class WithOnAttach<T>(val node: Node, val onAttach: () -> T) {
     fun onDetach(onDetach: (T?) -> Unit) {
       onAttachDetach(node, onAttach, onDetach)
+    }
+  }
+
+  fun <T> onBindToParent(node: Node, bind: () -> T, unbind: (T) -> Unit) {
+    var result: T? = null
+    node.parentProperty().addListener { observable, oldValue, newValue ->
+      if (oldValue==null && newValue!=null) {
+        result = bind()
+      }
+      if (oldValue!=null && newValue == null) {
+        val lastResult = result
+        if (lastResult!=null) {
+          unbind(lastResult)
+        }
+        result=null
+      }
     }
   }
 }

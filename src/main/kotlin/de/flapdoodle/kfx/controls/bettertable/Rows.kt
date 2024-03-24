@@ -38,15 +38,18 @@ class Rows<T : Any>(
     private val control: Rows<T>
   ) : SkinBase<Rows<T>>(control) {
 
+    private var rowEditor: RowEditor<T>? = null
+
     internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
       when (event) {
         is TableEvent.InsertFirstRow<T> -> {
-          insertRowPane.children.add(RowEditor(control.eventListener, control.columns, control.cellFactory, event.row, control.columnWidthProperties))
+          require(rowEditor == null) { "rowEditor already set: $rowEditor" }
+          val newEditor = RowEditor(control.eventListener, control.columns, control.cellFactory, event.row, control.columnWidthProperties)
+          rowEditor = newEditor
+          insertRowPane.children.add(newEditor)
         }
         else -> {
-          insertRowPane.children.forEach {
-            (it as RowEditor<T>).onTableEvent(event)
-          }
+          rowEditor?.onTableEvent(event)
           rowPane.children.forEach {
             (it as Row<T>).onTableEvent(event)
           }
@@ -55,9 +58,12 @@ class Rows<T : Any>(
     }
 
     fun columnSize(column: Column<T, out Any>): ColumnSize {
-      return rowPane.children.map {
+      val rowSizes = rowPane.children.map {
         (it as Row<T>).columnSize(column)
-      }.fold(ColumnSize(0.0, 0.0)) { l, r ->
+      }
+      val rowEditorSizes =  rowEditor?.let { listOf(it.columnSize(column)) } ?: emptyList()
+
+      return (rowSizes + rowEditorSizes).fold(ColumnSize(0.0, 0.0)) { l, r ->
         ColumnSize(max(l.min, r.min), max(l.preferred, r.preferred))
       }
     }
@@ -73,9 +79,9 @@ class Rows<T : Any>(
     val all=VBox()
 
     init {
-      all.children.add(insertRowPane)
-      all.children.add(rowPane)
-      children.add(all)
+      rowPane.children.syncWith(control.rows) {
+        Row(control.eventListener, control.columns, control.cellFactory, it, control.columnWidthProperties)
+      }
 
       rowPane.children.addListener(ListChangeListener {
         rowPane.children.forEachIndexed { index, node ->
@@ -83,9 +89,9 @@ class Rows<T : Any>(
         }
       })
 
-      rowPane.children.syncWith(control.rows) {
-        Row(control.eventListener, control.columns, control.cellFactory, it, control.columnWidthProperties)
-      }
+      all.children.add(insertRowPane)
+      all.children.add(rowPane)
+      children.add(all)
 
       rowPane.addEventFilter(MouseEvent.MOUSE_EXITED) {
         control.eventListener.fireEvent(TableEvent.MouseExitRows())

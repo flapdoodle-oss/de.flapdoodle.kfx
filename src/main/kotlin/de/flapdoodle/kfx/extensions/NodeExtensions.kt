@@ -160,6 +160,10 @@ fun Node.unsubscribeOnDetach(action: () -> Subscription) {
   Nodes.unsubscribeOnDetach(this, action)
 }
 
+fun Node.onBindToParent(action: () -> Subscription) {
+  Nodes.onBindToParent(this, action, Subscription::unsubscribe)
+}
+
 fun Node.blur() {
   parent?.requestFocus()
 }

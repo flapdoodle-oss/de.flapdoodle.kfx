@@ -11,10 +11,10 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Region
 
-class Cell<T : Any, C : Any>(
+class RowEditorCell<T : Any, C : Any>(
   val column: Column<T, C>,
-  val row: T,
-  val value: C?
+  var row: T,
+  value: C?
 ) : Region() {
 
   private lateinit var eventListener: TableRequestEventListener<T>
@@ -24,6 +24,7 @@ class Cell<T : Any, C : Any>(
 //      prefWidth = Double.MAX_VALUE
     alignment = Cells.asPosition(column.textAlignment)
     text = column.converter.toString(value)
+    isVisible = !column.editable
   }
 
   private val field = Cells.createTextField(value = value,
@@ -35,8 +36,8 @@ class Cell<T : Any, C : Any>(
       eventListener.fireEvent(TableEvent.AbortChange(row, column))
     }
   ).apply {
-    isVisible = false
-    isEditable = true
+    isVisible = column.editable
+//    isEditable = true
     focusedProperty().addListener { _, old, focused ->
       if (isVisible) {
         if (!focused) {
@@ -60,16 +61,9 @@ class Cell<T : Any, C : Any>(
     wrapper.children.add(label.withAnchors(all = 0.0))
     children.add(wrapper)
 
-    // TODO notwendig?
-//    consumeMouseEvents(false)
-
     focusedProperty().addListener { _, old, focused ->
       if (!old && focused) {
-        // got focus from somewhere
-//          if (!hasFocusAfterInitFired) {
         eventListener.fireEvent(TableEvent.HasFocus(row, column))
-//            hasFocusAfterInitFired = true
-//          }
       }
     }
   }
@@ -100,11 +94,11 @@ class Cell<T : Any, C : Any>(
       if (it.clickCount == 1) {
         eventListener.fireEvent(TableEvent.RequestFocus(row, column))
       }
-      if (it.clickCount == 2) {
-        if (column.editable) {
-          eventListener.fireEvent(TableEvent.RequestEdit(row, column))
-        }
-      }
+//      if (it.clickCount == 2) {
+//        if (column.editable) {
+//          eventListener.fireEvent(TableEvent.RequestEdit(row, column))
+//        }
+//      }
       it.consume()
     }
 
@@ -137,10 +131,10 @@ class Cell<T : Any, C : Any>(
               eventListener.fireEvent(TableEvent.RequestEdit(row, column))
             }
           }
-          if (it.code == KeyCode.DELETE) {
-            it.consume()
-            eventListener.fireEvent(TableEvent.DeleteRow(row))
-          }
+//          if (it.code == KeyCode.DELETE) {
+//            it.consume()
+//            eventListener.fireEvent(TableEvent.DeleteRow(row))
+//          }
         }
       }
     }
@@ -149,9 +143,20 @@ class Cell<T : Any, C : Any>(
 
   fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
     when (event) {
+      is TableEvent.UpdateInsertRow<T> -> {
+        row = event.row
+        val value = column.converter.toString(column.property(row))
+        label.text = value
+        field.text = value
+      }
+
       is TableEvent.Focus<T, out Any> -> {
         if (event.row == row && event.column == column) {
-          requestFocus()
+          if (column.editable) {
+            field.requestFocus()
+          } else {
+            requestFocus()
+          }
         }
       }
 

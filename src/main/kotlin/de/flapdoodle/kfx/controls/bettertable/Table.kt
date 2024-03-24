@@ -20,6 +20,9 @@ class Table<T: Any>(
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : StackLikeRegion() {
 
+  // TODO das ist ein Hack.. eigentlich müsste sich alles erst bei einhängen registrieren und dann beim aushängen entfernen
+  // vielleicht in dem man externe Values auf interne synct und zwar erst beo onAttach?
+  
   private val wrappedColumns: ObservableValue<List<Column<T, out Any>>> = columns.withChangeListenerAlwaysAsLast {
       _, oldValue, newValue ->
     Diff.between(oldValue, newValue).added.forEach {

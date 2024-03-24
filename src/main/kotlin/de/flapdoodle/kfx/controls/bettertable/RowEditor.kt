@@ -4,21 +4,13 @@ import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.hide
-import de.flapdoodle.kfx.extensions.show
 import de.flapdoodle.kfx.layout.StackLikeRegion
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
-import javafx.geometry.HPos
-import javafx.geometry.VPos
-import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Region
 
 class RowEditor<T : Any>(
   internal val eventListener: TableRequestEventListener<T>,
   internal val columns: ObservableValue<List<Column<T, out Any>>>,
-  private val cellFactory: CellFactory<T>,
   internal val value: T,
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : StackLikeRegion() {

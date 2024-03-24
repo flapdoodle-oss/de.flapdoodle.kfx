@@ -8,13 +8,11 @@ import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.geometry.HPos
-import javafx.geometry.VPos
 import javafx.scene.control.ScrollPane
-import javafx.scene.layout.Region
 
 class Table<T: Any>(
   internal val rows: ObservableValue<List<T>>,
-  internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val changeListener: TableChangeListener<T>,
   headerColumnFactory: HeaderColumnFactory<T> = HeaderColumnFactory.Default(),
   cellFactory: CellFactory<T> = CellFactory.Default(),
@@ -22,14 +20,21 @@ class Table<T: Any>(
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : StackLikeRegion() {
 
-  private val eventContext = EventContext(rows,columns,changeListener) {
+  private val wrappedColumns: ObservableValue<List<Column<T, out Any>>> = columns.withChangeListenerAlwaysAsLast {
+      _, oldValue, newValue ->
+    Diff.between(oldValue, newValue).added.forEach {
+      eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
+    }
+  }
+
+  private val eventContext = EventContext(rows,wrappedColumns,changeListener) {
     onTableEvent(it)
   }
   private val eventListener = StateEventListener(stateFactory(eventContext))
 
-  private val header = Header(columns, eventListener, headerColumnFactory)
-  private val _rows = Rows(rows, columns, cellFactory, eventListener, header::columnWidthProperty)
-  private val footer = Footer(columns, header::columnWidthProperty, footerColumnFactory)
+  private val header = Header(wrappedColumns, eventListener, headerColumnFactory)
+  private val _rows = Rows(rows, wrappedColumns, cellFactory, eventListener, header::columnWidthProperty)
+  private val footer = Footer(wrappedColumns, header::columnWidthProperty, footerColumnFactory)
 
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -69,28 +74,20 @@ class Table<T: Any>(
 
     children.add(scroll)
 
-    // TODO nicht ganz klar, warum das bei _rows funktioniert, aber nicht oberhalb
+//    // TODO nicht ganz klar, warum das bei _rows funktioniert, aber nicht oberhalb
     _rows.onAttach {
-      columns.value.forEach {
+      wrappedColumns.value.forEach {
         eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
       }
     }.onDetach {
 
     }
 
-//    onBindToParent {
-//      columns.addChangeListener { _, oldValue, newValue ->
-//        Diff.between(oldValue, newValue).added.forEach {
-//          eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
-//        }
+//    columns.addListener { _, oldValue, newValue ->
+//      Diff.between(oldValue, newValue).added.forEach {
+//        eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
 //      }
 //    }
-
-    columns.addListener { _, oldValue, newValue ->
-      Diff.between(oldValue, newValue).added.forEach {
-        eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
-      }
-    }
 
     rows.addListener { observable, oldValue, newValue ->
       if (newValue.isEmpty()) {

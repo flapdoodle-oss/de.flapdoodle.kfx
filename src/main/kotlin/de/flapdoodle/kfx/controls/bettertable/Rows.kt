@@ -5,7 +5,6 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.ListChangeListener
 import javafx.scene.input.MouseEvent
@@ -58,7 +57,7 @@ class Rows<T : Any>(
     when (event) {
       is TableEvent.InsertFirstRow<T> -> {
         require(rowEditor == null) { "rowEditor already set: $rowEditor" }
-        val newEditor = RowEditor(eventListener, columns, cellFactory, event.row, columnWidthProperties)
+        val newEditor = RowEditor(eventListener, columns, event.row, columnWidthProperties)
         rowEditor = newEditor
         insertRowPane.children.add(newEditor)
       }

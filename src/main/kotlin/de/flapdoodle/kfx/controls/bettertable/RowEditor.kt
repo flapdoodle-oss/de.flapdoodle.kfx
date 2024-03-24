@@ -6,6 +6,7 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
+import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.geometry.HPos
@@ -20,7 +21,7 @@ class RowEditor<T : Any>(
   private val cellFactory: CellFactory<T>,
   internal val value: T,
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
-) : Region() {
+) : StackLikeRegion() {
 
 //  private val skin = Skin(this)
 //  override fun createDefaultSkin() = skin
@@ -58,10 +59,6 @@ class RowEditor<T : Any>(
     return textField
   }
 
-  override fun layoutChildren() {
-    layoutInArea(rowContainer, insets.left, insets.top, width - insets.left - insets.right, height - insets.top - insets.bottom, -1.0, HPos.LEFT, VPos.TOP)
-  }
-
   fun columnSize(column: Column<T, out Any>): ColumnSize {
     val cells = rowContainer.children.filter {
       (it as RowEditorCell<T, out Any>).column == column
@@ -70,9 +67,4 @@ class RowEditor<T : Any>(
     val cell = cells[0] as RowEditorCell<T, out Any>
     return cell.columnSize()
   }
-
-//  class Skin<T : Any>(
-//    private val control: RowEditor<T>
-//  ) : SkinBase<RowEditor<T>>(control) {
-//  }
 }

@@ -12,7 +12,7 @@ import javafx.util.Subscription
 
 object ObservableLists {
 
-  fun <S, T> syncWith(source: ReadOnlyProperty<List<S>>, destination: WritableValue<List<T>>, transformation: (S) -> T): Subscription {
+  fun <S, T> syncWith(source: ObservableValue<List<S>>, destination: WritableValue<List<T>>, transformation: (S) -> T): Subscription {
     destination.value = source.value.map(transformation)
     val listener = List2ListChangeListener(destination, transformation)
     source.addListener(listener)
@@ -21,7 +21,7 @@ object ObservableLists {
     }
   }
 
-  fun <S, T> syncWith(source: ReadOnlyProperty<List<S>>, destination: ObservableList<T>, transformation: (S) -> T): Subscription {
+  fun <S, T> syncWith(source: ObservableValue<List<S>>, destination: ObservableList<T>, transformation: (S) -> T): Subscription {
     destination.setAll(source.value.map(transformation))
     val listener = List2ObservableListChangeListener(destination, transformation)
     source.addListener(listener)

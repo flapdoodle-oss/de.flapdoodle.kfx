@@ -16,7 +16,7 @@ import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 
 class Header<T : Any>(
-  internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  internal val columns: ObservableValue<List<Column<T, out Any>>>,
   private val eventListener: TableRequestEventListener<T>,
   private val headerColumnFactory: HeaderColumnFactory<T>
 ) : StackLikeRegion() {

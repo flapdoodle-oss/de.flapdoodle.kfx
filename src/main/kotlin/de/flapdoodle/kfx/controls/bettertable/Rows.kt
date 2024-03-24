@@ -13,8 +13,8 @@ import javafx.scene.layout.VBox
 import kotlin.math.max
 
 class Rows<T : Any>(
-  private val rows: ReadOnlyObjectProperty<List<T>>,
-  private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  private val rows: ObservableValue<List<T>>,
+  private val columns: ObservableValue<List<Column<T, out Any>>>,
   private val cellFactory: CellFactory<T>,
   private val eventListener: TableRequestEventListener<T>,
   private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>

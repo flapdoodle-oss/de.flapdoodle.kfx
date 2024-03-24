@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox
 
 class Row<T : Any>(
   internal val eventListener: TableRequestEventListener<T>,
-  internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  internal val columns: ObservableValue<List<Column<T, out Any>>>,
   private val cellFactory: CellFactory<T>,
   internal val value: T,
 //  internal val index: Int,

@@ -8,7 +8,7 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.layout.HBox
 
 class Footer<T : Any>(
-  private val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  private val columns: ObservableValue<List<Column<T, out Any>>>,
   private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
   private val footerColumnFactory: FooterColumnFactory<T>?
 ) : StackLikeRegion() {

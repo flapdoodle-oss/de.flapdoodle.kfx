@@ -6,13 +6,14 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.value.ObservableValue
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Region
 
 class Table<T: Any>(
-  internal val rows: ReadOnlyObjectProperty<List<T>>,
+  internal val rows: ObservableValue<List<T>>,
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val changeListener: TableChangeListener<T>,
   headerColumnFactory: HeaderColumnFactory<T> = HeaderColumnFactory.Default(),

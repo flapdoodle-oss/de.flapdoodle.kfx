@@ -23,10 +23,6 @@ class RowEditor<T : Any>(
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : StackLikeRegion() {
 
-//  private val skin = Skin(this)
-//  override fun createDefaultSkin() = skin
-
-
   private val rowContainer = HBox()
 
   init {

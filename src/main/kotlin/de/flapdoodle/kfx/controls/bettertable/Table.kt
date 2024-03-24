@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.bettertable.events.*
 import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.geometry.HPos
@@ -18,7 +19,7 @@ class Table<T: Any>(
   cellFactory: CellFactory<T> = CellFactory.Default(),
   footerColumnFactory: FooterColumnFactory<T> = FooterColumnFactory.Default(),
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
-) : Region() {
+) : StackLikeRegion() {
 
   private val eventContext = EventContext(rows,columns,changeListener) {
     onTableEvent(it)
@@ -111,9 +112,9 @@ class Table<T: Any>(
     }
   }
 
-  override fun layoutChildren() {
-    val contentWidth = width - insets.left - insets.right
-    val contentHeight = height - insets.top - insets.bottom
-    layoutInArea(scroll, insets.left, insets.top, contentWidth, contentHeight, baselineOffset, HPos.CENTER, VPos.CENTER)
-  }
+//  override fun layoutChildren() {
+//    val contentWidth = width - insets.left - insets.right
+//    val contentHeight = height - insets.top - insets.bottom
+//    layoutInArea(scroll, insets.left, insets.top, contentWidth, contentHeight, baselineOffset, HPos.CENTER, VPos.CENTER)
+//  }
 }

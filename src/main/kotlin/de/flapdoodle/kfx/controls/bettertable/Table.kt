@@ -1,18 +1,21 @@
 package de.flapdoodle.kfx.controls.bettertable
 
+import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.bettertable.events.*
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.geometry.HPos
 import javafx.scene.control.ScrollPane
+import javafx.util.Subscription
 
 class Table<T: Any>(
   internal val rows: ObservableValue<List<T>>,
-  columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
+  internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val changeListener: TableChangeListener<T>,
   headerColumnFactory: HeaderColumnFactory<T> = HeaderColumnFactory.Default(),
   cellFactory: CellFactory<T> = CellFactory.Default(),
@@ -20,24 +23,17 @@ class Table<T: Any>(
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : StackLikeRegion() {
 
-  // TODO das ist ein Hack.. eigentlich müsste sich alles erst bei einhängen registrieren und dann beim aushängen entfernen
-  // vielleicht in dem man externe Values auf interne synct und zwar erst beo onAttach?
-  
-  private val wrappedColumns: ObservableValue<List<Column<T, out Any>>> = columns.withChangeListenerAlwaysAsLast {
-      _, oldValue, newValue ->
-    Diff.between(oldValue, newValue).added.forEach {
-      eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
-    }
-  }
+  private val _rows: SimpleObjectProperty<List<T>> = SimpleObjectProperty(emptyList())
+  private val _columns: SimpleObjectProperty<List<Column<T, out Any>>> = SimpleObjectProperty(emptyList())
 
-  private val eventContext = EventContext(rows,wrappedColumns,changeListener) {
+  private val eventContext = EventContext(_rows, _columns, changeListener) {
     onTableEvent(it)
   }
   private val eventListener = StateEventListener(stateFactory(eventContext))
 
-  private val header = Header(wrappedColumns, eventListener, headerColumnFactory)
-  private val _rows = Rows(rows, wrappedColumns, cellFactory, eventListener, header::columnWidthProperty)
-  private val footer = Footer(wrappedColumns, header::columnWidthProperty, footerColumnFactory)
+  private val header = Header(_columns, eventListener, headerColumnFactory)
+  private val __rows = Rows(_rows, _columns, cellFactory, eventListener, header::columnWidthProperty)
+  private val footer = Footer(_columns, header::columnWidthProperty, footerColumnFactory)
 
   private val scroll = ScrollPane().apply {
     hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
@@ -54,7 +50,7 @@ class Table<T: Any>(
     isFocusTraversable = false
     isPannable = true
     isFitToHeight = true
-    content = _rows
+    content = __rows
   }
 
   init {
@@ -77,38 +73,46 @@ class Table<T: Any>(
 
     children.add(scroll)
 
-//    // TODO nicht ganz klar, warum das bei _rows funktioniert, aber nicht oberhalb
-    _rows.onAttach {
-      wrappedColumns.value.forEach {
-        eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
-      }
-    }.onDetach {
-
-    }
-
-//    columns.addListener { _, oldValue, newValue ->
-//      Diff.between(oldValue, newValue).added.forEach {
-//        eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
-//      }
-//    }
-
-    rows.addListener { observable, oldValue, newValue ->
+    _rows.addListener { observable, oldValue, newValue ->
       if (newValue.isEmpty()) {
         eventListener.fireEvent(TableEvent.EmptyRows())
       }
     }
+
+    onBindToScene {
+      val syncColumns = _columns.syncWith(columns) { it }
+      val syncRows = _rows.syncWith(rows) { it }
+      val resizeNewColumns = columns.subscribe { old, new ->
+        Diff.between(old, new).added.forEach {
+          eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
+        }
+      }
+
+      syncColumns
+        .and(syncRows)
+        .and(resizeNewColumns)
+    }
+
+    // TODO onBindToScene wird von oben nach unten propagiert, kann man das beheben?
+    __rows.onBindToScene {
+      _columns.value.forEach {
+        eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
+      }
+      Subscription { /* noop */ }
+    }
+
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
 //    println("table event: $event")
     when (event) {
       is TableEvent.ResizeColumn<T, out Any> -> {
-        val columnSize = _rows.columnSize(event.column)
+        val columnSize = __rows.columnSize(event.column)
 //        val columnSize = _rows.preferredColumnSize(event.column)
         header.setColumnSize(event.column, columnSize)
       }
       else -> {
-        _rows.onTableEvent(event)
+        __rows.onTableEvent(event)
       }
     }
   }

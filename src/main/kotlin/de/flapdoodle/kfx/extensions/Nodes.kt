@@ -107,13 +107,21 @@ object Nodes {
     }
   }
 
-  fun <T> onBindToParent(node: Node, bind: () -> T, unbind: (T) -> Unit) {
+  fun <T> onBindToParent(node: Node, bind: () -> T, unbind: (T) -> Unit): Subscription {
+    return node.parentProperty().subscribe(bindUnbindChangeListener(bind, unbind))
+  }
+
+  fun <T> onBindToScene(node: Node, bind: () -> T, unbind: (T) -> Unit): Subscription {
+    return node.sceneProperty().subscribe(bindUnbindChangeListener(bind, unbind))
+  }
+
+  private fun <P, T> bindUnbindChangeListener(bind: () -> T, unbind: (T) -> Unit): (P?, P?) -> Unit {
     var result: T? = null
-    node.parentProperty().addListener { observable, oldValue, newValue ->
-      if (oldValue==null && newValue!=null) {
+    return { old, new ->
+      if (old==null && new!=null) {
         result = bind()
       }
-      if (oldValue!=null && newValue == null) {
+      if (old!=null && new == null) {
         val lastResult = result
         if (lastResult!=null) {
           unbind(lastResult)

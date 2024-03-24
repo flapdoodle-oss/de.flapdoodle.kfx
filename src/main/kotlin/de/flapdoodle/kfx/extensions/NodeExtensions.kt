@@ -152,6 +152,7 @@ fun Node.sceneToLocal(src: ColoredAngleAtPoint2D?): ColoredAngleAtPoint2D? {
   } else null
 }
 
+@Deprecated("use onBindToScene")
 fun <T> Node.onAttach(action: () -> T): Nodes.WithOnAttach<T> {
   return Nodes.onAttach(this, action)
 }
@@ -160,8 +161,12 @@ fun Node.unsubscribeOnDetach(action: () -> Subscription) {
   Nodes.unsubscribeOnDetach(this, action)
 }
 
-fun Node.onBindToParent(action: () -> Subscription) {
-  Nodes.onBindToParent(this, action, Subscription::unsubscribe)
+fun Node.onBindToParent(action: () -> Subscription): Subscription {
+  return Nodes.onBindToParent(this, action, Subscription::unsubscribe)
+}
+
+fun Node.onBindToScene(action: () -> Subscription): Subscription {
+  return Nodes.onBindToScene(this, action, Subscription::unsubscribe)
 }
 
 fun Node.blur() {

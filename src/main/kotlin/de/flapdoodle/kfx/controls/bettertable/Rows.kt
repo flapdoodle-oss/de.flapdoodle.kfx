@@ -34,6 +34,10 @@ class Rows<T : Any>(
 
   fun columnSize(column: Column<T, out Any>) = skin.columnSize(column)
 
+  override fun layoutChildren() {
+    super.layoutChildren()
+  }
+
   class Skin<T : Any>(
     private val control: Rows<T>
   ) : SkinBase<Rows<T>>(control) {

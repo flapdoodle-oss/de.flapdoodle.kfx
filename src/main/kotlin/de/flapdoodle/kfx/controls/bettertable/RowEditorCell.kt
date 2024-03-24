@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.control.Label
@@ -15,7 +16,7 @@ class RowEditorCell<T : Any, C : Any>(
   val column: Column<T, C>,
   var row: T,
   value: C?
-) : Region() {
+) : StackLikeRegion() {
 
   private lateinit var eventListener: TableRequestEventListener<T>
 
@@ -66,10 +67,6 @@ class RowEditorCell<T : Any, C : Any>(
         eventListener.fireEvent(TableEvent.HasFocus(row, column))
       }
     }
-  }
-
-  override fun layoutChildren() {
-    layoutInArea(wrapper, insets.left, insets.top, width - insets.left - insets.right, height - insets.top - insets.bottom, -1.0, HPos.LEFT, VPos.TOP)
   }
 
   private fun _cancelEdit() {

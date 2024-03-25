@@ -61,6 +61,13 @@ class Rows<T : Any>(
         rowEditor = newEditor
         insertRowPane.children.add(newEditor)
       }
+      is TableEvent.HideInsertFirstRow<T> -> {
+        val oldEditor = rowEditor
+        if (oldEditor != null) {
+          insertRowPane.children.remove(oldEditor)
+        }
+        rowEditor = null
+      }
 
       else -> {
         rowEditor?.onTableEvent(event)

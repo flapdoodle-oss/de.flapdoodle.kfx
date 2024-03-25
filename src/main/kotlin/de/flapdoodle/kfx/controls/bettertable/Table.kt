@@ -76,6 +76,10 @@ class Table<T: Any>(
     _rows.addListener { observable, oldValue, newValue ->
       if (newValue.isEmpty()) {
         eventListener.fireEvent(TableEvent.EmptyRows())
+      } else {
+        if (oldValue.isEmpty()) {
+          eventListener.fireEvent(TableEvent.HasRows())
+        }
       }
     }
 

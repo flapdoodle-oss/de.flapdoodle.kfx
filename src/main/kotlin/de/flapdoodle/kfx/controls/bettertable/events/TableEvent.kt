@@ -8,6 +8,7 @@ sealed class TableEvent<T: Any> {
   sealed class RequestEvent<T: Any>() : TableEvent<T>()
   class MouseExitRows<T: Any>(): RequestEvent<T>()
   class EmptyRows<T: Any>(): RequestEvent<T>()
+  class HasRows<T: Any>(): RequestEvent<T>()
 
   sealed class ColumnTriggered<T: Any, C: Any>(open val column: Column<T, C>): RequestEvent<T>()
   data class RequestResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ColumnTriggered<T, C>(column) {
@@ -37,6 +38,11 @@ sealed class TableEvent<T: Any> {
 
     fun stopEvent() = StopEdit(row,column)
   }
+  data class UpdateChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val value: C?): CellTriggered<T, C>(row, column) {
+    fun asCellChange(): TableChangeListener.CellChange<T, C> {
+      return TableChangeListener.CellChange(column, value)
+    }
+  }
   data class AbortChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column) {
     fun ok() = StopEdit(row,column)
   }
@@ -56,6 +62,7 @@ sealed class TableEvent<T: Any> {
   data class InsertRow<T: Any>(override val row: T, val position: InsertPosition, val emptyRow: T): ToInsertRow<T>(row)
   data class InsertFirstRow<T: Any>(override val row: T): ToInsertRow<T>(row)
   data class UpdateInsertRow<T: Any>(override val row: T): ToInsertRow<T>(row)
+  class HideInsertFirstRow<T: Any>(): ResponseEvent<T>()
 
   sealed class ToCell<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): ResponseEvent<T>()
   data class Focus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)

@@ -9,15 +9,27 @@ class InsertRowState<T : Any>(
 
   override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
     when (event) {
+      is TableEvent.HasRows<T> -> {
+        return defaultState.onEvent(event)
+      }
       is TableEvent.EmptyRows<T> -> {
         currentRow = context.changeListener.emptyRow(0)
         onTableEvent(TableEvent.InsertFirstRow(currentRow))
         onTableEvent(TableEvent.Focus(currentRow, context.columns.value[0]))
       }
-      is TableEvent.CommitChange<T, out Any> -> {
+      is TableEvent.UpdateChange<T, out Any> -> {
         currentRow = changeCell(event.row, event.asCellChange())
         onTableEvent(TableEvent.UpdateInsertRow(currentRow))
-        onTableEvent(TableEvent.Focus(currentRow, event.column))
+//        onTableEvent(TableEvent.Focus(currentRow, event.column))
+//        onTableEvent(event.stopEvent())
+//        val changed = changeCell(event.row, event.asCellChange())
+//        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))
+      }
+      is TableEvent.CommitChange<T, out Any> -> {
+        currentRow = changeCellAndInsertRow(0, event.row, event.asCellChange())
+        return defaultState
+//        onTableEvent(TableEvent.UpdateInsertRow(currentRow))
+//        onTableEvent(TableEvent.Focus(currentRow, event.column))
 //        onTableEvent(event.stopEvent())
 //        val changed = changeCell(event.row, event.asCellChange())
 //        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))

@@ -36,6 +36,14 @@ class DefaultState<T : Any>(
         return InsertRowState(this,context).onEvent(event)
       }
 
+      is TableEvent.HasRows<T> -> {
+        onTableEvent(TableEvent.HideInsertFirstRow())
+      }
+
+      is TableEvent.LostFocus<T, out Any> -> {
+        // just ignore
+      }
+
       else -> {
         throw IllegalArgumentException("not implemented: $event")
       }

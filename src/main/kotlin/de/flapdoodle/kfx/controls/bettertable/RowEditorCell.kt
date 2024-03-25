@@ -124,6 +124,7 @@ class RowEditorCell<T : Any, C : Any>(
       if (!it.isShortcutDown && it.code == KeyCode.TAB) {
         it.consume()
         if (it.eventType == KeyEvent.KEY_RELEASED) {
+          eventListener.fireEvent(TableEvent.UpdateChange(row, column, column.converter.fromString(field.text)))
           eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
         }
       }
@@ -141,22 +142,7 @@ class RowEditorCell<T : Any, C : Any>(
         }
         if (direction != null) {
           it.consume()
-          if (field.isVisible) {
-            // just w
-          } else {
-            eventListener.fireEvent(TableEvent.NextCell(row, column, direction))
-          }
-        } else {
-//          if (it.code == KeyCode.ENTER) {
-//            it.consume()
-//            if (column.editable) {
-//              eventListener.fireEvent(TableEvent.RequestEdit(row, column))
-//            }
-//          }
-//          if (it.code == KeyCode.DELETE) {
-//            it.consume()
-//            eventListener.fireEvent(TableEvent.DeleteRow(row))
-//          }
+          eventListener.fireEvent(TableEvent.NextCell(row, column, direction))
         }
       }
     }

@@ -28,7 +28,9 @@ open class StackLikeRegion : Region() {
 
   final override fun layoutChildren() {
     children.forEach {
-      layoutInArea(it, insets.left, insets.top, width - insets.left - insets.right, height - insets.top - insets.bottom, -1.0, HPos.LEFT, VPos.TOP)
+      if (it.isManaged) {
+        layoutInArea(it, insets.left, insets.top, width - insets.left - insets.right, height - insets.top - insets.bottom, -1.0, HPos.LEFT, VPos.TOP)
+      }
     }
   }
 }

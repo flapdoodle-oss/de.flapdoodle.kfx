@@ -8,7 +8,7 @@ import javafx.scene.control.TextField
 import kotlin.reflect.KClass
 
 class TypedTextField<T: Any>(
-  val type: KClass<out T>
+  val type: KClass<T>
 ) : TextField() {
 
   private val valueProperty = SimpleObjectProperty<T>(null)

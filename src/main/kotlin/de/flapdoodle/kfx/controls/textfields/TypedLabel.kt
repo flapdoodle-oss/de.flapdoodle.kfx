@@ -9,7 +9,7 @@ import javafx.scene.control.Label
 import kotlin.reflect.KClass
 
 class TypedLabel<T: Any>(
-  val type: KClass<out T>
+  val type: KClass<T>
 ) : Label() {
 
   private val converter = Converters.converterFor(type)

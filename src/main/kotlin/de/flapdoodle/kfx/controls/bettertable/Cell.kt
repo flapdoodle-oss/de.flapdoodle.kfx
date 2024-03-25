@@ -186,7 +186,7 @@ class Cell<T : Any, C : Any>(
       }
 
       else -> {
-        println("ignore: $event")
+        println("$this: ignore: $event")
       }
     }
   }

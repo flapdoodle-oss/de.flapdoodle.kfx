@@ -16,9 +16,12 @@ sealed class TableEvent<T: Any> {
   }
 
   sealed class RowTriggered<T: Any>(open val row: T): RequestEvent<T>()
-  data class RequestInsertRow<T: Any>(override val row: T, val position: InsertPosition): RowTriggered<T>(row) {
+  data class MayInsertRow<T: Any>(override val row: T, val position: InsertPosition): RowTriggered<T>(row) {
     fun ok(): ResponseEvent<T> = ShowInsertRow(row, position)
     fun undo(): ResponseEvent<T> = HideInsertRow(row)
+  }
+  data class RequestInsertRow<T: Any>(override val row: T, val position: InsertPosition): RowTriggered<T>(row) {
+    
   }
   data class DeleteRow<T: Any>(override val row: T): RowTriggered<T>(row)
 
@@ -57,11 +60,11 @@ sealed class TableEvent<T: Any> {
   sealed class ToRow<T: Any>(open val row: T): ResponseEvent<T>()
   data class ShowInsertRow<T: Any>(override val row: T, val position: InsertPosition): ToRow<T>(row)
   data class HideInsertRow<T: Any>(override val row: T): ToRow<T>(row)
+  data class InsertRow<T: Any>(override val row: T, val position: InsertPosition, val emptyRow: T): ToRow<T>(row)
+  data class UpdateInsertRow<T: Any>(override val row: T): ToRow<T>(row)
+  data class StopInsertRow<T: Any>(override val row: T): ToRow<T>(row)
 
-  sealed class ToInsertRow<T: Any>(open val row: T): ResponseEvent<T>()
-  data class InsertRow<T: Any>(override val row: T, val position: InsertPosition, val emptyRow: T): ToInsertRow<T>(row)
-  data class InsertFirstRow<T: Any>(override val row: T): ToInsertRow<T>(row)
-  data class UpdateInsertRow<T: Any>(override val row: T): ToInsertRow<T>(row)
+  data class InsertFirstRow<T: Any>(val row: T): ResponseEvent<T>()
   class HideInsertFirstRow<T: Any>(): ResponseEvent<T>()
 
   sealed class ToCell<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): ResponseEvent<T>()

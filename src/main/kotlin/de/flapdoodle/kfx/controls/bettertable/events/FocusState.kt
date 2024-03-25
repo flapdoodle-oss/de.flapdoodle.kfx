@@ -27,7 +27,7 @@ class FocusState<T : Any>(
         return EditState(defaultState, context).onEvent(event)
       }
 
-      is TableEvent.RequestInsertRow<T> -> {
+      is TableEvent.MayInsertRow<T> -> {
         if (event.row != lastFocusEvent?.row) {
           return DelayedState(this) {
             lastFocusEvent?.let {

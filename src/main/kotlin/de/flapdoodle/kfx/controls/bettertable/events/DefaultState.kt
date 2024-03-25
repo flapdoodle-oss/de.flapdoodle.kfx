@@ -17,11 +17,26 @@ class DefaultState<T : Any>(
         return FocusState(this, context).onEvent(event)
       }
 
-      is TableEvent.RequestInsertRow<T> -> {
+      is TableEvent.MayInsertRow<T> -> {
         return DelayedState(this) {
           ShowInsertRowState(this, context).onEvent(event)
         }
       }
+
+      is TableEvent.RequestInsertRow<T> -> {
+        val index = context.rows.value.indexOf(event.row)
+        val insertIndex = index + if (event.position == TableEvent.InsertPosition.BELOW) 1 else 0
+        return InsertRowState(this,context, context.changeListener.emptyRow(insertIndex), insertIndex).onEvent(event)
+      }
+
+      is TableEvent.EmptyRows<T> -> {
+        return InsertRowState(this,context, context.changeListener.emptyRow(0), 0).onEvent(event)
+      }
+
+      is TableEvent.HasRows<T> -> {
+        onTableEvent(TableEvent.HideInsertFirstRow())
+      }
+
       is TableEvent.DeleteRow<T> -> {
         removeRow(event.row)
       }
@@ -30,14 +45,6 @@ class DefaultState<T : Any>(
       }
       is TableEvent.RequestResizeColumn<T, out Any> -> {
         onTableEvent(event.ok())
-      }
-
-      is TableEvent.EmptyRows<T> -> {
-        return InsertRowState(this,context).onEvent(event)
-      }
-
-      is TableEvent.HasRows<T> -> {
-        onTableEvent(TableEvent.HideInsertFirstRow())
       }
 
       is TableEvent.LostFocus<T, out Any> -> {

@@ -114,6 +114,10 @@
     -fx-background-color: -fx-focus-color;
 }
 
+.better-table .rows .row-insert-top:hover, .better-table .rows .row-insert-bottom:hover {
+    -fx-min-height: 8px;
+}
+
 .cell {
     -fx-border-color: rgba(0, 0, 0, 0.1);
     -fx-border-width: 0px  1px 0px 0px;

@@ -19,10 +19,8 @@ abstract class StateWithContext<T: Any>(
     return changed
   }
 
-  protected fun changeCellAndInsertRow(index: Int, row: T, change: TableChangeListener.CellChange<T, out Any>): T {
-    val changed = context.changeListener.changeCell(row, change)
-    context.changeListener.insertRow(index, changed)
-    return changed
+  protected fun insertRow(index: Int, row: T) {
+    context.changeListener.insertRow(index, row)
   }
 
   protected fun removeRow(row: T) {

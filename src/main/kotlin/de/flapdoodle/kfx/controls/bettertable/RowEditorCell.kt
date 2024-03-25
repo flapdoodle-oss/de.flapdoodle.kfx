@@ -4,13 +4,10 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
-import javafx.geometry.HPos
-import javafx.geometry.VPos
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.Region
 
 class RowEditorCell<T : Any, C : Any>(
   val column: Column<T, C>,
@@ -21,6 +18,8 @@ class RowEditorCell<T : Any, C : Any>(
   private lateinit var eventListener: TableRequestEventListener<T>
 
   private val label = Label().apply {
+    isFocusTraversable = true
+
     isWrapText = false
 //      prefWidth = Double.MAX_VALUE
     alignment = Cells.asPosition(column.textAlignment)
@@ -39,13 +38,6 @@ class RowEditorCell<T : Any, C : Any>(
   ).apply {
     isVisible = column.editable
 //    isEditable = true
-    focusedProperty().addListener { _, old, focused ->
-      if (isVisible) {
-        if (!focused) {
-          eventListener.fireEvent(TableEvent.EditLostFocus(row, column))
-        }
-      }
-    }
   }
 
   val wrapper = AnchorPane().apply {
@@ -54,7 +46,8 @@ class RowEditorCell<T : Any, C : Any>(
 
 
   init {
-    isFocusTraversable = true
+    isFocusTraversable = !column.editable
+
     cssClassName("cell")
     Styles.Readonly.set(this, !column.editable)
 
@@ -63,8 +56,18 @@ class RowEditorCell<T : Any, C : Any>(
     children.add(wrapper)
 
     focusedProperty().addListener { _, old, focused ->
-      if (!old && focused) {
-        eventListener.fireEvent(TableEvent.HasFocus(row, column))
+      if (!focused) {
+        eventListener.fireEvent(TableEvent.LostFocus(row, column))
+      }
+    }
+    
+    field.focusedProperty().addListener { _, old, focused ->
+      if (isVisible) {
+        if (!focused) {
+          eventListener.fireEvent(TableEvent.LostFocus(row, column))
+        } else {
+          eventListener.fireEvent(TableEvent.HasFocus(row, column))
+        }
       }
     }
   }
@@ -87,7 +90,8 @@ class RowEditorCell<T : Any, C : Any>(
 
   fun setEventListener(eventListener: TableRequestEventListener<T>) {
     this.eventListener = eventListener
-    addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
+    label.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
+      it.consume()
       if (it.clickCount == 1) {
         eventListener.fireEvent(TableEvent.RequestFocus(row, column))
       }
@@ -96,22 +100,43 @@ class RowEditorCell<T : Any, C : Any>(
 //          eventListener.fireEvent(TableEvent.RequestEdit(row, column))
 //        }
 //      }
-      it.consume()
     }
 
-    addEventFilter(KeyEvent.KEY_RELEASED) {
+//    addEventFilter(KeyEvent.KEY_PRESSED) {
+//      if (!it.isShortcutDown && it.code == KeyCode.TAB) {
+//        it.consume()
+//      }
+//    }
+//    addEventFilter(KeyEvent.KEY_RELEASED) {
+//      if (!it.isShortcutDown && it.code == KeyCode.TAB) {
+//        it.consume()
+//        eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
+//      }
+//    }
+//    field.addEventFilter(KeyEvent.KEY_RELEASED) {
+//      if (!it.isShortcutDown && it.code == KeyCode.TAB) {
+//        it.consume()
+//        println("----------------> field tab released")
+//        eventListener.fireEvent(TableEvent.NextCell(row, column, TableEvent.Direction.NEXT))
+//      }
+//    }
+    field.addEventFilter(KeyEvent.ANY) {
       if (!it.isShortcutDown && it.code == KeyCode.TAB) {
         it.consume()
+        if (it.eventType == KeyEvent.KEY_RELEASED) {
+          eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
+        }
       }
     }
-    addEventHandler(KeyEvent.KEY_RELEASED) {
+    
+    label.addEventHandler(KeyEvent.KEY_RELEASED) {
       if (!it.isShortcutDown) {
         val direction = when (it.code) {
           KeyCode.LEFT -> TableEvent.Direction.LEFT
           KeyCode.RIGHT -> TableEvent.Direction.RIGHT
           KeyCode.UP -> TableEvent.Direction.UP
           KeyCode.DOWN -> TableEvent.Direction.DOWN
-          KeyCode.TAB -> TableEvent.Direction.NEXT
+          KeyCode.TAB -> if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT
           else -> null
         }
         if (direction != null) {
@@ -122,12 +147,12 @@ class RowEditorCell<T : Any, C : Any>(
             eventListener.fireEvent(TableEvent.NextCell(row, column, direction))
           }
         } else {
-          if (it.code == KeyCode.ENTER) {
-            it.consume()
-            if (column.editable) {
-              eventListener.fireEvent(TableEvent.RequestEdit(row, column))
-            }
-          }
+//          if (it.code == KeyCode.ENTER) {
+//            it.consume()
+//            if (column.editable) {
+//              eventListener.fireEvent(TableEvent.RequestEdit(row, column))
+//            }
+//          }
 //          if (it.code == KeyCode.DELETE) {
 //            it.consume()
 //            eventListener.fireEvent(TableEvent.DeleteRow(row))
@@ -163,17 +188,17 @@ class RowEditorCell<T : Any, C : Any>(
         }
       }
 
-      is TableEvent.StartEdit<T, out Any> -> {
-        if (event.row == row && event.column == column) {
-          _startEdit()
-        }
-      }
-
-      is TableEvent.StopEdit<T, out Any> -> {
-        if (event.row == row && event.column == column) {
-          _cancelEdit()
-        }
-      }
+//      is TableEvent.StartEdit<T, out Any> -> {
+//        if (event.row == row && event.column == column) {
+//          _startEdit()
+//        }
+//      }
+//
+//      is TableEvent.StopEdit<T, out Any> -> {
+//        if (event.row == row && event.column == column) {
+//          _cancelEdit()
+//        }
+//      }
 
       else -> {
         println("ignore: $event")

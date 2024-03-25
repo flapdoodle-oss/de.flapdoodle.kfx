@@ -22,12 +22,24 @@ class InsertRowState<T : Any>(
 //        val changed = changeCell(event.row, event.asCellChange())
 //        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))
       }
-      is TableEvent.EditLostFocus<T, out Any> -> {
+      is TableEvent.RequestFocus<T, out Any> -> {
+        require(event.row == currentRow) { "focus for different row: ${event.row} != $currentRow"}
+        lastFocusEvent = event.ok()
+        onTableEvent(event.ok())
+      }
+      is TableEvent.LostFocus<T, out Any> -> {
         // ignore
         lastFocusEvent = null
       }
       is TableEvent.HasFocus<T, out Any> -> {
         lastFocusEvent = event.fakedOk()
+      }
+      is TableEvent.NextCell<T, out Any> -> {
+        val nextEvent = event.asFocusEvent(listOf(currentRow), context.columns.value)
+        if (nextEvent!=null) {
+          lastFocusEvent = nextEvent
+          onTableEvent(nextEvent)
+        }
       }
 
       is TableEvent.RequestResizeColumn<T, out Any> -> {

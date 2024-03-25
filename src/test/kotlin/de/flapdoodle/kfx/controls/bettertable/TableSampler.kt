@@ -200,6 +200,9 @@ class TableSampler {
       } else row
     }
 
+    override fun toString(): String {
+      return "CustomColumn($label)"
+    }
   }
 
   companion object {

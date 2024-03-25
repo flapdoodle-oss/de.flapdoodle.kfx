@@ -31,7 +31,7 @@ class RowEditor<T : Any>(
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
-    println("row editor event: $event")
+//    println("row editor event: $event")
     when (event) {
       else -> {
         rowContainer.children.forEach {

@@ -24,7 +24,7 @@ class EditState<T : Any>(
         onTableEvent(event.ok())
         return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
       }
-      is TableEvent.EditLostFocus<T, out Any> -> {
+      is TableEvent.LostFocus<T, out Any> -> {
         onTableEvent(event.ok())
         return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
       }

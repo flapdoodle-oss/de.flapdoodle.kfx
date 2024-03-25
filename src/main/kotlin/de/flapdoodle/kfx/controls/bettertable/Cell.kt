@@ -4,13 +4,10 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
-import javafx.geometry.HPos
-import javafx.geometry.VPos
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.Region
 
 class Cell<T : Any, C : Any>(
   val column: Column<T, C>,
@@ -41,7 +38,7 @@ class Cell<T : Any, C : Any>(
     focusedProperty().addListener { _, old, focused ->
       if (isVisible) {
         if (!focused) {
-          eventListener.fireEvent(TableEvent.EditLostFocus(row, column))
+          eventListener.fireEvent(TableEvent.LostFocus(row, column))
         }
       }
     }
@@ -105,11 +102,29 @@ class Cell<T : Any, C : Any>(
       it.consume()
     }
 
-    addEventFilter(KeyEvent.KEY_RELEASED) {
+//    addEventFilter(KeyEvent.KEY_RELEASED) {
+//      if (!it.isShortcutDown && it.code == KeyCode.TAB) {
+//        it.consume()
+//      }
+//    }
+    field.addEventFilter(KeyEvent.ANY) {
       if (!it.isShortcutDown && it.code == KeyCode.TAB) {
         it.consume()
+        if (it.eventType == KeyEvent.KEY_RELEASED) {
+          eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
+        }
       }
     }
+
+    addEventFilter(KeyEvent.ANY) {
+      if (!it.isShortcutDown && it.code == KeyCode.TAB) {
+        it.consume()
+        if (it.eventType == KeyEvent.KEY_RELEASED) {
+          eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
+        }
+      }
+    }
+
     addEventHandler(KeyEvent.KEY_RELEASED) {
       if (!it.isShortcutDown) {
         val direction = when (it.code) {
@@ -117,7 +132,7 @@ class Cell<T : Any, C : Any>(
           KeyCode.RIGHT -> TableEvent.Direction.RIGHT
           KeyCode.UP -> TableEvent.Direction.UP
           KeyCode.DOWN -> TableEvent.Direction.DOWN
-          KeyCode.TAB -> TableEvent.Direction.NEXT
+          KeyCode.TAB -> if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT
           else -> null
         }
         if (direction != null) {

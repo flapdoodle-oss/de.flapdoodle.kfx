@@ -4,9 +4,11 @@ class StateEventListener<T: Any>(
   internal val start: State<T>
 ): TableRequestEventListener<T> {
   var current = start
+  val debug = false
   override fun fireEvent(event: TableEvent.RequestEvent<T>) {
-//    println("${current}: $event")
+    if (debug) println("-----------------------------------------")
+    if (debug) println("${current}: $event")
     current = current.onEvent(event)
-//    println("is now: $current")
+    if (debug) println("is now: $current")
   }
 }

@@ -91,10 +91,18 @@ class Table<T: Any>(
           eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
         }
       }
+      val resizeAllColumns = _rows.subscribe { old, new ->
+        if (old.isEmpty() && new.isNotEmpty()) {
+          _columns.value.forEach {
+            eventListener.fireEvent(TableEvent.RequestResizeColumn(it))
+          }
+        }
+      }
 
       syncColumns
         .and(syncRows)
         .and(resizeNewColumns)
+        .and(resizeAllColumns)
     }
 
     // TODO onBindToScene wird von oben nach unten propagiert, kann man das beheben?

@@ -35,8 +35,10 @@ class InsertRowState<T : Any>(
         return defaultState.onEvent(TableEvent.RequestFocus(currentRow, event.column))
       }
       is TableEvent.AbortChange<T, out Any> -> {
-        onTableEvent(TableEvent.StopInsertRow(event.row))
-        return if (reference!=null) defaultState.onEvent(TableEvent.RequestFocus(reference, event.column)) else defaultState
+        if (reference!=null) {
+          onTableEvent(TableEvent.StopInsertRow(event.row))
+          return defaultState.onEvent(TableEvent.RequestFocus(reference, event.column))
+        }
       }
       is TableEvent.RequestFocus<T, out Any> -> {
         if (event.row == currentRow) {

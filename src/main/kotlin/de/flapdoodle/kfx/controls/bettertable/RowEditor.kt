@@ -18,7 +18,7 @@ class RowEditor<T : Any>(
   private val rowContainer = HBox()
 
   init {
-    rowContainer.cssClassName("row")
+    rowContainer.cssClassName("row","row-editor")
     children.add(rowContainer)
 
     ObservableLists.syncWith(columns, rowContainer.children) {

@@ -106,6 +106,14 @@
     -fx-background-color: rgba(0, 0, 0, 0.09);
 }
 
+.better-table .rows .row-editor {
+    -fx-padding: 2px 0px;
+    -fx-background-color: rgba(0, 0, 0, 0.12);
+}
+
+.better-table .rows .row-editor:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.22);
+}
 
 .better-table .rows .row-insert-top, .better-table .rows .row-insert-bottom {
     /*-fx-border-color: red;*/

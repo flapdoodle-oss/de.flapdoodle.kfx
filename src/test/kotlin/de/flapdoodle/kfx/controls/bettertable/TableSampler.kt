@@ -122,7 +122,7 @@ class TableSampler {
               property = { it.name },
               converter = Converters.converterFor(String::class),
               editable = true,
-              setter = { row, v -> row.copy(name = v ?: "") }
+              setter = { row, v -> row.copy(name = v) }
             )
           }
         }, Button("B(r)").apply {
@@ -132,7 +132,7 @@ class TableSampler {
               property = { it.name },
               converter = Converters.converterFor(String::class),
               editable = false,
-              setter = { row, v -> row.copy(name = v ?: "") }
+              setter = { row, v -> row.copy(name = v) }
             )
           }
         }, Button("C").apply {
@@ -142,7 +142,7 @@ class TableSampler {
               property = { it.size },
               converter = Converters.converterFor(Double::class),
               editable = true,
-              setter = { row, v -> row.copy(size = v ?: 1.5) }
+              setter = { row, v -> row.copy(size = v) }
             )
           }
         }, Button("C(r)").apply {

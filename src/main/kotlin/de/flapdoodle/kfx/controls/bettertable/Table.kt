@@ -99,6 +99,10 @@ class Table<T: Any>(
         }
       }
 
+      if (_rows.value.isEmpty()) {
+        eventListener.fireEvent(TableEvent.EmptyRows())
+      }
+
       syncColumns
         .and(syncRows)
         .and(resizeNewColumns)

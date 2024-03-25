@@ -52,6 +52,10 @@ class TableSampler {
         )
       )
 
+      if (false) {
+        rows.value = emptyList()
+      }
+
       val changeListener = object : TableChangeListener<Row> {
         override fun changeCell(row: Row, change: TableChangeListener.CellChange<Row, out Any>): Row {
           println("change: $row -> $change")

@@ -153,6 +153,10 @@ class Cell<T : Any, C : Any>(
             it.consume()
             eventListener.fireEvent(TableEvent.DeleteRow(row))
           }
+          if (it.code == KeyCode.INSERT) {
+            it.consume()
+            eventListener.fireEvent(TableEvent.RequestInsertRow(row, if (it.isShiftDown) TableEvent.InsertPosition.ABOVE else TableEvent.InsertPosition.BELOW))
+          }
         }
       }
     }

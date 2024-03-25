@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.bettertable.events
 class InsertRowState<T : Any>(
   private val defaultState: State<T>,
   private val context: EventContext<T>,
+  private val reference: T?,
   private val row: T,
   private val insertIndex: Int
 ) : StateWithContext<T>(context) {
@@ -25,29 +26,19 @@ class InsertRowState<T : Any>(
       is TableEvent.UpdateChange<T, out Any> -> {
         currentRow = changeCell(event.row, event.asCellChange())
         onTableEvent(TableEvent.UpdateInsertRow(currentRow))
-//        onTableEvent(TableEvent.Focus(currentRow, event.column))
-//        onTableEvent(event.stopEvent())
-//        val changed = changeCell(event.row, event.asCellChange())
-//        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))
       }
       is TableEvent.CommitChange<T, out Any> -> {
         currentRow = changeCell(event.row, event.asCellChange())
         onTableEvent(TableEvent.UpdateInsertRow(currentRow))
         onTableEvent(TableEvent.StopInsertRow(currentRow))
         insertRow(insertIndex, currentRow)
-        return defaultState
-//        onTableEvent(TableEvent.UpdateInsertRow(currentRow))
-//        onTableEvent(TableEvent.Focus(currentRow, event.column))
-//        onTableEvent(event.stopEvent())
-//        val changed = changeCell(event.row, event.asCellChange())
-//        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed, event.column))
+        return defaultState.onEvent(TableEvent.RequestFocus(currentRow, event.column))
       }
       is TableEvent.AbortChange<T, out Any> -> {
         onTableEvent(TableEvent.StopInsertRow(event.row))
-        return defaultState
+        return if (reference!=null) defaultState.onEvent(TableEvent.RequestFocus(reference, event.column)) else defaultState
       }
       is TableEvent.RequestFocus<T, out Any> -> {
-//        require(event.row == currentRow) { "focus for different row: ${event.row} != $currentRow"}
         if (event.row == currentRow) {
           lastFocusEvent = event.ok()
           onTableEvent(event.ok())

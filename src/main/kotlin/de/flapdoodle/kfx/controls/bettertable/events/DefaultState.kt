@@ -26,11 +26,11 @@ class DefaultState<T : Any>(
       is TableEvent.RequestInsertRow<T> -> {
         val index = context.rows.value.indexOf(event.row)
         val insertIndex = index + if (event.position == TableEvent.InsertPosition.BELOW) 1 else 0
-        return InsertRowState(this,context, context.changeListener.emptyRow(insertIndex), insertIndex).onEvent(event)
+        return InsertRowState(this,context, event.row, context.changeListener.emptyRow(insertIndex), insertIndex).onEvent(event)
       }
 
       is TableEvent.EmptyRows<T> -> {
-        return InsertRowState(this,context, context.changeListener.emptyRow(0), 0).onEvent(event)
+        return InsertRowState(this,context, null, context.changeListener.emptyRow(0), 0).onEvent(event)
       }
 
       is TableEvent.HasRows<T> -> {

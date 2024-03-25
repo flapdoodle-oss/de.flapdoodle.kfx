@@ -83,9 +83,10 @@ class TableSampler {
           rows.value = list.subList(0, index) + list.subList(index+1, list.size)
         }
 
-        override fun insertRow(index: Int, row: Row) {
+        override fun insertRow(index: Int, row: Row): Boolean {
           val list = rows.value
           rows.value = list.subList(0, index) + row + list.subList(index, list.size)
+          return true
         }
 
         override fun emptyRow(index: Int): Row {

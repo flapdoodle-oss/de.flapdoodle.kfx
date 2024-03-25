@@ -19,8 +19,8 @@ abstract class StateWithContext<T: Any>(
     return changed
   }
 
-  protected fun insertRow(index: Int, row: T) {
-    context.changeListener.insertRow(index, row)
+  protected fun insertRow(index: Int, row: T): Boolean {
+    return context.changeListener.insertRow(index, row)
   }
 
   protected fun removeRow(row: T) {

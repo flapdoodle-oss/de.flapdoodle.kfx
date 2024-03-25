@@ -31,8 +31,9 @@ class InsertRowState<T : Any>(
         currentRow = changeCell(event.row, event.asCellChange())
         onTableEvent(TableEvent.UpdateInsertRow(currentRow))
         onTableEvent(TableEvent.StopInsertRow(currentRow))
-        insertRow(insertIndex, currentRow)
-        return defaultState.onEvent(TableEvent.RequestFocus(currentRow, event.column))
+        if (insertRow(insertIndex, currentRow)) {
+          return defaultState.onEvent(TableEvent.RequestFocus(currentRow, event.column))
+        }
       }
       is TableEvent.AbortChange<T, out Any> -> {
         if (reference!=null) {

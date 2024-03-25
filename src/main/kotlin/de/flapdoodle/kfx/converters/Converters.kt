@@ -20,7 +20,7 @@ import java.time.LocalTime
 import kotlin.reflect.KClass
 
 object Converters {
-  fun <S : Any> converterFor(s: KClass<S>): StringConverter<S> {
+  fun <S : Any> converterFor(s: KClass<out S>): StringConverter<S> {
     @Suppress("UNCHECKED_CAST")
     return when (s.javaPrimitiveType ?: s) {
       Int::class -> IntegerStringConverter() as StringConverter<S>

@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.grapheditor
 import de.flapdoodle.kfx.controls.bettertable.Column
 import de.flapdoodle.kfx.controls.bettertable.Table
 import de.flapdoodle.kfx.controls.bettertable.TableChangeListener
+import de.flapdoodle.kfx.controls.bettertable.TableFactory
 import de.flapdoodle.kfx.controls.bettertable.events.ReadOnlyState
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
 import de.flapdoodle.kfx.controls.grapheditor.events.EventListener
@@ -39,7 +40,7 @@ class GraphEditorSampler {
 
       val vertexOne = Vertex("one").apply {
         layoutPosition = Point2D(100.0, 50.0)
-        content = dummyTable()
+        content = TableFactory.table()
         addConnector(slotInA)
         addConnector(slotOutX)
         addConnector(slotOutY)
@@ -136,45 +137,7 @@ class GraphEditorSampler {
       stage.scene = Scene(wrapper, 600.0, 400.0)
       stage.show()
     }
-
-    private fun dummyTable(): Node {
-      val row = SimpleObjectProperty(listOf(
-        TableRow("Klaus", 22),
-        TableRow("Susi", 34),
-        TableRow("Peter", 40),
-      ))
-      val columns = SimpleObjectProperty<List<Column<TableRow, out Any>>>(listOf(
-        Column("Name",TableRow::name, Converters.converterFor(String::class), false),
-        Column("Age",TableRow::age, Converters.converterFor(Int::class), false)
-      ))
-      val changeListener = object: TableChangeListener<TableRow> {
-        override fun changeCell(row: TableRow, change: TableChangeListener.CellChange<TableRow, out Any>): TableRow {
-          TODO("Not yet implemented")
-        }
-
-        override fun updateRow(row: TableRow, changed: TableRow) {
-          TODO("Not yet implemented")
-        }
-
-        override fun removeRow(row: TableRow) {
-          TODO("Not yet implemented")
-        }
-
-        override fun insertRow(index: Int, row: TableRow): Boolean {
-          TODO("Not yet implemented")
-        }
-
-        override fun emptyRow(index: Int): TableRow {
-          return TableRow(null, null)
-        }
-
-      }
-      return Table(row, columns, changeListener, stateFactory = { ReadOnlyState(it) })
-    }
-
   }
-
-  data class TableRow(val name: String?, val age: Int?)
 
   companion object {
     @JvmStatic

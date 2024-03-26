@@ -19,12 +19,15 @@ package de.flapdoodle.kfx.layout.grid
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.geometry.HPos
+import javafx.geometry.Insets
 import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.Border
 import javafx.scene.layout.Region
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 
 class WeightGridPaneSampler {
@@ -32,6 +35,8 @@ class WeightGridPaneSampler {
 
     override fun start(stage: Stage) {
       stage.scene = Scene(WeightGridPane().apply {
+        padding = Insets(60.0)
+
         verticalSpace.set(10.0)
         horizontalSpace.set(20.0)
 

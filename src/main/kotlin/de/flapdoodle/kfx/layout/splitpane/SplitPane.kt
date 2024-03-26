@@ -305,7 +305,10 @@ class SplitPane<T : Node>(
       } else if (preferred < minWidth) {
         minWidth - width
       } else {
-        preferred - width
+        if (preferred > width)
+            preferred - width
+        else
+          0.0
       }
     }
 

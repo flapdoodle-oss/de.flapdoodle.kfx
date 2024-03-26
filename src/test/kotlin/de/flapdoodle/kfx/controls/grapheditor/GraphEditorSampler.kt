@@ -40,7 +40,10 @@ class GraphEditorSampler {
 
       val vertexOne = Vertex("one").apply {
         layoutPosition = Point2D(100.0, 50.0)
-        content = TableFactory.table()
+        content = TableFactory.table().apply {
+          minWidth = 50.0
+          minHeight = 50.0
+        }
         addConnector(slotInA)
         addConnector(slotOutX)
         addConnector(slotOutY)

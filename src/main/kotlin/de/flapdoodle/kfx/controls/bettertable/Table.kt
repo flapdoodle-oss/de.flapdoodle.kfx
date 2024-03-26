@@ -54,6 +54,7 @@ class Table<T: Any>(
   }
 
   init {
+    isFocusTraversable = false
     bindCss("better-table")
     val content = WeightGridPane().apply {
       setRowWeight(0, 0.0)

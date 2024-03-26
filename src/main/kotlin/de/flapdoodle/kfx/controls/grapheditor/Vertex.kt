@@ -44,12 +44,6 @@ class Vertex(
     }
   }
 
-  private object Style {
-    val Focused = PseudoClassWrapper<Vertex>(PseudoClass.getPseudoClass("focused"))
-//    val Active = PseudoClassWrapper<Vertex>(PseudoClass.getPseudoClass("active"))
-    val Selected = PseudoClassWrapper<Vertex>(PseudoClass.getPseudoClass("selected"))
-  }
-
   private val contentWrapper=StackPane()
   private val _content=NodeContainerProperty.of<javafx.scene.Node>("content", contentWrapper::getChildren)
   private val connectors = FXCollections.observableArrayList<Slot>()
@@ -83,7 +77,7 @@ class Vertex(
     bottom = SlotsPane(registry, vertexId, connectors, Position.BOTTOM)
 
     selected.subscribe { it ->
-      if (it) Style.Selected.enable(this) else Style.Selected.disable(this)
+      Styles.Selected.set(this, it)
     }
   }
 
@@ -121,7 +115,7 @@ class Vertex(
 
   class NodeHeader(label: String) : HBox() {
     init {
-      styleClass.addAll("header")
+      styleClass.addAll("vertex-header")
       isMouseTransparent = false
 //      background = Background(BackgroundFill(Color.GREY, CornerRadii(2.0), Insets(1.0)))
       children.add(Label(label).apply {
@@ -151,15 +145,15 @@ class Vertex(
   }
 
   fun focused(): Boolean {
-    return Style.Focused.enabled(this)
+    return Styles.Focused.enabled(this)
   }
 
   fun focus() {
-    Style.Focused.enable(this)
+    Styles.Focused.enable(this)
   }
 
   fun blur() {
-    Style.Focused.disable(this)
+    Styles.Focused.disable(this)
   }
 
 

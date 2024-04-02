@@ -2,8 +2,12 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
+import de.flapdoodle.kfx.controls.bettertable.fields.DefaultFieldFactoryLookup
+import de.flapdoodle.kfx.controls.bettertable.fields.FieldFactoryLookup
+import de.flapdoodle.kfx.controls.bettertable.fields.FieldWrapper
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
+import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -12,7 +16,8 @@ import javafx.scene.layout.AnchorPane
 class Cell<T : Any, C : Any>(
   val column: Column<T, C>,
   val row: T,
-  val value: C?
+  val value: C?,
+  private val fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup
 ) : StackLikeRegion() {
 
   private lateinit var eventListener: TableRequestEventListener<T>
@@ -21,28 +26,28 @@ class Cell<T : Any, C : Any>(
     isWrapText = false
 //      prefWidth = Double.MAX_VALUE
     alignment = Cells.asPosition(column.textAlignment)
-    text = column.converter.toString(value)
+    text = column.property.converter.toString(value)
   }
 
-  private val field = Cells.createTextField(value = value,
-    converter = column.converter,
-    commitEdit = { it: C? ->
-      eventListener.fireEvent(TableEvent.CommitChange(row, column, it))
-    },
-    cancelEdit = {
-      eventListener.fireEvent(TableEvent.AbortChange(row, column))
-    }
-  ).apply {
-    isVisible = false
-    isEditable = true
-    focusedProperty().addListener { _, old, focused ->
-      if (isVisible) {
-        if (!focused) {
-          eventListener.fireEvent(TableEvent.LostFocus(row, column))
+  private val field = fieldFactoryLookup.fieldFactory(column.property.type)
+    .inputFor(value = value,
+      commitEdit = { it: C? ->
+        eventListener.fireEvent(TableEvent.CommitChange(row, column, it))
+      },
+      cancelEdit = {
+        eventListener.fireEvent(TableEvent.AbortChange(row, column))
+      }
+    ).apply {
+      isVisible = false
+//      isEditable = true
+      control.focusedProperty().addListener { _, old, focused ->
+        if (isVisible) {
+          if (!focused) {
+            eventListener.fireEvent(TableEvent.LostFocus(row, column))
+          }
         }
       }
     }
-  }
 
   val wrapper = AnchorPane().apply {
     cssClassName("background")
@@ -84,7 +89,7 @@ class Cell<T : Any, C : Any>(
     if (column.editable) {
       label.hide()
       field.show()
-      field.requestFocus()
+      field.control.requestFocus()
     }
   }
 

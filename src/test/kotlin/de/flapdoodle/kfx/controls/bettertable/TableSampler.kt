@@ -33,8 +33,7 @@ class TableSampler {
           onAction = EventHandler {
             columns.value += TableFactory.CustomColumn(
               label = "Name",
-              property = { it.name },
-              converter = Converters.converterFor(String::class),
+              property = ColumnProperty(String::class, { it.name }),
               editable = true,
               setter = { row, v -> row.copy(name = v) }
             )
@@ -43,8 +42,7 @@ class TableSampler {
           onAction = EventHandler {
             columns.value += TableFactory.CustomColumn(
               label = "Name*",
-              property = { it.name },
-              converter = Converters.converterFor(String::class),
+              property = ColumnProperty(String::class, { it.name }),
               editable = false,
               setter = { row, v -> row.copy(name = v) }
             )
@@ -53,8 +51,7 @@ class TableSampler {
           onAction = EventHandler {
             columns.value += TableFactory.CustomColumn(
               label = "Size",
-              property = { it.size },
-              converter = Converters.converterFor(Double::class),
+              property = ColumnProperty(Double::class, { it.size }),
               editable = true,
               setter = { row, v -> row.copy(size = v) }
             )
@@ -63,8 +60,7 @@ class TableSampler {
           onAction = EventHandler {
             columns.value += Column(
               label = "Size*",
-              property = { it.size },
-              converter = Converters.converterFor(Double::class),
+              property = ColumnProperty<TableFactory.Row, Double>(Double::class, { it.size }),
               editable = false
             )
           }

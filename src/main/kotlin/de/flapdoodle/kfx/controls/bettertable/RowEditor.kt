@@ -42,7 +42,7 @@ class RowEditor<T : Any>(
   }
 
   private fun <C : Any> editor(column: Column<T, C>, row: T, width: ObservableValue<Number>): RowEditorCell<T, C> {
-    val textField = RowEditorCell(column,row,column.property(row))
+    val textField = RowEditorCell(column,row,column.property.getter(row))
     textField.prefWidthProperty().bind(width)
     return textField
   }

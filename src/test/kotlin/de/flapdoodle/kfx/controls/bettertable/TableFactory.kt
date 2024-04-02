@@ -36,8 +36,7 @@ object TableFactory {
       listOf(
         CustomColumn(
           label = "Age",
-          property = { it.age },
-          converter = Converters.converterFor(Int::class),
+          property = ColumnProperty(Int::class, { it.age }),
           editable = true,
           setter = { row, v -> row.copy(age = v ?: 0) },
         )
@@ -51,22 +50,19 @@ object TableFactory {
       listOf(
         CustomColumn(
           label = "Age",
-          property = { it.age },
-          converter = Converters.converterFor(Int::class),
+          property = ColumnProperty(Int::class, { it.age }),
           editable = true,
           setter = { row, v -> row.copy(age = v ?: 0) },
         ),
         CustomColumn(
           label = "Age",
-          property = { it.name },
-          converter = Converters.converterFor(String::class),
+          property = ColumnProperty(String::class, { it.name }),
           editable = true,
           setter = { row, v -> row.copy(name = v) },
         ),
         CustomColumn(
           label = "Size",
-          property = { it.size },
-          converter = Converters.converterFor(Double::class),
+          property = ColumnProperty(Double::class, { it.size }),
           editable = true,
           setter = { row, v -> row.copy(size = v) },
         )
@@ -187,12 +183,13 @@ object TableFactory {
 
   class CustomColumn<C : Any>(
     override val label: String,
-    override val property: (Row) -> C?,
-    override val converter: StringConverter<C>,
+    override val property: ColumnProperty<Row, C>,
+//    override val property: (Row) -> C?,
+//    override val converter: StringConverter<C>,
     override val editable: Boolean,
     override val textAlignment: TextAlignment = TextAlignment.LEFT,
     val setter: (Row, C?) -> Row
-  ) : Column<Row, C>(label, property, converter, editable, textAlignment) {
+  ) : Column<Row, C>(label, property, editable, textAlignment) {
     fun change(row: Row, change: TableChangeListener.CellChange<Row, out Any>): Row {
       return if (change.column == this) {
         setter(row, change.value as C?)

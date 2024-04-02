@@ -5,8 +5,7 @@ import javafx.util.StringConverter
 
 open class Column<T: Any, C: Any>(
   open val label: String,
-  open val property: (T) -> C?,
-  open val converter: StringConverter<C>,
+  open val property: ColumnProperty<T, C>,
   open val editable: Boolean,
   open val textAlignment: TextAlignment = TextAlignment.LEFT
 )

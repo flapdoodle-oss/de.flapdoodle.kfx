@@ -23,12 +23,12 @@ class RowEditorCell<T : Any, C : Any>(
     isWrapText = false
 //      prefWidth = Double.MAX_VALUE
     alignment = Cells.asPosition(column.textAlignment)
-    text = column.converter.toString(value)
+    text = column.property.converter.toString(value)
     isVisible = !column.editable
   }
 
   private val field = Cells.createTextField(value = value,
-    converter = column.converter,
+    converter = column.property.converter,
     commitEdit = { it: C? ->
       eventListener.fireEvent(TableEvent.CommitChange(row, column, it))
     },
@@ -124,7 +124,7 @@ class RowEditorCell<T : Any, C : Any>(
       if (!it.isShortcutDown && it.code == KeyCode.TAB) {
         it.consume()
         if (it.eventType == KeyEvent.KEY_RELEASED) {
-          eventListener.fireEvent(TableEvent.UpdateChange(row, column, column.converter.fromString(field.text)))
+          eventListener.fireEvent(TableEvent.UpdateChange(row, column, column.property.converter.fromString(field.text)))
           eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
         }
       }
@@ -153,7 +153,7 @@ class RowEditorCell<T : Any, C : Any>(
     when (event) {
       is TableEvent.UpdateInsertRow<T> -> {
         row = event.row
-        val value = column.converter.toString(column.property(row))
+        val value = column.property.converter.toString(column.property.getter(row))
         label.text = value
         field.text = value
       }

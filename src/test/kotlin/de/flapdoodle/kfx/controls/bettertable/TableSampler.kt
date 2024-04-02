@@ -13,6 +13,7 @@ import javafx.scene.control.SplitPane
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
+import java.time.LocalDate
 
 class TableSampler {
   class Sample : Application() {
@@ -62,6 +63,15 @@ class TableSampler {
               label = "Size*",
               property = ColumnProperty<TableFactory.Row, Double>(Double::class, { it.size }),
               editable = false
+            )
+          }
+        }, Button("D").apply {
+          onAction = EventHandler {
+            columns.value += TableFactory.CustomColumn(
+              label = "BDay",
+              property = ColumnProperty(LocalDate::class, { it.birthDay }),
+              editable = true,
+              setter = { row, v -> row.copy(birthDay = v) }
             )
           }
         }, Button("toggle").apply {

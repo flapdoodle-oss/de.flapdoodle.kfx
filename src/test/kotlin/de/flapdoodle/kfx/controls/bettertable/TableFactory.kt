@@ -13,6 +13,7 @@ import javafx.scene.layout.CornerRadii
 import javafx.scene.paint.Color
 import javafx.scene.text.TextAlignment
 import javafx.util.StringConverter
+import java.time.LocalDate
 
 object TableFactory {
 
@@ -20,7 +21,7 @@ object TableFactory {
     val rows = SimpleObjectProperty(
       listOf(
         Row(20, "Klaus", 1.89),
-        Row(30, "Susi", 1.79),
+        Row(30, "Susi", 1.79, LocalDate.now()),
         Row(28, "Peter", 1.67),
         Row(17, "Claudia", 1.93),
         Row(19, "Joane", 1.88),
@@ -65,6 +66,12 @@ object TableFactory {
           property = ColumnProperty(Double::class, { it.size }),
           editable = true,
           setter = { row, v -> row.copy(size = v) },
+        ),
+        CustomColumn(
+          label = "Birthday",
+          property = ColumnProperty(LocalDate::class, { it.birthDay }),
+          editable = true,
+          setter = { row, v -> row.copy(birthDay = v) },
         )
       )
     )
@@ -179,6 +186,7 @@ object TableFactory {
     val age: Int,
     val name: String?,
     val size: Double?,
+    val birthDay: LocalDate? = null
   )
 
   class CustomColumn<C : Any>(

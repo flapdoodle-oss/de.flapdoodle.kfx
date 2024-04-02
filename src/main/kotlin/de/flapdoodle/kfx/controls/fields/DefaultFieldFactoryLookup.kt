@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.bettertable.fields
+package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.converters.Converters
 import java.time.LocalDate

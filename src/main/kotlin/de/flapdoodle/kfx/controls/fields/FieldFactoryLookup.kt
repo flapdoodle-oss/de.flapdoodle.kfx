@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.bettertable.fields
+package de.flapdoodle.kfx.controls.fields
 
 import kotlin.reflect.KClass
 

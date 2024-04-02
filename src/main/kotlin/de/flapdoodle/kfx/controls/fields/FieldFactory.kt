@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.bettertable.fields
+package de.flapdoodle.kfx.controls.fields
 
 import javafx.scene.control.Control
 
@@ -7,5 +7,5 @@ interface FieldFactory<T: Any> {
     value: T?,
     commitEdit: (T?) -> Unit,
     cancelEdit: () -> Unit
-  ): FieldWrapper<out Control>
+  ): FieldWrapper<T, out Control>
 }

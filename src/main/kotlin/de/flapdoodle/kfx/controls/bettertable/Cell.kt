@@ -2,9 +2,9 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
-import de.flapdoodle.kfx.controls.bettertable.fields.DefaultFieldFactoryLookup
-import de.flapdoodle.kfx.controls.bettertable.fields.FieldFactoryLookup
-import de.flapdoodle.kfx.controls.bettertable.fields.FieldWrapper
+import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
+import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
+import de.flapdoodle.kfx.controls.fields.FieldWrapper
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.scene.control.Control
@@ -17,7 +17,7 @@ class Cell<T : Any, C : Any>(
   val column: Column<T, C>,
   val row: T,
   val value: C?,
-  private val fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup
+  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup
 ) : StackLikeRegion() {
 
   private lateinit var eventListener: TableRequestEventListener<T>
@@ -81,7 +81,8 @@ class Cell<T : Any, C : Any>(
     if (column.editable) {
       label.show()
       field.hide()
-      field.text = label.text
+//      field.text = label.text
+      field.value = value
     }
   }
 
@@ -131,7 +132,8 @@ class Cell<T : Any, C : Any>(
     }
 
     addEventHandler(KeyEvent.KEY_RELEASED) {
-      if (!it.isShortcutDown) {
+      // with datepicker events for datepicker apears here, don't know why
+      if (!it.isShortcutDown && it.target == this) {
         val direction = when (it.code) {
           KeyCode.LEFT -> TableEvent.Direction.LEFT
           KeyCode.RIGHT -> TableEvent.Direction.RIGHT

@@ -2,6 +2,8 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
+import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
+import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.scene.control.Label
@@ -12,7 +14,8 @@ import javafx.scene.layout.AnchorPane
 class RowEditorCell<T : Any, C : Any>(
   val column: Column<T, C>,
   var row: T,
-  value: C?
+  var value: C?,
+  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup
 ) : StackLikeRegion() {
 
   private lateinit var eventListener: TableRequestEventListener<T>
@@ -27,8 +30,7 @@ class RowEditorCell<T : Any, C : Any>(
     isVisible = !column.editable
   }
 
-  private val field = Cells.createTextField(value = value,
-    converter = column.property.converter,
+  private val field = fieldFactoryLookup.fieldFactory(column.property.type).inputFor(value = value,
     commitEdit = { it: C? ->
       eventListener.fireEvent(TableEvent.CommitChange(row, column, it))
     },
@@ -72,22 +74,6 @@ class RowEditorCell<T : Any, C : Any>(
     }
   }
 
-  private fun _cancelEdit() {
-    if (column.editable) {
-      label.show()
-      field.hide()
-      field.text = label.text
-    }
-  }
-
-  private fun _startEdit() {
-    if (column.editable) {
-      label.hide()
-      field.show()
-      field.requestFocus()
-    }
-  }
-
   fun setEventListener(eventListener: TableRequestEventListener<T>) {
     this.eventListener = eventListener
     label.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
@@ -120,11 +106,11 @@ class RowEditorCell<T : Any, C : Any>(
 //        eventListener.fireEvent(TableEvent.NextCell(row, column, TableEvent.Direction.NEXT))
 //      }
 //    }
-    field.addEventFilter(KeyEvent.ANY) {
+    field.control.addEventFilter(KeyEvent.ANY) {
       if (!it.isShortcutDown && it.code == KeyCode.TAB) {
         it.consume()
         if (it.eventType == KeyEvent.KEY_RELEASED) {
-          eventListener.fireEvent(TableEvent.UpdateChange(row, column, column.property.converter.fromString(field.text)))
+          eventListener.fireEvent(TableEvent.UpdateChange(row, column, field.value))
           eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
         }
       }
@@ -153,15 +139,15 @@ class RowEditorCell<T : Any, C : Any>(
     when (event) {
       is TableEvent.UpdateInsertRow<T> -> {
         row = event.row
-        val value = column.property.converter.toString(column.property.getter(row))
-        label.text = value
-        field.text = value
+        value = column.property.getter(row)
+        label.text = column.property.converter.toString(value)
+        field.value = value
       }
 
       is TableEvent.Focus<T, out Any> -> {
         if (event.row == row && event.column == column) {
           if (column.editable) {
-            field.requestFocus()
+            field.control.requestFocus()
           } else {
             requestFocus()
           }

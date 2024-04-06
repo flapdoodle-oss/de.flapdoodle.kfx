@@ -129,6 +129,8 @@
 .cell {
     -fx-border-color: rgba(0, 0, 0, 0.1);
     -fx-border-width: 0px  1px 0px 0px;
+    -fx-padding: 1px 0px 1px 1px;
+
     /*-fx-background-color: skyblue, derive(skyblue, 25%), derive(skyblue, 50%), derive(skyblue, 75%); !* set background to skyblue *!*/
     /*-fx-background-insets: 20, 40, 60, 80;*/
     /*-fx-background-radius: 20 0 0 0, 0 20 0 0, 0 0 20 0, 0 0 0 20;*/
@@ -159,6 +161,8 @@
     -fx-border-color: -fx-focus-color;
     -fx-border: -fx-focus-border;
     -fx-border-width: 1px;
+    -fx-padding: 0px;
+    /*-fx-indent: 0px;*/
 }
 
 /*.better-table .slim-footer {*/

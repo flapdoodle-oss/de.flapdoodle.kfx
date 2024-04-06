@@ -27,3 +27,6 @@ val MouseEvent.scenePosition: Point2D
 
 val MouseEvent.localPosition: Point2D
     get() = Point2D(this.x, this.y)
+
+val MouseEvent.isAnyButtonDown: Boolean
+    get() = isPrimaryButtonDown || isMiddleButtonDown || isSecondaryButtonDown

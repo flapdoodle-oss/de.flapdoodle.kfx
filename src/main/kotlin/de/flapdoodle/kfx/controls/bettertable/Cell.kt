@@ -11,6 +11,7 @@ import javafx.scene.control.Control
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 
 class Cell<T : Any, C : Any>(
@@ -59,8 +60,8 @@ class Cell<T : Any, C : Any>(
     cssClassName("cell")
     Styles.Readonly.set(this, !column.editable)
 
-    wrapper.children.add(field.withAnchors(all = 0.0))
     wrapper.children.add(label.withAnchors(all = 0.0))
+    wrapper.children.add(field.withAnchors(all = 0.0))
     children.add(wrapper)
 
     // TODO notwendig?
@@ -79,33 +80,35 @@ class Cell<T : Any, C : Any>(
 
   private fun _cancelEdit() {
     if (column.editable) {
-      label.show()
-      field.hide()
-//      field.text = label.text
       field.value = value
+      field.isVisible = false // hide()
+//      label.show()
+//      field.text = label.text
     }
   }
 
   private fun _startEdit() {
     if (column.editable) {
-      label.hide()
-      field.show()
+//      label.hide()
+      field.isVisible = true // show()
       field.control.requestFocus()
     }
   }
 
   fun setEventListener(eventListener: TableRequestEventListener<T>) {
     this.eventListener = eventListener
-    addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
-      if (it.clickCount == 1) {
+    addEventHandler(MouseEvent.ANY) {
+//      println("event: $it")
+      if (it.eventType==MouseEvent.MOUSE_PRESSED && it.clickCount == 1) {
+        it.consume()
         eventListener.fireEvent(TableEvent.RequestFocus(row, column))
       }
-      if (it.clickCount == 2) {
+      if (it.eventType==MouseEvent.MOUSE_RELEASED && it.clickCount == 2) {
+        it.consume()
         if (column.editable) {
           eventListener.fireEvent(TableEvent.RequestEdit(row, column))
         }
       }
-      it.consume()
     }
 
 //    addEventFilter(KeyEvent.KEY_RELEASED) {

@@ -3,10 +3,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
-import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.hide
-import de.flapdoodle.kfx.extensions.localPosition
-import de.flapdoodle.kfx.extensions.show
+import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
@@ -53,15 +50,18 @@ class Row<T : Any>(
     children.add(all)
 
     all.addEventFilter(MouseEvent.ANY) {
-      val position = guessPosition(it.localPosition, all.height)
-      when (it.eventType) {
-        MouseEvent.MOUSE_ENTERED -> {
-          it.consume()
-          eventListener.fireEvent(TableEvent.MayInsertRow(value, position))
-        }
-        MouseEvent.MOUSE_MOVED -> {
-          it.consume()
-          eventListener.fireEvent(TableEvent.MayInsertRow(value, position))
+      if (!it.isAnyButtonDown) {
+        val position = guessPosition(it.localPosition, all.height)
+        when (it.eventType) {
+          MouseEvent.MOUSE_ENTERED -> {
+            it.consume()
+            eventListener.fireEvent(TableEvent.MayInsertRow(value, position))
+          }
+
+          MouseEvent.MOUSE_MOVED -> {
+            it.consume()
+            eventListener.fireEvent(TableEvent.MayInsertRow(value, position))
+          }
         }
       }
     }

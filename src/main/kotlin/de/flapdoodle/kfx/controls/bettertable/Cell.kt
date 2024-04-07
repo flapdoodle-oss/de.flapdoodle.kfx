@@ -18,10 +18,9 @@ class Cell<T : Any, C : Any>(
   val column: Column<T, C>,
   val row: T,
   val value: C?,
+  val eventListener: TableRequestEventListener<T>,
   fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup
 ) : StackLikeRegion() {
-
-  private lateinit var eventListener: TableRequestEventListener<T>
 
   private val label = Label().apply {
     isWrapText = false
@@ -40,6 +39,7 @@ class Cell<T : Any, C : Any>(
       }
     ).apply {
       isVisible = false
+      isManaged = column.editable
 //      isEditable = true
       control.focusedProperty().addListener { _, old, focused ->
         if (isVisible) {
@@ -76,27 +76,7 @@ class Cell<T : Any, C : Any>(
 //          }
       }
     }
-  }
 
-  private fun _cancelEdit() {
-    if (column.editable) {
-      field.value = value
-      field.isVisible = false // hide()
-//      label.show()
-//      field.text = label.text
-    }
-  }
-
-  private fun _startEdit() {
-    if (column.editable) {
-//      label.hide()
-      field.isVisible = true // show()
-      field.control.requestFocus()
-    }
-  }
-
-  fun setEventListener(eventListener: TableRequestEventListener<T>) {
-    this.eventListener = eventListener
     addEventHandler(MouseEvent.ANY) {
 //      println("event: $it")
       if (it.eventType==MouseEvent.MOUSE_PRESSED && it.clickCount == 1) {
@@ -170,9 +150,30 @@ class Cell<T : Any, C : Any>(
         }
       }
     }
-
   }
 
+  private fun _cancelEdit() {
+    if (column.editable) {
+      field.value = value
+      field.isVisible = false // hide()
+//      label.show()
+//      field.text = label.text
+    }
+  }
+
+  private fun _startEdit() {
+    if (column.editable) {
+//      label.hide()
+      field.isVisible = true // show()
+      field.control.requestFocus()
+    }
+  }
+
+//  fun setEventListener(eventListener: TableRequestEventListener<T>) {
+//    this.eventListener = eventListener
+//
+//  }
+//
   fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
     when (event) {
       is TableEvent.Focus<T, out Any> -> {
@@ -213,9 +214,9 @@ class Cell<T : Any, C : Any>(
     val width = java.lang.Double.max(labelWidth, fieldWidth) + insets.left + insets.right
 
     val minLabelWidth = label.minWidth(height)
-    val minFieldWidth = if (field.isVisible) field.minWidth(height) else field.minWidth
+    val minFieldWidth = if (field.isVisible || true) field.minWidth(height) else field.minWidth
     val minWidth = java.lang.Double.max(minLabelWidth, minFieldWidth) + insets.left + insets.right
 
-    return ColumnSize(minWidth, width)
+    return ColumnSize(minWidth, java.lang.Double.max(width, minWidth))
   }
 }

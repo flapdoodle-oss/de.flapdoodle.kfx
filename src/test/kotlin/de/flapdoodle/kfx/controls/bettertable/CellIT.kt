@@ -1,13 +1,10 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
-import de.flapdoodle.kfx.controls.fields.FieldWrapper
 import de.flapdoodle.kfx.converters.Converters
 import javafx.scene.Node
 import javafx.scene.Scene
-import javafx.scene.control.Label
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import org.assertj.core.api.Assertions.assertThat
@@ -16,27 +13,24 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
-import java.util.function.Predicate
+import java.time.LocalDate
 
 @ExtendWith(ApplicationExtension::class)
 class CellIT {
 
-  private val row = TableFactory.Row(12,null, null)
+  private val row = TableFactory.Row(12, null, null)
   private val column: Column<TableFactory.Row, Int> = Column(
     label = "label",
     property = ColumnProperty(Int::class, TableFactory.Row::age, Converters.converterFor(Int::class)),
     editable = true
   )
   private var events = emptyList<TableEvent.RequestEvent<TableFactory.Row>>()
-  
+
   @Start
   private fun createElement(stage: Stage) {
-    val pane = Pane(Cell(column, row, 12).apply {
-      id = "testee"
-      setEventListener { event ->
-        events = events + event
-      }
-    })
+    val pane = Pane().apply {
+      id = "pane"
+    }
     stage.scene = Scene(pane, 200.0, 200.0)
     stage.show()
   }
@@ -44,8 +38,14 @@ class CellIT {
 
   @Test
   fun singleClickAndDoubleClickEvents(robot: FxRobot) {
-    val testee = robot.lookup(Predicate { it.id=="testee" }).queryAs(Cell::class.java) as Cell<TableFactory.Row, Int>
-//    robot.doubleClickOn(testee, MouseButton.PRIMARY)
+    val pane = robot.lookup<Node> { it.id == "pane" }.queryAs(Pane::class.java)
+    val testee = Cell(column, row, 12, { event ->
+      events = events + event
+    })
+    robot.interact {
+      pane.children.add(testee)
+    }
+
     events = emptyList()
 
     robot.clickOn(testee, MouseButton.PRIMARY)
@@ -66,7 +66,15 @@ class CellIT {
 
   @Test
   fun preserveDimension(robot: FxRobot) {
-    val testee = robot.lookup(Predicate { it.id=="testee" }).queryAs(Cell::class.java) as Cell<TableFactory.Row, Int>
+    val pane = robot.lookup<Node> { it.id == "pane" }.queryAs(Pane::class.java)
+    val testee = Cell(column, row, 12, { event ->
+      events = events + event
+    })
+    robot.interact {
+      pane.children.add(testee)
+    }
+
+//    val testee = robot.lookup(Predicate { it.id=="testee" }).queryAs(Cell::class.java) as Cell<TableFactory.Row, Int>
 //    val label = robot.lookup<Node> { it.parent?.parent?.id == "testee" && it is Label }.queryAs(Label::class.java)
 //    val field = robot.lookup<Node> { it.parent?.parent?.id == "testee" && it is FieldWrapper<*,*> }.queryAs(FieldWrapper::class.java)
 //    val anchorPane = robot.lookup<Node> { it.parent?.id == "testee" }.queryAs(AnchorPane::class.java)
@@ -95,7 +103,7 @@ class CellIT {
     }
 
 //    Thread.sleep(1000)
-    
+
     val testeeAfterEdit = testee.layoutBounds
 //    val labelAfterEdit = label.layoutBounds
 //    val fieldAfterEdit = field.layoutBounds
@@ -107,5 +115,36 @@ class CellIT {
 //    println("wrapper: $anchorBounds -> $anchorAfterEdit")
 
     assertThat(testeeBounds).isEqualTo(testeeAfterEdit)
+  }
+
+  @Test
+  fun columnSizeMinMustNotChange(robot: FxRobot) {
+    val pane = robot.lookup<Node> { it.id == "pane" }.queryAs(Pane::class.java)
+
+    val localDateColumn = Column(
+      label = "X",
+      property = ColumnProperty(LocalDate::class, TableFactory.Row::birthDay, Converters.converterFor(LocalDate::class)),
+      editable = true
+    )
+
+    robot.interact {
+      val testee = Cell(localDateColumn, row, null, { event ->
+        events = events + event
+      })
+      pane.children.add(testee)
+      val columnSizeWithoutValue = testee.columnSize()
+
+      pane.children.remove(testee)
+
+      val testeeWithValue = Cell(localDateColumn, row, LocalDate.now(), { event ->
+        events = events + event
+      })
+      pane.children.add(testeeWithValue)
+      val columnSizeWithValue = testeeWithValue.columnSize()
+
+//      println("$columnSizeWithoutValue -> $columnSizeWithValue")
+      assertThat(columnSizeWithoutValue.min).isEqualTo(columnSizeWithValue.min)
+      assertThat(columnSizeWithoutValue.preferred).isLessThanOrEqualTo(columnSizeWithValue.preferred)
+    }
   }
 }

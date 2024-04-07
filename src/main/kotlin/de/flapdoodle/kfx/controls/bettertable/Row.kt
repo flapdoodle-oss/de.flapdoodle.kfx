@@ -91,18 +91,13 @@ class Row<T : Any>(
     }
 
     ObservableLists.syncWith(columns, rowContainer.children) {
-      cell(it, value, columnWidthProperties(it)).apply {
-//          property[Row::class] = control
-        setEventListener(eventListener)
-      }
+      cell(it, value, columnWidthProperties(it), eventListener)
     }
   }
 
-  private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>): Cell<T, C> {
-    return cellFactory.cell(c, value).apply {
+  private fun <C : Any> cell(c: Column<T, C>, value: T, width: ObservableValue<Number>, eventListener: TableRequestEventListener<T>): Cell<T, C> {
+    return cellFactory.cell(c, value, eventListener).apply {
       prefWidthProperty().bind(width)
-//        onAttach { columnCellRegistry.register(c, this) }
-//          .onDetach { it?.unsubscribe() }
     }
   }
 

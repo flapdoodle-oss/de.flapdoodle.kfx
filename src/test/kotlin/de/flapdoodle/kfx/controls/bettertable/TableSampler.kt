@@ -90,7 +90,7 @@ class TableSampler {
           }
         }, Button("+").apply {
           onAction = EventHandler {
-            rows.value = rows.value + TableFactory.Row(rows.value.size + 20, "Peter", 1.78)
+            rows.value = rows.value + TableFactory.Row(rows.value.size + 20, "Peter", 1.78, LocalDate.now())
           }
         }).withAnchors(bottom = 0.0)
       )

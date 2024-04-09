@@ -9,5 +9,7 @@ fun Node.cssClassName(vararg name: String) {
 
 fun Parent.bindCss(name: String) {
   cssClassName(name)
-  stylesheets += javaClass.getResource(javaClass.simpleName+".css").toExternalForm()
+  val resource = javaClass.getResource("${javaClass.simpleName}.css")
+  require(resource!=null) { "could not bind css to ${javaClass.simpleName}.css" }
+  stylesheets += resource.toExternalForm()
 }

@@ -22,7 +22,7 @@ data class Slot(
     )
 
     private val colors8dark = arrayOf("#a82800","#a57e00","#7fa602","#09a70d","#046c9d","#04189f","#4504a3","#ab0a80")
-    private val colors8bright = arrayOf("#f13501","#ecb201","#baf004","#0bf110","#04a0e4","#0426e7","#5e05ed","#f50ebe")
+    private val colors8bright = arrayOf("#f13501","#ffe201","#baf004","#0bf110","#04a0e4","#0426e7","#5e05ed","#f50ebe")
     private val colorNames8 = colors8dark.zip(colors8bright).flatMap { listOf(it.first, it.second) }
 
     private val colors = colorNames8.map(Color::web)

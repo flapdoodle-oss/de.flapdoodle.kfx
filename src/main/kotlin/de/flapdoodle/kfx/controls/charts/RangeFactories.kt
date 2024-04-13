@@ -18,7 +18,7 @@ object RangeFactories {
     }
 
     private fun dateRange(list: List<LocalDate>): Range<LocalDate> {
-        if (list.isEmpty()) return empty()
+        if (list.isEmpty() || list.size==1) return empty()
 
         val min = list.min()
         val max = list.max()
@@ -32,7 +32,7 @@ object RangeFactories {
     }
 
     private fun doubleRange(list: List<Number>): Range<Number> {
-        if (list.isEmpty()) return empty()
+        if (list.isEmpty() || list.size==1) return empty()
 
         val asDouble = list.map { it.toDouble() }
         val min = asDouble.min()

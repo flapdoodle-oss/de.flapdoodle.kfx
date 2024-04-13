@@ -27,11 +27,8 @@ class SmallChartSampler {
             val series = SimpleObjectProperty(emptyList<Serie<LocalDate, Number>>())
             series.value = listOf(
                 Serie(
-                    "a", Color.RED, listOf(
-                        now to 100.0,
-                        now.plusDays(1) to 110.0,
-                        now.plusDays(32) to 70.0,
-                        now.plusDays(35) to 200.0,
+                    "0", Color.ORANGE, listOf(
+                        now.plusDays(7) to 95.0,
                     )
                 )
             )
@@ -47,11 +44,24 @@ class SmallChartSampler {
             val all = BorderPane().apply {
                 center = content
                 bottom = VBox().apply {
-                    children.add(Button("+").apply {
+                    children.add(Button("+a").apply {
+                        onAction = EventHandler {
+                            series.value = series.value + Serie(
+                                "a", Color.RED, listOf(
+                                    now to 100.0,
+                                    now.plusDays(1) to 110.0,
+                                    now.plusDays(32) to 70.0,
+                                    now.plusDays(35) to 200.0,
+                                )
+                            )
+
+                        }
+                    })
+                    children.add(Button("+b").apply {
                         onAction = EventHandler {
                             series.value = series.value + Serie(
                                 "b", Color.BLUE, listOf(
-                                    now to 80.0,
+                                    now.minusDays(5) to 80.0,
                                     now.plusDays(5) to 60.0,
                                     now.plusDays(20) to 70.0,
                                     now.plusDays(22) to 80.0,

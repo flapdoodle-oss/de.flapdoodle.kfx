@@ -148,13 +148,6 @@ class SmallChart<X : Any, Y : Any>(
 
 
     companion object {
-//        private val FACTORY = StyleablePropertyFactory<WeightGridControl>(StyleableProperties.STYLEABLES)
-
-//        internal val CSS_HSPACE: CssMetaData<WeightGridControl, Number> = WeightGridControlStyle.FACTORY.createSizeCssMetaData(
-//            WeightGridControlStyle.CSS_HSPACE_NAME,
-//            { it.horizontalSpace },
-//            2.0)
-
         private fun asCss(color: Color): String {
             return String.format(
                 "#%02X%02X%02X",
@@ -174,12 +167,7 @@ class SmallChart<X : Any, Y : Any>(
             }
         }
 
+        // ChartLine extends Pane
         val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + Pane.getClassCssMetaData() + CHART_SPACING
-
-//        init {
-//            final List < CssMetaData <? extends Styleable, ?>> styleables = new ArrayList<>(Node.getClassCssMetaData());
-//            styleables.add(GRID_COLOR);
-//            STYLEABLES = Collections.unmodifiableList(styleables);
-//        }
     }
 }

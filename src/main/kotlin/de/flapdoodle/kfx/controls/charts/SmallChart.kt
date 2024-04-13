@@ -21,6 +21,7 @@ import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo
 import javafx.scene.shape.Path
 import javafx.scene.shape.PathElement
+import javafx.scene.shape.Rectangle
 
 class SmallChart<X : Any, Y : Any>(
     series: ObservableValue<List<Serie<X, Y>>>,
@@ -35,8 +36,10 @@ class SmallChart<X : Any, Y : Any>(
 
     private val charts = PaneLike().apply {
         WeightGridPane.setPosition(this, 0, 0, HPos.CENTER, VPos.CENTER)
+        clipProperty().bind(layoutBoundsProperty().map { Rectangle(it.minX, it.minY, it.width, it.height) })
     }
     private val labels = HBox().apply {
+        cssClassName("small-chart-legends")
         alignment = Pos.CENTER
         WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
     }
@@ -47,7 +50,7 @@ class SmallChart<X : Any, Y : Any>(
         main.children.addAll(charts, labels)
         children.add(main)
 
-        labels.children.syncWith(series) { Label(it.label) }
+        labels.children.syncWith(series) { Legend(it.label, it.color) }
 
         val lines = series.map { list ->
             val allXY = list.flatMap { it.values }
@@ -59,6 +62,21 @@ class SmallChart<X : Any, Y : Any>(
         }
 
         charts.children.syncWith(lines) { it }
+    }
+
+    class Legend(name: String, color: Color): HBox() {
+        init {
+            cssClassName("small-chart-legend")
+            isFillHeight = false
+            alignment = Pos.CENTER
+            children.addAll(
+                Label(name),
+                StackPane().apply {
+                    cssClassName("small-chart-line-symbol")
+                    style = "-fx-border-color: ${asCss(color)}"
+
+                })
+        }
     }
 
     class ChartLine<X : Any, Y : Any>(
@@ -113,20 +131,10 @@ class SmallChart<X : Any, Y : Any>(
             children.addAll(points)
         }
 
-        //        override fun layoutChildren() {
-//            super.layoutChildren()
-//
-//            path.elements.clear()
-//            path.elements.addAll(serie.values.mapIndexed { index, pair ->
-//                val x = xrange.offset(pair.first, width)
-//                val y = yrange.offset(pair.second, height)
-//                if (index == 0) {
-//                    MoveTo(x, y)
-//                } else {
-//                    LineTo(x, y)
-//                }
-//            })
-//        }
+    }
+
+
+    companion object {
         private fun asCss(color: Color): String {
             return String.format(
                 "#%02X%02X%02X",
@@ -136,6 +144,4 @@ class SmallChart<X : Any, Y : Any>(
             )
         }
     }
-
-
 }

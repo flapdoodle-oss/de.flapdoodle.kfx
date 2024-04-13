@@ -37,8 +37,8 @@ class SmallChartSampler {
             )
             val content = SmallChart(
                 series,
-                localDateRange(),
-                numberRange()
+                RangeFactories.localDate(),
+                RangeFactories.number()
             )
 //      val content = ColorableLineChart<Number, Number>(x, y, series) {
 //        it -> colorMap[it.name] ?: Color.BLACK

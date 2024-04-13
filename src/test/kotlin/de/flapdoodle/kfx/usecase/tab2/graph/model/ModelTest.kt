@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.usecase.tab2.graph.model
 
+import de.flapdoodle.kfx.controls.colors.HashedColors
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Edge
@@ -13,8 +14,8 @@ class ModelTest {
   @Test
   fun useCase() {
     var testee = Model<Int>()
-    val x = Slot("x", Slot.Mode.IN, Position.LEFT)
-    val y = Slot("y", Slot.Mode.OUT, Position.RIGHT)
+    val x = Slot("x", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("x"))
+    val y = Slot("y", Slot.Mode.OUT, Position.RIGHT, HashedColors.hashedColor("y"))
     val a = Vertex("A", 1, slots = listOf(x))
     val b = Vertex("B", 2, slots = listOf(y))
 

@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.controls.grapheditor.model
 
+import de.flapdoodle.kfx.controls.colors.HashedColors
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Action
@@ -19,7 +20,7 @@ class ActionTest {
 
   @Test
   fun addVertex() {
-    val vertex = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT)))
+    val vertex = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("x"))))
 
     val actions = Action.syncActions(emptyModel(), emptyModel().add(vertex))
 
@@ -33,8 +34,8 @@ class ActionTest {
 
   @Test
   fun addVertexAndEdge() {
-    val start = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT)))
-    val end = Vertex("b", 2, listOf(Slot("y", Slot.Mode.IN, Position.LEFT)))
+    val start = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("x"))))
+    val end = Vertex("b", 2, listOf(Slot("y", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("y"))))
     val edge = Edge(start.id, start.slots[0].id, end.id, end.slots[0].id)
 
     val actions = Action.syncActions(emptyModel(), emptyModel().add(start, end).add(edge))
@@ -52,7 +53,7 @@ class ActionTest {
 
   @Test
   fun removeVertex() {
-    val vertex = Vertex("A", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT)))
+    val vertex = Vertex("A", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("x"))))
 
     val actions = Action.syncActions(emptyModel().add(vertex), emptyModel())
 
@@ -66,8 +67,8 @@ class ActionTest {
 
   @Test
   fun removeVertexAndEdge() {
-    val start = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT)))
-    val end = Vertex("b", 2, listOf(Slot("y", Slot.Mode.IN, Position.LEFT)))
+    val start = Vertex("a", 1, listOf(Slot("x", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("a"))))
+    val end = Vertex("b", 2, listOf(Slot("y", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("b"))))
     val edge = Edge(start.id, start.slots[0].id, end.id, end.slots[0].id)
 
     val actions = Action.syncActions(emptyModel().add(start, end).add(edge), emptyModel())
@@ -84,10 +85,10 @@ class ActionTest {
   }
   @Test
   fun changeVertex() {
-    val oldSlot = Slot("x", Slot.Mode.IN, Position.LEFT)
-    val newSlot = Slot("x", Slot.Mode.OUT, Position.RIGHT)
-    val stillThereSlot = Slot("x", Slot.Mode.OUT, Position.BOTTOM)
-    val unchangedSlot = Slot("x", Slot.Mode.IN, Position.LEFT)
+    val oldSlot = Slot("x", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("x"))
+    val newSlot = Slot("x", Slot.Mode.OUT, Position.RIGHT, HashedColors.hashedColor("x"))
+    val stillThereSlot = Slot("x", Slot.Mode.OUT, Position.BOTTOM, HashedColors.hashedColor("x"))
+    val unchangedSlot = Slot("x", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("x"))
 
     val old = Vertex("A", 1, listOf(oldSlot, stillThereSlot, unchangedSlot))
     val new = old.copy(name = "B", data = 2, slots = listOf(unchangedSlot, newSlot, stillThereSlot.copy(name = "X")))

@@ -5,6 +5,7 @@ import de.flapdoodle.kfx.controls.bettertable.Table
 import de.flapdoodle.kfx.controls.bettertable.TableChangeListener
 import de.flapdoodle.kfx.controls.bettertable.TableFactory
 import de.flapdoodle.kfx.controls.bettertable.events.ReadOnlyState
+import de.flapdoodle.kfx.controls.colors.HashedColors
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
 import de.flapdoodle.kfx.controls.grapheditor.events.EventListener
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
@@ -29,14 +30,14 @@ class GraphEditorSampler {
   class Sample : Application() {
     override fun start(stage: Stage) {
       val wrapper = BorderPane()
-      val slotInA = Slot("a", Slot.Mode.IN, Position.LEFT)
-      val slotInB = Slot("b", Slot.Mode.IN, Position.LEFT)
-      val slotOutX = Slot("x", Slot.Mode.OUT, Position.RIGHT)
-      val slotOutY = Slot("y", Slot.Mode.OUT, Position.RIGHT)
-      val slotOutZ = Slot("z", Slot.Mode.OUT, Position.RIGHT)
-      val slotAgg1 = Slot("1", Slot.Mode.IN, Position.BOTTOM)
-      val slotAgg2 = Slot("2", Slot.Mode.OUT, Position.BOTTOM)
-      val slotAgg3 = Slot("3", Slot.Mode.IN, Position.BOTTOM)
+      val slotInA = Slot("a", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("a"))
+      val slotInB = Slot("b", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("b"))
+      val slotOutX = Slot("x", Slot.Mode.OUT, Position.RIGHT, HashedColors.hashedColor("x"))
+      val slotOutY = Slot("y", Slot.Mode.OUT, Position.RIGHT, HashedColors.hashedColor("y"))
+      val slotOutZ = Slot("z", Slot.Mode.OUT, Position.RIGHT, HashedColors.hashedColor("z"))
+      val slotAgg1 = Slot("1", Slot.Mode.IN, Position.BOTTOM, HashedColors.hashedColor("1"))
+      val slotAgg2 = Slot("2", Slot.Mode.OUT, Position.BOTTOM, HashedColors.hashedColor("2"))
+      val slotAgg3 = Slot("3", Slot.Mode.IN, Position.BOTTOM, HashedColors.hashedColor("3"))
 
       val vertexOne = Vertex("one").apply {
         layoutPosition = Point2D(100.0, 50.0)
@@ -125,14 +126,14 @@ class GraphEditorSampler {
           button.onAction = EventHandler {
             val vertex = Vertex("X")
             graphEditor.addVertex(vertex)
-            vertex.addConnector(Slot("u", Slot.Mode.IN, Position.LEFT))
+            vertex.addConnector(Slot("u", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("u")))
             lastAddedVertex = vertex
           }
         })
         flowPane.children.add(Button("+In").also { button ->
           button.onAction = EventHandler {
             if (lastAddedVertex!=null) {
-              lastAddedVertex!!.addConnector(Slot("u", Slot.Mode.IN, Position.LEFT))
+              lastAddedVertex!!.addConnector(Slot("u", Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor("u")))
             }
           }
         })

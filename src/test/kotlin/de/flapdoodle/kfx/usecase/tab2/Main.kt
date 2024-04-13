@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.usecase.tab2
 
+import de.flapdoodle.kfx.controls.colors.HashedColors
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.GraphEditorModelAdapter
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
@@ -113,7 +114,7 @@ class Main() : BorderPane() {
           button.onAction = EventHandler {
             val vertexId = selectedVertex.value
             val vertex = model.get().vertex(vertexId)
-            model.set(model.get().replace(vertex, vertex.add(Slot("x#"+slotCounter.incrementAndGet(), Slot.Mode.IN, Position.LEFT))))
+            model.set(model.get().replace(vertex, vertex.add(Slot("x#"+slotCounter.incrementAndGet(), Slot.Mode.IN, Position.LEFT, HashedColors.hashedColor(slotCounter.get())))))
           }
         },
         Button("<--").also { button ->
@@ -122,7 +123,7 @@ class Main() : BorderPane() {
           button.onAction = EventHandler {
             val vertexId = selectedVertex.value
             val vertex = model.get().vertex(vertexId)
-            model.set(model.get().replace(vertex, vertex.add(Slot("y#"+slotCounter.incrementAndGet(), Slot.Mode.OUT, Position.RIGHT))))
+            model.set(model.get().replace(vertex, vertex.add(Slot("y#"+slotCounter.incrementAndGet(), Slot.Mode.OUT, Position.RIGHT, HashedColors.hashedColor(slotCounter.get())))))
           }
         },
         Button("X").also { button ->

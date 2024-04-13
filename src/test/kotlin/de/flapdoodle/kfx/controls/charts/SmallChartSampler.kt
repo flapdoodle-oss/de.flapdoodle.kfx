@@ -87,7 +87,6 @@ class SmallChartSampler {
                 // liste kann leer sein oder ein element beinhalten
                 val min = list.min()
                 val max = list.max()
-                println("--> $min - $max")
 
                 val dist = ChronoUnit.DAYS.between(min, max)
 //                val distance = max.

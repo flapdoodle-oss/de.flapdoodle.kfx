@@ -1,0 +1,16 @@
+.small-chart .small-chart-line-box {
+    -fx-padding: 10px;
+}
+
+.small-chart .small-chart-line {
+    -fx-stroke-width: 2px;
+}
+
+.small-chart .small-chart-line-symbol {
+    /*-fx-border-color: red;*/
+    -fx-background-color: white;
+    -fx-background-radius: 4px;
+    -fx-border-width: 2px;
+    -fx-padding: 4px;
+    -fx-border-radius: 4px;
+}

@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.extensions
 
+import com.sun.javafx.binding.MappedBinding
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 
@@ -13,6 +14,14 @@ object ObservableValueExtensions {
         super.removeListener(lastListener)
         super.addListener(listener)
         super.addListener(lastListener)
+      }
+    }
+  }
+
+  fun <T, R> mapNullable(src: ObservableValue<T?>, map: (T?) -> R): ObservableValue<R> {
+    return object : MappedBinding<T, R>(src, map) {
+      override fun computeValue(): R {
+        return map.invoke(src.value)
       }
     }
   }

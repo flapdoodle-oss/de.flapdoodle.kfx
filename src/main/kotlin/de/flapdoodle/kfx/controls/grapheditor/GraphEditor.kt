@@ -3,8 +3,10 @@ package de.flapdoodle.kfx.controls.grapheditor
 import de.flapdoodle.kfx.controls.grapheditor.commands.Command
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
 import de.flapdoodle.kfx.controls.grapheditor.events.EventListener
+import de.flapdoodle.kfx.controls.grapheditor.hints.NodeConnectionHint
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
+import de.flapdoodle.kfx.controls.virtual.VirtualView
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
@@ -27,7 +29,17 @@ class GraphEditor(
 ) : AnchorPane() {
   private val sharedLock = SharedLock<javafx.scene.Node>()
   private val registry = Registry()
-  private val view = View(sharedLock, registry).withAnchors(all = 0.0)
+  private val nodeConnectionHint = NodeConnectionHint().apply {
+    isVisible = false
+  }
+  private val layers = Layers(registry).apply {
+    addHints(nodeConnectionHint)
+  }
+  private val view = VirtualView(layers,Layers::boundingBoxProperty,{
+    layers.visibleArea().bind(it)
+  }, sharedLock).withAnchors(all = 0.0)
+
+//  private val view = View(sharedLock, registry).withAnchors(all = 0.0)
 //  private var askForClick = SimpleBooleanProperty(false)
   private val currentCommand = SimpleObjectProperty<Command>(null)
 
@@ -49,19 +61,19 @@ class GraphEditor(
   }
 
   fun addVertex(vararg list: Vertex) {
-    view.layers().addVertex(*list)
+    layers.addVertex(*list)
   }
 
   fun removeVertex(vararg list: Vertex) {
-    view.layers().removeVertex(listOf(*list))
+    layers.removeVertex(listOf(*list))
   }
 
   fun addEdge(vararg list: Edge) {
-    view.layers().addEdge(*list)
+    layers.addEdge(*list)
   }
 
   fun removeEdge(vararg list: Edge) {
-    view.layers().removeEdges(listOf(*list))
+    layers.removeEdges(listOf(*list))
   }
 
   fun execute(command: Command) {
@@ -79,7 +91,7 @@ class GraphEditor(
     when (command) {
       is Command.AskForPosition -> {
         if (event.eventType == MouseEvent.MOUSE_RELEASED) {
-          val layerLocal = view.layers().screenToLocal(event.screenPosition)
+          val layerLocal = layers.screenToLocal(event.screenPosition)
           //eventListener.onEvent(this, Event.Click(layerLocal))
           command.onSuccess(layerLocal)
           currentCommand.value = null
@@ -109,7 +121,7 @@ class GraphEditor(
           if (action is VertexAction.Connect) {
             if (eventListener.onEvent(this, Event.TryToConnect(action.source))) {
               val position = registry.scenePositionOf(action.source)!!
-              view.nodeConnectionHint().apply {
+              nodeConnectionHint.apply {
                 isVisible = true
                 start(position)
                 end(position.copy(angle = position.angle - 180))
@@ -140,7 +152,7 @@ class GraphEditor(
       event.consume()
       val action = lock.value
       if (action is VertexAction.Connect) {
-        view.nodeConnectionHint().isVisible = false
+        nodeConnectionHint.isVisible = false
 
         if (action.destination != null) {
           eventListener.onEvent(this, Event.ConnectTo(action.source, action.destination))
@@ -158,7 +170,7 @@ class GraphEditor(
             lock.owner.toFront()
           }
           if (event.clickCount == 1 && lock.owner.focused()) {
-            IsSelectable.select(event.isShiftDown, lock.owner, view.layers().vertices())
+            IsSelectable.select(event.isShiftDown, lock.owner, layers.vertices())
           }
         }
       }
@@ -169,7 +181,7 @@ class GraphEditor(
     sharedLock.ifLocked(Edge::class.java, EdgeAction::class.java) { lock ->
       event.consume()
       if (event.clickCount == 1 && lock.value is EdgeAction.Select) {
-        IsSelectable.select(event.isShiftDown, lock.owner, view.layers().edges())
+        IsSelectable.select(event.isShiftDown, lock.owner, layers.edges())
       }
 
   //          cursor = null
@@ -198,7 +210,7 @@ class GraphEditor(
         }
 
         is VertexAction.Connect -> {
-          view.nodeConnectionHint()
+          nodeConnectionHint
             .end(ColoredAngleAtPoint2D(event.scenePosition, Point2DMath.angle(action.clickPosition, event.screenPosition) - 180, Color.BLACK))
 
           val nextBestGuess = guessAction(event.screenPosition)
@@ -208,7 +220,7 @@ class GraphEditor(
             if (nextAction is VertexAction.Connect) {
               if (eventListener.onEvent(this, Event.TryToConnectTo(action.source, nextAction.source))) {
                 val position = registry.scenePositionOf(nextAction.source)!!
-                view.nodeConnectionHint().end(position)
+                nodeConnectionHint.end(position)
                 destination = nextAction.source
               }
             }

@@ -66,8 +66,8 @@ object BoundingBoxes {
         }
     }
 
-    fun <T: Node> reduceBounds(nodeList: Collection<T>, boundsOfNode: (T) -> Bounds): Bounds {
-        return reduce(nodeList.map { boundsOfNode(it) })
+    fun <T: Node> reduceBounds(nodeList: Collection<T>, boundsOfNode: (T) -> Bounds?): Bounds {
+        return reduce(nodeList.map { boundsOfNode(it) ?: empty() })
     }
 
     fun <T: Node> reduceBoundsProperty(parent: Node, boundMapping: BoundMapping<T>): ReadOnlyObjectProperty<Bounds> {

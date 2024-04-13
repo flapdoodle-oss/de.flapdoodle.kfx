@@ -4,9 +4,10 @@
 .small-chart .small-chart-line-box {
     /*-fx-padding: 10px;*/
     -fx-border-width: 1px;
-    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-border-color: rgba(0, 0, 0, 0.05);
 
     -chart-spacing: 10px;
+    -fx-background-color: rgba(255,255,255,0.2);
 }
 
 .small-chart .small-chart-legends {
@@ -23,6 +24,6 @@
     -fx-background-color: white;
     -fx-background-radius: 4px;
     -fx-border-width: 2px;
-    -fx-padding: 4px;
+    -fx-padding: 3px;
     -fx-border-radius: 4px;
 }

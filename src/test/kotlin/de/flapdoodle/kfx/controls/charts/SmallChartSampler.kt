@@ -77,35 +77,6 @@ class SmallChartSampler {
             stage.show()
         }
 
-        private fun numberRange(): (List<Number>) -> Range<Number> {
-            return { list ->
-                // liste kann leer sein oder ein element beinhalten
-                val asDouble = list.map { it.toDouble() }
-                val min = asDouble.min()
-                val max = asDouble.max()
-                val dist = max - min
-
-                Range { value, scale ->
-                    val valueDist = value.toDouble() - min
-                    scale * valueDist/dist
-                }
-            }
-        }
-
-        private fun localDateRange(): (List<LocalDate>) -> Range<LocalDate> {
-            return { list ->
-                // liste kann leer sein oder ein element beinhalten
-                val min = list.min()
-                val max = list.max()
-
-                val dist = ChronoUnit.DAYS.between(min, max)
-//                val distance = max.
-                Range { value, scale ->
-                    val valueDist = ChronoUnit.DAYS.between(min, value)
-                    scale * valueDist/dist
-                }
-            }
-        }
     }
 
 

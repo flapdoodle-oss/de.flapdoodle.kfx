@@ -4,11 +4,15 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KClass
 
-interface Key<K> {
+interface Key<K: Any> {
+  fun type(): KClass<K>
+
   data class ClassKey<K: Any>(val clazz: KClass<K>) : Key<K> {
     override fun toString(): String {
       return "Key(${clazz.qualifiedName})"
     }
+
+    override fun type(): KClass<K> = clazz
   }
 
   companion object {
@@ -30,5 +34,4 @@ interface Key<K> {
       return ClassKey(type)
     }
   }
-
 }

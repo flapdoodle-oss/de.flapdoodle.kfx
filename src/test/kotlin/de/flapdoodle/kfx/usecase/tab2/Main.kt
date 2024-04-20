@@ -35,6 +35,9 @@ class Main() : BorderPane() {
       is ModelEvent.ConnectTo -> {
         model.value = model.value.add(Edge(event.startVertex, event.startSlot, event.endVertex, event.endSlot))
       }
+      is ModelEvent.VertexMoved -> {
+        println("vertex ${event.vertex} moved to ${event.layoutPosition}")
+      }
       else -> {
 
       }

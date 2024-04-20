@@ -172,6 +172,10 @@ class GraphEditor(
           if (event.clickCount == 1 && lock.owner.focused()) {
             IsSelectable.select(event.isShiftDown, lock.owner, layers.vertices())
           }
+        } else {
+          if (action is VertexAction.Move) {
+            eventListener.onEvent(this, Event.VertexMoved(lock.owner.vertexId, lock.owner.layoutPosition))
+          }
         }
       }
 

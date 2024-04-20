@@ -11,18 +11,14 @@ class EventListenerMapper<T>(
 ) : EventListener {
   override fun onEvent(graphEditor: GraphEditor, event: Event): Boolean {
     return when (event) {
-      is Event.TryToConnect -> {
-        delegate.onEvent(ModelEvent.TryToConnect(vertexIdMapper(event.start.vertexId), event.start.slotId))
-      }
-
-      is Event.TryToConnectTo -> {
-        delegate.onEvent(
-          ModelEvent.TryToConnectTo(vertexIdMapper(event.start.vertexId), event.start.slotId, vertexIdMapper(event.end.vertexId), event.end.slotId)
-        )
-      }
-
-      is Event.ConnectTo -> {
-        delegate.onEvent(ModelEvent.ConnectTo(vertexIdMapper(event.start.vertexId), event.start.slotId, vertexIdMapper(event.end.vertexId), event.end.slotId))
+      is Event.TryToConnect -> delegate.onEvent(ModelEvent.TryToConnect(vertexIdMapper(event.start.vertexId), event.start.slotId))
+      is Event.TryToConnectTo -> delegate.onEvent(
+        ModelEvent.TryToConnectTo(vertexIdMapper(event.start.vertexId), event.start.slotId, vertexIdMapper(event.end.vertexId), event.end.slotId)
+      )
+      is Event.ConnectTo -> delegate.onEvent(ModelEvent.ConnectTo(vertexIdMapper(event.start.vertexId), event.start.slotId, vertexIdMapper(event.end.vertexId), event.end.slotId))
+      is Event.VertexMoved -> delegate.onEvent(ModelEvent.VertexMoved(vertexIdMapper(event.vertexId), event.layoutPosition))
+      else -> {
+        throw IllegalArgumentException("this can not happen: $event")
       }
     }
   }

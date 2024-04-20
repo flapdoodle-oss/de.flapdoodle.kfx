@@ -63,25 +63,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>toolchain</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <toolchains>
-                        <jdk>
-                            <version>[17,)</version>
-                        </jdk>
-                    </toolchains>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
@@ -167,7 +148,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -176,7 +157,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>enforce-ban-duplicate-classes</id>
@@ -209,7 +190,7 @@
                     <dependency>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>extra-enforcer-rules</artifactId>
-                        <version>1.6.2</version>
+                        <version>1.7.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -232,6 +213,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.2</version>
                 <configuration>
                     <excludes>
                         <exclude>**/live/**</exclude>
@@ -265,7 +247,7 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
+                <version>4.3</version>
                 <configuration>
                     <!-- <basedir>${basedir}</basedir> -->
                     <header>${basedir}/src/etc/header.txt</header>
@@ -273,9 +255,8 @@
                     <validHeader>http://www.company.com/yetAnotherSupportedHeader.txt</validHeader> 
                     </validHeaders> -->
                     <quiet>false</quiet>
-                    <!-- TODO enable for first release -->
-                    <failIfMissing>false</failIfMissing>
-<!--                    <strictCheck>true</strictCheck>-->
+                    <failIfMissing>true</failIfMissing>
+                    <strictCheck>true</strictCheck>
                     <aggregate>false</aggregate>
                     <includes>
                         <include>src/**</include>
@@ -316,7 +297,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.3.1</version>
             </plugin>
 
             <plugin>
@@ -357,7 +338,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -372,6 +353,25 @@
                 </executions>
             </plugin>
             
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>[17,)</version>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
 <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -505,12 +505,15 @@
                     <value>true</value>
                 </property>
             </activation>
+            <properties>
+                <pitest.skip>true</pitest.skip>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -653,25 +656,14 @@
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
             <version>4.0.17</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
             <version>4.0.17</version>
+            <scope>test</scope>
         </dependency>
-        <!-- jdk-9+181 for Java 9, jdk-11+26 for Java 11 -->
-<!--        <dependency>-->
-<!--            <groupId>org.testfx</groupId>-->
-<!--            <artifactId>openjfx-monocle</artifactId>-->
-<!--            <version>jdk-12.0.1+2</version>-->
-<!--            <scope>test</scope>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.openjfx</groupId>-->
-<!--                    <artifactId>*</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>de.flapdoodle.fx21</groupId>
             <artifactId>openjfx-monocle-java17</artifactId>

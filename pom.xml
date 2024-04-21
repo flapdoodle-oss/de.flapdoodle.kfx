@@ -631,11 +631,13 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
             <version>${javafx.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>11.2.0</version>
+            <version>11.2.1</version>
+            <scope>test</scope>
         </dependency>
         
         <dependency>

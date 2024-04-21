@@ -336,6 +336,28 @@
                 </executions>
             </plugin>
 
+<!--https://stackoverflow.com/questions/48127495/how-to-generate-javadoc-jar-for-repository-upload-with-dokka-->
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <version>1.9.20</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>dokka</goal>
+                            <goal>javadoc</goal>
+                            <goal>javadocJar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+<!--                <configuration>-->
+<!--                    <includes>-->
+<!--                        <file>packages.md</file>-->
+<!--                    </includes>-->
+<!--                </configuration>-->
+            </plugin>
+
 <!--            https://kotlinlang.org/docs/dokka-maven.html -->
 <!--            <plugin>-->
 <!--                <groupId>org.apache.maven.plugins</groupId>-->
@@ -354,19 +376,19 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--            </plugin>-->
-            <plugin>
-                <groupId>org.jetbrains.dokka</groupId>
-                <artifactId>dokka-maven-plugin</artifactId>
-                <version>1.9.20</version>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>javadocJar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.jetbrains.dokka</groupId>-->
+<!--                <artifactId>dokka-maven-plugin</artifactId>-->
+<!--                <version>1.9.20</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>pre-site</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>javadocJar</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 <!--            <plugin>-->
 <!--                <groupId>org.apache.maven.plugins</groupId>-->
 <!--                <artifactId>maven-jar-plugin</artifactId>-->
@@ -412,15 +434,15 @@
                     </toolchains>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.1</version>
-                <configuration>
-<!--                    <pushChanges>false</pushChanges>-->
-                    <goals>dokka:javadocJar deploy</goals>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-release-plugin</artifactId>-->
+<!--                <version>3.0.1</version>-->
+<!--                <configuration>-->
+<!--&lt;!&ndash;                    <pushChanges>false</pushChanges>&ndash;&gt;-->
+<!--                    <goals>dokka:javadocJar deploy</goals>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 <!--            <plugin>-->
 <!--                <groupId>org.apache.maven.plugins</groupId>-->
 <!--                <artifactId>maven-compiler-plugin</artifactId>-->
@@ -499,7 +521,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.2</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

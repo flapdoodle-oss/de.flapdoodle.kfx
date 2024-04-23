@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
-import de.flapdoodle.kfx.controls.bettertable.Cells
 import javafx.event.EventHandler
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode

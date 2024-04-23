@@ -35,7 +35,7 @@ class Cell<T : Any, C : Any>(
   val row: T,
   val value: C?,
   val eventListener: TableRequestEventListener<T>,
-  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup
+  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup()
 ) : StackLikeRegion() {
 
   private val label = Label().apply {

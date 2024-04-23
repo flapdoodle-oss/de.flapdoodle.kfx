@@ -31,7 +31,7 @@ class RowEditorCell<T : Any, C : Any>(
   val column: Column<T, C>,
   var row: T,
   var value: C?,
-  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup
+  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup()
 ) : StackLikeRegion() {
 
   private lateinit var eventListener: TableRequestEventListener<T>

@@ -16,49 +16,62 @@
  */
 package de.flapdoodle.kfx.converters
 
+import de.flapdoodle.kfx.converters.impl.*
 import javafx.util.StringConverter
-import javafx.util.converter.BigDecimalStringConverter
-import javafx.util.converter.BigIntegerStringConverter
-import javafx.util.converter.DefaultStringConverter
-import javafx.util.converter.DoubleStringConverter
-import javafx.util.converter.FloatStringConverter
-import javafx.util.converter.IntegerStringConverter
-import javafx.util.converter.LocalDateStringConverter
-import javafx.util.converter.LocalDateTimeStringConverter
-import javafx.util.converter.LocalTimeStringConverter
-import javafx.util.converter.LongStringConverter
-import javafx.util.converter.NumberStringConverter
+import javafx.util.converter.*
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.util.*
 import kotlin.reflect.KClass
 
 object Converters {
   fun <S : Any> converterFor(s: KClass<out S>): StringConverter<S> {
     @Suppress("UNCHECKED_CAST")
     return when (s.javaPrimitiveType ?: s) {
-      Int::class -> IntegerStringConverter() as StringConverter<S>
-      Integer::class -> IntegerStringConverter() as StringConverter<S>
-      Integer::class.javaPrimitiveType -> IntegerStringConverter() as StringConverter<S>
-      Double::class -> DoubleStringConverter() as StringConverter<S>
-      Double::class.javaPrimitiveType -> DoubleStringConverter() as StringConverter<S>
-      Float::class -> FloatStringConverter() as StringConverter<S>
-      Float::class.javaPrimitiveType -> FloatStringConverter() as StringConverter<S>
-      Long::class -> LongStringConverter() as StringConverter<S>
-      Long::class.javaPrimitiveType -> LongStringConverter() as StringConverter<S>
-      Number::class -> NumberStringConverter() as StringConverter<S>
-      BigDecimal::class -> BigDecimalStringConverter() as StringConverter<S>
-      BigInteger::class -> BigIntegerStringConverter() as StringConverter<S>
-      String::class -> DefaultStringConverter() as StringConverter<S>
-      LocalDate::class -> LocalDateStringConverter() as StringConverter<S>
-      LocalTime::class -> LocalTimeStringConverter() as StringConverter<S>
-      LocalDateTime::class -> LocalDateTimeStringConverter() as StringConverter<S>
+      Int::class -> IntegerStringConverter()
+      Integer::class -> IntegerStringConverter()
+      Integer::class.javaPrimitiveType -> IntegerStringConverter()
+      Double::class -> DoubleStringConverter()
+      Double::class.javaPrimitiveType -> DoubleStringConverter()
+      Float::class -> FloatStringConverter()
+      Float::class.javaPrimitiveType -> FloatStringConverter()
+      Long::class -> LongStringConverter()
+      Long::class.javaPrimitiveType -> LongStringConverter()
+      Number::class -> NumberStringConverter()
+      BigDecimal::class -> BigDecimalStringConverter()
+      BigInteger::class -> BigIntegerStringConverter()
+      String::class -> DefaultStringConverter()
+      LocalDate::class -> LocalDateStringConverter()
+      LocalTime::class -> LocalTimeStringConverter()
+      LocalDateTime::class -> LocalDateTimeStringConverter()
 //      Boolean::class.javaPrimitiveType -> {
 //        (this as TableColumn<T, Boolean?>).useCheckbox(true)
 //      }
       else -> throw RuntimeException("not implemented for type:" + s.qualifiedName)
-    }
+    } as StringConverter<S>
+  }
+
+  fun <S: Any> validatingFor(s: KClass<out S>, locale: Locale): ValidatingConverter<S> {
+    return when (s.javaPrimitiveType ?: s) {
+      Int::class -> IntConverter(locale)
+      Integer::class -> IntConverter(locale)
+      Integer::class.javaPrimitiveType -> IntConverter(locale)
+      Double::class -> DoubleConverter(locale)
+      Double::class.javaPrimitiveType -> DoubleConverter(locale)
+      Float::class -> FloatConverter(locale)
+      Float::class.javaPrimitiveType -> FloatConverter(locale)
+      Long::class -> LongConverter(locale)
+      Long::class.javaPrimitiveType -> LongConverter(locale)
+      Number::class -> BigDecimalConverter(locale)
+      BigDecimal::class -> BigDecimalConverter(locale)
+      BigInteger::class -> BigIntegerConverter(locale)
+      String::class -> de.flapdoodle.kfx.converters.impl.StringConverter()
+      LocalDate::class -> LocalDateConverter(locale)
+
+      else -> throw RuntimeException("not implemented for type:" + s.qualifiedName)
+    } as ValidatingConverter<S>
   }
 }

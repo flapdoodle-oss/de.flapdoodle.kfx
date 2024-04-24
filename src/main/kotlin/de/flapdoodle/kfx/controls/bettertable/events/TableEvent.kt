@@ -87,7 +87,7 @@ sealed class TableEvent<T: Any> {
 
   sealed class ToCell<T: Any, C: Any>(open val row: T, open val column: Column<T, C>): ResponseEvent<T>()
   data class Focus<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
-  data class Blur<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
+//  data class Blur<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
   data class StartEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
   data class StopEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): ToCell<T, C>(row, column)
 

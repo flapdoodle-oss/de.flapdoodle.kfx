@@ -170,11 +170,11 @@ class RowEditorCell<T : Any, C : Any>(
         }
       }
 
-      is TableEvent.Blur<T, out Any> -> {
-        if (event.row == row && event.column == column) {
-          blur()
-        }
-      }
+//      is TableEvent.Blur<T, out Any> -> {
+//        if (event.row == row && event.column == column) {
+//          blur()
+//        }
+//      }
 
 //      is TableEvent.StartEdit<T, out Any> -> {
 //        if (event.row == row && event.column == column) {

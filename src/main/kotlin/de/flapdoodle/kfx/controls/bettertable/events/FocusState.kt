@@ -46,9 +46,9 @@ class FocusState<T : Any>(
       is TableEvent.MayInsertRow<T> -> {
         if (event.row != lastFocusEvent?.row) {
           return DelayedState(this) {
-            lastFocusEvent?.let {
-              onTableEvent(TableEvent.Blur(it.row, it.column))
-            }
+//            lastFocusEvent?.let {
+//              onTableEvent(TableEvent.Blur(it.row, it.column))
+//            }
             ShowInsertRowState(defaultState, context).onEvent(event)
           }
         }
@@ -58,7 +58,8 @@ class FocusState<T : Any>(
       }
       else -> {
         lastFocusEvent?.let {
-          onTableEvent(TableEvent.Blur(it.row, it.column))
+//          onTableEvent(TableEvent.Blur(it.row, it.column))
+          onTableEvent(TableEvent.FocusTable())
         }
         return defaultState.onEvent(event)
       }

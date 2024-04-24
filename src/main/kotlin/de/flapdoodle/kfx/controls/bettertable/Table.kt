@@ -144,6 +144,9 @@ class Table<T: Any>(
 //        val columnSize = _rows.preferredColumnSize(event.column)
         header.setColumnSize(event.column, columnSize)
       }
+      is TableEvent.FocusTable<T> -> {
+        requestFocus()
+      }
       else -> {
         __rows.onTableEvent(event)
       }

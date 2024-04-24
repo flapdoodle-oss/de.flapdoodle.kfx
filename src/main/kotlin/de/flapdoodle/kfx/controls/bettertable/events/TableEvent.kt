@@ -70,6 +70,8 @@ sealed class TableEvent<T: Any> {
   }
 
   sealed class ResponseEvent<T: Any>() : TableEvent<T>()
+  class FocusTable<T: Any>(): ResponseEvent<T>()
+
   sealed class ToColumn<T: Any, C: Any>(open val column: Column<T, C>): ResponseEvent<T>()
   data class ResizeColumn<T: Any, C: Any>(override val column: Column<T, C>): ToColumn<T, C>(column)
 

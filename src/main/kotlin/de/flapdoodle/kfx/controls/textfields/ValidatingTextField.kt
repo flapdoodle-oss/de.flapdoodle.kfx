@@ -88,4 +88,8 @@ class ValidatingTextField<T : Any>(
   fun get(): T? {
     return valueProperty.value
   }
+
+  fun hasError(): Boolean {
+    return lastExceptionProperty.value != null
+  }
 }

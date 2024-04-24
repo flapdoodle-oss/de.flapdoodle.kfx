@@ -29,6 +29,6 @@ class DefaultFieldFactoryLookup(
     if (LocalDate::class == type) {
       return DatePickerFieldFactory() as FieldFactory<T>
     }
-    return ValidatingTextFieldFactory(Converters.validatingFor(type, locale))
+    return TextFieldFactory(Converters.validatingFor(type, locale))
   }
 }

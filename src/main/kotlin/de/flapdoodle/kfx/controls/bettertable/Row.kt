@@ -70,12 +70,12 @@ class Row<T : Any>(
         val position = guessPosition(it.localPosition, all.height)
         when (it.eventType) {
           MouseEvent.MOUSE_ENTERED -> {
-            it.consume()
+//            it.consume()
             eventListener.fireEvent(TableEvent.MayInsertRow(value, position))
           }
 
           MouseEvent.MOUSE_MOVED -> {
-            it.consume()
+//            it.consume()
             eventListener.fireEvent(TableEvent.MayInsertRow(value, position))
           }
         }

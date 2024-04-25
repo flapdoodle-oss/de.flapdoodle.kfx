@@ -51,7 +51,7 @@ class LinearChartSampler {
       val series = listOf(
         XYChart.Series(
           "a", listOf(
-            XYChart.Data<Number, Number>(1.0, 1.0),
+            XYChart.Data<Number, Number>(1.231, 1.12),
             XYChart.Data<Number, Number>(2.0, 1.2),
             XYChart.Data<Number, Number>(10.0, 3.4),
             XYChart.Data<Number, Number>(12.0, 2.8),

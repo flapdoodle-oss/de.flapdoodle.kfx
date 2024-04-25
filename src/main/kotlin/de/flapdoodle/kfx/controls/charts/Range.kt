@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
-fun interface Range<T> {
+interface Range<T> {
     fun offset(value: T, scale: Double): Double
+    fun ticks(maxTicks: Int): List<Ticks<T>>
 }

@@ -48,6 +48,7 @@ class SmallChart<X : Any, Y : Any>(
   private val main = WeightGridPane().apply {
     setRowWeight(0, 1.0)
     setRowWeight(1, 0.0)
+    setRowWeight(2, 0.0)
   }
 
   private val charts = PaneLike().apply {
@@ -58,7 +59,7 @@ class SmallChart<X : Any, Y : Any>(
   private val labels = HBox().apply {
     cssClassName("small-chart-legends")
     alignment = Pos.CENTER
-    WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
+    WeightGridPane.setPosition(this, 0, 2, HPos.CENTER, VPos.CENTER)
   }
 
   init {

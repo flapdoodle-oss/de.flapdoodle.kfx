@@ -6,14 +6,14 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.temporal.ChronoUnit
 
-class RangeFactoriesTest {
+class LocalDateRangeFactoryTest {
 
   @Test
   fun dateTicks() {
     val min = LocalDate.of(2023, Month.JUNE, 18)
     val max = LocalDate.of(2024, Month.SEPTEMBER, 23)
 
-    val yearTicks = RangeFactories.ticks(min, max, ChronoUnit.YEARS, 20)
+    val yearTicks = LocalDateRangeFactory.ticks(min, max, ChronoUnit.YEARS, 20)
 
     assertThat(yearTicks.list)
       .hasSize(1)
@@ -21,7 +21,7 @@ class RangeFactoriesTest {
         LocalDate.of(2024, Month.JANUARY, 1)
       )
 
-    val monthTicks = RangeFactories.ticks(min, max, ChronoUnit.MONTHS, 20)
+    val monthTicks = LocalDateRangeFactory.ticks(min, max, ChronoUnit.MONTHS, 20)
 
     assertThat(monthTicks.list)
       .hasSize(15)
@@ -34,12 +34,12 @@ class RangeFactoriesTest {
         LocalDate.of(2024, Month.OCTOBER, 1),
       )
 
-    val dayTicks = RangeFactories.ticks(min, max, ChronoUnit.DAYS, 20)
+    val dayTicks = LocalDateRangeFactory.ticks(min, max, ChronoUnit.DAYS, 20)
 
     assertThat(dayTicks.list)
       .isEmpty()
 
-    val unlimitedDayTicks = RangeFactories.ticks(min, max, ChronoUnit.DAYS, 1000)
+    val unlimitedDayTicks = LocalDateRangeFactory.ticks(min, max, ChronoUnit.DAYS, 1000)
 
     assertThat(unlimitedDayTicks.list)
       .hasSize(464)
@@ -58,7 +58,7 @@ class RangeFactoriesTest {
     val min = LocalDate.of(2023, Month.JANUARY, 1)
     val max = LocalDate.of(2024, Month.JANUARY, 1)
 
-    val yearTicks = RangeFactories.ticks(min, max, ChronoUnit.YEARS, 20)
+    val yearTicks = LocalDateRangeFactory.ticks(min, max, ChronoUnit.YEARS, 20)
 
     assertThat(yearTicks.list)
       .hasSize(2)
@@ -73,7 +73,7 @@ class RangeFactoriesTest {
     val min = LocalDate.of(2023, Month.JANUARY, 1)
     val max = LocalDate.of(2023, Month.FEBRUARY, 1)
 
-    val yearTicks = RangeFactories.ticks(min, max, ChronoUnit.MONTHS, 20)
+    val yearTicks = LocalDateRangeFactory.ticks(min, max, ChronoUnit.MONTHS, 20)
 
     assertThat(yearTicks.list)
       .hasSize(2)
@@ -88,7 +88,7 @@ class RangeFactoriesTest {
     val min = LocalDate.of(2023, Month.JANUARY, 1)
     val max = LocalDate.of(2023, Month.JANUARY, 1)
 
-    val yearTicks = RangeFactories.ticks(min, max, ChronoUnit.DAYS, 20)
+    val yearTicks = LocalDateRangeFactory.ticks(min, max, ChronoUnit.DAYS, 20)
 
     assertThat(yearTicks.list)
       .hasSize(1)

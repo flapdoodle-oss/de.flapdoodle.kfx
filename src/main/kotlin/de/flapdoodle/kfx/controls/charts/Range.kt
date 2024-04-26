@@ -19,4 +19,30 @@ package de.flapdoodle.kfx.controls.charts
 interface Range<T> {
     fun offset(value: T, scale: Double): Double
     fun ticks(maxTicks: Int): List<Ticks<T>>
+
+    companion object {
+        fun <T : Any> empty(): Range<T> {
+            return object : Range<T> {
+                override fun offset(value: T, scale: Double): Double {
+                    return scale / 2.0
+                }
+
+                override fun ticks(maxTicks: Int): List<Ticks<T>> {
+                    return emptyList()
+                }
+            }
+        }
+
+        fun <T> single(value: T): Range<T> {
+            return object : Range<T> {
+                override fun offset(value: T, scale: Double): Double {
+                    return scale / 2.0
+                }
+
+                override fun ticks(maxTicks: Int): List<Ticks<T>> {
+                    return listOf(Ticks(listOf(value)))
+                }
+            }
+        }
+    }
 }

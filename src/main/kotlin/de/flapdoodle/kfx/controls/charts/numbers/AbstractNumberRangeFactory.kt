@@ -1,4 +1,8 @@
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.numbers
+
+import de.flapdoodle.kfx.controls.charts.Range
+import de.flapdoodle.kfx.controls.charts.RangeFactory
+import de.flapdoodle.kfx.controls.charts.Ticks
 
 abstract class AbstractNumberRangeFactory<T: Number>: RangeFactory<T> {
   override fun rangeOf(values: List<T>): Range<T> {
@@ -39,4 +43,5 @@ abstract class AbstractNumberRangeFactory<T: Number>: RangeFactory<T> {
       return Ticks(emptyList())
     }
   }
+
 }

@@ -26,11 +26,7 @@ object RangeFactories {
     return LocalDateRangeFactory()
   }
 
-  fun number(): RangeFactory<Number> {
-    return NumberRangeFactory()
-  }
-
   fun <T: Number> number(type: KClass<T>): RangeFactory<T> {
-    return de.flapdoodle.kfx.controls.charts.numbers.NumberRangeFactory(NumberType.of(type))
+    return NumberRangeFactory(NumberType.of(type))
   }
 }

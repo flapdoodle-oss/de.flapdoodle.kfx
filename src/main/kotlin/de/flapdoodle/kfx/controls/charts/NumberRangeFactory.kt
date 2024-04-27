@@ -1,43 +1,50 @@
 package de.flapdoodle.kfx.controls.charts
 
-@Deprecated("")
-class NumberRangeFactory : RangeFactory<Number> {
-  override fun rangeOf(values: List<Number>): Range<Number> {
-    return doubleRange(values)
+import de.flapdoodle.kfx.controls.charts.numbers.NumberType
+import de.flapdoodle.kfx.controls.charts.numbers.NumberUnit
+
+class NumberRangeFactory<T: Number>(
+  private val type: NumberType<T>
+): RangeFactory<T> {
+  override fun rangeOf(values: List<T>): Range<T> {
+    return doubleRange(type, values)
   }
 
   companion object {
-    private fun doubleRange(list: List<Number>): Range<Number> {
+    private fun <T: Number> doubleRange(type: NumberType<T>, list: List<T>): Range<T> {
       if (list.isEmpty()) return Range.empty()
       if (list.size == 1) return Range.single(list[0])
 
+
       val asDouble = list.map { it.toDouble() }
-      val min = asDouble.min()
-      val max = asDouble.max()
+      val min = requireNotNull(type.min(list)) { "min not found for $list"}
+      val max = requireNotNull(type.max(list)) { "max not found for $list"}
 
-      val dist = max - min
-
-      return object : Range<Number> {
-        override fun offset(value: Number, scale: Double): Double {
-          val valueDist = value.toDouble() - min
-          return if (dist != 0.0)
-            scale * valueDist / dist
-          else
-            scale / 2.0
+      return object : Range<T> {
+        override fun offset(value: T, scale: Double): Double {
+          return type.offset(min, max, scale, value)
         }
 
-        override fun ticks(maxTicks: Int): List<Ticks<Number>> {
-          val baseDist = 1.0
-
-          return listOf(ticks(min, max, 1, maxTicks)).filter {
-            it.list.isNotEmpty()
-          }
+        override fun ticks(maxTicks: Int): List<Ticks<T>> {
+          return type.units(min, max)
+            .map { ticks(it, min, max, maxTicks) }
+            .filter { it.list.isNotEmpty() }
         }
       }
     }
 
-    internal fun ticks(min: Double, max: Double, base: Int, maxTicks: Int): Ticks<Number> {
-      return Ticks(emptyList())
+    private fun <T: Number> ticks(unit: NumberUnit<T>, min: T, max: T, maxTicks: Int): Ticks<T> {
+      val ticks = unit.unitsBetween(min, max)
+      val list = if (ticks <= maxTicks) {
+        val start = unit.firstAfter(min)
+        (0..<ticks).map {
+          unit.next(start, it)
+        }
+      } else {
+        emptyList()
+      }
+      return Ticks(list)
     }
   }
+
 }

@@ -16,7 +16,9 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
+import de.flapdoodle.kfx.controls.charts.numbers.NumberType
 import java.time.LocalDate
+import kotlin.reflect.KClass
 
 object RangeFactories {
 
@@ -26,5 +28,9 @@ object RangeFactories {
 
   fun number(): RangeFactory<Number> {
     return NumberRangeFactory()
+  }
+
+  fun <T: Number> number(type: KClass<T>): RangeFactory<T> {
+    return de.flapdoodle.kfx.controls.charts.numbers.NumberRangeFactory(NumberType.of(type))
   }
 }

@@ -40,7 +40,7 @@ class SmallChartSampler {
         override fun start(stage: Stage) {
             val now = LocalDate.now()
 
-            val series = SimpleObjectProperty(emptyList<Serie<LocalDate, Number>>())
+            val series = SimpleObjectProperty(emptyList<Serie<LocalDate, Double>>())
             series.value = listOf(
                 Serie(
                     "0", Color.ORANGE, listOf(
@@ -51,7 +51,7 @@ class SmallChartSampler {
             val content = SmallChart(
                 series,
                 RangeFactories.localDate(),
-                RangeFactories.number()
+                RangeFactories.number(Double::class)
             )
 //      val content = ColorableLineChart<Number, Number>(x, y, series) {
 //        it -> colorMap[it.name] ?: Color.BLACK

@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.controls.charts
 
 import de.flapdoodle.kfx.bindings.*
+import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.mapNullable
@@ -45,22 +46,16 @@ class SmallChart<X : Any, Y : Any>(
   val yRangeFactory: RangeFactory<Y>
 ) : StackLikeRegion() {
 
-  internal val chartSpacing = object : SimpleStyleableDoubleProperty(CHART_SPACING, this, null, 2.0) {
-    override fun invalidated() {
-      requestLayout()
-    }
+  internal val chartSpacing = CHART_SPACING.asProperty(5.0) {
+    requestLayout()
   }
 
-  internal val scaleSpacing = object : SimpleStyleableDoubleProperty(SCALE_SPACING, this, null, 2.0) {
-    override fun invalidated() {
+  internal val scaleSpacing = SCALE_SPACING.asProperty(5.0) {
       requestLayout()
-    }
   }
 
-  internal val scaleLength = object : SimpleStyleableDoubleProperty(SCALE_LENGTH, this, null, 2.0) {
-    override fun invalidated() {
+  internal val scaleLength = SCALE_LENGTH.asProperty(5.0) {
       requestLayout()
-    }
   }
 
   private val main = WeightGridPane().apply {
@@ -248,40 +243,11 @@ class SmallChart<X : Any, Y : Any>(
       )
     }
 
-    val CHART_SPACING: CssMetaData<SmallChart<out Any, out Any>, Number> =
-      object : CssMetaData<SmallChart<out Any, out Any>, Number>("-chart-spacing", StyleConverter.getSizeConverter()) {
-        override fun isSettable(styleable: SmallChart<*, *>): Boolean {
-          return !styleable.chartSpacing.isBound
-        }
+    val CHART_SPACING: NumberCssMetaData<SmallChart<out Any, out Any>> = NumberCssMetaData("-chart-spacing", SmallChart<out Any, out Any>::chartSpacing)
+    val SCALE_SPACING: NumberCssMetaData<SmallChart<out Any, out Any>> = NumberCssMetaData("-scale-spacing", SmallChart<out Any, out Any>::scaleSpacing)
+    val SCALE_LENGTH: NumberCssMetaData<SmallChart<out Any, out Any>> = NumberCssMetaData("-scale-length", SmallChart<out Any, out Any>::scaleLength)
 
-        override fun getStyleableProperty(styleable: SmallChart<*, *>): StyleableProperty<Number> {
-          return styleable.chartSpacing
-        }
-      }
-
-    val SCALE_SPACING: CssMetaData<SmallChart<*, *>, Number> =
-      object : CssMetaData<SmallChart<*, *>, Number>("-scale-spacing", StyleConverter.getSizeConverter()) {
-        override fun isSettable(styleable: SmallChart<*, *>): Boolean {
-          return !styleable.scaleSpacing.isBound
-        }
-
-        override fun getStyleableProperty(styleable: SmallChart<*, *>): StyleableProperty<Number> {
-          return styleable.scaleSpacing
-        }
-      }
-
-    val SCALE_LENGTH: CssMetaData<SmallChart<*, *>, Number> =
-      object : CssMetaData<SmallChart<*, *>, Number>("-scale-length", StyleConverter.getSizeConverter()) {
-        override fun isSettable(styleable: SmallChart<*, *>): Boolean {
-          return !styleable.scaleLength.isBound
-        }
-
-        override fun getStyleableProperty(styleable: SmallChart<*, *>): StyleableProperty<Number> {
-          return styleable.scaleLength
-        }
-      }
-
-    // ChartLine extends Pane
     val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + Pane.getClassCssMetaData() + CHART_SPACING + SCALE_SPACING + SCALE_LENGTH
   }
 }
+

@@ -16,7 +16,6 @@ class NumberRangeFactory<T: Number>(
       if (list.size == 1) return Range.single(list[0])
 
 
-      val asDouble = list.map { it.toDouble() }
       val min = requireNotNull(type.min(list)) { "min not found for $list"}
       val max = requireNotNull(type.max(list)) { "max not found for $list"}
 
@@ -29,6 +28,7 @@ class NumberRangeFactory<T: Number>(
           return type.units(min, max)
             .map { ticks(it, min, max, maxTicks) }
             .filter { it.list.isNotEmpty() }
+            .reversed()
         }
       }
     }

@@ -14,33 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.small-chart {
-    -fx-padding: 10px;
-    /*-chart-spacing: 10px;*/
-}
-
-.small-chart .small-chart-line-box {
+.scale {
     /*-fx-padding: 10px;*/
-    -fx-border-width: 1px;
-    -fx-border-color: rgba(0, 0, 0, 0.05);
-
-    -fx-background-color: rgba(255,255,255,0.2);
-}
-
-.small-chart .small-chart-legends {
-    -fx-padding: 4px;
-    -fx-spacing: 4px;
-}
-
-.small-chart .small-chart-line {
-    -fx-stroke-width: 2px;
-}
-
-.small-chart .small-chart-line-symbol {
-    /*-fx-border-color: red;*/
-    -fx-background-color: white;
-    -fx-background-radius: 4px;
-    -fx-border-width: 2px;
-    -fx-padding: 3px;
-    -fx-border-radius: 4px;
+    -scale-spacing: 10;
+    -scale-length: 10;
 }

@@ -18,13 +18,12 @@ package de.flapdoodle.kfx.controls.charts
 
 import de.flapdoodle.kfx.bindings.*
 import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
+import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.mapNullable
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
-import javafx.beans.property.DoublePropertyBase
-import javafx.beans.property.SimpleObjectProperty
+import de.flapdoodle.kfx.types.Direction
 import javafx.beans.value.ObservableValue
 import javafx.css.*
 import javafx.geometry.HPos
@@ -35,9 +34,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.shape.LineTo
-import javafx.scene.shape.MoveTo
-import javafx.scene.shape.Path
 import javafx.scene.shape.Rectangle
 
 class SmallChart<X : Any, Y : Any>(
@@ -50,48 +46,61 @@ class SmallChart<X : Any, Y : Any>(
     requestLayout()
   }
 
-  internal val scaleSpacing = SCALE_SPACING.asProperty(5.0) {
-      requestLayout()
+  private val lines = series.map { list ->
+    val allXY = list.flatMap { it.values }
+    val allX = allXY.map { it.first }
+    val allY = allXY.map { it.second }
+    val xrange = xRangeFactory.rangeOf(allX)
+    val yrange = yRangeFactory.rangeOf(allY)
+    list.map { ChartLine(it, xrange, yrange, chartSpacing) }
   }
 
-  internal val scaleLength = SCALE_LENGTH.asProperty(5.0) {
-      requestLayout()
+  private val xRange = series.map { list ->
+    val allXY = list.flatMap { it.values }
+    val allX = allXY.map { it.first }
+    xRangeFactory.rangeOf(allX)
+  }
+
+  private val yRange = series.map { list ->
+    val allXY = list.flatMap { it.values }
+    val allY = allXY.map { it.second }
+    yRangeFactory.rangeOf(allY)
   }
 
   private val main = WeightGridPane().apply {
     setRowWeight(0, 1.0)
     setRowWeight(1, 0.0)
     setRowWeight(2, 0.0)
+    setColumnWeight(0, 0.0)
+    setColumnWeight(1, 1.0)
   }
 
   private val charts = PaneLike().apply {
-    WeightGridPane.setPosition(this, 0, 0, HPos.CENTER, VPos.CENTER)
+    WeightGridPane.setPosition(this, 1, 0, HPos.CENTER, VPos.CENTER)
     clipProperty().bind(layoutBoundsProperty().map { Rectangle(it.minX, it.minY, it.width, it.height) })
+  }
+
+  private val xscale = Scale(xRange,chartSpacing, Direction.BOTTOM).apply {
+    WeightGridPane.setPosition(this, 1, 1, HPos.CENTER, VPos.CENTER)
+  }
+
+  private val yscale = Scale(yRange,chartSpacing, Direction.LEFT).apply {
+    WeightGridPane.setPosition(this, 0, 0, HPos.CENTER, VPos.CENTER)
   }
 
   private val labels = HBox().apply {
     cssClassName("small-chart-legends")
     alignment = Pos.CENTER
-    WeightGridPane.setPosition(this, 0, 2, HPos.CENTER, VPos.CENTER)
+    WeightGridPane.setPosition(this, 1, 2, HPos.CENTER, VPos.CENTER)
   }
 
   init {
     bindCss("small-chart")
 
-    main.children.addAll(charts, labels)
+    main.children.addAll(charts, yscale, xscale, labels)
     children.add(main)
 
     labels.children.syncWith(series) { Legend(it.label, it.color) }
-
-    val lines = series.map { list ->
-      val allXY = list.flatMap { it.values }
-      val allX = allXY.map { it.first }
-      val allY = allXY.map { it.second }
-      val xrange = xRangeFactory.rangeOf(allX)
-      val yrange = yRangeFactory.rangeOf(allY)
-      list.map { ChartLine(it, xrange, yrange, chartSpacing) }
-    }
-
     charts.children.syncWith(lines) { it }
   }
 
@@ -104,128 +113,9 @@ class SmallChart<X : Any, Y : Any>(
         Label(name),
         StackPane().apply {
           cssClassName("small-chart-line-symbol")
-          style = "-fx-border-color: ${asCss(color)}"
+          style = "-fx-border-color: ${Colors.asCss(color)}"
 
         })
-    }
-  }
-
-  class Scale<T>(
-    private val range: Range<T>,
-    private val spacing: DoublePropertyBase
-  ): Pane(), Styleable {
-    private val spacingNonNull: ObservableValue<out Number> = spacing.mapToDouble { v -> v?.toDouble() ?: 10.0 }
-
-    private val path = Path().apply {
-      stroke = Color.BLACK
-//            strokeWidth = 2.0
-      cssClassName("small-chart-scale")
-      minWidthProperty().bind(spacing.multiply(4))
-      minHeightProperty().bind(spacing.multiply(4))
-    }
-
-    internal val length = object : SimpleStyleableDoubleProperty(SCALE_LENGTH, this, null, 10.0) {
-      override fun invalidated() {
-        requestLayout()
-      }
-    }
-
-    private val ticks = DoubleBindings.merge(spacingNonNull, widthProperty()) { space, width ->
-      val maxTicks = (width / space).toInt()
-      val list = range.ticks(maxTicks).firstOrNull()?.list ?: emptyList()
-
-      list
-    }
-
-//    private val x = ObjectBindings.merge(ticks, layoutBoundsProperty()) { t, l ->
-//        val usableWidht = width - insets.left - insets.right - spacing * 2.0
-//        val usableHeight = height - insets.top - insets.bottom - spacing * 2.0
-//        val x = xrange.offset(pair.first, usableWidht) + insets.left + spacing
-//        val y = usableHeight - yrange.offset(pair.second, usableHeight) + insets.top + spacing
-//        x to y
-//    }
-
-
-    init {
-//      path.elements.syncWith(elements)
-    }
-//
-//    private val coords = ticks.map { it: List<T> ->
-////      SimpleObjectProperty(it).and(layoutBoundsProperty()).and(spacing.mapNullable { v -> v?.toDouble() ?: 0.0 }).map { pair, _, spacing ->
-////        val usableWidht = width - insets.left - insets.right - spacing * 2.0
-////        val usableHeight = height - insets.top - insets.bottom - spacing * 2.0
-////        val x = xrange.offset(pair.first, usableWidht) + insets.left + spacing
-////        val y = usableHeight - yrange.offset(pair.second, usableHeight) + insets.top + spacing
-////        x to y
-////      }
-//    }
-
-
-
-
-  }
-
-  class ChartLine<X : Any, Y : Any>(
-    val serie: Serie<X, Y>,
-    val xrange: Range<X>,
-    val yrange: Range<Y>,
-    val spacing: DoublePropertyBase
-  ) : Pane(), Styleable {
-
-//    internal val spacing: SimpleStyleableDoubleProperty = object : SimpleStyleableDoubleProperty(CHART_SPACING, this, null, 2.0) {
-//      override fun invalidated() {
-//        requestLayout()
-//      }
-//    }
-
-    private val path = Path().apply {
-      stroke = serie.color
-//            strokeWidth = 2.0
-      cssClassName("small-chart-line")
-      minWidthProperty().bind(spacing.multiply(4))
-      minHeightProperty().bind(spacing.multiply(4))
-    }
-
-    private val coords = serie.values.map {
-      SimpleObjectProperty(it).and(layoutBoundsProperty()).and(spacing.mapNullable { v -> v?.toDouble() ?: 0.0 }).map { pair, _, spacing ->
-        val usableWidht = width - insets.left - insets.right - spacing * 2.0
-        val usableHeight = height - insets.top - insets.bottom - spacing * 2.0
-        val x = xrange.offset(pair.first, usableWidht) + insets.left + spacing
-        val y = usableHeight - yrange.offset(pair.second, usableHeight) + insets.top + spacing
-        x to y
-      }
-    }
-
-    private val lineSegments = coords.mapIndexed { index, coords ->
-      if (index == 0) {
-        MoveTo().apply {
-          xProperty().bind(coords.map { it.first })
-          yProperty().bind(coords.map { it.second })
-        }
-      } else {
-        LineTo().apply {
-          xProperty().bind(coords.map { it.first })
-          yProperty().bind(coords.map { it.second })
-        }
-      }
-    }
-
-    private val points = coords.map { coords ->
-      StackPane().apply {
-        cssClassName("small-chart-line-symbol")
-        style = "-fx-border-color: ${asCss(serie.color)}"
-//                border = Border(BorderStroke(serie.color, null, null, null))
-        layoutXProperty().bind(coords.and(insetsProperty()).map { c, inset -> c.first - inset.left })
-        layoutYProperty().bind(coords.and(insetsProperty()).map { c, inset -> c.second - inset.right })
-      }
-    }
-
-    init {
-      cssClassName("small-chart-line-box")
-
-      path.elements.addAll(lineSegments)
-      children.add(path)
-      children.addAll(points)
     }
   }
 
@@ -234,20 +124,9 @@ class SmallChart<X : Any, Y : Any>(
   }
 
   companion object {
-    private fun asCss(color: Color): String {
-      return String.format(
-        "#%02X%02X%02X",
-        (color.red * 255).toInt(),
-        (color.green * 255).toInt(),
-        (color.blue * 255).toInt()
-      )
-    }
-
     val CHART_SPACING: NumberCssMetaData<SmallChart<out Any, out Any>> = NumberCssMetaData("-chart-spacing", SmallChart<out Any, out Any>::chartSpacing)
-    val SCALE_SPACING: NumberCssMetaData<SmallChart<out Any, out Any>> = NumberCssMetaData("-scale-spacing", SmallChart<out Any, out Any>::scaleSpacing)
-    val SCALE_LENGTH: NumberCssMetaData<SmallChart<out Any, out Any>> = NumberCssMetaData("-scale-length", SmallChart<out Any, out Any>::scaleLength)
 
-    val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + Pane.getClassCssMetaData() + CHART_SPACING + SCALE_SPACING + SCALE_LENGTH
+    val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + Pane.getClassCssMetaData() + CHART_SPACING
   }
 }
 

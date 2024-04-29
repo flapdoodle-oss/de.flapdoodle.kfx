@@ -17,6 +17,8 @@ class LocalDateRangeFactory : RangeFactory<LocalDate> {
       val min = list.min()
       val max = list.max()
 
+      require(!min.isAfter(max)) { "$min > $max" }
+
       val dist = ChronoUnit.DAYS.between(min, max)
 
       return object : Range<LocalDate> {
@@ -37,9 +39,9 @@ class LocalDateRangeFactory : RangeFactory<LocalDate> {
     // VisibleForTesting
     internal fun dateTicks(min: LocalDate, max: LocalDate, maxTicks: Int): List<Ticks<LocalDate>> {
       val chronoUnits = listOf(
-        ChronoUnit.YEARS,
+        ChronoUnit.DAYS,
         ChronoUnit.MONTHS,
-        ChronoUnit.DAYS
+        ChronoUnit.YEARS
       )
 
       return chronoUnits.map {
@@ -73,7 +75,7 @@ class LocalDateRangeFactory : RangeFactory<LocalDate> {
         else -> throw IllegalArgumentException("not implemented: $chronoUnit")
       }
 
-      val list = if (dist < maxTicks) {
+      val list = if (dist < maxTicks && !start.isAfter(end)) {
         start.datesUntil(end, period)
           .map { it }
           .toList()

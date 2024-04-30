@@ -18,8 +18,9 @@
     -fx-border-width: 1;
     -fx-border-color: rgb(120,120,120);
     /*-fx-border-style: dashed;*/
-    -fx-fill: rgba(205,205,205,0.7);
+    /*-fx-fill: rgba(205,205,205,0.7);*/
     -fx-background-color: rgba(245,245,245,0.7);
+    /*-fx-effect: dropshadow(gaussian, gray, 20, 0.01, 4, 4)*/
 }
 
 .vertex .vertex-header {

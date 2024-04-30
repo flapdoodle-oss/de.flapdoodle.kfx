@@ -1,9 +1,11 @@
 package de.flapdoodle.kfx.controls.charts
 
+import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.types.Direction
 import javafx.beans.property.DoublePropertyBase
 import javafx.beans.value.ObservableValue
@@ -39,7 +41,8 @@ class Scale<T>(
   }
 
   private val path = Path().apply {
-    stroke = Color.BLACK
+    cssClassName("ticks")
+//    stroke = Color.BLACK
     
     //TODO das ist vielleicht nicht so richtig
     minWidthProperty().bind(chartSpacing.multiply(4))
@@ -65,10 +68,12 @@ class Scale<T>(
         Direction.LEFT, Direction.RIGHT -> height - insets.top - insets.bottom - spaceAroundChart * 2.0
       }
 
-      val startOffset = when(direction) {
+      val startOffset = snappedToPixel(when(direction) {
         Direction.BOTTOM, Direction.TOP -> insets.left + spaceAroundChart
         Direction.LEFT, Direction.RIGHT -> insets.top + spaceAroundChart
-      }
+      })
+
+
 
       ticks.flatMap {
         val scaleOffset = r.offset(it, scaleLength) + startOffset
@@ -98,6 +103,10 @@ class Scale<T>(
 
     path.elements.syncWith(pathSegments) { it }
     children.addAll(path)
+  }
+
+  private fun snappedToPixel(value: Double): Double {
+    return if (isSnapToPixel) ScaledMath.ceil(value, 1.0) else value
   }
 
   override fun getCssMetaData(): List<CssMetaData<out Styleable, *>> {

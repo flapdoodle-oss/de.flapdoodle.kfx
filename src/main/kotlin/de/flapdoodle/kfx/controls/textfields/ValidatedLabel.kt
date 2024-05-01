@@ -14,19 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.textfields
 
-import de.flapdoodle.kfx.controls.charts.numbers.NumberType
-import java.time.LocalDate
+import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.ValidatingConverter
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.control.Label
+import java.util.Locale
 import kotlin.reflect.KClass
 
-object RangeFactories {
+class ValidatedLabel<T: Any>(
+  val converter: ValidatingConverter<T>,
+) : Label() {
 
-  fun localDate(): RangeFactory<LocalDate> {
-    return LocalDateRangeFactory()
+  private val valueProperty = SimpleObjectProperty<T>(null)
+
+  init {
+    textProperty().bindBidirectional(valueProperty, ValidatingConverter.asStringConverter(converter))
   }
 
-  fun <T: Number> number(type: KClass<T>): RangeFactory<T> {
-    return NumberRangeFactory(NumberType.of(type))
+  fun valueProperty(): ObjectProperty<T> = valueProperty
+
+  fun set(v: T?) {
+    valueProperty.value = v
   }
 }

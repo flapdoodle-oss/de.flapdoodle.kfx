@@ -16,18 +16,11 @@
  */
 package de.flapdoodle.kfx.controls.virtual
 
-import de.flapdoodle.kfx.controls.charts.Range
-import de.flapdoodle.kfx.controls.charts.Serie
-import de.flapdoodle.kfx.controls.charts.SmallChart
 import de.flapdoodle.kfx.extensions.BoundingBoxes
 import de.flapdoodle.kfx.extensions.mapNullable
 import de.flapdoodle.kfx.extensions.withAnchors
-import de.flapdoodle.kfx.layout.StackLikeRegion
-import de.flapdoodle.kfx.sampler.AbsolutePane
 import javafx.application.Application
-import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
-import javafx.geometry.Bounds
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.layout.*
@@ -37,8 +30,6 @@ import javafx.scene.shape.MoveTo
 import javafx.scene.shape.Path
 import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 class VirtualViewSampler {
     class Sample : Application() {

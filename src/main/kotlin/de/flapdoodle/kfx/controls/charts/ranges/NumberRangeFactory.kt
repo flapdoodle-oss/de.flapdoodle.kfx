@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.ranges
 
 import de.flapdoodle.kfx.controls.charts.numbers.NumberType
 import de.flapdoodle.kfx.controls.charts.numbers.NumberUnit

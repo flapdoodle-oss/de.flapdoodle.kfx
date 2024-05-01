@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.ranges
 
-class IndexAxis {
+import de.flapdoodle.kfx.controls.charts.numbers.NumberType
+import java.time.LocalDate
+import kotlin.reflect.KClass
+
+object RangeFactories {
+
+  fun localDate(): RangeFactory<LocalDate> {
+    return LocalDateRangeFactory()
+  }
+
+  fun <T: Number> number(type: KClass<T>): RangeFactory<T> {
+    return NumberRangeFactory(NumberType.of(type))
+  }
 }

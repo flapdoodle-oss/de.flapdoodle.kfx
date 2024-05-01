@@ -25,7 +25,13 @@ object BigDecimalType : NumberType<BigDecimal> {
 
     val dist = max - min
     val oneTickUnit = biggestOneTick(dist)
-    return listOf(Unit(oneTickUnit), Unit(oneTickUnit.divide(BigDecimal.TEN)), Unit(oneTickUnit.divide(BigDecimal.TEN).divide(BigDecimal.TEN)))
+    return listOf(
+      Unit(oneTickUnit),
+      Unit(oneTickUnit.divide(BigDecimal.valueOf(5L))),
+      Unit(oneTickUnit.divide(BigDecimal.TEN)),
+      Unit(oneTickUnit.divide(BigDecimal.TEN).divide(BigDecimal.valueOf(5L))),
+      Unit(oneTickUnit.divide(BigDecimal.TEN).divide(BigDecimal.TEN))
+    )
   }
 
   private fun biggestOneTick(dist: BigDecimal, start: BigDecimal = BigDecimal.ONE): BigDecimal {

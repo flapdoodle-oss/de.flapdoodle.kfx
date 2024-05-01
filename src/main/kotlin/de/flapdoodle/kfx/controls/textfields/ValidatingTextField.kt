@@ -48,36 +48,11 @@ class ValidatingTextField<T : Any>(
   fun lastExceptionProperty(): ReadOnlyProperty<Exception> = lastExceptionProperty
 
   init {
-    textProperty().bindBidirectional(valueProperty, asStringConverter(converter))
+    textProperty().bindBidirectional(valueProperty, ValidatingConverter.asStringConverter(converter, lastExceptionPropertySetter = {
+      lastExceptionProperty.value = it
+    }))
     lastExceptionProperty().addListener { _, _, exception ->
       onException(this, exception)
-    }
-  }
-
-  private fun asStringConverter(converter: ValidatingConverter<T>): StringConverter<T> {
-    return object : StringConverter<T>() {
-      override fun toString(value: T?): String? {
-        return value?.let {
-          lastExceptionProperty.value = null
-          converter.toString(it)
-        }
-      }
-
-      override fun fromString(value: String?): T? {
-        return if (value != null && value.trim().isNotEmpty()) {
-          when (val v = converter.fromString(value)) {
-            is ValueOrError.Value -> {
-              lastExceptionProperty.value = null
-              v.value
-            }
-
-            is ValueOrError.Error -> {
-              lastExceptionProperty.value = v.exception
-              null
-            }
-          }
-        } else null
-      }
     }
   }
 

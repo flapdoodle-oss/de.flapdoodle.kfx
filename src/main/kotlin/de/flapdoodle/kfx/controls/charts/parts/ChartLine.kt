@@ -1,15 +1,13 @@
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.parts
 
 import de.flapdoodle.kfx.bindings.and
+import de.flapdoodle.kfx.controls.charts.ranges.Range
+import de.flapdoodle.kfx.controls.charts.Serie
 import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.mapNullable
-import javafx.beans.property.DoublePropertyBase
 import javafx.beans.property.SimpleObjectProperty
 import javafx.css.Styleable
-import javafx.geometry.Insets
 import javafx.scene.layout.Pane
-import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo

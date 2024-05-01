@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.ranges
 
 fun interface RangeFactory<T: Any> {
     fun rangeOf(values: List<T>) : Range<T>

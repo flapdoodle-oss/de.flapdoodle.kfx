@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.ranges
 
 import java.time.LocalDate
 import java.time.Period

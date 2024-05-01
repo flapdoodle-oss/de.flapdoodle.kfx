@@ -17,7 +17,8 @@
 package de.flapdoodle.kfx.controls.charts
 
 import de.flapdoodle.kfx.bindings.*
-import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
+import de.flapdoodle.kfx.controls.charts.parts.ChartLine
+import de.flapdoodle.kfx.controls.charts.ranges.RangeFactory
 import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
@@ -25,13 +26,11 @@ import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.types.Direction
 import javafx.beans.value.ObservableValue
-import javafx.css.*
 import javafx.geometry.HPos
 import javafx.geometry.Pos
 import javafx.geometry.VPos
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
@@ -41,10 +40,6 @@ class SmallChart<X : Any, Y : Any>(
   val xRangeFactory: RangeFactory<X>,
   val yRangeFactory: RangeFactory<Y>
 ) : StackLikeRegion() {
-
-  internal val chartSpacing = CHART_SPACING.asProperty(5.0) {
-    requestLayout()
-  }
 
   private val lines = series.map { list ->
     val allXY = list.flatMap { it.values }
@@ -131,16 +126,6 @@ class SmallChart<X : Any, Y : Any>(
 
         })
     }
-  }
-
-  override fun getCssMetaData(): List<CssMetaData<out Styleable, *>> {
-    return STYLEABLES
-  }
-
-  companion object {
-    val CHART_SPACING: NumberCssMetaData<SmallChart<out Any, out Any>> = NumberCssMetaData("-chart-spacing", SmallChart<out Any, out Any>::chartSpacing)
-
-    val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + Pane.getClassCssMetaData() + CHART_SPACING
   }
 }
 

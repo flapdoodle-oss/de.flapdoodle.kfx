@@ -16,12 +16,16 @@
  */
 .scale {
     /*-fx-padding: 10px;*/
-    -scale-spacing: 10;
+    -scale-min-spacing: 10;
     -scale-length: 10;
-    -fx-padding: 10px;
+    -scale-distance: 30;
 }
 
 .scale .ticks {
+    -fx-padding: 0px;
+}
+
+.scale .tick {
     -fx-stroke-width: 1px;
     -fx-stroke: gray;
     -fx-snap-to-pixel: true;

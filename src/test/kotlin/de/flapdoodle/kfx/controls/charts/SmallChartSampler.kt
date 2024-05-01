@@ -16,24 +16,17 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
-import de.flapdoodle.kfx.bindings.toObservable
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.controls.charts.ranges.RangeFactories
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.scene.Scene
-import javafx.scene.chart.LineChart
-import javafx.scene.chart.NumberAxis
-import javafx.scene.chart.XYChart
 import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import java.time.Duration
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 class SmallChartSampler {
     class Sample : Application() {
@@ -68,6 +61,9 @@ class SmallChartSampler {
                                     now.plusDays(1) to 110.0,
                                     now.plusDays(32) to 70.0,
                                     now.plusDays(35) to 200.0,
+                                    now.plusDays(75) to 600.0,
+                                    now.plusDays(235) to 0.0,
+                                    now.plusDays(310) to 20.0,
                                 )
                             )
 

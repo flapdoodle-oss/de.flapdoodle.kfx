@@ -36,7 +36,9 @@ class DoubleTypeTest {
     assertThat(testee.units(0.0, 10.0))
       .containsExactly(
         DoubleType.Unit(10.0),
+        DoubleType.Unit(2.0),
         DoubleType.Unit(1.0),
+        DoubleType.Unit(0.2),
         DoubleType.Unit(0.1)
       )
   }

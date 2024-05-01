@@ -16,7 +16,6 @@
  */
 .small-chart {
     -fx-padding: 10px;
-    -chart-spacing: 0px;
 }
 
 .small-chart .small-chart-line-box {

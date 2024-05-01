@@ -25,7 +25,12 @@ object DoubleType : NumberType<Double> {
 
     val dist = max - min
     val oneTickUnit = biggestOneTick(dist)
-    return listOf(Unit(oneTickUnit), Unit(oneTickUnit/10.0), Unit(oneTickUnit/100.0))
+    return listOf(
+      Unit(oneTickUnit),
+      Unit(oneTickUnit/5.0),
+      Unit(oneTickUnit/10.0),
+      Unit(oneTickUnit/50.0),
+      Unit(oneTickUnit/100.0))
   }
 
   private fun biggestOneTick(dist: Double, start: Double = 1.0): Double {

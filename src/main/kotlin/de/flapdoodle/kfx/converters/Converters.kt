@@ -55,6 +55,7 @@ object Converters {
   }
 
   fun <S: Any> validatingFor(s: KClass<out S>, locale: Locale): ValidatingConverter<S> {
+    @Suppress("UNCHECKED_CAST")
     return when (s.javaPrimitiveType ?: s) {
       Int::class -> IntConverter(locale)
       Integer::class -> IntConverter(locale)
@@ -70,6 +71,7 @@ object Converters {
       BigInteger::class -> BigIntegerConverter(locale)
       String::class -> de.flapdoodle.kfx.converters.impl.StringConverter()
       LocalDate::class -> LocalDateConverter(locale)
+      LocalDateTime::class -> LocalDateTimeConverter(locale)
 
       else -> throw RuntimeException("not implemented for type:" + s.qualifiedName)
     } as ValidatingConverter<S>

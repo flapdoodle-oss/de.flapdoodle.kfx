@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.ranges
 
 interface Range<T> {
     fun offset(value: T, scale: Double): Double

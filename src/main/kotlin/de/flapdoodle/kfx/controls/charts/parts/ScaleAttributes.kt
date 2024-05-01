@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.controls.charts
+package de.flapdoodle.kfx.controls.charts.parts
 
 data class ScaleAttributes(
   val spacing: Double,

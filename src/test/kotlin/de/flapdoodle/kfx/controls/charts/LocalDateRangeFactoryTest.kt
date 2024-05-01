@@ -1,5 +1,6 @@
 package de.flapdoodle.kfx.controls.charts
 
+import de.flapdoodle.kfx.controls.charts.ranges.LocalDateRangeFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

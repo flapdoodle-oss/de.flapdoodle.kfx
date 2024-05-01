@@ -27,6 +27,7 @@ import javafx.css.SimpleStyleableDoubleProperty
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.Node
+import kotlin.math.max
 
 class WeightGridPane : javafx.scene.layout.Region() {
 
@@ -38,6 +39,7 @@ class WeightGridPane : javafx.scene.layout.Region() {
       horizontalPosition: HPos? = null,
       verticalPosition: VPos? = null
     ) {
+      require(node.constraint[GridMap.Pos::class] == null) {"position already set"}
       node.constraint[GridMap.Pos::class] = GridMap.Pos(column, row)
       node.constraint[HPos::class] = horizontalPosition
       node.constraint[VPos::class] = verticalPosition
@@ -156,6 +158,8 @@ class WeightGridPane : javafx.scene.layout.Region() {
     return sumOf(selector) + size * space
   }
 
+  private val debug = false
+
   private fun columnSizes() = gridMap.mapColumns { index, list ->
     val limits = list.map { it.widthLimits() }
     val min = limits.map { it.first }.maxOrNull() ?: 0.0
@@ -175,26 +179,38 @@ class WeightGridPane : javafx.scene.layout.Region() {
     WeightedSize(rowWeights.get(index) ?: 1.0, min, max)
   }
 
+  private val debugMinPref = false
+
   override fun computeMinWidth(height: Double): Double {
-    val width = columnSizes().sumWithSpaceBetween(horizontalSpace()) { it.min }
-    return width + insets.left + insets.right
+    val ret = columnSizes().sumWithSpaceBetween(horizontalSpace()) { it.min }
+    if (debugMinPref) println("computeMinWidth: $ret + insets..")
+    return ret + insets.left + insets.right
   }
 
   override fun computeMinHeight(width: Double): Double {
     val ret = rowSizes().sumWithSpaceBetween(verticalSpace()) { it.min }
+    if (debugMinPref) println("computeMinHeight: $ret + insets..")
     return ret + insets.top + insets.bottom
   }
 
   override fun computePrefWidth(height: Double): Double {
     val ret = gridMap.mapColumns { _, list ->
-      list.map { it.prefWidth(-1.0) }.maxOrNull() ?: 0.0
+      list.map {
+        val w = max(it.prefWidth(-1.0), it.minWidth(-1.0))
+        if (debugMinPref) println("computePrefWidth: $it = $w")
+        w
+      }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(horizontalSpace()) { it }
     return ret + insets.left + insets.right
   }
 
   override fun computePrefHeight(width: Double): Double {
     val ret = gridMap.mapRows { _, list ->
-      list.map { it.prefHeight(-1.0) }.maxOrNull() ?: 0.0
+      list.map {
+        val h = max(it.prefHeight(-1.0), it.minHeight(-1.0))
+        if (debugMinPref) println("computePrefHeight: $it = $h")
+        h
+      }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(verticalSpace()) { it }
     return ret + insets.top + insets.bottom
   }
@@ -216,8 +232,8 @@ class WeightGridPane : javafx.scene.layout.Region() {
 
     contentX = left
     contentY = top
-//    println("grid: $contentX, $contentY -> $contentWidth,$contentHeight")
-//      println("-------------------------")
+    if (debug) println("grid: $contentX, $contentY -> $contentWidth,$contentHeight")
+    if (debug) println("-------------------------")
 
 //      println("hspace: ${horizontalSpace.value}")
     val columnSizes = columnSizes()
@@ -226,17 +242,17 @@ class WeightGridPane : javafx.scene.layout.Region() {
     val hSpaces = if (columnSizes.isEmpty()) 0.0 else (columnSizes.size - 1) * horizontalSpace()
     val vSpaces = if (rowSizes.isEmpty()) 0.0 else (rowSizes.size - 1) * verticalSpace()
 
-//      println("columns")
-//      columnSizes.forEach { println(it) }
-//      println("rows")
-//      rowSizes.forEach { println(it) }
+    if (debug) println("columns")
+    if (debug) columnSizes.forEach { println(it) }
+    if (debug) println("rows")
+    if (debug) rowSizes.forEach { println(it) }
 
     val colWidths = WeightedSize.distribute(contentWidth - hSpaces, columnSizes)
     val rowHeights = WeightedSize.distribute(contentHeight - vSpaces, rowSizes)
 
-//      println("widths: $colWidths")
-//      println("heights: $rowHeights")
-//      println("-------------------------")
+    if (debug) println("widths: $colWidths")
+    if (debug) println("heights: $rowHeights")
+    if (debug) println("-------------------------")
 
     gridMap.rows().forEachIndexed { r_idx, r ->
       gridMap.columns().forEachIndexed { c_idx, c ->
@@ -251,7 +267,7 @@ class WeightGridPane : javafx.scene.layout.Region() {
           val hPos = node.constraint[HPos::class] ?: HPos.CENTER
           val vPos = node.constraint[VPos::class] ?: VPos.CENTER
 
-//          println("layoutInArea $node: $areaX, $areaY, $areaW, $areaH")
+          if (debug) println("layoutInArea $node: $areaX, $areaY, $areaW, $areaH")
           layoutInArea(node, snappedToPixel(areaX), snappedToPixel(areaY), snappedToPixel(areaW), snappedToPixel(areaH), -1.0, hPos, vPos)
         }
       }

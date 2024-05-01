@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.controls.charts
 
 import de.flapdoodle.kfx.bindings.*
 import de.flapdoodle.kfx.controls.charts.parts.ChartLine
+import de.flapdoodle.kfx.controls.charts.parts.Scale
 import de.flapdoodle.kfx.controls.charts.ranges.RangeFactory
 import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.bindCss
@@ -65,6 +66,37 @@ class SmallChart<X : Any, Y : Any>(
     yRangeFactory.rangeOf(allY)
   }
 
+  private val topScale = Scale(xRange, Direction.TOP).apply {
+    WeightGridPane.setPosition(this, 1, 0, HPos.CENTER, VPos.CENTER)
+  }
+
+  private val leftScale = Scale(yRange, Direction.LEFT).apply {
+    WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
+  }
+
+  private val charts = PaneLike().apply {
+    WeightGridPane.setPosition(this, 1, 1, HPos.CENTER, VPos.CENTER)
+    clipProperty().bind(layoutBoundsProperty().map { Rectangle(it.minX, it.minY, it.width, it.height) })
+
+    children.syncWith(lines) { it }
+  }
+
+  private val rightScale = Scale(yRange, Direction.RIGHT).apply {
+    WeightGridPane.setPosition(this, 2, 1, HPos.CENTER, VPos.CENTER)
+  }
+
+  private val bottomScale = Scale(xRange, Direction.BOTTOM).apply {
+    WeightGridPane.setPosition(this, 1, 2, HPos.CENTER, VPos.CENTER)
+  }
+
+  private val labels = HBox().apply {
+    cssClassName("small-chart-legends")
+    alignment = Pos.CENTER
+    WeightGridPane.setPosition(this, 1, 3, HPos.CENTER, VPos.CENTER)
+
+    children.syncWith(series) { Legend(it.label, it.color) }
+  }
+
   private val main = WeightGridPane().apply {
     setRowWeight(0, 0.0)
     setRowWeight(1, 1.0)
@@ -76,41 +108,11 @@ class SmallChart<X : Any, Y : Any>(
     setColumnWeight(2, 0.0)
   }
 
-  private val charts = PaneLike().apply {
-    WeightGridPane.setPosition(this, 1, 1, HPos.CENTER, VPos.CENTER)
-    clipProperty().bind(layoutBoundsProperty().map { Rectangle(it.minX, it.minY, it.width, it.height) })
-  }
-
-  private val topScale = Scale(xRange, Direction.TOP).apply {
-    WeightGridPane.setPosition(this, 1, 0, HPos.CENTER, VPos.CENTER)
-  }
-
-  private val bottomScale = Scale(xRange, Direction.BOTTOM).apply {
-    WeightGridPane.setPosition(this, 1, 2, HPos.CENTER, VPos.CENTER)
-  }
-
-  private val leftScale = Scale(yRange, Direction.LEFT).apply {
-    WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
-  }
-
-  private val rightScale = Scale(yRange, Direction.RIGHT).apply {
-    WeightGridPane.setPosition(this, 2, 1, HPos.CENTER, VPos.CENTER)
-  }
-
-  private val labels = HBox().apply {
-    cssClassName("small-chart-legends")
-    alignment = Pos.CENTER
-    WeightGridPane.setPosition(this, 1, 3, HPos.CENTER, VPos.CENTER)
-  }
-
   init {
     bindCss("small-chart")
 
     main.children.addAll(charts, topScale, bottomScale, leftScale, rightScale, labels)
     children.add(main)
-
-    labels.children.syncWith(series) { Legend(it.label, it.color) }
-    charts.children.syncWith(lines) { it }
   }
 
   class Legend(name: String, color: Color) : HBox() {

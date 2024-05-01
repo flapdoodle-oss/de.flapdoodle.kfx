@@ -16,26 +16,22 @@
  */
 package de.flapdoodle.kfx.types
 
-enum class CardinalDirection {
-  NORTH,
-  NORTHEAST,
-  EAST,
-  SOUTHEAST,
-  SOUTH,
-  SOUTHWEST,
-  WEST,
-  NORTHWEST;
+import javafx.geometry.Point2D
+import javafx.scene.transform.Affine
 
-  fun opposite(): CardinalDirection {
-    return when (this) {
-      NORTH -> SOUTH
-      NORTHEAST -> SOUTHWEST
-      EAST -> WEST
-      SOUTHEAST -> NORTHWEST
-      SOUTH -> NORTH
-      SOUTHWEST -> NORTHEAST
-      WEST -> EAST
-      NORTHWEST -> SOUTHEAST
-    }
+object Point2DMath {
+  fun angle(p1: Point2D, p2: Point2D): Double {
+    val xDiff = p2.x - p1.x
+    val yDiff = p2.y - p1.y
+    return Math.toDegrees(Math.atan2(yDiff, xDiff))
+  }
+
+  @Deprecated("see AngleAtPoint2D")
+  fun pointAt(start: Point2D, angle: Double, distance: Double, offset: Double = 0.0): Point2D {
+    val rotation = Affine.rotate(angle, 0.0, 0.0)
+    val offsetPoint = Point2D(distance, offset)
+    val rotated = rotation.transform(offsetPoint)
+    val result = rotated.add(start)
+    return result
   }
 }

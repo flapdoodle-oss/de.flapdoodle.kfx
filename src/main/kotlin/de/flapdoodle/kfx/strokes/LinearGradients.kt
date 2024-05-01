@@ -17,8 +17,9 @@
 package de.flapdoodle.kfx.strokes
 
 import de.flapdoodle.kfx.bindings.ObjectBindings
-import de.flapdoodle.kfx.extensions.Point2DMath
+import de.flapdoodle.kfx.types.Point2DMath.angle
 import de.flapdoodle.kfx.types.CardinalDirection
+import de.flapdoodle.kfx.types.CardinalDirections
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import javafx.scene.paint.*
@@ -63,7 +64,7 @@ object LinearGradients {
     )
 
     return ObjectBindings.merge(start, end, startColor, endColor) { s, e, colorAtStart, colorAtEnd ->
-      val direction = Point2DMath.cardinalDirection(s, e)
+      val direction = CardinalDirections.cardinalDirection(angle(s, e))
       val key = GradientKey(direction, colorAtStart, colorAtEnd)
       if (cached.key != key) {
         cached = KeyedGradient(key, gradient(key.direction, key.start, key.end))

@@ -24,25 +24,14 @@ interface AngleAndPoint2D {
   val point2D: Point2D
   val angle: Double
 
-  fun withDistance(distance: Double): Point2D {
-    return point2D + Affine.rotate(angle, 0.0, 0.0)
-      .transform(Point2D(distance,0.0))
-  }
-
-  fun withDistance(distance: Double, deltaAngle: Double): Point2D {
+  fun withDistance(distance: Double, deltaAngle: Double = 0.0, offset: Double = 0.0): Point2D {
     return point2D + Affine.rotate(angle + deltaAngle, 0.0, 0.0)
-      .transform(Point2D(distance,0.0))
+      .transform(Point2D(distance,offset))
   }
 
-  fun atDistance(distance: Double): AngleAndPoint2D {
-    val newPoint = point2D + Affine.rotate(angle, 0.0, 0.0)
-      .transform(Point2D(distance,0.0))
-    return AngleAtPoint2D(newPoint, angle)
-  }
-
-  fun atDistance(distance: Double, deltaAngle: Double): AngleAndPoint2D {
+  fun atDistance(distance: Double, deltaAngle: Double = 0.0, offset: Double = 0.0): AngleAndPoint2D {
     val newPoint = point2D + Affine.rotate(angle + deltaAngle, 0.0, 0.0)
-      .transform(Point2D(distance,0.0))
+      .transform(Point2D(distance,offset))
     return AngleAtPoint2D(newPoint, angle + deltaAngle)
   }
 }

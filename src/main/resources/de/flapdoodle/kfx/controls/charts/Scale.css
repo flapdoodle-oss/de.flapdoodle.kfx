@@ -18,10 +18,12 @@
     /*-fx-padding: 10px;*/
     -scale-spacing: 10;
     -scale-length: 10;
+    -fx-padding: 10px;
 }
 
 .scale .ticks {
     -fx-stroke-width: 1px;
     -fx-stroke: gray;
     -fx-snap-to-pixel: true;
+    -fx-stroke-line-cap: butt;
 }

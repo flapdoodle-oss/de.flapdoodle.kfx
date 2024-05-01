@@ -7,21 +7,19 @@ import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.types.Direction
-import javafx.beans.property.DoublePropertyBase
 import javafx.beans.value.ObservableValue
 import javafx.css.CssMetaData
 import javafx.css.Styleable
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
+import javafx.scene.layout.Region
 import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo
 import javafx.scene.shape.Path
 
 class Scale<T>(
   private val range: ObservableValue<Range<T>>,
-  private val chartSpacing: DoublePropertyBase,
   private val direction: Direction
-): Pane(), Styleable {
+): Region(), Styleable {
 //    private val spacingNonNull = spacing.mapToDouble { v -> v?.toDouble() ?: 10.0 }
 
   internal val scaleSpacing = SCALE_SPACING.asProperty(5.0) {
@@ -45,14 +43,17 @@ class Scale<T>(
 //    stroke = Color.BLACK
     
     //TODO das ist vielleicht nicht so richtig
-    minWidthProperty().bind(chartSpacing.multiply(4))
-    minHeightProperty().bind(chartSpacing.multiply(4))
+//    minWidthProperty().bind(chartSpacing.multiply(4))
+//    minHeightProperty().bind(chartSpacing.multiply(4))
+    minWidthProperty().bind(ObjectBindings.merge(scaleLength, insetsProperty()) { s, i -> snappedToPixel(s.toDouble() + i.left + i.right)})
+    minHeightProperty().bind(ObjectBindings.merge(scaleLength, insetsProperty()) { s, i -> snappedToPixel(s.toDouble() + i.top + i.bottom)})
   }
 
   private val pathSegments =
-    ObjectBindings.merge(range, chartSpacing, scaleAttributes, layoutBoundsProperty()) { r, chartSpaceNumber, attr, _ ->
+    ObjectBindings.merge(range, scaleAttributes, layoutBoundsProperty()) { r, attr, _ ->
       // TODO will be zero soon
-      val spaceAroundChart = chartSpaceNumber.toDouble()
+//      val spaceAroundChart = chartSpaceNumber.toDouble()
+      val spaceAroundChart = 0.0
 
       val space = attr.spacing
       
@@ -73,26 +74,24 @@ class Scale<T>(
         Direction.LEFT, Direction.RIGHT -> insets.top + spaceAroundChart
       })
 
-
-
       ticks.flatMap {
         val scaleOffset = r.offset(it, scaleLength) + startOffset
         when (direction) {
           Direction.BOTTOM -> listOf(
-            MoveTo(scaleOffset, attr.distance),
-            LineTo(scaleOffset, attr.distance + attr.length)
+            MoveTo(scaleOffset, attr.distance + insets.top),
+            LineTo(scaleOffset, attr.distance + attr.length + insets.top)
           )
           Direction.TOP -> listOf(
-            MoveTo(scaleOffset, attr.distance),
-            LineTo(scaleOffset, attr.distance + attr.length)
+            MoveTo(scaleOffset, attr.distance + attr.length + insets.top),
+            LineTo(scaleOffset, attr.distance + insets.top)
           )
           Direction.LEFT -> listOf(
-            MoveTo(attr.distance, scaleOffset),
-            LineTo(attr.distance + attr.length, scaleOffset)
+            MoveTo(attr.distance + insets.left, scaleOffset),
+            LineTo(attr.distance + attr.length + insets.left, scaleOffset)
           )
           Direction.RIGHT -> listOf(
-            MoveTo(attr.distance, scaleOffset),
-            LineTo(attr.distance + attr.length, scaleOffset)
+            MoveTo(attr.distance + attr.length + insets.left, scaleOffset),
+            LineTo(attr.distance + insets.left, scaleOffset)
           )
         }
       }

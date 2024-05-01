@@ -52,7 +52,10 @@ class SmallChart<X : Any, Y : Any>(
     val allY = allXY.map { it.second }
     val xrange = xRangeFactory.rangeOf(allX)
     val yrange = yRangeFactory.rangeOf(allY)
-    list.map { ChartLine(it, xrange, yrange, chartSpacing) }
+    list.map { ChartLine(it, xrange, yrange).apply {
+//      layoutX = 0.0
+//      layoutY = 0.0
+    } }
   }
 
   private val xRange = series.map { list ->
@@ -68,36 +71,47 @@ class SmallChart<X : Any, Y : Any>(
   }
 
   private val main = WeightGridPane().apply {
-    setRowWeight(0, 1.0)
-    setRowWeight(1, 0.0)
+    setRowWeight(0, 0.0)
+    setRowWeight(1, 1.0)
     setRowWeight(2, 0.0)
+    setRowWeight(3, 0.0)
+
     setColumnWeight(0, 0.0)
     setColumnWeight(1, 1.0)
+    setColumnWeight(2, 0.0)
   }
 
   private val charts = PaneLike().apply {
-    WeightGridPane.setPosition(this, 1, 0, HPos.CENTER, VPos.CENTER)
+    WeightGridPane.setPosition(this, 1, 1, HPos.CENTER, VPos.CENTER)
     clipProperty().bind(layoutBoundsProperty().map { Rectangle(it.minX, it.minY, it.width, it.height) })
   }
 
-  private val xscale = Scale(xRange,chartSpacing, Direction.BOTTOM).apply {
-    WeightGridPane.setPosition(this, 1, 1, HPos.CENTER, VPos.CENTER)
+  private val topScale = Scale(xRange, Direction.TOP).apply {
+    WeightGridPane.setPosition(this, 1, 0, HPos.CENTER, VPos.CENTER)
   }
 
-  private val yscale = Scale(yRange,chartSpacing, Direction.LEFT).apply {
-    WeightGridPane.setPosition(this, 0, 0, HPos.CENTER, VPos.CENTER)
+  private val bottomScale = Scale(xRange, Direction.BOTTOM).apply {
+    WeightGridPane.setPosition(this, 1, 2, HPos.CENTER, VPos.CENTER)
+  }
+
+  private val leftScale = Scale(yRange, Direction.LEFT).apply {
+    WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
+  }
+
+  private val rightScale = Scale(yRange, Direction.RIGHT).apply {
+    WeightGridPane.setPosition(this, 2, 1, HPos.CENTER, VPos.CENTER)
   }
 
   private val labels = HBox().apply {
     cssClassName("small-chart-legends")
     alignment = Pos.CENTER
-    WeightGridPane.setPosition(this, 1, 2, HPos.CENTER, VPos.CENTER)
+    WeightGridPane.setPosition(this, 1, 3, HPos.CENTER, VPos.CENTER)
   }
 
   init {
     bindCss("small-chart")
 
-    main.children.addAll(charts, yscale, xscale, labels)
+    main.children.addAll(charts, topScale, bottomScale, leftScale, rightScale, labels)
     children.add(main)
 
     labels.children.syncWith(series) { Legend(it.label, it.color) }

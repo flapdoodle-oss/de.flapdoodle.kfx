@@ -16,7 +16,7 @@
  */
 .small-chart {
     -fx-padding: 10px;
-    /*-chart-spacing: 10px;*/
+    -chart-spacing: 0px;
 }
 
 .small-chart .small-chart-line-box {
@@ -39,7 +39,7 @@
 .small-chart .small-chart-line-symbol {
     /*-fx-border-color: red;*/
     -fx-background-color: white;
-    -fx-background-radius: 4px;
+    -fx-background-radius: 2px;
     -fx-border-width: 2px;
     -fx-padding: 3px;
     -fx-border-radius: 4px;

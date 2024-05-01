@@ -16,6 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.charts.ranges
 
-fun interface RangeFactory<T: Any> {
+import kotlin.reflect.KClass
+
+interface RangeFactory<T: Any> {
     fun rangeOf(values: List<T>) : Range<T>
 }

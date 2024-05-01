@@ -27,6 +27,6 @@ object RangeFactories {
   }
 
   fun <T: Number> number(type: KClass<T>): RangeFactory<T> {
-    return NumberRangeFactory(NumberType.of(type))
+    return NumberRangeFactory(type)
   }
 }

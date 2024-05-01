@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.controls.charts
 
 import de.flapdoodle.kfx.controls.charts.ranges.RangeFactories
+import de.flapdoodle.kfx.converters.Converters
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
@@ -27,6 +28,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import java.time.LocalDate
+import java.util.*
 
 class SmallChartSampler {
     class Sample : Application() {
@@ -44,7 +46,9 @@ class SmallChartSampler {
             val content = SmallChart(
                 series,
                 RangeFactories.localDate(),
-                RangeFactories.number(Double::class)
+                RangeFactories.number(Double::class),
+                Converters.validatingFor(LocalDate::class, Locale.GERMANY),
+                Converters.validatingFor(Double::class, Locale.GERMANY)
             )
 //      val content = ColorableLineChart<Number, Number>(x, y, series) {
 //        it -> colorMap[it.name] ?: Color.BLACK

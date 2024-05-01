@@ -24,7 +24,8 @@ import javafx.scene.layout.Region
 import kotlin.math.max
 
 open class StackLikeRegion : Region() {
-  var debug = false
+  private val debug = false
+  
   final override fun computeMinHeight(width: Double): Double {
     val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l, r) }
     if (debug) println("computeMinHeight: ${insets.top} + $height + ${insets.bottom}")
@@ -49,7 +50,7 @@ open class StackLikeRegion : Region() {
     return insets.left + width + insets.right
   }
 
-  final override fun layoutChildren() {
+  override fun layoutChildren() {
     children.forEach {
       if (it.isManaged) {
         layoutInArea(it, insets.left, insets.top, width - insets.left - insets.right, height - insets.top - insets.bottom, -1.0, HPos.LEFT, VPos.TOP)
@@ -58,10 +59,6 @@ open class StackLikeRegion : Region() {
   }
 
   class PaneLike : StackLikeRegion() {
-    init {
-      debug = false
-    }
-
     public override fun getChildren(): ObservableList<Node> {
       return super.getChildren()
     }

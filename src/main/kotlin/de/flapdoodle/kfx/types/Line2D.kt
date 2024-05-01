@@ -26,13 +26,13 @@ data class Line2D(val start: Point2D, val end: Point2D) {
     fun positionAt(position: UnitInterval, distance: Double, offset: Double): Point2D {
 
         val diff = end.subtract(start)
-
         val base = diff.multiply(position.value).add(start)
-
         val offsetPoint = Point2D(offset, -distance)
-
-        var baseAngle = Point2D(1.0, 0.0).angle(diff)
-
+        var baseAngle = if (isZero(diff))
+            0.0
+        else
+            Point2D(1.0, 0.0).angle(diff)
+        
         if (diff.y < 0) {
             baseAngle = 360 - baseAngle
         }
@@ -44,5 +44,9 @@ data class Line2D(val start: Point2D, val end: Point2D) {
         val result = rotated.add(base)
 
         return result
+    }
+
+    private fun isZero(diff: Point2D): Boolean {
+        return diff.x == 0.0 && diff.y == 0.0
     }
 }

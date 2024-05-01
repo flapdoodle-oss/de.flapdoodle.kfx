@@ -2,14 +2,17 @@ package de.flapdoodle.kfx.controls.charts.ranges
 
 import de.flapdoodle.kfx.controls.charts.numbers.NumberType
 import de.flapdoodle.kfx.controls.charts.numbers.NumberUnit
+import kotlin.reflect.KClass
 
 class NumberRangeFactory<T: Number>(
-  private val type: NumberType<T>
+  private val type: KClass<T>
 ): RangeFactory<T> {
-  override fun rangeOf(values: List<T>): Range<T> {
-    return doubleRange(type, values)
-  }
+  private val numberType = NumberType.of(type)
 
+  override fun rangeOf(values: List<T>): Range<T> {
+    return doubleRange(numberType, values)
+  }
+  
   companion object {
     private fun <T: Number> doubleRange(type: NumberType<T>, list: List<T>): Range<T> {
       if (list.isEmpty()) return Range.empty()

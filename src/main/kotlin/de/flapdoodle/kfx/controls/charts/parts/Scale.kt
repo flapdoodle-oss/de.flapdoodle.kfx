@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.charts.parts
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
 import de.flapdoodle.kfx.controls.charts.ranges.Range
+import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
@@ -13,9 +14,9 @@ import javafx.css.CssMetaData
 import javafx.css.Styleable
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
-import javafx.scene.layout.Region
 
-class Scale<T>(
+class Scale<T: Any>(
+  private val converter: ValidatingConverter<T>,
   private val range: ObservableValue<Range<T>>,
   private val direction: Direction
 ): StackLikeRegion(), Styleable {
@@ -62,9 +63,7 @@ class Scale<T>(
     }
   }
 
-  private val labels = Pane().apply {
-    cssClassName("labels")
-
+  private val labelsPane = TicksLabelPane(range, ticksWithSize,converter, direction).apply {
     val lab = this
 
     when (direction) {
@@ -73,8 +72,6 @@ class Scale<T>(
       Direction.RIGHT -> WeightGridPane.setPosition(lab, 1, 0)
       Direction.BOTTOM -> WeightGridPane.setPosition(lab, 0, 1)
     }
-
-    lab.children.addAll(Label("foo"))
   }
 
   private val all = WeightGridPane().apply {
@@ -101,8 +98,14 @@ class Scale<T>(
   init {
     bindCss("scale")
 
-    all.children.addAll(ticksPane, labels)
+    all.children.addAll(ticksPane, labelsPane)
     children.addAll(all)
+  }
+
+  @Deprecated("use with care")
+  fun enableDebug(): Scale<T> {
+    all.enableDebug()
+    return this
   }
 
   override fun getCssMetaData(): List<CssMetaData<out Styleable, *>> {

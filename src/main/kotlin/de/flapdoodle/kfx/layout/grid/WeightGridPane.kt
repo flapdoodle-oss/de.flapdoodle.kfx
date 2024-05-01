@@ -158,7 +158,13 @@ class WeightGridPane : javafx.scene.layout.Region() {
     return sumOf(selector) + size * space
   }
 
-  private val debug = false
+  private var debug = false
+  private var debugMinPref = false
+
+  @Deprecated("use with care")
+  fun enableDebug() {
+    debug = true
+  }
 
   private fun columnSizes() = gridMap.mapColumns { index, list ->
     val limits = list.map { it.widthLimits() }
@@ -178,8 +184,6 @@ class WeightGridPane : javafx.scene.layout.Region() {
 //      require(max >= min) { "invalid min/max for $list -> $min ? $max" }
     WeightedSize(rowWeights.get(index) ?: 1.0, min, max)
   }
-
-  private val debugMinPref = false
 
   override fun computeMinWidth(height: Double): Double {
     val ret = columnSizes().sumWithSpaceBetween(horizontalSpace()) { it.min }

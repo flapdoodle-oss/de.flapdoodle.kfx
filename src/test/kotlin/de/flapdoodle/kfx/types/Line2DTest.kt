@@ -50,4 +50,16 @@ internal class Line2DTest {
 
         assertThat(result).isEqualTo(Point2D(0.5, 10.0), 0.01)
     }
+
+    @Test
+    fun whatHappensIfLineIsZero() {
+        val sample = Point2D(0.0, 0.0).to(Point2D(0.0, 0.0))
+
+        assertThat(sample.positionAt(UnitInterval.ZERO, 0.5, 0.0))
+            .isEqualTo(Point2D(0.0, -0.5), 0.01)
+        assertThat(sample.positionAt(UnitInterval(0.5), 0.5, 0.0))
+            .isEqualTo(Point2D(0.0, -0.5), 0.01)
+        assertThat(sample.positionAt(UnitInterval.ONE, 0.5, 0.0))
+            .isEqualTo(Point2D(0.0, -0.5), 0.01)
+    }
 }

@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.controls.charts.parts
 
 import de.flapdoodle.kfx.controls.charts.ranges.RangeFactories
+import de.flapdoodle.kfx.converters.Converters
 import de.flapdoodle.kfx.types.Direction
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
@@ -9,6 +10,7 @@ import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import java.time.LocalDate
+import java.util.*
 
 class ScaleSampler {
   class Sample : Application() {
@@ -20,12 +22,13 @@ class ScaleSampler {
 //      }
 
       val range = SimpleObjectProperty(RangeFactories.number(Double::class).rangeOf(listOf(0.0, 100.0)))
+      val converter =Converters.validatingFor(Double::class, Locale.GERMANY)
 
       val all = BorderPane().apply {
-        left = Scale(range, Direction.LEFT)
-        right = Scale(range, Direction.RIGHT)
-        top = Scale(range, Direction.TOP)
-        bottom = Scale(range, Direction.BOTTOM)
+        left = Scale(converter, range, Direction.LEFT)
+        right = Scale(converter, range, Direction.RIGHT)
+        top = Scale(converter, range, Direction.TOP)
+        bottom = Scale(converter, range, Direction.BOTTOM)
       }
 
       stage.scene = Scene(all, 800.0, 600.0)

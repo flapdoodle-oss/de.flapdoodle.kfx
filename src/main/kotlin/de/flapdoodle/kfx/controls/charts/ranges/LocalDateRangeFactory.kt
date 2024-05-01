@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.controls.charts.ranges
 import java.time.LocalDate
 import java.time.Period
 import java.time.temporal.ChronoUnit
+import kotlin.reflect.KClass
 
 class LocalDateRangeFactory : RangeFactory<LocalDate> {
   override fun rangeOf(values: List<LocalDate>): Range<LocalDate> {

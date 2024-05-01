@@ -20,6 +20,8 @@ import de.flapdoodle.kfx.bindings.*
 import de.flapdoodle.kfx.controls.charts.parts.ChartLine
 import de.flapdoodle.kfx.controls.charts.parts.Scale
 import de.flapdoodle.kfx.controls.charts.ranges.RangeFactory
+import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
@@ -39,7 +41,9 @@ import javafx.scene.shape.Rectangle
 class SmallChart<X : Any, Y : Any>(
   series: ObservableValue<List<Serie<X, Y>>>,
   val xRangeFactory: RangeFactory<X>,
-  val yRangeFactory: RangeFactory<Y>
+  val yRangeFactory: RangeFactory<Y>,
+  val xConverter: ValidatingConverter<X>,
+  val yConverter: ValidatingConverter<Y>,
 ) : StackLikeRegion() {
 
   private val lines = series.map { list ->
@@ -66,11 +70,11 @@ class SmallChart<X : Any, Y : Any>(
     yRangeFactory.rangeOf(allY)
   }
 
-  private val topScale = Scale(xRange, Direction.TOP).apply {
+  private val topScale = Scale(xConverter, xRange, Direction.TOP).apply {
     WeightGridPane.setPosition(this, 1, 0, HPos.CENTER, VPos.CENTER)
   }
 
-  private val leftScale = Scale(yRange, Direction.LEFT).apply {
+  private val leftScale = Scale(yConverter, yRange, Direction.LEFT).apply {
     WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
   }
 
@@ -81,11 +85,11 @@ class SmallChart<X : Any, Y : Any>(
     children.syncWith(lines) { it }
   }
 
-  private val rightScale = Scale(yRange, Direction.RIGHT).apply {
+  private val rightScale = Scale(yConverter, yRange, Direction.RIGHT).apply {
     WeightGridPane.setPosition(this, 2, 1, HPos.CENTER, VPos.CENTER)
   }
 
-  private val bottomScale = Scale(xRange, Direction.BOTTOM).apply {
+  private val bottomScale = Scale(xConverter, xRange, Direction.BOTTOM).apply {
     WeightGridPane.setPosition(this, 1, 2, HPos.CENTER, VPos.CENTER)
   }
 

@@ -24,7 +24,7 @@ import javafx.scene.control.Label
 import java.util.Locale
 import kotlin.reflect.KClass
 
-class ValidatedLabel<T: Any>(
+open class ValidatedLabel<T: Any>(
   val converter: ValidatingConverter<T>,
 ) : Label() {
 

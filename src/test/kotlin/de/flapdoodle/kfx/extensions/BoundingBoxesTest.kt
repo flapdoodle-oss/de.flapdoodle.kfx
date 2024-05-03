@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.extensions
 
+import de.flapdoodle.kfx.types.BoundingBoxes
 import javafx.geometry.BoundingBox
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

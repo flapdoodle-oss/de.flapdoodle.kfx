@@ -18,7 +18,7 @@ package de.flapdoodle.kfx.controls.grapheditor
 
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.bindings.storeTo
-import de.flapdoodle.kfx.extensions.BoundingBoxes
+import de.flapdoodle.kfx.types.BoundingBoxes
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty

@@ -5,14 +5,12 @@ import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
 import de.flapdoodle.kfx.controls.charts.ranges.Range
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.types.Direction
 import javafx.beans.value.ObservableValue
 import javafx.css.CssMetaData
 import javafx.css.Styleable
-import javafx.scene.control.Label
 import javafx.scene.layout.Pane
 
 class Scale<T: Any>(

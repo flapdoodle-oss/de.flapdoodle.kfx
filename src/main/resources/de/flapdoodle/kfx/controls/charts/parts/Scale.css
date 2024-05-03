@@ -18,7 +18,7 @@
     /*-fx-padding: 10px;*/
     -scale-min-spacing: 10;
     -scale-length: 10;
-    -scale-distance: 30;
+    -scale-distance: 3;
 }
 
 .scale .ticks {

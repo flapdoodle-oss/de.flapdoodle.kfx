@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.extensions
 
+import de.flapdoodle.kfx.types.BoundingBoxes
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.geometry.Insets

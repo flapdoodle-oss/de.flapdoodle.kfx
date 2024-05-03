@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.extensions
+package de.flapdoodle.kfx.types
 
 import de.flapdoodle.kfx.bindings.LazyProperty
 import de.flapdoodle.kfx.bindings.mapToDouble
+import de.flapdoodle.kfx.extensions.Key
+import de.flapdoodle.kfx.extensions.property
 import javafx.beans.InvalidationListener
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
@@ -105,6 +107,17 @@ object BoundingBoxes {
         }
         return empty()
     }
+
+    fun pointAtEdge(bounds: Bounds, direction: CardinalDirection): AngleAtPoint2D {
+        return when (direction) {
+            CardinalDirection.NORTH -> AngleAtPoint2D(bounds.centerX, bounds.minY, -90.0)
+            CardinalDirection.WEST -> AngleAtPoint2D(bounds.minX, bounds.centerY, 180.0)
+            CardinalDirection.SOUTH -> AngleAtPoint2D(bounds.centerX, bounds.maxY, 90.0)
+            CardinalDirection.EAST -> AngleAtPoint2D(bounds.maxX, bounds.centerY, 0.0)
+            else -> throw IllegalArgumentException("not implemented: $direction")
+        }
+    }
+
 
     private class BoundsInParentProperty(val parent: Node, val filter: Predicate<Node>) : LazyProperty<Bounds>() {
         init {

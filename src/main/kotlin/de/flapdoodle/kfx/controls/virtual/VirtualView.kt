@@ -19,12 +19,12 @@ package de.flapdoodle.kfx.controls.virtual
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.bindings.mapToDouble
-import de.flapdoodle.kfx.controls.grapheditor.Layers
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.bind
+import de.flapdoodle.kfx.types.BoundingBoxes
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty

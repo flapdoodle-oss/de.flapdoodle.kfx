@@ -1,28 +1,24 @@
 package de.flapdoodle.kfx.controls.charts.parts
 
-import de.flapdoodle.kfx.bindings.ObjectBindings
+import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.controls.charts.ranges.Range
+import de.flapdoodle.kfx.controls.textfields.ValidatedLabel
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.layout.StackLikeRegion
-import de.flapdoodle.kfx.layout.decoration.Base
-import de.flapdoodle.kfx.layout.decoration.LayoutPositions
-import de.flapdoodle.kfx.layout.decoration.Nodes
-import de.flapdoodle.kfx.layout.decoration.Position
+import de.flapdoodle.kfx.extensions.minus
+import de.flapdoodle.kfx.types.BoundingBoxes
 import de.flapdoodle.kfx.types.CardinalDirection
 import de.flapdoodle.kfx.types.Direction
-import de.flapdoodle.kfx.types.UnitInterval
 import javafx.beans.value.ObservableValue
 import javafx.geometry.HPos
+import javafx.geometry.Point2D
 import javafx.geometry.VPos
-import javafx.scene.control.Label
 import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.text.Text
+import kotlin.math.max
+import kotlin.math.min
 
 class TicksLabelPane<T : Any>(
   private val range: ObservableValue<Range<T>>,
@@ -31,7 +27,25 @@ class TicksLabelPane<T : Any>(
   private val direction: Direction
 ) : Pane() {
 
-  val labels = ObjectBindings.merge(range, layoutBoundsProperty(), ticksWithLevel) { r, _, ticks ->
+  init {
+    cssClassName("labels")
+
+    children.syncWith(ticksWithLevel.map { list -> list.filter { it.second == 2 }.map { it.first } }) {
+      TickLabel(converter, it)
+    }
+  }
+
+  override fun computePrefHeight(width: Double): Double {
+    return children.map { it.prefHeight(width) }.maxOrNull() ?: (0.0 + insets.top + insets.bottom)
+  }
+
+  override fun computePrefWidth(height: Double): Double {
+    return children.map { it.prefWidth(width) }.maxOrNull() ?: (0.0 + insets.left + insets.right)
+  }
+
+  override fun layoutChildren() {
+//    println("layout: ${layoutBounds}")
+
     val scaleLength = when (direction) {
       Direction.BOTTOM, Direction.TOP -> width - insets.left - insets.right
       Direction.LEFT, Direction.RIGHT -> height - insets.top - insets.bottom
@@ -42,71 +56,69 @@ class TicksLabelPane<T : Any>(
       Direction.LEFT, Direction.RIGHT -> insets.top
     }
 
-    ticks.filter { it.second == 1 }
-      .flatMap {
-      val scaleOffset = r.offset(it.first, scaleLength) + startOffset
-      val labelText = converter.toString(it.first)
+    val r = range.value
 
-      val baseNode = StackPane().apply {
-        this.prefWidth = 1.0
-        this.prefHeight = 1.0
-        this.background = Background.fill(Color.RED)
-      }
-      val text = Label(labelText)
+    children.forEach { node ->
+      if (node.isManaged) {
+        if (node is TickLabel<out Any>) {
+          val tickedLabel = node as TickLabel<T>
+          val scaleOffset = r.offset(tickedLabel.tick, scaleLength) + startOffset
 
-        val cardinalDirection = when (direction) {
-          Direction.TOP -> CardinalDirection.NORTH
-          Direction.LEFT -> CardinalDirection.WEST
-          Direction.BOTTOM -> CardinalDirection.SOUTH
-          Direction.RIGHT -> CardinalDirection.EAST
-        }
+          tickedLabel.autosize()
+          val ticketLabelBounds = tickedLabel.layoutBounds
 
-      val reg = LayoutPositions.attachNodes(
-          source = baseNode,
-          sourceOffset = LayoutPositions.Offset(cardinalDirection, 0.0),
-          destination = text,
-          destinationOffset = LayoutPositions.Offset(cardinalDirection.opposite(), 0.0)
-        )
+          val prefWidth = ticketLabelBounds.width //  tickedLabel.prefWidth(-1.0)
+          val prefHeight = ticketLabelBounds.height // tickedLabel.prefHeight(-1.0)
 
-//        Nodes.attach(
-//          baseNode,
-//          text,
-//
-//        )
+          val scalePoint = when (direction) {
+            Direction.LEFT -> Point2D(width - insets.right - 1.0, scaleOffset)
+            Direction.RIGHT -> Point2D(insets.left, scaleOffset)
+            Direction.TOP -> Point2D(scaleOffset, height - insets.bottom - 1.0)
+            Direction.BOTTOM -> Point2D(scaleOffset, insets.top)
+          }
+          if (direction == Direction.TOP) {
+//            println("--> $scalePoint (h: $height, inset.b: ${insets.bottom})")
+          }
 
-//      Nodes.attach(
-//        base = baseNode,
-//        attachment = text,
-//        position = Position(Base.RIGHT, UnitInterval.ONE, 10.0),
-//        attachmentPosition = Position(Base.LEFT, UnitInterval.ONE, 10.0)
-//      )
+          val w = snappedToPixel(min(prefWidth, width - insets.left - insets.right))
+          val h = snappedToPixel(min(prefHeight, height - insets.top - insets.bottom))
 
-      when (direction) {
-        Direction.LEFT -> {
-          baseNode.layoutX = 0.0
-          baseNode.layoutY = scaleOffset
-        }
-        Direction.RIGHT -> {
-          baseNode.layoutX = 0.0
-          baseNode.layoutY = scaleOffset
-        }
-        Direction.TOP -> {
-          baseNode.layoutY = 0.0
-          baseNode.layoutX = scaleOffset
-        }
-        Direction.BOTTOM -> {
-          baseNode.layoutY = 0.0
-          baseNode.layoutX = scaleOffset
+          val delta = BoundingBoxes.pointAtEdge(ticketLabelBounds, when (direction) {
+            Direction.LEFT -> CardinalDirection.EAST
+            Direction.RIGHT -> CardinalDirection.WEST
+            Direction.TOP -> CardinalDirection.SOUTH
+            Direction.BOTTOM -> CardinalDirection.NORTH
+          }).point2D
+
+          if (direction == Direction.TOP) {
+//            println("--> $scalePoint (h: $height, inset.b: ${insets.bottom})")
+          }
+
+          val pos = scalePoint.minus(delta)
+
+          val x = pos.x
+          val y = pos.y
+
+          layoutInArea(tickedLabel, x, y, w, h, -1.0, HPos.LEFT, VPos.TOP)
+        } else {
+          if (node.isResizable) {
+            node.autosize()
+          }
         }
       }
-
-      listOf(baseNode, text)
     }
   }
 
-  init {
-    cssClassName("labels")
+  private fun snappedToPixel(value: Double): Double {
+    return if (isSnapToPixel) ScaledMath.ceil(value, 1.0) else value
+  }
 
-    children.syncWith(labels) { it }
+  class TickLabel<T: Any>(
+    converter: ValidatingConverter<T>,
+    val tick: T,
+  ) : ValidatedLabel<T>(converter) {
+    init {
+      set(tick)
+    }
   }
 }

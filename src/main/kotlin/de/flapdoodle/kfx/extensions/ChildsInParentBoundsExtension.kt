@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.extensions
 
 import de.flapdoodle.kfx.bindings.LazyProperty
+import de.flapdoodle.kfx.types.BoundingBoxes
 import javafx.beans.InvalidationListener
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Bounds

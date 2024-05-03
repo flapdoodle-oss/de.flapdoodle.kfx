@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.virtual
 
-import de.flapdoodle.kfx.extensions.BoundingBoxes
+import de.flapdoodle.kfx.types.BoundingBoxes
 import de.flapdoodle.kfx.extensions.mapNullable
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application

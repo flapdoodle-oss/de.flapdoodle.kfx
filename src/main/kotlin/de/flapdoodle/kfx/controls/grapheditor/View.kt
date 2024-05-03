@@ -24,6 +24,7 @@ import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.bind
+import de.flapdoodle.kfx.types.BoundingBoxes
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Orientation

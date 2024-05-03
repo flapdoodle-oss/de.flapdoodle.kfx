@@ -29,12 +29,12 @@ class TicksPane<T>(
     ObjectBindings.merge(range, scaleAttributes, layoutBoundsProperty(), ticksWithLevel) { r, attr, _, ticks ->
       val scaleLength = when (direction) {
         Direction.BOTTOM, Direction.TOP -> width - insets.left - insets.right
-        Direction.LEFT, Direction.RIGHT -> height - insets.top - insets.bottom
+        Direction.LEFT, Direction.RIGHT -> -(height - insets.top - insets.bottom)
       }
 
       val startOffset = snappedToPixel(when(direction) {
         Direction.BOTTOM, Direction.TOP -> insets.left
-        Direction.LEFT, Direction.RIGHT -> insets.top
+        Direction.LEFT, Direction.RIGHT -> height - insets.bottom
       })
 
       ticks.flatMap {

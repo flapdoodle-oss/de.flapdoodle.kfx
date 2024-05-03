@@ -12,6 +12,7 @@ import de.flapdoodle.kfx.types.CardinalDirection
 import de.flapdoodle.kfx.types.Direction
 import javafx.beans.value.ObservableValue
 import javafx.geometry.*
+import javafx.scene.control.OverrunStyle
 import javafx.scene.layout.Pane
 import kotlin.math.min
 
@@ -30,6 +31,15 @@ class TicksLabelPane<T : Any>(
     }
   }
 
+  override fun computeMinHeight(width: Double): Double {
+    return children.maxOfOrNull { it.minHeight(width) } ?: (0.0 + insets.top + insets.bottom)
+  }
+
+  override fun computeMinWidth(height: Double): Double {
+    // not min width
+    return children.maxOfOrNull { it.prefWidth(width) } ?: (0.0 + insets.left + insets.right)
+  }
+
   override fun computePrefHeight(width: Double): Double {
     return children.maxOfOrNull { it.prefHeight(width) } ?: (0.0 + insets.top + insets.bottom)
   }
@@ -41,12 +51,12 @@ class TicksLabelPane<T : Any>(
   override fun layoutChildren() {
     val scaleLength = when (direction) {
       Direction.BOTTOM, Direction.TOP -> width - insets.left - insets.right
-      Direction.LEFT, Direction.RIGHT -> height - insets.top - insets.bottom
+      Direction.LEFT, Direction.RIGHT -> -(height - insets.top - insets.bottom)
     }
 
     val startOffset = when (direction) {
       Direction.BOTTOM, Direction.TOP -> insets.left
-      Direction.LEFT, Direction.RIGHT -> insets.top
+      Direction.LEFT, Direction.RIGHT -> height - insets.bottom
     }
 
     val r = range.value
@@ -98,7 +108,7 @@ class TicksLabelPane<T : Any>(
 
           label2position = label2position + (TickedLabelAndBounds(tickedLabel, BoundingBox(x, y, w, h)))
 
-          layoutInArea(tickedLabel, x, y, w, h, -1.0, HPos.LEFT, VPos.TOP)
+          layoutInArea(tickedLabel, x, y, w, h, baselineOffset, HPos.LEFT, VPos.TOP)
         } else {
           if (node.isResizable) {
             node.autosize()

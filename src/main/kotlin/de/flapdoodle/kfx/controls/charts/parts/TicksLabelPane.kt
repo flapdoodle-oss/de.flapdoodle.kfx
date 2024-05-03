@@ -11,9 +11,9 @@ import de.flapdoodle.kfx.types.BoundingBoxes
 import de.flapdoodle.kfx.types.CardinalDirection
 import de.flapdoodle.kfx.types.Direction
 import javafx.beans.value.ObservableValue
+import javafx.css.Styleable
 import javafx.geometry.*
-import javafx.scene.control.OverrunStyle
-import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
 import kotlin.math.min
 
 class TicksLabelPane<T : Any>(
@@ -21,11 +21,12 @@ class TicksLabelPane<T : Any>(
   private val ticksWithLevel: ObservableValue<List<Pair<T, Int>>>,
   private val converter: ValidatingConverter<T>,
   private val direction: Direction
-) : Pane() {
+) : Region(), Styleable {
 
   init {
     cssClassName("labels")
 
+    clip = de.flapdoodle.kfx.layout.backgrounds.Bounds.sizeRectangle(this)
     children.syncWith(ticksWithLevel.map { list -> list.filter { it.second == 2 }.map { it.first } }) {
       TickLabel(converter, it)
     }
@@ -119,7 +120,9 @@ class TicksLabelPane<T : Any>(
 
     val sorted = label2position.sortedBy { it.bounds.minX }.sortedBy { it.bounds.minY }
 
-    val labelsWithoutCollisions = filterUntilNoCollisions(sorted).map { it.tickLabel }.toSet()
+    val labelsWithoutCollisions = filterUntilNoCollisions(sorted)
+      .map { it.tickLabel }
+      .toSet()
 
     sorted.forEach {
       it.tickLabel.isVisible = labelsWithoutCollisions.contains(it.tickLabel)

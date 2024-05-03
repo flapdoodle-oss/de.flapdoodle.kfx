@@ -5,10 +5,9 @@ import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.controls.charts.ranges.Range
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.layout.StackLikeRegion
+import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.types.Direction
 import javafx.beans.value.ObservableValue
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo
@@ -25,6 +24,11 @@ class TicksPane<T>(
     cssClassName("tick")
   }
 
+  // TODO draw a line
+  private val border = Path().apply {
+    cssClassName("ticksline")
+  }
+
   private val pathSegments =
     ObjectBindings.merge(range, scaleAttributes, layoutBoundsProperty(), ticksWithLevel) { r, attr, _, ticks ->
       val scaleLength = when (direction) {
@@ -32,10 +36,12 @@ class TicksPane<T>(
         Direction.LEFT, Direction.RIGHT -> -(height - insets.top - insets.bottom)
       }
 
-      val startOffset = snappedToPixel(when(direction) {
-        Direction.BOTTOM, Direction.TOP -> insets.left
-        Direction.LEFT, Direction.RIGHT -> height - insets.bottom
-      })
+      val startOffset = snappedToPixel(
+        when (direction) {
+          Direction.BOTTOM, Direction.TOP -> insets.left
+          Direction.LEFT, Direction.RIGHT -> height - insets.bottom
+        }
+      )
 
       ticks.flatMap {
         val scaleOffset = r.offset(it.first, scaleLength) + startOffset
@@ -46,14 +52,17 @@ class TicksPane<T>(
             MoveTo(scaleOffset, insets.top),
             LineTo(scaleOffset, length + insets.top)
           )
+
           Direction.TOP -> listOf(
             MoveTo(scaleOffset, height - length - insets.bottom),
             LineTo(scaleOffset, height - insets.bottom)
           )
+
           Direction.LEFT -> listOf(
             MoveTo(width - insets.right - length, scaleOffset),
             LineTo(width - insets.right, scaleOffset)
           )
+
           Direction.RIGHT -> listOf(
             MoveTo(length + insets.left, scaleOffset),
             LineTo(insets.left, scaleOffset)
@@ -65,22 +74,41 @@ class TicksPane<T>(
   init {
     cssClassName("ticks")
 
+    clip = Bounds.sizeRectangle(this)
+
     path.elements.syncWith(pathSegments) { it }
     children.add(path)
 
-    when (direction) {
-      Direction.TOP, Direction.BOTTOM -> {
-        minHeightProperty().bind(ObjectBindings.merge(scaleAttributes, insetsProperty()) { s, i -> snappedToPixel(s.length + s.distance + i.top + i.bottom)})
-        prefHeightProperty().bind(minWidthProperty())
-      }
-      Direction.LEFT, Direction.RIGHT -> {
-        minWidthProperty().bind(ObjectBindings.merge(scaleAttributes, insetsProperty()) { s, i -> snappedToPixel(s.length + s.distance + i.left + i.right)})
-        prefWidthProperty().bind(minWidthProperty())
-      }
-    }
+//    when (direction) {
+//      Direction.TOP, Direction.BOTTOM -> {
+//        minHeightProperty().bind(ObjectBindings.merge(scaleAttributes, insetsProperty()) { s, i -> snappedToPixel(s.length + s.distance + i.top + i.bottom)})
+//        prefHeightProperty().bind(minWidthProperty())
+//      }
+//      Direction.LEFT, Direction.RIGHT -> {
+//        minWidthProperty().bind(ObjectBindings.merge(scaleAttributes, insetsProperty()) { s, i -> snappedToPixel(s.length + s.distance + i.left + i.right)})
+//        prefWidthProperty().bind(minWidthProperty())
+//      }
+//    }
 
 
   }
+
+  override fun computeMinWidth(height: Double): Double {
+    val w = when (direction) {
+      Direction.LEFT, Direction.RIGHT -> scaleAttributes.value.distance + scaleAttributes.value.length
+      Direction.TOP, Direction.BOTTOM -> scaleAttributes.value.spacing
+    }
+    return insets.left + insets.right + w
+  }
+
+  override fun computeMinHeight(width: Double): Double {
+    val h = when (direction) {
+      Direction.LEFT, Direction.RIGHT -> scaleAttributes.value.spacing
+      Direction.TOP, Direction.BOTTOM -> scaleAttributes.value.distance + scaleAttributes.value.length
+    }
+    return insets.top + insets.bottom + h
+  }
+
 
   private fun snappedToPixel(value: Double): Double {
     return if (isSnapToPixel) ScaledMath.ceil(value, 1.0) else value

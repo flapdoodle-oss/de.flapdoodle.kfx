@@ -66,7 +66,7 @@ class SmallChartSampler {
                                     now.plusDays(32) to 70.0,
                                     now.plusDays(35) to 200.0,
                                     now.plusDays(75) to 600.0,
-                                    now.plusDays(235) to 0.0,
+                                    now.plusDays(235) to -10.0,
                                     now.plusDays(310) to 20.0,
                                 )
                             )

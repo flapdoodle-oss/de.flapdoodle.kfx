@@ -39,7 +39,6 @@ class WeightGridPane : javafx.scene.layout.Region() {
       horizontalPosition: HPos? = null,
       verticalPosition: VPos? = null
     ) {
-      require(node.constraint[GridMap.Pos::class] == null) {"position already set"}
       node.constraint[GridMap.Pos::class] = GridMap.Pos(column, row)
       node.constraint[HPos::class] = horizontalPosition
       node.constraint[VPos::class] = verticalPosition

@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.controls.charts.numbers
 
 import java.math.BigDecimal
+import java.math.BigInteger
 
 object BigDecimalType : NumberType<BigDecimal> {
   override fun min(values: List<BigDecimal>): BigDecimal? {
@@ -66,7 +67,7 @@ object BigDecimalType : NumberType<BigDecimal> {
 
     override fun firstUnit(value: BigDecimal): BigDecimal {
       val rest = value % unit
-      return value + (unit - rest)
+      return if (rest == BigDecimal.ZERO) value else value + (unit - rest)
     }
 
     override fun next(value: BigDecimal, offset: Int): BigDecimal {

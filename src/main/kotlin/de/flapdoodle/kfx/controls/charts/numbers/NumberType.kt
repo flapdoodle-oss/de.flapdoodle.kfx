@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.controls.charts.numbers
 
 import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.reflect.KClass
 
 interface NumberType<T: Number> {
@@ -13,10 +14,12 @@ interface NumberType<T: Number> {
   companion object {
     fun <T: Number> of(type: KClass<T>): NumberType<T> {
       return when (type) {
+        BigDecimal::class -> BigDecimalType
         Double::class -> DoubleType
+
+        BigInteger::class -> BigIntType
         Long::class -> LongType
         Int::class -> IntType
-        BigDecimal::class -> BigDecimalType
         else -> throw IllegalArgumentException("type not supported: $type")
       } as NumberType<T>
     }

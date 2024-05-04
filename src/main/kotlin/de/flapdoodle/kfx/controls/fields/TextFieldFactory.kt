@@ -1,6 +1,5 @@
 package de.flapdoodle.kfx.controls.fields
 
-import de.flapdoodle.kfx.controls.textfields.ValidatingTextField
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import javafx.event.EventHandler
 import javafx.scene.control.Control

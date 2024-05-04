@@ -2,7 +2,7 @@ package de.flapdoodle.kfx.controls.charts.parts
 
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
-import de.flapdoodle.kfx.controls.charts.ranges.Range
+import de.flapdoodle.kfx.types.ranges.Range
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.layout.StackLikeRegion

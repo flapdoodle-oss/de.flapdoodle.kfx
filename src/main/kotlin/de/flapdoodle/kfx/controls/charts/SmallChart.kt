@@ -19,8 +19,7 @@ package de.flapdoodle.kfx.controls.charts
 import de.flapdoodle.kfx.bindings.*
 import de.flapdoodle.kfx.controls.charts.parts.ChartLine
 import de.flapdoodle.kfx.controls.charts.parts.Scale
-import de.flapdoodle.kfx.controls.charts.ranges.RangeFactory
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.types.ranges.RangeFactory
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.bindCss
@@ -37,7 +36,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import java.util.EnumSet
 
 class SmallChart<X : Any, Y : Any>(
   series: ObservableValue<List<Serie<X, Y>>>,

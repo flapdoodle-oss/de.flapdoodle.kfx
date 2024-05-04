@@ -1,11 +1,10 @@
 package de.flapdoodle.kfx.controls.charts.parts
 
-import de.flapdoodle.kfx.controls.charts.ranges.RangeFactories
+import de.flapdoodle.kfx.types.ranges.RangeFactories
 import de.flapdoodle.kfx.converters.Converters
 import de.flapdoodle.kfx.types.Direction
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
-import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage

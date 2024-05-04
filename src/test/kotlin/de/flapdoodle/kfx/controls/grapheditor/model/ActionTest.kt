@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor.model
 
-import de.flapdoodle.kfx.controls.colors.HashedColors
+import de.flapdoodle.kfx.colors.HashedColors
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Action

@@ -6,6 +6,11 @@ interface ValidatingConverter<T: Any> {
   fun toString(value: T): String
   fun fromString(value: String): ValueOrError<T>
 
+
+  fun asStringConverter(lastExceptionPropertySetter: (Exception?) -> Unit): StringConverter<T> {
+    return asStringConverter(this, lastExceptionPropertySetter)
+  }
+
   companion object {
     fun <T: Any> asStringConverter(
       converter: ValidatingConverter<T>,

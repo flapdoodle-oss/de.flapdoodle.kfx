@@ -1,7 +1,7 @@
 package de.flapdoodle.kfx.controls.charts.parts
 
 import de.flapdoodle.kfx.bindings.and
-import de.flapdoodle.kfx.controls.charts.ranges.Range
+import de.flapdoodle.kfx.types.ranges.Range
 import de.flapdoodle.kfx.controls.charts.Serie
 import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.cssClassName

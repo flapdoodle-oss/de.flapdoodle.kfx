@@ -3,7 +3,7 @@ package de.flapdoodle.kfx.controls.charts.parts
 import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.syncWith
-import de.flapdoodle.kfx.controls.charts.ranges.Range
+import de.flapdoodle.kfx.types.ranges.Range
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.types.Direction

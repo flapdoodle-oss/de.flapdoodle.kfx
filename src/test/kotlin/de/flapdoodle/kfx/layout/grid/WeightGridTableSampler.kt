@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.layout.grid
 
-import de.flapdoodle.kfx.controls.textfields.TypedTextField
+import de.flapdoodle.kfx.controls.fields.TypedTextField
 import de.flapdoodle.kfx.types.Id
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty

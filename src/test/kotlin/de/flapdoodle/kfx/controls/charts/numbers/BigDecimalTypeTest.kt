@@ -50,9 +50,9 @@ class BigDecimalTypeTest {
 
     assertThat(testee.unitsBetween(BigDecimal.valueOf(0.0), BigDecimal.valueOf(9.9999))).isEqualTo(99)
 
-    assertThat(testee.firstAfter(BigDecimal.valueOf(0.0002))).isCloseTo(BigDecimal.valueOf(0.1), maxDelta)
-    assertThat(testee.firstAfter(BigDecimal.valueOf(0.1002))).isCloseTo(BigDecimal.valueOf(0.2), maxDelta)
-    assertThat(testee.firstAfter(BigDecimal.valueOf(10.1002))).isCloseTo(BigDecimal.valueOf(10.2), maxDelta)
+    assertThat(testee.firstUnit(BigDecimal.valueOf(0.0002))).isCloseTo(BigDecimal.valueOf(0.1), maxDelta)
+    assertThat(testee.firstUnit(BigDecimal.valueOf(0.1002))).isCloseTo(BigDecimal.valueOf(0.2), maxDelta)
+    assertThat(testee.firstUnit(BigDecimal.valueOf(10.1002))).isCloseTo(BigDecimal.valueOf(10.2), maxDelta)
 
     assertThat(testee.next(BigDecimal.valueOf(10.0), 3)).isCloseTo(BigDecimal.valueOf(10.3), maxDelta)
   }

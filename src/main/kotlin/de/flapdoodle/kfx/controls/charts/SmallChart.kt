@@ -37,6 +37,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import java.util.EnumSet
 
 class SmallChart<X : Any, Y : Any>(
   series: ObservableValue<List<Serie<X, Y>>>,
@@ -44,6 +45,7 @@ class SmallChart<X : Any, Y : Any>(
   val yRangeFactory: RangeFactory<Y>,
   val xConverter: ValidatingConverter<X>,
   val yConverter: ValidatingConverter<Y>,
+  val showScaleAt: Set<Direction> = setOf(Direction.LEFT, Direction.BOTTOM)
 ) : StackLikeRegion() {
 
   private val lines = series.map { list ->
@@ -96,26 +98,47 @@ class SmallChart<X : Any, Y : Any>(
   private val labels = HBox().apply {
     cssClassName("small-chart-legends")
     alignment = Pos.CENTER
-    WeightGridPane.setPosition(this, 1, 3, HPos.CENTER, VPos.CENTER)
+    WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
 
     children.syncWith(series) { Legend(it.label, it.color) }
   }
 
-  private val main = WeightGridPane().apply {
+  private val chartArea = WeightGridPane().apply {
     setRowWeight(0, 0.0)
     setRowWeight(1, 1.0)
     setRowWeight(2, 0.0)
-    setRowWeight(3, 0.0)
 
     setColumnWeight(0, 0.0)
     setColumnWeight(1, 1.0)
     setColumnWeight(2, 0.0)
+
+    children.addAll(charts)
+    if (showScaleAt.contains(Direction.LEFT)) children.add(leftScale)
+    if (showScaleAt.contains(Direction.RIGHT)) children.add(rightScale)
+    if (showScaleAt.contains(Direction.TOP)) children.add(topScale)
+    if (showScaleAt.contains(Direction.BOTTOM)) children.add(bottomScale)
   }
+
+  private val main = WeightGridPane().apply {
+    setRowWeight(0, 1.0)
+    setRowWeight(1, 0.0)
+
+//    setRowWeight(0, 0.0)
+//    setRowWeight(1, 1.0)
+//    setRowWeight(2, 0.0)
+//    setRowWeight(3, 0.0)
+//
+//    setColumnWeight(0, 0.0)
+//    setColumnWeight(1, 1.0)
+//    setColumnWeight(2, 0.0)
+    children.addAll(chartArea, labels)
+  }
+
 
   init {
     bindCss("small-chart")
 
-    main.children.addAll(charts, topScale, bottomScale, leftScale, rightScale, labels)
+//    main.children.addAll(charts, topScale, bottomScale, leftScale, rightScale, labels)
     children.add(main)
   }
 

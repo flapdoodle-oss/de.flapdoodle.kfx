@@ -33,7 +33,8 @@ object DoubleType : NumberType<Double> {
       Unit(oneTickUnit/100.0))
   }
 
-  private fun biggestOneTick(dist: Double, start: Double = 1.0): Double {
+  private fun biggestOneTick(dist: Double): Double {
+    val start = 1.0
     return if (dist>start) {
       unitUntilDistIsSmaller(dist, start)
     } else {
@@ -63,7 +64,7 @@ object DoubleType : NumberType<Double> {
       return ((max - min) / unit).toInt()
     }
 
-    override fun firstAfter(value: Double): Double {
+    override fun firstUnit(value: Double): Double {
       val rest = value % unit
       return if (rest==0.0) value else value + (unit - rest)
     }

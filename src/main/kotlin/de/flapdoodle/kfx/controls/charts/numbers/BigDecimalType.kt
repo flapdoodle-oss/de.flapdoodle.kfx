@@ -64,7 +64,7 @@ object BigDecimalType : NumberType<BigDecimal> {
       return ((max - min).divide(unit)).toInt()
     }
 
-    override fun firstAfter(value: BigDecimal): BigDecimal {
+    override fun firstUnit(value: BigDecimal): BigDecimal {
       val rest = value % unit
       return value + (unit - rest)
     }

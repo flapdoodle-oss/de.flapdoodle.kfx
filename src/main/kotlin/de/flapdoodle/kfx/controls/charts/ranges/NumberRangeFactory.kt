@@ -40,7 +40,7 @@ class NumberRangeFactory<T: Number>(
     internal fun <T: Number> ticks(unit: NumberUnit<T>, min: T, max: T, maxTicks: Int): Ticks<T> {
       val ticks = unit.unitsBetween(min, max)
       val list = if (ticks <= maxTicks) {
-        val start = unit.firstAfter(min)
+        val start = unit.firstUnit(min)
         (0..ticks).map {
           unit.next(start, it)
         }

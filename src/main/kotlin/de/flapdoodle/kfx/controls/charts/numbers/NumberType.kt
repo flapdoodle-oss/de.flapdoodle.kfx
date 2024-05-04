@@ -14,6 +14,7 @@ interface NumberType<T: Number> {
     fun <T: Number> of(type: KClass<T>): NumberType<T> {
       return when (type) {
         Double::class -> DoubleType
+        Long::class -> LongType
         BigDecimal::class -> BigDecimalType
         else -> throw IllegalArgumentException("type not supported: $type")
       } as NumberType<T>

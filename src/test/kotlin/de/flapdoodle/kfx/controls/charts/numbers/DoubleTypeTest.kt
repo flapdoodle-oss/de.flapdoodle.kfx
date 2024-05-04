@@ -41,6 +41,15 @@ class DoubleTypeTest {
         DoubleType.Unit(0.2),
         DoubleType.Unit(0.1)
       )
+
+    assertThat(testee.units(0.1, 0.2))
+      .containsExactly(
+        DoubleType.Unit(0.1),
+        DoubleType.Unit(0.02),
+        DoubleType.Unit(0.01),
+        DoubleType.Unit(0.002),
+        DoubleType.Unit(0.001)
+      )
   }
 
   @Test
@@ -49,9 +58,9 @@ class DoubleTypeTest {
 
     assertThat(testee.unitsBetween(0.0, 9.9999)).isEqualTo(99)
 
-    assertThat(testee.firstAfter(0.0002)).isCloseTo(0.1, maxDelta)
-    assertThat(testee.firstAfter(0.1002)).isCloseTo(0.2, maxDelta)
-    assertThat(testee.firstAfter(10.1002)).isCloseTo(10.2, maxDelta)
+    assertThat(testee.firstUnit(0.0002)).isCloseTo(0.1, maxDelta)
+    assertThat(testee.firstUnit(0.1002)).isCloseTo(0.2, maxDelta)
+    assertThat(testee.firstUnit(10.1002)).isCloseTo(10.2, maxDelta)
 
     assertThat(testee.next(10.0, 3)).isCloseTo(10.3, maxDelta)
   }
@@ -59,6 +68,6 @@ class DoubleTypeTest {
   @Test
   fun unitShouldStartWithMinIfItMatchesUnit() {
     val testee = DoubleType.Unit(1.0)
-    assertThat(testee.firstAfter(0.0)).isEqualTo(0.0)
+    assertThat(testee.firstUnit(0.0)).isEqualTo(0.0)
   }
 }

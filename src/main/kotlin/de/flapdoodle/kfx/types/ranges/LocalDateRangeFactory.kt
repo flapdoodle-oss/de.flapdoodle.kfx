@@ -3,6 +3,7 @@ package de.flapdoodle.kfx.types.ranges
 import java.time.LocalDate
 import java.time.Period
 import java.time.temporal.ChronoUnit
+import java.util.stream.Collectors
 
 class LocalDateRangeFactory : RangeFactory<LocalDate> {
   override fun rangeOf(values: List<LocalDate>): Range<LocalDate> {
@@ -76,9 +77,7 @@ class LocalDateRangeFactory : RangeFactory<LocalDate> {
       }
 
       val list = if (dist < maxTicks && !start.isAfter(end)) {
-        start.datesUntil(end, period)
-          .map { it }
-          .toList()
+        start.datesUntil(end, period).collect(Collectors.toList())
       } else emptyList()
 
       return Ticks(list)

@@ -77,12 +77,14 @@ object IntType : NumberType<Int> {
   data class Unit(val unit: Int) : NumberUnit<Int> {
 
     override fun unitsBetween(min: Int, max: Int): Int {
-      return ((max - min) / unit).toInt()
+      val diff = firstUnit(max) - firstUnit(min)
+      return (diff / unit)
     }
 
     override fun firstUnit(value: Int): Int {
       val rest = value % unit
-      return if (rest == 0) value else value + (unit - rest)
+      val onUnit = value - rest
+      return if (rest> 0) onUnit + unit else onUnit
     }
 
     override fun next(value: Int, offset: Int): Int {

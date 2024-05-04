@@ -17,6 +17,8 @@
 package de.flapdoodle.kfx.types.numbers
 
 import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 
 object BigDecimalType : NumberType<BigDecimal> {
   override fun min(values: List<BigDecimal>): BigDecimal? {
@@ -31,7 +33,7 @@ object BigDecimalType : NumberType<BigDecimal> {
     val valueDist = value - min
     val dist = max - min
     return if (dist != BigDecimal.ZERO)
-      scale * (valueDist.divide(dist)).toDouble()
+      scale * (valueDist.divide(dist, MathContext.DECIMAL128)).toDouble()
     else
       scale / 2.0
   }
@@ -77,12 +79,14 @@ object BigDecimalType : NumberType<BigDecimal> {
   data class Unit(val unit: BigDecimal) : NumberUnit<BigDecimal> {
 
     override fun unitsBetween(min: BigDecimal, max: BigDecimal): Int {
-      return ((max - min).divide(unit)).toInt()
+      val diff = firstUnit(max) - firstUnit(min)
+      return (diff.divide(unit)).toInt()
     }
 
     override fun firstUnit(value: BigDecimal): BigDecimal {
       val rest = value % unit
-      return if (rest == BigDecimal.ZERO) value else value + (unit - rest)
+      val onUnit = value - rest
+      return if (rest>BigDecimal.ZERO) onUnit + unit else onUnit
     }
 
     override fun next(value: BigDecimal, offset: Int): BigDecimal {

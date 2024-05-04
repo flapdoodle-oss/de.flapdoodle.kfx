@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.types.numbers
 
+import java.math.BigDecimal
 import java.math.BigInteger
 
 object BigIntType : NumberType<BigInteger> {
@@ -51,7 +52,7 @@ object BigIntType : NumberType<BigInteger> {
   }
 
   private fun biggestOneTick(dist: BigInteger, start: BigInteger = BigInteger.ONE): BigInteger {
-    return if (dist>start) {
+    return if (dist > start) {
       unitUntilDistIsSmaller(dist, start)
     } else {
       unitUntilDistIsBigger(dist, start)
@@ -77,12 +78,14 @@ object BigIntType : NumberType<BigInteger> {
   data class Unit(val unit: BigInteger) : NumberUnit<BigInteger> {
 
     override fun unitsBetween(min: BigInteger, max: BigInteger): Int {
-      return ((max - min).divide(unit)).toInt()
+      val diff = firstUnit(max) - firstUnit(min)
+      return (diff.divide(unit)).toInt()
     }
 
     override fun firstUnit(value: BigInteger): BigInteger {
       val rest = value % unit
-      return if (rest == BigInteger.ZERO) value else value + (unit - rest)
+      val onUnit = value - rest
+      return if (rest> BigInteger.ZERO) onUnit + unit else onUnit
     }
 
     override fun next(value: BigInteger, offset: Int): BigInteger {

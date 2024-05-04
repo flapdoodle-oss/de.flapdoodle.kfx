@@ -137,7 +137,10 @@ class TicksLabelPane<T : Any>(
       }
     }
 
-    val sorted = label2position.sortedBy { it.bounds.minX }.sortedBy { it.bounds.minY }
+    val sorted = label2position.sortedBy { when (direction) {
+      Direction.LEFT, Direction.RIGHT -> -it.bounds.minY
+      else -> it.bounds.minX
+    } }
 
     val boundingBox = layoutBounds
     val labelsWithoutCollisions = filterUntilNoCollisions(sorted)

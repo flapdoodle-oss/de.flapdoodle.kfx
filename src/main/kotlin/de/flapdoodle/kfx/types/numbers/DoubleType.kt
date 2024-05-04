@@ -78,12 +78,14 @@ object DoubleType : NumberType<Double> {
   data class Unit(val unit: Double) : NumberUnit<Double> {
 
     override fun unitsBetween(min: Double, max: Double): Int {
-      return ((max - min) / unit).toInt()
+      val diff = firstUnit(max) - firstUnit(min)
+      return (diff / unit).toInt()
     }
 
     override fun firstUnit(value: Double): Double {
       val rest = value % unit
-      return if (rest==0.0) value else value + (unit - rest)
+      val onUnit = value - rest
+      return if (rest>0.0) onUnit + unit else onUnit
     }
 
     override fun next(value: Double, offset: Int): Double {

@@ -27,7 +27,7 @@ class BigDecimalTypeTest {
 
   @Test
   fun minMax() {
-    val someDouble = BigDecimal.valueOf(ThreadLocalRandom.current().nextDouble())
+    val someDouble = bd(ThreadLocalRandom.current().nextDouble())
 
     val testee = BigDecimalType
 
@@ -43,42 +43,82 @@ class BigDecimalTypeTest {
   fun offset() {
     val testee = BigDecimalType
 
-    assertThat(testee.offset(BigDecimal.ZERO, BigDecimal.TEN, 100.0, BigDecimal.valueOf(3L))).isEqualTo(30.0)
+    assertThat(testee.offset(BigDecimal.ZERO, BigDecimal.TEN, 100.0, bd(3.0))).isEqualTo(30.0)
   }
 
   @Test
   fun units() {
     val testee = BigDecimalType
 
-    assertThat(testee.units(BigDecimal.valueOf(0.0), BigDecimal.valueOf(10.0)))
+    assertThat(testee.units(bd(0.0), bd(10.0)))
       .containsExactly(
-        BigDecimalType.Unit(BigDecimal.valueOf(10)),
-        BigDecimalType.Unit(BigDecimal.valueOf(2)),
-        BigDecimalType.Unit(BigDecimal.valueOf(1)),
-        BigDecimalType.Unit(BigDecimal.valueOf(0.2)),
-        BigDecimalType.Unit(BigDecimal.valueOf(0.1))
+        BigDecimalType.Unit(bd(10)),
+        BigDecimalType.Unit(bd(2)),
+        BigDecimalType.Unit(bd(1)),
+        BigDecimalType.Unit(bd(0.2)),
+        BigDecimalType.Unit(bd(0.1))
       )
 
-    assertThat(testee.units(BigDecimal.valueOf(0.1), BigDecimal.valueOf(0.2)))
+    assertThat(testee.units(bd(0.1), bd(0.2)))
       .containsExactly(
-        BigDecimalType.Unit(BigDecimal.valueOf(0.1)),
-        BigDecimalType.Unit(BigDecimal.valueOf(0.02)),
-        BigDecimalType.Unit(BigDecimal.valueOf(0.01)),
-        BigDecimalType.Unit(BigDecimal.valueOf(0.002)),
-        BigDecimalType.Unit(BigDecimal.valueOf(0.001))
+        BigDecimalType.Unit(bd(0.1)),
+        BigDecimalType.Unit(bd(0.02)),
+        BigDecimalType.Unit(bd(0.01)),
+        BigDecimalType.Unit(bd(0.002)),
+        BigDecimalType.Unit(bd(0.001))
       )
   }
 
   @Test
   fun unit() {
-    val testee = BigDecimalType.Unit(BigDecimal.valueOf(0.1))
+    val testee = BigDecimalType.Unit(bd(0.1))
 
-    assertThat(testee.unitsBetween(BigDecimal.valueOf(0.0), BigDecimal.valueOf(9.9999))).isEqualTo(99)
+    assertThat(testee.unitsBetween(bd(0.0), bd(9.9999))).isEqualTo(100)
 
-    assertThat(testee.firstUnit(BigDecimal.valueOf(0.0002))).isCloseTo(BigDecimal.valueOf(0.1), maxDelta)
-    assertThat(testee.firstUnit(BigDecimal.valueOf(0.1002))).isCloseTo(BigDecimal.valueOf(0.2), maxDelta)
-    assertThat(testee.firstUnit(BigDecimal.valueOf(10.1002))).isCloseTo(BigDecimal.valueOf(10.2), maxDelta)
+    assertThat(testee.firstUnit(bd(0.0002))).isCloseTo(bd(0.1), maxDelta)
+    assertThat(testee.firstUnit(bd(0.1002))).isCloseTo(bd(0.2), maxDelta)
+    assertThat(testee.firstUnit(bd(10.1002))).isCloseTo(bd(10.2), maxDelta)
 
-    assertThat(testee.next(BigDecimal.valueOf(10.0), 3)).isCloseTo(BigDecimal.valueOf(10.3), maxDelta)
+    assertThat(testee.next(bd(10.0), 3)).isCloseTo(bd(10.3), maxDelta)
+  }
+
+  @Test
+  fun withUnitOneFirstUnitAndUnitsBetween() {
+    val testee = BigDecimalType.Unit(bd(1))
+
+    assertThat(testee.firstUnit(bd(0.0))).isEqualTo(bd(0.0))
+    assertThat(testee.firstUnit(bd(0.0001))).isCloseTo(bd(1.0), maxDelta)
+    assertThat(testee.firstUnit(bd(0.9))).isCloseTo(bd(1), maxDelta)
+    assertThat(testee.firstUnit(bd(1.0000001))).isCloseTo(bd(2.0), maxDelta)
+    assertThat(testee.firstUnit(bd(-0.9))).isCloseTo(bd(0.0), maxDelta)
+    assertThat(testee.firstUnit(bd(-1.01))).isCloseTo(bd(-1.0), maxDelta)
+
+    assertThat(testee.unitsBetween(bd(-0.00001), bd(1.00001))).isEqualTo(2)
+    assertThat(testee.unitsBetween(bd(0.02), bd(1.01))).isEqualTo(1)
+    assertThat(testee.unitsBetween(bd(0.011), bd(0.99))).isEqualTo(0)
+  }
+
+  @Test
+  fun withUnit100FirstUnitAndUnitsBetween() {
+    val testee = BigDecimalType.Unit(bd(10.0))
+
+    assertThat(testee.firstUnit(bd(0.0))).isEqualTo(bd(0.0))
+    assertThat(testee.firstUnit(bd(0.0001))).isCloseTo(bd(10.0), maxDelta)
+    assertThat(testee.firstUnit(bd(9.9))).isCloseTo(bd(10.0), maxDelta)
+    assertThat(testee.firstUnit(bd(10.0000001))).isCloseTo(bd(20.0), maxDelta)
+    assertThat(testee.firstUnit(bd(-9.9))).isCloseTo(bd(0.0), maxDelta)
+    assertThat(testee.firstUnit(bd(-10.01))).isCloseTo(bd(-10.0), maxDelta)
+
+    assertThat(testee.unitsBetween(bd(-0.00001), bd(10.00001))).isEqualTo(2)
+    assertThat(testee.unitsBetween(bd(0.02), bd(10.01))).isEqualTo(1)
+    assertThat(testee.unitsBetween(bd(0.011), bd(9.99))).isEqualTo(0)
+  }
+
+  private fun bd(value: Double): BigDecimal {
+    return BigDecimal.valueOf(value)
+  }
+
+  private fun bd(value: Long): BigDecimal {
+    return BigDecimal.valueOf(value)
   }
 }

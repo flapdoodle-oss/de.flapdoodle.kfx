@@ -73,18 +73,49 @@ class DoubleTypeTest {
   fun unit() {
     val testee = DoubleType.Unit(0.1)
 
-    assertThat(testee.unitsBetween(0.0, 9.9999)).isEqualTo(99)
+    assertThat(testee.unitsBetween(0.0, 9.9999)).isEqualTo(100)
 
     assertThat(testee.firstUnit(0.0002)).isCloseTo(0.1, maxDelta)
     assertThat(testee.firstUnit(0.1002)).isCloseTo(0.2, maxDelta)
     assertThat(testee.firstUnit(10.1002)).isCloseTo(10.2, maxDelta)
+    assertThat(testee.firstUnit(-0.03)).isCloseTo(0.0, maxDelta)
 
     assertThat(testee.next(10.0, 3)).isCloseTo(10.3, maxDelta)
+
+    assertThat(DoubleType.Unit(10.0).firstUnit(-12.0)).isCloseTo(-10.0, maxDelta)
+    assertThat(DoubleType.Unit(10.0).firstUnit(-2.0)).isCloseTo(0.0, maxDelta)
+    assertThat(DoubleType.Unit(10.0).firstUnit(0.01)).isCloseTo(10.0, maxDelta)
   }
 
   @Test
-  fun unitShouldStartWithMinIfItMatchesUnit() {
+  fun withUnitOneFirstUnitAndUnitsBetween() {
     val testee = DoubleType.Unit(1.0)
+
     assertThat(testee.firstUnit(0.0)).isEqualTo(0.0)
+    assertThat(testee.firstUnit(0.0001)).isEqualTo(1.0)
+    assertThat(testee.firstUnit(0.9)).isEqualTo(1.0)
+    assertThat(testee.firstUnit(1.0000001)).isEqualTo(2.0)
+    assertThat(testee.firstUnit(-0.9)).isEqualTo(0.0)
+    assertThat(testee.firstUnit(-1.01)).isEqualTo(-1.0)
+
+    assertThat(testee.unitsBetween(-0.00001, 1.00001)).isEqualTo(2)
+    assertThat(testee.unitsBetween(0.02, 1.01)).isEqualTo(1)
+    assertThat(testee.unitsBetween(0.011, 0.99)).isEqualTo(0)
+  }
+
+  @Test
+  fun withUnit100FirstUnitAndUnitsBetween() {
+    val testee = DoubleType.Unit(10.0)
+
+    assertThat(testee.firstUnit(0.0)).isEqualTo(0.0)
+    assertThat(testee.firstUnit(0.0001)).isEqualTo(10.0)
+    assertThat(testee.firstUnit(9.9)).isEqualTo(10.0)
+    assertThat(testee.firstUnit(10.0000001)).isEqualTo(20.0)
+    assertThat(testee.firstUnit(-9.9)).isEqualTo(0.0)
+    assertThat(testee.firstUnit(-10.01)).isEqualTo(-10.0)
+
+    assertThat(testee.unitsBetween(-0.00001, 10.00001)).isEqualTo(2)
+    assertThat(testee.unitsBetween(0.02, 10.01)).isEqualTo(1)
+    assertThat(testee.unitsBetween(0.011, 9.99)).isEqualTo(0)
   }
 }

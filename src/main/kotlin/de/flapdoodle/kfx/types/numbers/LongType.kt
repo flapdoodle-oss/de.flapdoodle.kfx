@@ -16,6 +16,8 @@
  */
 package de.flapdoodle.kfx.types.numbers
 
+import java.math.BigInteger
+
 object LongType : NumberType<Long> {
   override fun min(values: List<Long>): Long? {
     return values.minOrNull()
@@ -77,12 +79,14 @@ object LongType : NumberType<Long> {
   data class Unit(val unit: Long) : NumberUnit<Long> {
 
     override fun unitsBetween(min: Long, max: Long): Int {
-      return ((max - min) / unit).toInt()
+      val diff = firstUnit(max) - firstUnit(min)
+      return (diff / unit).toInt()
     }
 
     override fun firstUnit(value: Long): Long {
       val rest = value % unit
-      return if (rest == 0L) value else value + (unit - rest)
+      val onUnit = value - rest
+      return if (rest> 0L) onUnit + unit else onUnit
     }
 
     override fun next(value: Long, offset: Int): Long {

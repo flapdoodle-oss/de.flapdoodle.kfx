@@ -42,6 +42,15 @@ class BigDecimalTypeTest {
         BigDecimalType.Unit(BigDecimal.valueOf(0.2)),
         BigDecimalType.Unit(BigDecimal.valueOf(0.1))
       )
+
+    assertThat(testee.units(BigDecimal.valueOf(0.1), BigDecimal.valueOf(0.2)))
+      .containsExactly(
+        BigDecimalType.Unit(BigDecimal.valueOf(0.1)),
+        BigDecimalType.Unit(BigDecimal.valueOf(0.02)),
+        BigDecimalType.Unit(BigDecimal.valueOf(0.01)),
+        BigDecimalType.Unit(BigDecimal.valueOf(0.002)),
+        BigDecimalType.Unit(BigDecimal.valueOf(0.001))
+      )
   }
 
   @Test

@@ -7,16 +7,16 @@ import java.util.concurrent.ThreadLocalRandom
 class LongTypeTest {
   @Test
   fun minMax() {
-    val someDouble = ThreadLocalRandom.current().nextLong()
+    val someValue = ThreadLocalRandom.current().nextLong()
 
     val testee = LongType
 
     assertThat(testee.min(emptyList())).isNull()
     assertThat(testee.max(emptyList())).isNull()
-    assertThat(testee.min(listOf(someDouble))).isEqualTo(someDouble)
-    assertThat(testee.max(listOf(someDouble))).isEqualTo(someDouble)
-    assertThat(testee.min(listOf(someDouble + 1, someDouble))).isEqualTo(someDouble)
-    assertThat(testee.max(listOf(someDouble, someDouble - 1))).isEqualTo(someDouble)
+    assertThat(testee.min(listOf(someValue))).isEqualTo(someValue)
+    assertThat(testee.max(listOf(someValue))).isEqualTo(someValue)
+    assertThat(testee.min(listOf(someValue + 1, someValue))).isEqualTo(someValue)
+    assertThat(testee.max(listOf(someValue, someValue - 1))).isEqualTo(someValue)
   }
 
   @Test
@@ -55,12 +55,8 @@ class LongTypeTest {
     val testee = LongType.Unit(1L)
 
     assertThat(testee.unitsBetween(0L, 9L)).isEqualTo(9)
-
-//    Assertions.assertThat(testee.firstUnit(0.0002)).isCloseTo(0.1, maxDelta)
-//    Assertions.assertThat(testee.firstUnit(0.1002)).isCloseTo(0.2, maxDelta)
-//    Assertions.assertThat(testee.firstUnit(10.1002)).isCloseTo(10.2, maxDelta)
-//
-//    Assertions.assertThat(testee.next(10.0, 3)).isCloseTo(10.3, maxDelta)
+    assertThat(testee.firstUnit(1)).isEqualTo(1)
+    assertThat(testee.firstUnit(10)).isEqualTo(10)
   }
 
   @Test

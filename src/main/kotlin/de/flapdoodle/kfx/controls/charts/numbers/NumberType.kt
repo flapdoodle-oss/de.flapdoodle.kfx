@@ -15,6 +15,7 @@ interface NumberType<T: Number> {
       return when (type) {
         Double::class -> DoubleType
         Long::class -> LongType
+        Int::class -> IntType
         BigDecimal::class -> BigDecimalType
         else -> throw IllegalArgumentException("type not supported: $type")
       } as NumberType<T>

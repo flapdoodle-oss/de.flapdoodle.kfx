@@ -1,5 +1,8 @@
 package de.flapdoodle.kfx.controls.charts
 
+import de.flapdoodle.kfx.controls.charts.ranges.NumberRangeFactory
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -7,6 +10,12 @@ class NumberRangeFactoryTest {
 
   @Test
   fun ticks() {
-//    NumberRangeFactory.t
+    val ticks = NumberRangeFactory(Double::class).rangeOf(listOf(0.0, 10.0)).ticks(10)
+
+    assertThat(ticks)
+      .hasSize(3)
+
+    assertThat(ticks[0].list)
+      .containsExactly(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
   }
 }

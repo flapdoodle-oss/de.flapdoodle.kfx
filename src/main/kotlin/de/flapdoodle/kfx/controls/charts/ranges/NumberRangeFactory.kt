@@ -36,11 +36,12 @@ class NumberRangeFactory<T: Number>(
       }
     }
 
-    private fun <T: Number> ticks(unit: NumberUnit<T>, min: T, max: T, maxTicks: Int): Ticks<T> {
+    // VisibleForTesting
+    internal fun <T: Number> ticks(unit: NumberUnit<T>, min: T, max: T, maxTicks: Int): Ticks<T> {
       val ticks = unit.unitsBetween(min, max)
       val list = if (ticks <= maxTicks) {
         val start = unit.firstAfter(min)
-        (0..<ticks).map {
+        (0..ticks).map {
           unit.next(start, it)
         }
       } else {

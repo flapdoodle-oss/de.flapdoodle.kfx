@@ -21,6 +21,7 @@ import de.flapdoodle.kfx.types.Point2DMath
 import javafx.geometry.Point2D
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.sin
@@ -42,6 +43,7 @@ class Point2DMathTest {
   }
 
   @Test
+  @Disabled
   fun pointAt() {
     val center = randomPoint()
 

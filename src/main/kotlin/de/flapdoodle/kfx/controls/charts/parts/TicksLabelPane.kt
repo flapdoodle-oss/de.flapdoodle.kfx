@@ -27,26 +27,29 @@ class TicksLabelPane<T : Any>(
     cssClassName("labels")
 
     clip = de.flapdoodle.kfx.layout.backgrounds.Bounds.sizeRectangle(this)
-    children.syncWith(ticksWithLevel.map { list -> list.filter { it.second == 2 }.map { it.first } }) {
+    children.syncWith(ticksWithLevel.map { list ->
+      val mainTicks = list.filter { it.second == 1 }
+      (if (mainTicks.isNotEmpty()) mainTicks else list.filter { it.second == 2 }).map { it.first }
+    }) {
       TickLabel(converter, it)
     }
   }
 
   override fun computeMinHeight(width: Double): Double {
-    return children.maxOfOrNull { it.minHeight(width) } ?: (0.0 + insets.top + insets.bottom)
+    return snappedToPixel(children.maxOfOrNull { it.minHeight(width) } ?: (0.0 + insets.top + insets.bottom))
   }
 
   override fun computeMinWidth(height: Double): Double {
     // not min width
-    return children.maxOfOrNull { it.prefWidth(width) } ?: (0.0 + insets.left + insets.right)
+    return snappedToPixel(children.maxOfOrNull { it.prefWidth(width) } ?: (0.0 + insets.left + insets.right))
   }
 
   override fun computePrefHeight(width: Double): Double {
-    return children.maxOfOrNull { it.prefHeight(width) } ?: (0.0 + insets.top + insets.bottom)
+    return snappedToPixel(children.maxOfOrNull { it.prefHeight(width) } ?: (0.0 + insets.top + insets.bottom))
   }
 
   override fun computePrefWidth(height: Double): Double {
-    return children.maxOfOrNull { it.prefWidth(width) } ?: (0.0 + insets.left + insets.right)
+    return snappedToPixel(children.maxOfOrNull { it.prefWidth(width) } ?: (0.0 + insets.left + insets.right))
   }
 
   override fun layoutChildren() {
@@ -71,20 +74,20 @@ class TicksLabelPane<T : Any>(
           val scaleOffset = r.offset(tickedLabel.tick, scaleLength) + startOffset
 
           tickedLabel.autosize()
-          val ticketLabelBounds = tickedLabel.layoutBounds
+          val ticketLabelBounds = snappedToPixel(tickedLabel.layoutBounds)
 
           val prefWidth = ticketLabelBounds.width //  tickedLabel.prefWidth(-1.0)
           val prefHeight = ticketLabelBounds.height // tickedLabel.prefHeight(-1.0)
 
           val scalePoint = when (direction) {
-            Direction.LEFT -> Point2D(width - insets.right - 1.0, scaleOffset)
+            Direction.LEFT -> Point2D(width - insets.right, scaleOffset)
             Direction.RIGHT -> Point2D(insets.left, scaleOffset)
-            Direction.TOP -> Point2D(scaleOffset, height - insets.bottom - 1.0)
+            Direction.TOP -> Point2D(scaleOffset, height - insets.bottom)
             Direction.BOTTOM -> Point2D(scaleOffset, insets.top)
           }
-          if (direction == Direction.TOP) {
-//            println("--> $scalePoint (h: $height, inset.b: ${insets.bottom})")
-          }
+//          if (direction == Direction.LEFT) {
+//            println("--> $scalePoint (w: $width, inset.r: ${insets.right})")
+//          }
 
           val w = snappedToPixel(min(prefWidth, width - insets.left - insets.right))
           val h = snappedToPixel(min(prefHeight, height - insets.top - insets.bottom))
@@ -98,14 +101,14 @@ class TicksLabelPane<T : Any>(
             }
           ).point2D
 
-          if (direction == Direction.TOP) {
-//            println("--> $scalePoint (h: $height, inset.b: ${insets.bottom})")
-          }
+//          if (direction == Direction.LEFT) {
+//            println("--> $delta")
+//          }
 
           val pos = scalePoint.minus(delta)
 
-          val x = pos.x
-          val y = pos.y
+          val x = snappedToPixel(pos.x)
+          val y = snappedToPixel(pos.y)
 
           label2position = label2position + (TickedLabelAndBounds(tickedLabel, BoundingBox(x, y, w, h)))
 
@@ -120,9 +123,21 @@ class TicksLabelPane<T : Any>(
 
     val sorted = label2position.sortedBy { it.bounds.minX }.sortedBy { it.bounds.minY }
 
+    val boundingBox = layoutBounds
     val labelsWithoutCollisions = filterUntilNoCollisions(sorted)
+      .filter {
+        val fit = boundingBox.contains(it.bounds)
+//        if (direction == Direction.LEFT) {
+//          println("--> ${it.bounds} $fit")
+//        }
+        fit
+      }
       .map { it.tickLabel }
       .toSet()
+
+//    if (direction == Direction.LEFT) {
+//      println("? $boundingBox")
+//    }
 
     sorted.forEach {
       it.tickLabel.isVisible = labelsWithoutCollisions.contains(it.tickLabel)
@@ -131,10 +146,10 @@ class TicksLabelPane<T : Any>(
 
   private fun filterUntilNoCollisions(list: List<TickedLabelAndBounds<T>>): List<TickedLabelAndBounds<T>> {
     val odd = list.filterIndexed { index, pair -> index % 2 == 0 }
-    val even = list.filterIndexed { index, pair -> index % 2 == 1  }
+    val even = list.filterIndexed { index, pair -> index % 2 == 1 }
     val collides = odd.zip(even).any { (e, o) -> e.bounds.intersects(o.bounds) }
     return if (collides) {
-       filterUntilNoCollisions(odd)
+      filterUntilNoCollisions(odd)
     } else {
       list
     }
@@ -144,7 +159,18 @@ class TicksLabelPane<T : Any>(
     return if (isSnapToPixel) ScaledMath.ceil(value, 1.0) else value
   }
 
-  data class TickedLabelAndBounds<T: Any>(
+  private fun snappedToPixel(value: Bounds): Bounds {
+    return BoundingBox(
+      snappedToPixel(value.minX),
+      snappedToPixel(value.minY),
+      snappedToPixel(value.minZ),
+      snappedToPixel(value.width),
+      snappedToPixel(value.height),
+      snappedToPixel(value.depth)
+    )
+  }
+
+  data class TickedLabelAndBounds<T : Any>(
     val tickLabel: TickLabel<T>,
     val bounds: Bounds
   )

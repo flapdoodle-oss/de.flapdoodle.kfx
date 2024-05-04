@@ -55,4 +55,10 @@ class DoubleTypeTest {
 
     assertThat(testee.next(10.0, 3)).isCloseTo(10.3, maxDelta)
   }
+
+  @Test
+  fun unitShouldStartWithMinIfItMatchesUnit() {
+    val testee = DoubleType.Unit(1.0)
+    assertThat(testee.firstAfter(0.0)).isEqualTo(0.0)
+  }
 }

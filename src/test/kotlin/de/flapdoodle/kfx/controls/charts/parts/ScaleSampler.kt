@@ -21,7 +21,7 @@ class ScaleSampler {
 //        it -> colorMap[it.name] ?: Color.BLACK
 //      }
 
-      val range = SimpleObjectProperty(RangeFactories.number(Double::class).rangeOf(listOf(0.0, 100.0)))
+      val range = SimpleObjectProperty(RangeFactories.number(Double::class).rangeOf(listOf(0.0, 3.0)))
       val converter =Converters.validatingFor(Double::class, Locale.GERMANY)
 
       val all = BorderPane().apply {

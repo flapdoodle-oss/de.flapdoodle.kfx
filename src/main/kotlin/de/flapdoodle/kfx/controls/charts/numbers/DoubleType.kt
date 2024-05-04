@@ -65,7 +65,7 @@ object DoubleType : NumberType<Double> {
 
     override fun firstAfter(value: Double): Double {
       val rest = value % unit
-      return value + (unit - rest)
+      return if (rest==0.0) value else value + (unit - rest)
     }
 
     override fun next(value: Double, offset: Int): Double {

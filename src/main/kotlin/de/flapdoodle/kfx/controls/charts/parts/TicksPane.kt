@@ -20,28 +20,55 @@ class TicksPane<T>(
   private val direction: Direction
 ) : Pane() {
 
-  private val path = Path().apply {
-    cssClassName("tick")
+  private val ticks = Path().apply {
+    cssClassName("ticks")
   }
 
-  // TODO draw a line
-  private val border = Path().apply {
-    cssClassName("ticksline")
+  private val tickBorder = Path().apply {
+    cssClassName("tickBorder")
   }
+
+  private fun scaleLengt() = when (direction) {
+      Direction.BOTTOM, Direction.TOP -> width - insets.left - insets.right
+      Direction.LEFT, Direction.RIGHT -> -(height - insets.top - insets.bottom)
+    }
+
+  private fun startOffset() = snappedToPixel(
+    when (direction) {
+      Direction.BOTTOM, Direction.TOP -> insets.left
+      Direction.LEFT, Direction.RIGHT -> height - insets.bottom
+    }
+  )
+
+  private val borderSegments =
+    ObjectBindings.map(layoutBoundsProperty()) { _ ->
+      when (direction) {
+        Direction.BOTTOM -> listOf(
+          MoveTo(insets.left, insets.top),
+          LineTo(width - insets.right, insets.top)
+        )
+
+        Direction.TOP -> listOf(
+          MoveTo(insets.left, height - insets.bottom),
+          LineTo(width - insets.right, height - insets.bottom)
+        )
+
+        Direction.LEFT -> listOf(
+          MoveTo(width - insets.right, insets.top),
+          LineTo(width - insets.right, height - insets.bottom)
+        )
+
+        Direction.RIGHT -> listOf(
+          MoveTo(insets.left, insets.top),
+          LineTo(insets.left, height - insets.bottom)
+        )
+      }
+    }
 
   private val pathSegments =
     ObjectBindings.merge(range, scaleAttributes, layoutBoundsProperty(), ticksWithLevel) { r, attr, _, ticks ->
-      val scaleLength = when (direction) {
-        Direction.BOTTOM, Direction.TOP -> width - insets.left - insets.right
-        Direction.LEFT, Direction.RIGHT -> -(height - insets.top - insets.bottom)
-      }
-
-      val startOffset = snappedToPixel(
-        when (direction) {
-          Direction.BOTTOM, Direction.TOP -> insets.left
-          Direction.LEFT, Direction.RIGHT -> height - insets.bottom
-        }
-      )
+      val scaleLength = scaleLengt()
+      val startOffset = startOffset()
 
       ticks.flatMap {
         val scaleOffset = r.offset(it.first, scaleLength) + startOffset
@@ -76,8 +103,9 @@ class TicksPane<T>(
 
     clip = Bounds.sizeRectangle(this)
 
-    path.elements.syncWith(pathSegments) { it }
-    children.add(path)
+    ticks.elements.syncWith(pathSegments) { it }
+    tickBorder.elements.syncWith(borderSegments) { it }
+    children.addAll(ticks, tickBorder)
 
 //    when (direction) {
 //      Direction.TOP, Direction.BOTTOM -> {

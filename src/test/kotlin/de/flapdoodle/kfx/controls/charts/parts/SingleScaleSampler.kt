@@ -18,7 +18,8 @@ class SingleScaleSampler {
 
       val all = BorderPane().apply {
         top = Scale(converter, range, Direction.TOP)
-        bottom = Scale(converter, range, Direction.BOTTOM)
+        left = Scale(converter, range, Direction.LEFT)
+//        bottom = Scale(converter, range, Direction.BOTTOM)
       }
 
       stage.scene = Scene(all, 800.0, 600.0)

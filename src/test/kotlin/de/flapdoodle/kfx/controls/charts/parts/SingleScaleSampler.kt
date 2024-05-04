@@ -24,13 +24,16 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
+import java.math.BigDecimal
 import java.util.*
 
 class SingleScaleSampler {
   class Sample : Application() {
     override fun start(stage: Stage) {
-      val range = SimpleObjectProperty(RangeFactories.number(Double::class).rangeOf(listOf(0.0, 10.0)))
-      val converter = Converters.validatingFor(Double::class, Locale.GERMANY)
+      val range = SimpleObjectProperty(RangeFactories.number(BigDecimal::class)
+        .rangeOf(listOf(BigDecimal.ZERO, BigDecimal.valueOf(630.0)))
+      )
+      val converter = Converters.validatingFor(BigDecimal::class, Locale.GERMANY)
 
       val all = BorderPane().apply {
         top = Scale(converter, range, Direction.TOP)

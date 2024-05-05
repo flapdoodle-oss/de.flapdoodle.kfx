@@ -42,16 +42,18 @@ class InsertRowState<T : Any>(
       is TableEvent.UpdateChange<T, out Any> -> {
         val changed = changeCell(event.row, event.asCellChange())
         currentRow = changed.row
-        onTableEvent(TableEvent.UpdateInsertRow(currentRow, changed.errors.map {
+        val currentColumnErrors = changed.errors.map {
           TableEvent.ColumnError(it.column, it.localizedError)
-        }))
+        }
+        onTableEvent(TableEvent.UpdateInsertRow(currentRow, currentColumnErrors))
       }
       is TableEvent.CommitChange<T, out Any> -> {
         val changed = changeCell(event.row, event.asCellChange())
         currentRow = changed.row
-        onTableEvent(TableEvent.UpdateInsertRow(currentRow, changed.errors.map {
+        val currentColumnErrors = changed.errors.map {
           TableEvent.ColumnError(it.column, it.localizedError)
-        }))
+        }
+        onTableEvent(TableEvent.UpdateInsertRow(currentRow, currentColumnErrors))
         if (changed.hasNoErrors()) {
           onTableEvent(TableEvent.StopInsertRow(currentRow))
           if (insertRow(insertIndex, currentRow)) {

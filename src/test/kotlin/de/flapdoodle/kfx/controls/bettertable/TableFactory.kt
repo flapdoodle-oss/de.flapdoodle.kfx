@@ -19,7 +19,6 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.controls.bettertable.events.DefaultState
 import de.flapdoodle.kfx.controls.bettertable.events.EventContext
 import de.flapdoodle.kfx.controls.bettertable.events.State
-import de.flapdoodle.kfx.converters.Converters
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Insets
@@ -28,7 +27,6 @@ import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.CornerRadii
 import javafx.scene.paint.Color
 import javafx.scene.text.TextAlignment
-import javafx.util.StringConverter
 import java.time.LocalDate
 
 object TableFactory {
@@ -55,7 +53,8 @@ object TableFactory {
           label = "Age",
           property = ColumnProperty(Int::class, { it.age }),
           editable = true,
-          setter = { row, v -> row.copy(age = v ?: 0) },
+          setter = { row, v, error -> row.copy(age = v ?: 0).withError("age", error) },
+          error = { row -> row.error("age") }
         )
       )
     )
@@ -69,25 +68,29 @@ object TableFactory {
           label = "Age",
           property = ColumnProperty(Int::class, { it.age }),
           editable = true,
-          setter = { row, v -> row.copy(age = v ?: 0) },
+          setter = { row, v, error -> row.copy(age = v ?: 0).withError("age", error) },
+          error = { row -> row.error("age") }
         ),
         CustomColumn(
           label = "Age",
           property = ColumnProperty(String::class, { it.name }),
           editable = true,
-          setter = { row, v -> row.copy(name = v) },
+          setter = { row, v, error -> row.copy(name = v).withError("name", error) },
+          error = { row -> row.error("name") }
         ),
         CustomColumn(
           label = "Size",
           property = ColumnProperty(Double::class, { it.size }),
           editable = true,
-          setter = { row, v -> row.copy(size = v) },
+          setter = { row, v, error -> row.copy(size = v).withError("size", error) },
+          error = { row -> row.error("size") }
         ),
         CustomColumn(
           label = "Birthday",
           property = ColumnProperty(LocalDate::class, { it.birthDay }),
           editable = true,
-          setter = { row, v -> row.copy(birthDay = v) },
+          setter = { row, v, error -> row.copy(birthDay = v).withError("birthDay", error) },
+          error = { row -> row.error("birthDay") }
         )
       )
     )
@@ -145,24 +148,26 @@ object TableFactory {
           is TableFactory.CustomColumn<out Any> -> {
             column.change(row, change)
           }
+
           else -> {
             row
           }
         }
-        return TableChangeListener.ChangedRow(changed)
+
+        return TableChangeListener.ChangedRow(changed, errors(row, columns))
       }
 
       override fun updateRow(row: Row, changed: Row, errors: List<TableChangeListener.CellError<Row, out Any>>) {
         val list = rows.value
         val index = list.indexOf(row)
 
-        rows.value = list.subList(0, index) + changed + list.subList(index+1, list.size)
+        rows.value = list.subList(0, index) + changed + list.subList(index + 1, list.size)
       }
 
       override fun removeRow(row: Row) {
         val list = rows.value
         val index = list.indexOf(row)
-        rows.value = list.subList(0, index) + list.subList(index+1, list.size)
+        rows.value = list.subList(0, index) + list.subList(index + 1, list.size)
       }
 
       override fun insertRow(index: Int, row: Row): Boolean {
@@ -173,9 +178,23 @@ object TableFactory {
 
       override fun emptyRow(index: Int): Row {
         val list = rows.value
-        val before = if (index>0 && index<list.size) list[index-1] else null
-        val after = if (index<list.size) list[index] else null
+        val before = if (index > 0 && index < list.size) list[index - 1] else null
+        val after = if (index < list.size) list[index] else null
         return Row(((before?.age ?: 0) + (after?.age ?: 0)) / 2, null, null)
+      }
+
+      private fun errors(
+        row: Row,
+        columns: SimpleObjectProperty<List<Column<Row, out Any>>>
+      ): List<TableChangeListener.CellError<Row, out Any>> {
+        return columns.value.filterIsInstance(CustomColumn::class.java)
+          .flatMap {
+            val error = it.error(row)
+            if (error!=null) {
+              listOf(TableChangeListener.CellError(it, error))
+            } else
+              emptyList()
+          }
       }
     }
 
@@ -202,21 +221,27 @@ object TableFactory {
     val age: Int,
     val name: String?,
     val size: Double?,
-    val birthDay: LocalDate? = null
-  )
+    val birthDay: LocalDate? = null,
+    val errors: Map<String, String> = emptyMap()
+  ) {
+    fun withError(key: String, error: String?): Row {
+      return copy(errors = if (error != null) errors + (key to error) else errors - key)
+    }
+
+    fun error(key: String): String? = errors[key]
+  }
 
   class CustomColumn<C : Any>(
     override val label: String,
     override val property: ColumnProperty<Row, C>,
-//    override val property: (Row) -> C?,
-//    override val converter: StringConverter<C>,
     override val editable: Boolean,
     override val textAlignment: TextAlignment = TextAlignment.LEFT,
-    val setter: (Row, C?) -> Row
+    val setter: (Row, C?, String?) -> Row,
+    val error: (Row) -> String?
   ) : Column<Row, C>(label, property, editable, textAlignment) {
     fun change(row: Row, change: TableChangeListener.CellChange<Row, out Any>): Row {
       return if (change.column == this) {
-        setter(row, change.value as C?)
+        setter(row, change.value as C?, change.localizedError)
       } else row
     }
 

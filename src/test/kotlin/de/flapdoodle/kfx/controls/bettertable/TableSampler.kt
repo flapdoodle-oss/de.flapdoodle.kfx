@@ -52,7 +52,8 @@ class TableSampler {
               label = "Name",
               property = ColumnProperty(String::class, { it.name }),
               editable = true,
-              setter = { row, v -> row.copy(name = v) }
+              setter = { row, v, error -> row.copy(name = v).withError("name", error) },
+              error = { row -> row.error("name") }
             )
           }
         }, Button("B(r)").apply {
@@ -61,7 +62,8 @@ class TableSampler {
               label = "Name*",
               property = ColumnProperty(String::class, { it.name }),
               editable = false,
-              setter = { row, v -> row.copy(name = v) }
+              setter = { row, v, error -> row.copy(name = v).withError("name", error) },
+              error = { row -> row.error("name") }
             )
           }
         }, Button("C").apply {
@@ -70,7 +72,8 @@ class TableSampler {
               label = "Size",
               property = ColumnProperty(Double::class, { it.size }),
               editable = true,
-              setter = { row, v -> row.copy(size = v) }
+              setter = { row, v, error -> row.copy(size = v).withError("size", error) },
+              error = { row -> row.error("size") }
             )
           }
         }, Button("C(r)").apply {
@@ -87,7 +90,8 @@ class TableSampler {
               label = "BDay",
               property = ColumnProperty(LocalDate::class, { it.birthDay }),
               editable = true,
-              setter = { row, v -> row.copy(birthDay = v) }
+              setter = { row, v, error -> row.copy(birthDay = v).withError("birthDay", error) },
+              error = { row -> row.error("birthDay") }
             )
           }
         }, Button("toggle").apply {

@@ -171,6 +171,8 @@ class Row<T : Any>(
             rowEditor?.let {
               if (it.value!=event.row) {
                 println("row editor does not match: ${it.value} != ${event.row}")
+              } else {
+                println("row editor match: ${it.value} == ${event.row}")
               }
               rowOnTopContainer.children.clear()
               rowBottomContainer.children.clear()

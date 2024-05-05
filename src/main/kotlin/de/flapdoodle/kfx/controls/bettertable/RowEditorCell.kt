@@ -131,6 +131,9 @@ class RowEditorCell<T : Any, C : Any>(
         }
       }
     }
+    field.control.focusedProperty().addListener { observable, oldValue, focused ->
+      if (!focused) eventListener.fireEvent(TableEvent.UpdateChange(row, column, field.value))
+    }
     
     label.addEventHandler(KeyEvent.KEY_RELEASED) {
       if (!it.isShortcutDown) {

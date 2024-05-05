@@ -27,7 +27,7 @@ import javafx.scene.layout.HBox
 class RowEditor<T : Any>(
   internal val eventListener: TableRequestEventListener<T>,
   internal val columns: ObservableValue<List<Column<T, out Any>>>,
-  internal val value: T,
+  internal var value: T,
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : StackLikeRegion() {
 
@@ -49,6 +49,12 @@ class RowEditor<T : Any>(
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
 //    println("row editor event: $event")
     when (event) {
+      is TableEvent.UpdateInsertRow<T> -> {
+        value = event.row
+        rowContainer.children.forEach {
+          (it as RowEditorCell<T, out Any>).onTableEvent(event)
+        }
+      }
       else -> {
         rowContainer.children.forEach {
           (it as RowEditorCell<T, out Any>).onTableEvent(event)

@@ -21,7 +21,7 @@ import javafx.scene.control.Control
 interface FieldFactory<T: Any> {
   fun inputFor(
     value: T?,
-    commitEdit: (T?) -> Unit,
+    commitEdit: (T?, String?) -> Unit,
     cancelEdit: () -> Unit
   ): FieldWrapper<T, out Control>
 }

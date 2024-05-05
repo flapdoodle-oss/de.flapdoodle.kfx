@@ -44,16 +44,16 @@ class ValidatingTextFieldIT {
 
     assertThat(typedTextField.get()).isNull()
     assertThat(typedTextField.valueProperty().value).isNull()
-    assertThat(typedTextField.lastExceptionProperty().value).isNull()
+    assertThat(typedTextField.lastErrorProperty().value).isNull()
 
     typedTextField.textProperty().value = "123"
     assertThat(typedTextField.get()).isEqualTo(123)
     assertThat(typedTextField.valueProperty().value).isEqualTo(123)
-    assertThat(typedTextField.lastExceptionProperty().value).isNull()
+    assertThat(typedTextField.lastErrorProperty().value).isNull()
 
     typedTextField.textProperty().value = "123a"
     assertThat(typedTextField.get()).isNull()
     assertThat(typedTextField.valueProperty().value).isNull()
-    assertThat(typedTextField.lastExceptionProperty().value).isNotNull()
+    assertThat(typedTextField.lastErrorProperty().value).isNotNull()
   }
 }

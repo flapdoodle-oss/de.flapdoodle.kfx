@@ -47,8 +47,8 @@ class Cell<T : Any, C : Any>(
 
   private val field = fieldFactoryLookup.fieldFactory(column.property.type)
     .inputFor(value = value,
-      commitEdit = { it: C? ->
-        eventListener.fireEvent(TableEvent.CommitChange(row, column, it))
+      commitEdit = { it: C?, error: String? ->
+        eventListener.fireEvent(TableEvent.CommitChange(row, column, it, error))
       },
       cancelEdit = {
         eventListener.fireEvent(TableEvent.AbortChange(row, column))

@@ -26,9 +26,10 @@ import javafx.scene.paint.Color
 
 class ValidatingTextField<T : Any>(
   val converter: ValidatingConverter<T>,
-  val onException: (TextField, Exception?) -> Unit = { textfield, ex ->
-    if (ex!=null) {
-      textfield.tooltip = Tooltips.tooltip(ex.localizedMessage)
+  val mapException: (Exception) -> String = { it.localizedMessage },
+  val onError: (TextField, String?) -> Unit = { textfield, error ->
+    if (error != null) {
+      textfield.tooltip = Tooltips.tooltip(error)
       textfield.border = Border.stroke(Color.RED)
     } else {
       textfield.tooltip = null
@@ -38,17 +39,17 @@ class ValidatingTextField<T : Any>(
 ) : TextField() {
 
   private val valueProperty = SimpleObjectProperty<T>(null)
-  private val lastExceptionProperty = SimpleObjectProperty<Exception>(null)
+  private val lastError = SimpleObjectProperty<String>(null)
 
   fun valueProperty(): ReadOnlyProperty<T> = valueProperty
-  fun lastExceptionProperty(): ReadOnlyProperty<Exception> = lastExceptionProperty
+  fun lastErrorProperty(): ReadOnlyProperty<String> = lastError
 
   init {
     textProperty().bindBidirectional(valueProperty, ValidatingConverter.asStringConverter(converter, lastExceptionPropertySetter = {
-      lastExceptionProperty.value = it
+      lastError.value = if (it!=null) mapException(it) else null
     }))
-    lastExceptionProperty().addListener { _, _, exception ->
-      onException(this, exception)
+    lastError.addListener { _, _, error ->
+      onError(this, error)
     }
   }
 
@@ -61,6 +62,12 @@ class ValidatingTextField<T : Any>(
   }
 
   fun hasError(): Boolean {
-    return lastExceptionProperty.value != null
+    return lastError.value != null
   }
+
+  fun setErrorMessage(message: String?) {
+    lastError.value = message
+  }
+
+  fun errorMessage() = lastError.value
 }

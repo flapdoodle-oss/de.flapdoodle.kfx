@@ -17,11 +17,17 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 interface TableChangeListener<T: Any> {
-  fun changeCell(row: T, change: CellChange<T, out Any>): T
-  fun updateRow(row: T, changed: T)
+  fun changeCell(row: T, change: CellChange<T, out Any>): ChangedRow<T>
+
+  fun updateRow(row: T, changed: T, errors: List<CellError<T, out Any>>)
   fun removeRow(row: T)
   fun insertRow(index: Int, row: T): Boolean
   fun emptyRow(index: Int): T
 
-  data class CellChange<T: Any, C: Any>(val column: Column<T, C>, val value: C?)
+  data class CellChange<T: Any, C: Any>(val column: Column<T, C>, val value: C?, val localizedError: String?)
+  data class CellError<T: Any, C: Any>(val column: Column<T, C>, val localizedError: String)
+
+  data class ChangedRow<T: Any>(val row: T, val errors: List<CellError<T, out Any>> = emptyList()) {
+    fun hasNoErrors(): Boolean = errors.isEmpty()
+  }
 }

@@ -47,8 +47,8 @@ class RowEditorCell<T : Any, C : Any>(
   }
 
   private val field = fieldFactoryLookup.fieldFactory(column.property.type).inputFor(value = value,
-    commitEdit = { it: C? ->
-      eventListener.fireEvent(TableEvent.CommitChange(row, column, it))
+    commitEdit = { it: C?, error: String? ->
+      eventListener.fireEvent(TableEvent.CommitChange(row, column, it, error))
     },
     cancelEdit = {
       eventListener.fireEvent(TableEvent.AbortChange(row, column))
@@ -126,13 +126,13 @@ class RowEditorCell<T : Any, C : Any>(
       if (!it.isShortcutDown && it.code == KeyCode.TAB) {
         it.consume()
         if (it.eventType == KeyEvent.KEY_RELEASED) {
-          eventListener.fireEvent(TableEvent.UpdateChange(row, column, field.value))
+          eventListener.fireEvent(TableEvent.UpdateChange(row, column, field.value, field.error))
           eventListener.fireEvent(TableEvent.NextCell(row, column, if (it.isShiftDown) TableEvent.Direction.PREV else TableEvent.Direction.NEXT))
         }
       }
     }
     field.control.focusedProperty().addListener { observable, oldValue, focused ->
-      if (!focused) eventListener.fireEvent(TableEvent.UpdateChange(row, column, field.value))
+      if (!focused) eventListener.fireEvent(TableEvent.UpdateChange(row, column, field.value, field.error))
     }
     
     label.addEventHandler(KeyEvent.KEY_RELEASED) {

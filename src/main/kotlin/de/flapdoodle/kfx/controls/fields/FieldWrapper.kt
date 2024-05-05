@@ -25,6 +25,7 @@ open abstract class FieldWrapper<T: Any, C: Control>(
 
   abstract var text: String?
   abstract var value: T?
+  abstract var error: String?
 
   init {
     children.add(control)

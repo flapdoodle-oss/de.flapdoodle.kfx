@@ -138,8 +138,8 @@ object TableFactory {
 //      rows.value = emptyList()
 //    }
 
-    val changeListener = object : TableChangeListener<TableFactory.Row> {
-      override fun changeCell(row: TableFactory.Row, change: TableChangeListener.CellChange<TableFactory.Row, out Any>): TableFactory.Row {
+    val changeListener = object : TableChangeListener<Row> {
+      override fun changeCell(row: Row, change: TableChangeListener.CellChange<Row, out Any>): TableChangeListener.ChangedRow<Row> {
         println("change: $row -> $change")
         val changed = when (val column = change.column) {
           is TableFactory.CustomColumn<out Any> -> {
@@ -149,47 +149,47 @@ object TableFactory {
             row
           }
         }
-        return changed
+        return TableChangeListener.ChangedRow(changed)
       }
 
-      override fun updateRow(row: TableFactory.Row, changed: TableFactory.Row) {
+      override fun updateRow(row: Row, changed: Row, errors: List<TableChangeListener.CellError<Row, out Any>>) {
         val list = rows.value
         val index = list.indexOf(row)
 
         rows.value = list.subList(0, index) + changed + list.subList(index+1, list.size)
       }
 
-      override fun removeRow(row: TableFactory.Row) {
+      override fun removeRow(row: Row) {
         val list = rows.value
         val index = list.indexOf(row)
         rows.value = list.subList(0, index) + list.subList(index+1, list.size)
       }
 
-      override fun insertRow(index: Int, row: TableFactory.Row): Boolean {
+      override fun insertRow(index: Int, row: Row): Boolean {
         val list = rows.value
         rows.value = list.subList(0, index) + row + list.subList(index, list.size)
         return true
       }
 
-      override fun emptyRow(index: Int): TableFactory.Row {
+      override fun emptyRow(index: Int): Row {
         val list = rows.value
         val before = if (index>0 && index<list.size) list[index-1] else null
         val after = if (index<list.size) list[index] else null
-        return TableFactory.Row(((before?.age ?: 0) + (after?.age ?: 0)) / 2, null, null)
+        return Row(((before?.age ?: 0) + (after?.age ?: 0)) / 2, null, null)
       }
     }
 
-    val headerColumnFactory = HeaderColumnFactory.Default<TableFactory.Row>().andThen { column, headerColumn ->
+    val headerColumnFactory = HeaderColumnFactory.Default<Row>().andThen { column, headerColumn ->
       if (column.label.contains("*")) {
         headerColumn.backgroundProperty().bind(backGroundToggled)
       }
     }
-    val cellFactory = CellFactory.Default<TableFactory.Row>().andThen { column, cell ->
+    val cellFactory = CellFactory.Default<Row>().andThen { column, cell ->
       if (column.label.contains("*")) {
         cell.backgroundProperty().bind(backGroundToggled)
       }
     }
-    val footerColumnFactory = FooterColumnFactory.Default<TableFactory.Row>().andThen { column, footerColumn ->
+    val footerColumnFactory = FooterColumnFactory.Default<Row>().andThen { column, footerColumn ->
       if (column.label.contains("*")) {
         footerColumn.backgroundProperty().bind(backGroundToggled)
       }

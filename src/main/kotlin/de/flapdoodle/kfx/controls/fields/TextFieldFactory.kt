@@ -25,7 +25,7 @@ import javafx.scene.input.KeyEvent
 class TextFieldFactory<T : Any>(
   private val converter: ValidatingConverter<T>
 ) : FieldFactory<T> {
-  override fun inputFor(value: T?, commitEdit: (T?) -> Unit, cancelEdit: () -> Unit): FieldWrapper<T, out Control> {
+  override fun inputFor(value: T?, commitEdit: (T?, String?) -> Unit, cancelEdit: () -> Unit): FieldWrapper<T, out Control> {
     val textField = ValidatingTextField(converter)
     textField.set(value)
 
@@ -33,7 +33,7 @@ class TextFieldFactory<T : Any>(
       if (t.code == KeyCode.ENTER) {
         t.consume()
         if (!textField.hasError()) {
-          commitEdit(textField.get())
+          commitEdit(textField.get(), textField.errorMessage())
         }
       }
       if (t.code == KeyCode.ESCAPE) {
@@ -55,5 +55,9 @@ class TextFieldFactory<T : Any>(
     override var value: T?
       get() = control.get()
       set(value) { control.set(value) }
+
+    override var error: String?
+      get() = control.errorMessage()
+      set(value) { control.setErrorMessage(value) }
   }
 }

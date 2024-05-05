@@ -50,16 +50,16 @@ sealed class TableEvent<T: Any> {
     fun ok(): Focus<T, C> = Focus(row, column)
   }
   data class RequestEdit<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column)
-  data class CommitChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val value: C?): CellTriggered<T, C>(row, column) {
+  data class CommitChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val value: C?, val localizedError: String?): CellTriggered<T, C>(row, column) {
     fun asCellChange(): TableChangeListener.CellChange<T, C> {
-      return TableChangeListener.CellChange(column, value)
+      return TableChangeListener.CellChange(column, value, localizedError)
     }
 
     fun stopEvent() = StopEdit(row,column)
   }
-  data class UpdateChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val value: C?): CellTriggered<T, C>(row, column) {
+  data class UpdateChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>, val value: C?, val localizedError: String?): CellTriggered<T, C>(row, column) {
     fun asCellChange(): TableChangeListener.CellChange<T, C> {
-      return TableChangeListener.CellChange(column, value)
+      return TableChangeListener.CellChange(column, value, localizedError)
     }
   }
   data class AbortChange<T: Any, C: Any>(override val row: T, override val column: Column<T, C>): CellTriggered<T, C>(row, column) {
@@ -79,8 +79,10 @@ sealed class TableEvent<T: Any> {
   data class ShowInsertRow<T: Any>(override val row: T, val position: InsertPosition): ToRow<T>(row)
   data class HideInsertRow<T: Any>(override val row: T): ToRow<T>(row)
   data class InsertRow<T: Any>(override val row: T, val position: InsertPosition, val emptyRow: T): ToRow<T>(row)
-  data class UpdateInsertRow<T: Any>(override val row: T): ToRow<T>(row)
+  data class UpdateInsertRow<T: Any>(override val row: T, val errors: List<ColumnError<T, out Any>>): ToRow<T>(row)
   data class StopInsertRow<T: Any>(override val row: T): ToRow<T>(row)
+
+  data class ColumnError<T: Any, C: Any>(val column: Column<T, C>, val localizedError: String)
 
   data class InsertFirstRow<T: Any>(val row: T): ResponseEvent<T>()
   class HideInsertFirstRow<T: Any>(): ResponseEvent<T>()
@@ -140,32 +142,6 @@ sealed class TableEvent<T: Any> {
             Focus(rows[newRowIndex], columns[newColumnIndex])
           }
         }
-//        if (direction == Direction.NEXT) {
-//          var newColumnIndex = columnIndex + 1
-//          var newRowIndex = rowIndex
-//          if (newColumnIndex >= columns.size) {
-//            newColumnIndex = 0
-//            newRowIndex + 1
-//            if (newRowIndex >= rows.size) {
-//              newRowIndex = rows.size - 1
-//            }
-//          }
-//          return Focus(rows[newRowIndex], columns[newColumnIndex])
-//        } else {
-//          val newRowIndex = when (direction) {
-//            Direction.UP -> (rowIndex - 1).coerceAtLeast(0)
-//            Direction.DOWN -> (rowIndex + 1).coerceAtMost(rows.size - 1)
-//            else -> rowIndex
-//          }
-//
-//          val newColumnIndex = when (direction) {
-//            Direction.LEFT -> (columnIndex - 1).coerceAtLeast(0)
-//            Direction.RIGHT -> (columnIndex + 1).coerceAtMost(columns.size - 1)
-//            else -> columnIndex
-//          }
-//
-//          return Focus(rows[newRowIndex], columns[newColumnIndex])
-//        }
       }
       return null
     }

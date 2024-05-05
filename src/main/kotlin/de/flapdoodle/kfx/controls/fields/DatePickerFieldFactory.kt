@@ -25,7 +25,7 @@ import java.time.LocalDate
 
 internal class DatePickerFieldFactory : FieldFactory<LocalDate> {
 
-  override fun inputFor(value: LocalDate?, commitEdit: (LocalDate?) -> Unit, cancelEdit: () -> Unit): FieldWrapper<LocalDate, out Control> {
+  override fun inputFor(value: LocalDate?, commitEdit: (LocalDate?, String?) -> Unit, cancelEdit: () -> Unit): FieldWrapper<LocalDate, out Control> {
     return DatePickerFieldWrapper(DatePicker().apply {
 //      editor.text = converter.toString(value)
       this.value = value
@@ -42,7 +42,7 @@ internal class DatePickerFieldFactory : FieldFactory<LocalDate> {
       editor.addEventHandler(KeyEvent.KEY_RELEASED) { t ->
         if (t.code == KeyCode.ENTER) {
           t.consume()
-          commitEdit(this.value)
+          commitEdit(this.value, null)
         }
       }
     })
@@ -59,5 +59,10 @@ internal class DatePickerFieldFactory : FieldFactory<LocalDate> {
     override var value: LocalDate?
       get() = control.value
       set(value) { control.value = value }
+
+    // TODO
+    override var error: String?
+      get() = null
+      set(value) {}
   }
 }

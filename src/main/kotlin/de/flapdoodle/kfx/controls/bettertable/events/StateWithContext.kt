@@ -25,14 +25,12 @@ abstract class StateWithContext<T: Any>(
     context.onTableEvent(event)
   }
 
-  protected fun changeCell(row: T, change: TableChangeListener.CellChange<T, out Any>): T {
+  protected fun changeCell(row: T, change: TableChangeListener.CellChange<T, out Any>): TableChangeListener.ChangedRow<T> {
     return context.changeListener.changeCell(row, change)
   }
 
-  protected fun changeCellAndUpdateRow(row: T, change: TableChangeListener.CellChange<T, out Any>): T {
-    val changed = context.changeListener.changeCell(row, change)
-    context.changeListener.updateRow(row, changed)
-    return changed
+  protected fun updateRow(row: T, changed: T, errors: List<TableChangeListener.CellError<T, out Any>>) {
+    context.changeListener.updateRow(row, changed, errors)
   }
 
   protected fun insertRow(index: Int, row: T): Boolean {

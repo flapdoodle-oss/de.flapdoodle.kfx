@@ -40,15 +40,23 @@ class InsertRowState<T : Any>(
         onTableEvent(TableEvent.Focus(currentRow, context.columns.value[0]))
       }
       is TableEvent.UpdateChange<T, out Any> -> {
-        currentRow = changeCell(event.row, event.asCellChange())
-        onTableEvent(TableEvent.UpdateInsertRow(currentRow))
+        val changed = changeCell(event.row, event.asCellChange())
+        currentRow = changed.row
+        onTableEvent(TableEvent.UpdateInsertRow(currentRow, changed.errors.map {
+          TableEvent.ColumnError(it.column, it.localizedError)
+        }))
       }
       is TableEvent.CommitChange<T, out Any> -> {
-        currentRow = changeCell(event.row, event.asCellChange())
-        onTableEvent(TableEvent.UpdateInsertRow(currentRow))
-        onTableEvent(TableEvent.StopInsertRow(currentRow))
-        if (insertRow(insertIndex, currentRow)) {
-          return defaultState.onEvent(TableEvent.RequestFocus(currentRow, event.column))
+        val changed = changeCell(event.row, event.asCellChange())
+        currentRow = changed.row
+        onTableEvent(TableEvent.UpdateInsertRow(currentRow, changed.errors.map {
+          TableEvent.ColumnError(it.column, it.localizedError)
+        }))
+        if (changed.hasNoErrors()) {
+          onTableEvent(TableEvent.StopInsertRow(currentRow))
+          if (insertRow(insertIndex, currentRow)) {
+            return defaultState.onEvent(TableEvent.RequestFocus(currentRow, event.column))
+          }
         }
       }
       is TableEvent.AbortChange<T, out Any> -> {

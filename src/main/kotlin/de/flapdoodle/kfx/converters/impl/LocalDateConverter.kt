@@ -19,19 +19,21 @@ package de.flapdoodle.kfx.converters.impl
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.converters.ValueOrError
 import java.time.LocalDate
+import java.time.chrono.Chronology
 import java.time.chrono.IsoChronology
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.format.DecimalStyle
 import java.time.format.FormatStyle
 import java.util.*
 
 class LocalDateConverter(
-  locale: Locale
-) : AbstractTemporalConverter(locale, DateTimeFormatterBuilder().parseLenient()
-  .appendPattern(DateTimeFormatterBuilder
-    .getLocalizedDateTimePattern(FormatStyle.MEDIUM, null, IsoChronology.INSTANCE, locale))
-  .toFormatter(locale)
-  .withDecimalStyle(DecimalStyle.of(locale))), ValidatingConverter<LocalDate> {
+  locale: Locale,
+  chronology: Chronology = IsoChronology.INSTANCE
+) : AbstractTemporalConverter(
+  locale,
+  dateTimeFormater(FormatStyle.MEDIUM, null, chronology, locale)
+), ValidatingConverter<LocalDate> {
 
   override fun toString(value: LocalDate): String {
     return value.format(format)

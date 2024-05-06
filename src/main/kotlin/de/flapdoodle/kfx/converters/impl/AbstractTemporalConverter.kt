@@ -18,8 +18,9 @@ package de.flapdoodle.kfx.converters.impl
 
 import de.flapdoodle.kfx.converters.ValueOrError
 import java.text.ParsePosition
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import java.time.chrono.Chronology
+import java.time.chrono.IsoChronology
+import java.time.format.*
 import java.time.temporal.TemporalAccessor
 import java.util.*
 
@@ -34,7 +35,7 @@ abstract class AbstractTemporalConverter(
       val number = format.parse(value, pos)
         ?: return ValueOrError.Error(TemporalAccessorParseException(locale, value, 0))
 
-      if (pos.index!=value.length) {
+      if (pos.index != value.length) {
         // could not parse everything
         return if (pos.errorIndex == -1) {
           ValueOrError.Error(SomethingLeftException(locale, value, value.substring(pos.index), pos.index))
@@ -51,4 +52,22 @@ abstract class AbstractTemporalConverter(
     }
   }
 
+  companion object {
+    fun dateTimeFormater(
+      dateStyle: FormatStyle,
+      timeStyle: FormatStyle?,
+      chronology: Chronology = IsoChronology.INSTANCE,
+      locale: Locale
+    ): DateTimeFormatter {
+      val pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+        dateStyle, timeStyle,
+        chronology, locale
+      );
+      return DateTimeFormatterBuilder().parseLenient()
+        .appendPattern(pattern)
+        .toFormatter()
+        .withChronology(chronology)
+        .withDecimalStyle(DecimalStyle.of(locale))
+    }
+  }
 }

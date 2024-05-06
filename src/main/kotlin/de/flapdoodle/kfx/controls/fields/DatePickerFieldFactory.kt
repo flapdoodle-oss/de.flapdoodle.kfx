@@ -16,23 +16,34 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
-import javafx.event.EventHandler
+import de.flapdoodle.kfx.controls.Tooltips
+import de.flapdoodle.kfx.converters.impl.LocalDateConverter
+import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Control
 import javafx.scene.control.DatePicker
+import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.layout.Border
+import javafx.scene.paint.Color
 import java.time.LocalDate
+import java.time.chrono.IsoChronology
+import java.util.*
 
-internal class DatePickerFieldFactory : FieldFactory<LocalDate> {
+internal class DatePickerFieldFactory(
+  private val locale: Locale
+) : FieldFactory<LocalDate> {
 
   override fun inputFor(value: LocalDate?, commitEdit: (LocalDate?, String?) -> Unit, cancelEdit: () -> Unit): FieldWrapper<LocalDate, out Control> {
-    return DatePickerFieldWrapper(DatePicker().apply {
-//      editor.text = converter.toString(value)
+    val errorMessage = SimpleObjectProperty<String>(null)
+
+    val control = DatePicker().apply {
+      this.chronology = IsoChronology.INSTANCE
+      this.converter = LocalDateConverter(locale, chronology).asStringConverter {
+        errorMessage.value = it?.localizedMessage
+      }
       this.value = value
-//      onAction = EventHandler {
-//        it.consume()
-//        commitEdit(this.value)
-//      }
+
       addEventHandler(KeyEvent.KEY_RELEASED) { t ->
         if (t.code == KeyCode.ESCAPE) {
           t.consume()
@@ -42,14 +53,29 @@ internal class DatePickerFieldFactory : FieldFactory<LocalDate> {
       editor.addEventHandler(KeyEvent.KEY_RELEASED) { t ->
         if (t.code == KeyCode.ENTER) {
           t.consume()
-          commitEdit(this.value, null)
+          if (errorMessage.value == null) {
+            commitEdit(this.value, null)
+          }
         }
       }
-    })
+    }
+
+    errorMessage.addListener { _, _, error ->
+      if (error != null) {
+        control.tooltip = Tooltips.tooltip(error)
+        control.border = Border.stroke(Color.RED)
+      } else {
+        control.tooltip = null
+        control.border = null
+      }
+    }
+
+    return DatePickerFieldWrapper(control, errorMessage)
   }
 
   class DatePickerFieldWrapper(
-    control: DatePicker
+    control: DatePicker,
+    private val errorMessage: SimpleObjectProperty<String>
   ) : FieldWrapper<LocalDate, DatePicker>(control) {
 
     override var text: String?
@@ -60,9 +86,8 @@ internal class DatePickerFieldFactory : FieldFactory<LocalDate> {
       get() = control.value
       set(value) { control.value = value }
 
-    // TODO
     override var error: String?
-      get() = null
-      set(value) {}
+      get() = errorMessage.value
+      set(value) { errorMessage.value = value }
   }
 }

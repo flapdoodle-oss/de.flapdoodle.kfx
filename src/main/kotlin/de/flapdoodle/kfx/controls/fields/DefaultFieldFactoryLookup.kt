@@ -27,7 +27,7 @@ class DefaultFieldFactoryLookup(
 
   override fun <T : Any> fieldFactory(type: KClass<T>): FieldFactory<T> {
     if (LocalDate::class == type) {
-      return DatePickerFieldFactory() as FieldFactory<T>
+      return DatePickerFieldFactory(locale) as FieldFactory<T>
     }
     return TextFieldFactory(Converters.validatingFor(type, locale))
   }

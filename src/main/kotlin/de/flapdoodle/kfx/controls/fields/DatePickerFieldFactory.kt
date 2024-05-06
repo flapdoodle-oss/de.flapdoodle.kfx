@@ -17,7 +17,10 @@
 package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.converters.impl.LocalDateConverter
+import javafx.event.EventHandler
 import javafx.scene.control.Control
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import java.time.LocalDate
 import java.util.*
 
@@ -26,7 +29,24 @@ internal class DatePickerFieldFactory(
 ) : FieldFactory<LocalDate> {
 
   override fun inputFor(value: LocalDate?, commitEdit: (LocalDate?, String?) -> Unit, cancelEdit: () -> Unit): FieldWrapper<LocalDate, out Control> {
-    return DatePickerFieldWrapper(ValidatingDatePicker(LocalDateConverter(locale)))
+    val control = ValidatingDatePicker(LocalDateConverter(locale))
+
+    control.set(value)
+
+    control.onKeyReleased = EventHandler { t: KeyEvent ->
+      if (t.code == KeyCode.ENTER) {
+        t.consume()
+        if (!control.hasError()) {
+          commitEdit(control.get(), control.errorMessage())
+        }
+      }
+      if (t.code == KeyCode.ESCAPE) {
+        t.consume()
+        cancelEdit()
+      }
+    }
+
+    return DatePickerFieldWrapper(control)
   }
 
   class DatePickerFieldWrapper(

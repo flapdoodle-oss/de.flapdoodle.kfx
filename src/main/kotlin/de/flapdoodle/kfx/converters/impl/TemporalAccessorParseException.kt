@@ -30,4 +30,6 @@ class TemporalAccessorParseException(
     return I18N.exceptionMessage(locale, TemporalAccessorParseException::class, "unparseableDate", value)
       ?: super.getLocalizedMessage()
   }
+
+  fun input() = value
 }

@@ -34,5 +34,6 @@ class SomethingLeftException(
       ?: super.getLocalizedMessage()
   }
 
+  fun input() = all
   fun errorIndex() = errorIndex
 }

@@ -17,11 +17,13 @@
 package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.impl.LocalDateConverter
 import javafx.application.Application
 import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.layout.FlowPane
 import javafx.stage.Stage
+import java.time.LocalDate
 import java.util.*
 
 class ValidatingTextFieldSampler {
@@ -59,6 +61,13 @@ class ValidatingTextFieldSampler {
 //          }
 //        }
       }
+
+      val dateField = ValidatingDatePicker(LocalDateConverter(Locale.GERMANY)).apply {
+        valueProperty().addListener { _, _, newValue ->
+          println("--> $newValue")
+        }
+      }
+
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {
         children.add(intField)
         children.add(TypedLabel(Int::class).apply {
@@ -67,6 +76,10 @@ class ValidatingTextFieldSampler {
         children.add(doubleField)
         children.add(TypedLabel(Double::class).apply {
           valueProperty().bind(doubleField.valueProperty())
+        })
+        children.add(dateField)
+        children.add(TypedLabel(LocalDate::class).apply {
+          valueProperty().bind(dateField.valueProperty())
         })
       })
       stage.show()

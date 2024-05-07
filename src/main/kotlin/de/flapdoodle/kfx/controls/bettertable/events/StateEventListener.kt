@@ -16,14 +16,21 @@
  */
 package de.flapdoodle.kfx.controls.bettertable.events
 
+import de.flapdoodle.kfx.transitions.DelayAction
+import javafx.util.Duration
+
 class StateEventListener<T: Any>(
   internal val start: State<T>
 ): TableRequestEventListener<T> {
-  var current = start
-  val debug = false
+  private val delayAction = DelayAction(Duration.millis(700.0))
+
+  private var current = start
+  private val debug = false
 
   override fun fireEvent(event: TableEvent.RequestEvent<T>) {
     try {
+      delayAction.stop()
+
       if (debug) println("-----------------------------------------")
       if (debug) println("${current}: $event")
       val nextState = current.onEvent(event)
@@ -32,6 +39,18 @@ class StateEventListener<T: Any>(
       if (nextState.event!=null) {
         if (debug) println("additional event: ${nextState.event}")
         fireEvent(nextState.event)
+      }
+      val delayed = nextState.delayed
+      
+      if (delayed !=null) {
+        delayAction.call {
+          current = delayed.state
+          if (debug) println("delayed state: $current")
+          if (delayed.event != null) {
+            if (debug) println("additional event: ${delayed.event}")
+            fireEvent(delayed.event)
+          }
+        }
       }
     } finally {
       if (debug) println("is now: $current")

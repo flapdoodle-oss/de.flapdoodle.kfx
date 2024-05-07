@@ -34,10 +34,13 @@ class DefaultState<T : Any>(
       }
 
       is TableEvent.MayInsertRow<T> -> {
-        return State.NextState(DelayedState(this) {
-          // TODO hmm..
-          ShowInsertRowState(this, context).onEvent(event).state
-        })
+        return State.NextState(this, delayed = State.Delayed(
+          ShowInsertRowState(this, context), event
+        ))
+//        return State.NextState(DelayedState(this) {
+//          // TODO hmm..
+//          ShowInsertRowState(this, context).onEvent(event).state
+//        })
       }
 
       is TableEvent.RequestInsertRow<T> -> {

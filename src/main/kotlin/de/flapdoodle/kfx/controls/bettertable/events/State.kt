@@ -21,6 +21,12 @@ interface State<T: Any> {
 
   data class NextState<T: Any>(
     val state: State<T>,
+    val event: TableEvent.RequestEvent<T>? = null,
+    val delayed: Delayed<T>? = null
+  )
+
+  data class Delayed<T: Any>(
+    val state: State<T>,
     val event: TableEvent.RequestEvent<T>? = null
   )
 }

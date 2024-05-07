@@ -45,10 +45,13 @@ class FocusState<T : Any>(
 
       is TableEvent.MayInsertRow<T> -> {
         if (event.row != lastFocusEvent?.row) {
-          return State.NextState(DelayedState(this) {
-            // TODO was anderes ausdenken
-            ShowInsertRowState(defaultState, context).onEvent(event).state
-          })
+          return State.NextState(this, delayed = State.Delayed(
+            ShowInsertRowState(defaultState, context), event
+          ))
+//          return State.NextState(DelayedState(this) {
+//            // TODO was anderes ausdenken
+//            ShowInsertRowState(defaultState, context).onEvent(event).state
+//          })
         }
       }
       is TableEvent.MouseExitRows<T> -> {

@@ -5,7 +5,7 @@
     <groupId>de.flapdoodle.kfx</groupId>
     <artifactId>de.flapdoodle.kfx</artifactId>
     <name>kotlin javafx components</name>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.4.1</version>
 
     <description>kfx</description>
     <url>https://github.com/flapdoodle-oss/de.flapdoodle.kfx</url>
@@ -31,7 +31,7 @@
         <connection>scm:git:git@github.com:flapdoodle-oss/de.flapdoodle.kfx.git</connection>
         <developerConnection>scm:git:git@github.com:flapdoodle-oss/de.flapdoodle.kfx.git</developerConnection>
         <url>git@github.com:flapdoodle-oss/de.flapdoodle.kfx.git</url>
-        <tag>HEAD</tag>
+        <tag>de.flapdoodle.kfx-1.4.1</tag>
     </scm>
 
     <distributionManagement>

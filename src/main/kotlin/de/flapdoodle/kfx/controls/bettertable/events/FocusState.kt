@@ -22,7 +22,7 @@ class FocusState<T : Any>(
 ) : StateWithContext<T>(context) {
   private var lastFocusEvent: TableEvent.Focus<T, out Any>? = null
 
-  override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
+  override fun onEvent(event: TableEvent.RequestEvent<T>): State.NextState<T> {
     when (event) {
       is TableEvent.HasFocus<T, out Any> -> {
         lastFocusEvent = event.fakedOk()
@@ -45,12 +45,10 @@ class FocusState<T : Any>(
 
       is TableEvent.MayInsertRow<T> -> {
         if (event.row != lastFocusEvent?.row) {
-          return DelayedState(this) {
-//            lastFocusEvent?.let {
-//              onTableEvent(TableEvent.Blur(it.row, it.column))
-//            }
-            ShowInsertRowState(defaultState, context).onEvent(event)
-          }
+          return State.NextState(DelayedState(this) {
+            // TODO was anderes ausdenken
+            ShowInsertRowState(defaultState, context).onEvent(event).state
+          })
         }
       }
       is TableEvent.MouseExitRows<T> -> {
@@ -64,6 +62,6 @@ class FocusState<T : Any>(
         return defaultState.onEvent(event)
       }
     }
-    return this
+    return State.NextState(this)
   }
 }

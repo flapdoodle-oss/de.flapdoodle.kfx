@@ -22,7 +22,7 @@ class EditState<T : Any>(
 ) : StateWithContext<T>(context) {
   private var lastEdit: TableEvent.RequestEdit<T, out Any>? = null
 
-  override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
+  override fun onEvent(event: TableEvent.RequestEvent<T>): State.NextState<T> {
     when (event) {
       is TableEvent.RequestEdit<T, out Any> -> {
         lastEdit?.let {
@@ -31,26 +31,30 @@ class EditState<T : Any>(
         lastEdit = event
         onTableEvent(TableEvent.StartEdit(event.row, event.column))
       }
+
       is TableEvent.CommitChange<T, out Any> -> {
         onTableEvent(event.stopEvent())
         val changed = changeCell(event.row, event.asCellChange())
         updateRow(event.row, changed.row, changed.errors)
         if (changed.hasNoErrors()) {
-          return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(changed.row, event.column))
+          return State.NextState(FocusState(defaultState, context), TableEvent.RequestFocus(changed.row, event.column))
         }
       }
+
       is TableEvent.AbortChange<T, out Any> -> {
         onTableEvent(event.ok())
-        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
+        return State.NextState(FocusState(defaultState, context), TableEvent.RequestFocus(event.row, event.column))
       }
+
       is TableEvent.LostFocus<T, out Any> -> {
         onTableEvent(event.ok())
-        return FocusState(defaultState, context).onEvent(TableEvent.RequestFocus(event.row, event.column))
+        return State.NextState(FocusState(defaultState, context), TableEvent.RequestFocus(event.row, event.column))
       }
+
       else -> {
 //        println("EDIT MODE - Ignore: $event")
       }
     }
-    return this
+    return State.NextState(this)
   }
 }

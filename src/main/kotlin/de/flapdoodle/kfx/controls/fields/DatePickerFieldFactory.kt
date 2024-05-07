@@ -37,7 +37,9 @@ internal class DatePickerFieldFactory(
       if (t.code == KeyCode.ENTER) {
         t.consume()
         if (!control.hasError()) {
-          commitEdit(control.get(), control.errorMessage())
+          if (t.target == control) {
+            commitEdit(control.get(), control.errorMessage())
+          }
         }
       }
       if (t.code == KeyCode.ESCAPE) {

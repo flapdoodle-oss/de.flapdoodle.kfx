@@ -31,7 +31,11 @@ class RowEditor<T : Any>(
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : StackLikeRegion() {
 
+  private var stopped = false
   private val rowContainer = HBox()
+  private val rowCellEventListenerDelegate: TableRequestEventListener<T> = TableRequestEventListener {
+    if (!stopped) eventListener.fireEvent(it)
+  }
 
   init {
     rowContainer.cssClassName("row","row-editor")
@@ -55,6 +59,9 @@ class RowEditor<T : Any>(
           (it as RowEditorCell<T, out Any>).onTableEvent(event)
         }
       }
+      is TableEvent.StopInsertRow<T> -> {
+        stopped = true
+      }
       else -> {
         rowContainer.children.forEach {
           (it as RowEditorCell<T, out Any>).onTableEvent(event)
@@ -64,7 +71,7 @@ class RowEditor<T : Any>(
   }
 
   private fun <C : Any> editor(column: Column<T, C>, row: T, width: ObservableValue<Number>): RowEditorCell<T, C> {
-    val textField = RowEditorCell(column,row,column.property.getter(row))
+    val textField = RowEditorCell(column,row,column.property.getter(row), rowCellEventListenerDelegate)
     textField.prefWidthProperty().bind(width)
     return textField
   }

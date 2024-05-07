@@ -26,7 +26,7 @@ class InsertRowState<T : Any>(
   private var currentRow: T = row
   private var lastFocusEvent: TableEvent.Focus<T, out Any>? = null
 
-  override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
+  override fun onEvent(event: TableEvent.RequestEvent<T>): State.NextState<T> {
     when (event) {
       is TableEvent.HasRows<T> -> {
         return defaultState.onEvent(event)
@@ -104,6 +104,6 @@ class InsertRowState<T : Any>(
         println("$this: ignore $event")
       }
     }
-    return this
+    return State.NextState(this)
   }
 }

@@ -22,7 +22,7 @@ class ShowInsertRowState<T : Any>(
 ) : StateWithContext<T>(context) {
   private var lastInsertRowRequest: TableEvent.MayInsertRow<T>? = null
 
-  override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
+  override fun onEvent(event: TableEvent.RequestEvent<T>): State.NextState<T> {
     when (event) {
       is TableEvent.MayInsertRow<T> -> {
         lastInsertRowRequest?.let {
@@ -44,6 +44,6 @@ class ShowInsertRowState<T : Any>(
         return defaultState.onEvent(event)
       }
     }
-    return this
+    return State.NextState(this)
   }
 }

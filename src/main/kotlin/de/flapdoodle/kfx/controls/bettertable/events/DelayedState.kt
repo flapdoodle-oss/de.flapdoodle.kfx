@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.controls.bettertable.events
 import de.flapdoodle.kfx.transitions.DelayAction
 import javafx.util.Duration
 
+// TODO .. was anderes ausdenken
 class DelayedState<T : Any>(
   private val base: State<T>,
   private val delayedState: () -> State<T>,
@@ -32,8 +33,8 @@ class DelayedState<T : Any>(
     }
   }
 
-  override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
+  override fun onEvent(event: TableEvent.RequestEvent<T>): State.NextState<T> {
     delayAction.stop()
-    return current.onEvent(event)
+    return State.NextState(current,event)
   }
 }

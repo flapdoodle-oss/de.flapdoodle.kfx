@@ -23,30 +23,31 @@ import javafx.beans.property.ReadOnlyObjectProperty
 class DefaultState<T : Any>(
   private val context: EventContext<T>
 ) : StateWithContext<T>(context) {
-  override fun onEvent(event: TableEvent.RequestEvent<T>): State<T> {
+  override fun onEvent(event: TableEvent.RequestEvent<T>): State.NextState<T> {
     when (event) {
       is TableEvent.RequestFocus<T, out Any> -> {
-        return FocusState(this, context).onEvent(event)
+        return State.NextState(FocusState(this, context), event)
       }
 
       is TableEvent.HasFocus<T, out Any> -> {
-        return FocusState(this, context).onEvent(event)
+        return State.NextState(FocusState(this, context), event)
       }
 
       is TableEvent.MayInsertRow<T> -> {
-        return DelayedState(this) {
-          ShowInsertRowState(this, context).onEvent(event)
-        }
+        return State.NextState(DelayedState(this) {
+          // TODO hmm..
+          ShowInsertRowState(this, context).onEvent(event).state
+        })
       }
 
       is TableEvent.RequestInsertRow<T> -> {
         val index = context.rows.value.indexOf(event.row)
         val insertIndex = index + if (event.position == TableEvent.InsertPosition.BELOW) 1 else 0
-        return InsertRowState(this,context, event.row, context.changeListener.emptyRow(insertIndex), insertIndex).onEvent(event)
+        return State.NextState(InsertRowState(this,context, event.row, context.changeListener.emptyRow(insertIndex), insertIndex),event)
       }
 
       is TableEvent.EmptyRows<T> -> {
-        return InsertRowState(this,context, null, context.changeListener.emptyRow(0), 0).onEvent(event)
+        return State.NextState(InsertRowState(this,context, null, context.changeListener.emptyRow(0), 0),event)
       }
 
       is TableEvent.HasRows<T> -> {
@@ -71,7 +72,7 @@ class DefaultState<T : Any>(
         throw IllegalArgumentException("not implemented: $event")
       }
     }
-    return this
+    return State.NextState(this)
   }
 
 

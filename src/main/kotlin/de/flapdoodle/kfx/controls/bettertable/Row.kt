@@ -174,6 +174,7 @@ class Row<T : Any>(
               } else {
                 println("row editor match: ${it.value} == ${event.row}")
               }
+              it.onTableEvent(event)
               rowOnTopContainer.children.clear()
               rowBottomContainer.children.clear()
             }

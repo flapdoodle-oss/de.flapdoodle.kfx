@@ -31,10 +31,11 @@ class RowEditorCell<T : Any, C : Any>(
   val column: Column<T, C>,
   var row: T,
   var value: C?,
+  val eventListener: TableRequestEventListener<T>,
   fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup()
 ) : StackLikeRegion() {
 
-  private lateinit var eventListener: TableRequestEventListener<T>
+//  private lateinit var eventListener: TableRequestEventListener<T>
 
   private val label = Label().apply {
     isFocusTraversable = true
@@ -88,10 +89,12 @@ class RowEditorCell<T : Any, C : Any>(
         }
       }
     }
+    // TODO fix
+    setEventListener(eventListener)
   }
 
   fun setEventListener(eventListener: TableRequestEventListener<T>) {
-    this.eventListener = eventListener
+//    this.eventListener = eventListener
     label.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_RELEASED) {
       it.consume()
       if (it.clickCount == 1) {

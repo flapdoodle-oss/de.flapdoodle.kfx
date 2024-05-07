@@ -87,6 +87,7 @@ class Rows<T : Any>(
       is TableEvent.StopInsertRow<T> -> {
         val oldEditor = rowEditor
         if (oldEditor != null && oldEditor.value==event.row) {
+          oldEditor.onTableEvent(event)
           insertRowPane.children.remove(oldEditor)
           rowEditor = null
         } else {

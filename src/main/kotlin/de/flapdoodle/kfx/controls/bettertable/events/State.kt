@@ -17,5 +17,10 @@
 package de.flapdoodle.kfx.controls.bettertable.events
 
 interface State<T: Any> {
-  fun onEvent(event: TableEvent.RequestEvent<T>): State<T>
+  fun onEvent(event: TableEvent.RequestEvent<T>): NextState<T>
+
+  data class NextState<T: Any>(
+    val state: State<T>,
+    val event: TableEvent.RequestEvent<T>? = null
+  )
 }

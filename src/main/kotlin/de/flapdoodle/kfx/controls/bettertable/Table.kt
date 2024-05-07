@@ -39,7 +39,7 @@ class Table<T: Any>(
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : StackLikeRegion() {
 
-  private val debug = true
+  private val debug = false
   
   private val _rows: SimpleObjectProperty<List<T>> = SimpleObjectProperty(emptyList())
   private val _columns: SimpleObjectProperty<List<Column<T, out Any>>> = SimpleObjectProperty(emptyList())

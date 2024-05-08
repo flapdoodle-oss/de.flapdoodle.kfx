@@ -140,6 +140,7 @@ class Edge(
 
   override fun select(value: Boolean) {
     selected.value = value
+    requestFocus()
   }
 
   fun focus() {

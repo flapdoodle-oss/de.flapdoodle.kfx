@@ -138,16 +138,7 @@ class Vertex(
 
   override fun select(value: Boolean) {
     selected.value = value
-  }
-
-  @Deprecated("use IsSelectable")
-  fun select() {
-    selected.value = true
-  }
-
-  @Deprecated("use IsSelectable")
-  fun deselect() {
-    selected.value = false
+    requestFocus()
   }
 
   fun focused(): Boolean {

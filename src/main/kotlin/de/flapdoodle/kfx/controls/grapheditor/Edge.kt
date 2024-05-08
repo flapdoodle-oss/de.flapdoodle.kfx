@@ -20,6 +20,8 @@ import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.extensions.PseudoClassWrapper
+import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.shapes.Arrow
 import de.flapdoodle.kfx.shapes.Curves
 import de.flapdoodle.kfx.strokes.LinearGradients
@@ -50,10 +52,10 @@ class Edge(
     }
   }
 
-  private object Style {
-    val Focused = PseudoClassWrapper<Edge>(PseudoClass.getPseudoClass("focused"))
-    val Selected = PseudoClassWrapper<Edge>(PseudoClass.getPseudoClass("selected"))
-  }
+//  private object Style {
+//    val Focused = PseudoClassWrapper<Edge>(PseudoClass.getPseudoClass("focused"))
+//    val Selected = PseudoClassWrapper<Edge>(PseudoClass.getPseudoClass("selected"))
+//  }
 
 
   val registry = SimpleObjectProperty<Registry>()
@@ -74,8 +76,9 @@ class Edge(
   private val arrow = Arrow(endConnector)
 
   init {
-    styleClass.addAll("edge")
-    stylesheets += javaClass.getResource("Edge.css").toExternalForm()
+    bindCss("edge")
+//    styleClass.addAll("edge")
+//    stylesheets += javaClass.getResource("Edge.css").toExternalForm()
     //isFocusTraversable = false
 
 //    val linearGrad = LinearGradient(
@@ -114,7 +117,7 @@ class Edge(
     isPickOnBounds = false
 
     selected.subscribe { it ->
-      if (it) Style.Selected.enable(this) else Style.Selected.disable(this)
+      Styles.Selected.set(this, it)
     }
   }
 
@@ -144,11 +147,11 @@ class Edge(
   }
 
   fun focus() {
-    Style.Focused.enable(this)
+    Styles.Focused.enable(this)
   }
 
   fun blur() {
-    Style.Focused.disable(this)
+    Styles.Focused.disable(this)
   }
 
 }

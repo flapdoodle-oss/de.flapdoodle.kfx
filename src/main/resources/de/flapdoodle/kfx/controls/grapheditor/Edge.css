@@ -20,16 +20,17 @@
     /*-fx-stroke: red;*/
 }
 
-.edge:focused > .path {
+.edge:focus > .path {
     /*-fx-stroke: green;*/
     -fx-stroke-width: 3.0;
 }
 
 .edge:selected > .path {
-    -fx-stroke-dash-array: 8.0 8.0;
+    -fx-stroke-dash-array: 8.0 4.0;
     -fx-stroke-width: 2.0;
+    /*-fx-effect: dropshadow(gaussian, black, 1, 1, 0, 0);*/
 }
 
-.edge:selected:focused > .path {
+.edge:selected:focus > .path {
     -fx-stroke-width: 3.0;
 }

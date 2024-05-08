@@ -26,6 +26,7 @@ import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.extensions.PseudoClassWrapper
+import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.layout.StackLikeRegion
@@ -79,8 +80,9 @@ class Vertex(
   }
 
   init {
-    cssClassName("vertex")
-    stylesheets += javaClass.getResource("Vertex.css").toExternalForm()
+    bindCss("vertex")
+//    cssClassName("vertex")
+//    stylesheets += javaClass.getResource("Vertex.css").toExternalForm()
 
     setMargin(contentWrapper, Insets(10.0))
 

@@ -14,13 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+* {
+    -fx-vertex-border-color: rgb(120,120,120);
+    -fx-vertex-focus-border-color: black;
+    -fx-vertex-selected-border-color: black;
+}
 .vertex {
     -fx-border-width: 1px;
-    -fx-border-color: rgb(120,120,120);
+    -fx-border-color: -fx-vertex-border-color;
     -fx-border-radius: 6px;
     /*-fx-border-style: dashed;*/
     /*-fx-fill: rgba(205,205,205,0.7);*/
     -fx-background-color: rgba(245,245,245,0.7);
+    -fx-background-radius: 6px;
     /*-fx-effect: dropshadow(gaussian, gray, 20, 0.01, 4, 4)*/
 }
 
@@ -28,22 +34,30 @@
     -fx-background-color: rgba(235,235,235,1.0);
     -fx-padding: 3.0;
     -fx-border-width: 0 0 1 0;
-    -fx-border-color: rgb(120,120,120);
+    -fx-border-color: -fx-vertex-border-color;
     -fx-background-radius: 6px 6px 0px 0px;
 }
 
-.vertex:focused {
-    -fx-border-color: black;
+.vertex:focus .vertex-header {
+   -fx-background-color: rgba(205,205,205,1.0);
+}
+
+.vertex:focus {
+    -fx-border-color: -fx-vertex-focus-border-color;
+    -fx-background-color: rgba(245,245,245,0.9);
+    -fx-effect: dropshadow(gaussian, darkgray, 10.0, 0.02, 3, 3);
 }
 
 .vertex:selected {
-    -fx-border-width: 2px;
-    -fx-border-color: rgb(90,90,90);
+    -fx-border-width: 2px, 1px;
+    -fx-border-color: -fx-vertex-border-color, -fx-vertex-selected-border-color;
+    /*-fx-border-style: segments(8px, 8px) ;*/
 }
 
-.vertex:focused:selected {
-    -fx-border-width: 2px;
-    -fx-border-color: black;
+.vertex:focus:selected {
+    /*-fx-border-width: 2px;*/
+    /*-fx-border-color: black;*/
+    -fx-border-color: -fx-vertex-focus-border-color, -fx-vertex-selected-border-color;
 }
 
 .vertex .slots-left .vbox, .vertex .slots-right .vbox {

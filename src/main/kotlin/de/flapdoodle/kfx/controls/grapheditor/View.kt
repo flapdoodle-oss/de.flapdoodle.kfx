@@ -71,8 +71,9 @@ class View(
   }
 
   init {
-    styleClass.addAll("node-view")
-    stylesheets += javaClass.getResource("View.css").toExternalForm()
+    bindCss("node-view")
+//    styleClass.addAll("node-view")
+//    stylesheets += javaClass.getResource("View.css").toExternalForm()
 
     layers.addHints(nodeConnectionHint)
 

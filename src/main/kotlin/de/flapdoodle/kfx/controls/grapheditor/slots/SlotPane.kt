@@ -56,25 +56,25 @@ class SlotPane(
 
     elements.addAll(when (position) {
       Position.LEFT -> listOf(
-        MoveTo(-radius, -radius),
-        LineTo(0.0, -radius),
-        ArcTo(radius, radius, 0.0, 0.0, radius, false, true),
+        MoveTo(0.0, -radius),
+        LineTo(radius, -radius),
+        ArcTo(radius, radius, 0.0, radius, radius, false, true),
+        LineTo(radius, radius),
         LineTo(0.0, radius),
-        LineTo(-radius, radius),
       )
       Position.RIGHT -> listOf(
-        MoveTo(radius, -radius),
-        LineTo(0.0, -radius),
-        ArcTo(radius, radius, 0.0, 0.0, radius, false, false),
+        MoveTo(0.0, -radius),
+        LineTo(-radius, -radius),
+        ArcTo(radius, radius, 0.0, -radius, radius, false, false),
+        LineTo(-radius, radius),
         LineTo(0.0, radius),
-        LineTo(radius, radius),
       )
       Position.BOTTOM -> listOf(
-        MoveTo(-radius, radius),
-        LineTo(-radius, 0.0),
-        ArcTo(radius, radius, 0.0, radius, 0.0, false, true),
+        MoveTo(-radius, 0.0),
+        LineTo(-radius, -radius),
+        ArcTo(radius, radius, 0.0, radius, -radius, false, true),
+        LineTo(radius, -radius),
         LineTo(radius, 0.0),
-        LineTo(radius, radius),
       )
     })
 //      ArcTo(5.0,5.0,90.0,0.0,0.0,true,false)

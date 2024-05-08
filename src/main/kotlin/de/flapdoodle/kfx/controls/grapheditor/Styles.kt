@@ -23,6 +23,6 @@ import javafx.scene.Node
 object Styles {
 //  val Even = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("even"))
 //  val Readonly = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("readonly"))
-  val Focused = PseudoClassWrapper<Vertex>(PseudoClass.getPseudoClass("focused"))
-  val Selected = PseudoClassWrapper<Vertex>(PseudoClass.getPseudoClass("selected"))
+  val Focused = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("focus"))
+  val Selected = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("selected"))
 }

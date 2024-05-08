@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.layout.grid
 
 import com.sun.javafx.scene.layout.ScaledMath
+import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.constraint
 import de.flapdoodle.kfx.extensions.heightLimits
 import de.flapdoodle.kfx.extensions.widthLimits
@@ -72,8 +73,9 @@ class WeightGridPane : javafx.scene.layout.Region() {
   internal var columnWeights = AutoArray.empty<Double>()
 
   init {
-    styleClass.addAll("weight-grid-pane")
-    stylesheets += javaClass.getResource("WeightGridPane.css").toExternalForm();
+    bindCss("weight-grid-pane")
+//    styleClass.addAll("weight-grid-pane")
+//    stylesheets += javaClass.getResource("WeightGridPane.css").toExternalForm();
   }
 
 //  private val skin = WeightGridPaneSkin(this)

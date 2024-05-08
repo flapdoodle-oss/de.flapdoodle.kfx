@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 .vertex {
-    -fx-border-width: 1;
+    -fx-border-width: 1px;
     -fx-border-color: rgb(120,120,120);
+    -fx-border-radius: 6px;
     /*-fx-border-style: dashed;*/
     /*-fx-fill: rgba(205,205,205,0.7);*/
     -fx-background-color: rgba(245,245,245,0.7);
@@ -28,6 +29,7 @@
     -fx-padding: 3.0;
     -fx-border-width: 0 0 1 0;
     -fx-border-color: rgb(120,120,120);
+    -fx-background-radius: 6px 6px 0px 0px;
 }
 
 .vertex:focused {
@@ -43,3 +45,21 @@
     -fx-border-width: 2px;
     -fx-border-color: black;
 }
+
+.vertex .slots-left .vbox, .vertex .slots-right .vbox {
+    /*-fx-background-color: blue;*/
+    -fx-padding: 5px 0px;
+}
+
+.vertex .slots-left .slot, .vertex .slots-right .slot {
+    -fx-padding: 0px -1px;
+}
+
+.vertex .slots-bottom .hbox {
+    -fx-padding: 0px 5px;
+}
+
+.vertex .slots-bottom .slot {
+    -fx-padding: -1px 0px;
+}
+

@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.controls.grapheditor.slots
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.controls.grapheditor.Registry
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.unsubscribeOnDetach
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
@@ -34,12 +35,18 @@ class SlotsPane(
 ) : Pane() {
 
   init {
+    cssClassName("slots")
+    when (position) {
+      Position.LEFT -> cssClassName("slots-left")
+      Position.RIGHT -> cssClassName("slots-right")
+      Position.BOTTOM -> cssClassName("slots-bottom")
+    }
     val filtered = slots.filtered { it.position == position }
 
     val wrapper = when (position) {
-      Position.LEFT -> VBox().apply { spacing = 2.0 }
-      Position.RIGHT -> VBox().apply { spacing = 2.0 }
-      Position.BOTTOM -> HBox().apply { spacing = 2.0 }
+      Position.LEFT -> VBox().apply { spacing = 2.0; cssClassName("vbox") }
+      Position.RIGHT -> VBox().apply { spacing = 2.0; cssClassName("vbox") }
+      Position.BOTTOM -> HBox().apply { spacing = 2.0; cssClassName("hbox") }
     }
 
     unsubscribeOnDetach {

@@ -104,7 +104,8 @@ object TableFactory {
     rows: SimpleObjectProperty<List<Row>>,
     columns: SimpleObjectProperty<List<Column<Row, out Any>>>,
     toggle: ObservableValue<Boolean>,
-    stateFactory: (EventContext<Row>) -> State<Row> = { DefaultState(it) }
+    footerColumnFactory: FooterColumnFactory<Row>? = FooterColumnFactory.Default(),
+    stateFactory: (EventContext<Row>) -> State<Row> = { DefaultState(it) },
   ): Table<Row> {
 
     val backGroundToggled = toggle.map {
@@ -208,13 +209,13 @@ object TableFactory {
         cell.backgroundProperty().bind(backGroundToggled)
       }
     }
-    val footerColumnFactory = FooterColumnFactory.Default<Row>().andThen { column, footerColumn ->
+    val footerColumnFactoryWithBackground = footerColumnFactory?.andThen { column, footerColumn ->
       if (column.label.contains("*")) {
         footerColumn.backgroundProperty().bind(backGroundToggled)
       }
     }
 
-    return Table(rows, columns, changeListener, headerColumnFactory, cellFactory, footerColumnFactory, stateFactory = stateFactory)
+    return Table(rows, columns, changeListener, headerColumnFactory, cellFactory, footerColumnFactoryWithBackground, stateFactory = stateFactory)
   }
 
   data class Row(

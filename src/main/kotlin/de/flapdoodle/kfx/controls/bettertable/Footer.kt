@@ -35,10 +35,12 @@ class Footer<T : Any>(
     isFocusTraversable = false
     cssClassName("footer")
 
-    ObservableLists.syncWith(columns, footer.children) {
-      val footerColumn = footerColumnFactory?.footerColumn(it) ?: FooterColumn(it)
-      footerColumn.prefWidthProperty().bind(columnWidthProperties(it))
-      footerColumn
+    if (footerColumnFactory!=null) {
+      ObservableLists.syncWith(columns, footer.children) {
+        val footerColumn = footerColumnFactory.footerColumn(it)
+        footerColumn.prefWidthProperty().bind(columnWidthProperties(it))
+        footerColumn
+      }
     }
     children.add(footer)
   }

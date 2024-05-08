@@ -42,7 +42,10 @@ class TableSampler {
       val splitPane = SplitPane(
         TableFactory.table(rows, columns, toggle),
         TableFactory.table(rows, columns, toggle) { ReadOnlyState(it) },
-      )
+        TableFactory.table(rows, columns, toggle, null) { ReadOnlyState(it) },
+      ).apply {
+        setDividerPositions(0.33, 0.66)
+      }
 
       val content = AnchorPane(
         splitPane.withAnchors(all = 10.0, bottom = 50.0),

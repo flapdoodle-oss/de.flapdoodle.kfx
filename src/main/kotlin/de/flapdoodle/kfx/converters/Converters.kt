@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.converters
 import de.flapdoodle.kfx.converters.impl.*
 import javafx.util.StringConverter
 import javafx.util.converter.*
+import java.io.Serializable
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
@@ -55,7 +56,7 @@ object Converters {
   }
 
   fun <S : Any> validatingFor(s: KClass<out S>, locale: Locale): ValidatingConverter<S> {
-    val type = s.javaPrimitiveType ?: s
+    val type = s.javaObjectType
     val converter = validatingConverters(locale).firstOrNull { it.first == type }
     return if (converter==null) {
       throw RuntimeException("not implemented for type:" + s.qualifiedName)
@@ -65,21 +66,17 @@ object Converters {
     }
   }
 
-  fun validatingConverters(locale: Locale) = listOf(
-    Int::class to IntConverter(locale),
-    Integer::class to IntConverter(locale),
-    Integer::class.javaPrimitiveType to IntConverter(locale),
-    Double::class to DoubleConverter(locale),
-    Double::class.javaPrimitiveType to DoubleConverter(locale),
-    Float::class to FloatConverter(locale),
-    Float::class.javaPrimitiveType to FloatConverter(locale),
-    Long::class to LongConverter(locale),
-    Long::class.javaPrimitiveType to LongConverter(locale),
-    Number::class to BigDecimalConverter(locale),
-    BigDecimal::class to BigDecimalConverter(locale),
-    BigInteger::class to BigIntegerConverter(locale),
-    String::class to de.flapdoodle.kfx.converters.impl.StringConverter(),
-    LocalDate::class to LocalDateConverter(locale),
-    LocalDateTime::class to LocalDateTimeConverter(locale),
+  fun validatingConverters(locale: Locale) = listOf<Pair<Class<out Serializable>, ValidatingConverter<out Any>>>(
+    Int::class.javaObjectType to IntConverter(locale),
+    Integer::class.javaObjectType to IntConverter(locale),
+    Double::class.javaObjectType to DoubleConverter(locale),
+    Float::class.javaObjectType to FloatConverter(locale),
+    Long::class.javaObjectType to LongConverter(locale),
+    Number::class.javaObjectType to BigDecimalConverter(locale),
+    BigDecimal::class.javaObjectType to BigDecimalConverter(locale),
+    BigInteger::class.javaObjectType to BigIntegerConverter(locale),
+    String::class.javaObjectType to de.flapdoodle.kfx.converters.impl.StringConverter(),
+    LocalDate::class.javaObjectType to LocalDateConverter(locale),
+    LocalDateTime::class.javaObjectType to LocalDateTimeConverter(locale),
   )
 }

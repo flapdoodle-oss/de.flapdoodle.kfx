@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.TextField
 import kotlin.reflect.KClass
 
+@Deprecated("see ValidatingTextField")
 class TypedTextField<T: Any>(
   val type: KClass<T>
 ) : TextField() {

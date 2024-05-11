@@ -22,6 +22,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Label
 import kotlin.reflect.KClass
 
+@Deprecated("see ValidatedLabel")
 class TypedLabel<T: Any>(
   val type: KClass<T>
 ) : Label() {

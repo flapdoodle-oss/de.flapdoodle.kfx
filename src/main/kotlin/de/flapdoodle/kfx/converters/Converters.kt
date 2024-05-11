@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.converters
 
 import de.flapdoodle.kfx.converters.impl.*
+import de.flapdoodle.reflection.TypeInfo
 import javafx.util.StringConverter
 import javafx.util.converter.*
 import java.io.Serializable
@@ -29,54 +30,57 @@ import java.util.*
 import kotlin.reflect.KClass
 
 object Converters {
+  private val stringConverters: Map<TypeInfo<out Any>, StringConverter<out Serializable>> = listOf(
+    Int::class to IntegerStringConverter(),
+    Integer::class to IntegerStringConverter(),
+    Double::class to DoubleStringConverter(),
+    Float::class to FloatStringConverter(),
+    Long::class to LongStringConverter(),
+    Number::class to NumberStringConverter(),
+    BigDecimal::class to BigDecimalStringConverter(),
+    BigInteger::class to BigIntegerStringConverter(),
+    String::class to DefaultStringConverter(),
+    LocalDate::class to LocalDateStringConverter(),
+    LocalTime::class to LocalTimeStringConverter(),
+    LocalDateTime::class to LocalDateTimeStringConverter(),
+  ).associate { TypeInfo.of(it.first.javaObjectType) to it.second }
+
+  private fun validatingConverters(locale: Locale) = listOf<Pair<KClass<out Any>, ValidatingConverter<out Any>>>(
+    Int::class to IntConverter(locale),
+    Integer::class to IntConverter(locale),
+    Double::class to DoubleConverter(locale),
+    Float::class to FloatConverter(locale),
+    Long::class to LongConverter(locale),
+    Number::class to BigDecimalConverter(locale),
+    BigDecimal::class to BigDecimalConverter(locale),
+    BigInteger::class to BigIntegerConverter(locale),
+    String::class to de.flapdoodle.kfx.converters.impl.StringConverter(),
+    LocalDate::class to LocalDateConverter(locale),
+    LocalDateTime::class to LocalDateTimeConverter(locale),
+  ).associate { TypeInfo.of(it.first.javaObjectType) to it.second }
+
+
   fun <S : Any> converterFor(s: KClass<out S>): StringConverter<S> {
+    return converterFor(TypeInfo.of(s.javaObjectType))
+  }
+
+  fun <S : Any> converterFor(s: TypeInfo<out S>): StringConverter<S> {
+    val converter = stringConverters[s]
+      ?: throw RuntimeException("not implemented for type:" + s)
+
     @Suppress("UNCHECKED_CAST")
-    return when (s.javaPrimitiveType ?: s) {
-      Int::class -> IntegerStringConverter()
-      Integer::class -> IntegerStringConverter()
-      Integer::class.javaPrimitiveType -> IntegerStringConverter()
-      Double::class -> DoubleStringConverter()
-      Double::class.javaPrimitiveType -> DoubleStringConverter()
-      Float::class -> FloatStringConverter()
-      Float::class.javaPrimitiveType -> FloatStringConverter()
-      Long::class -> LongStringConverter()
-      Long::class.javaPrimitiveType -> LongStringConverter()
-      Number::class -> NumberStringConverter()
-      BigDecimal::class -> BigDecimalStringConverter()
-      BigInteger::class -> BigIntegerStringConverter()
-      String::class -> DefaultStringConverter()
-      LocalDate::class -> LocalDateStringConverter()
-      LocalTime::class -> LocalTimeStringConverter()
-      LocalDateTime::class -> LocalDateTimeStringConverter()
-//      Boolean::class.javaPrimitiveType -> {
-//        (this as TableColumn<T, Boolean?>).useCheckbox(true)
-//      }
-      else -> throw RuntimeException("not implemented for type:" + s.qualifiedName)
-    } as StringConverter<S>
+    return converter as StringConverter<S>
   }
 
   fun <S : Any> validatingFor(s: KClass<out S>, locale: Locale): ValidatingConverter<S> {
-    val type = s.javaObjectType
-    val converter = validatingConverters(locale).firstOrNull { it.first == type }
-    return if (converter==null) {
-      throw RuntimeException("not implemented for type:" + s.qualifiedName)
-    } else {
-      @Suppress("UNCHECKED_CAST")
-      converter.second as ValidatingConverter<S>
-    }
+    return validatingFor(TypeInfo.of(s.javaObjectType), locale)
   }
 
-  fun validatingConverters(locale: Locale) = listOf<Pair<Class<out Serializable>, ValidatingConverter<out Any>>>(
-    Int::class.javaObjectType to IntConverter(locale),
-    Integer::class.javaObjectType to IntConverter(locale),
-    Double::class.javaObjectType to DoubleConverter(locale),
-    Float::class.javaObjectType to FloatConverter(locale),
-    Long::class.javaObjectType to LongConverter(locale),
-    Number::class.javaObjectType to BigDecimalConverter(locale),
-    BigDecimal::class.javaObjectType to BigDecimalConverter(locale),
-    BigInteger::class.javaObjectType to BigIntegerConverter(locale),
-    String::class.javaObjectType to de.flapdoodle.kfx.converters.impl.StringConverter(),
-    LocalDate::class.javaObjectType to LocalDateConverter(locale),
-    LocalDateTime::class.javaObjectType to LocalDateTimeConverter(locale),
-  )
+  fun <S : Any> validatingFor(s: TypeInfo<out S>, locale: Locale): ValidatingConverter<S> {
+    val converter = validatingConverters(locale)[s]
+      ?: throw RuntimeException("not implemented for type:" + s)
+
+    @Suppress("UNCHECKED_CAST")
+    return converter as ValidatingConverter<S>
+  }
 }

@@ -17,11 +17,19 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.reflection.TypeInfo
 import javafx.util.StringConverter
 import kotlin.reflect.KClass
 
 data class ColumnProperty<T: Any, C: Any>(
-  val type: KClass<C>,
+  val type: TypeInfo<C>,
   val getter: (T) -> C?,
   val converter: StringConverter<C> = Converters.converterFor(type)
-)
+) {
+  @Deprecated("use typeinfo")
+  constructor(
+    type: KClass<C>,
+    getter: (T) -> C?,
+    converter: StringConverter<C> = Converters.converterFor(type)
+  ) : this(TypeInfo.of(type.javaObjectType), getter, converter)
+}

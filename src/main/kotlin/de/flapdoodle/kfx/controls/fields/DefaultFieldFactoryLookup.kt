@@ -17,16 +17,18 @@
 package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.reflection.TypeInfo
 import java.time.LocalDate
-import java.util.Locale
-import kotlin.reflect.KClass
+import java.util.*
 
 class DefaultFieldFactoryLookup(
   private val locale: Locale = Locale.getDefault()
 ) : FieldFactoryLookup {
 
-  override fun <T : Any> fieldFactory(type: KClass<T>): FieldFactory<T> {
-    if (LocalDate::class == type) {
+  private val localDateType = TypeInfo.of(LocalDate::class.java)
+
+  override fun <T : Any> fieldFactory(type: TypeInfo<T>): FieldFactory<T> {
+    if (localDateType == type) {
       return DatePickerFieldFactory(locale) as FieldFactory<T>
     }
     return TextFieldFactory(Converters.validatingFor(type, locale))

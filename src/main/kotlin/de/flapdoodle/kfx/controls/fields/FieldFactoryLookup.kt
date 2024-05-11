@@ -16,8 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
-import kotlin.reflect.KClass
+import de.flapdoodle.reflection.TypeInfo
 
 interface FieldFactoryLookup {
-  fun <T: Any> fieldFactory(type: KClass<T>): FieldFactory<T>
+  fun <T: Any> fieldFactory(type: TypeInfo<T>): FieldFactory<T>
 }

@@ -13,6 +13,6 @@ Stable (Maven Central Repository, Released: 11.05.2024 - wait 24hrs for [maven c
 	<dependency>
 		<groupId>de.flapdoodle.kfx</groupId>
 		<artifactId>de.flapdoodle.kfx</artifactId>
-		<version>1.5.0</version>
+		<version>1.5.1</version>
 	</dependency>
 

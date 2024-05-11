@@ -164,12 +164,12 @@ class SmallChart<X : Any, Y : Any>(
       isFillHeight = false
       alignment = Pos.CENTER
       children.addAll(
-        Label(name),
         StackPane().apply {
           cssClassName("small-chart-line-symbol")
           style = "-fx-border-color: ${Colors.asCss(color)}"
 
-        })
+        },
+        Label(name))
 
       onMouseClicked = EventHandler {
         if (filterSet.value.contains(id)) {

@@ -16,18 +16,25 @@
  */
 package de.flapdoodle.kfx.types.ranges
 
-import java.time.LocalDate
-import kotlin.reflect.KClass
+class SortedCategoryRangeFactory<T: Comparable<T>> : RangeFactory<T> {
+  override fun rangeOf(values: List<T>): Range<T> {
+    val sorted = values.toSortedSet()
+    val parts = sorted.size + 1
+    val ticks = Ticks(list = sorted.toList())
 
-object RangeFactories {
+    return object : Range<T> {
+      override fun offset(value: T, scale: Double): Double {
+        val index = sorted.indexOf(value)
+        return (scale * (index + 1)) / parts;
+      }
 
-  fun localDate(): RangeFactory<LocalDate> {
-    return LocalDateRangeFactory()
+      override fun ticks(maxTicks: Int): List<Ticks<T>> {
+        return if (maxTicks>=ticks.list.size)
+          listOf(ticks)
+        else
+          emptyList()
+      }
+    }
   }
 
-  fun <T: Number> number(type: KClass<T>): RangeFactory<T> {
-    return NumberRangeFactory(type)
-  }
-
-  fun <T: Comparable<T>> category() = SortedCategoryRangeFactory<T>()
 }

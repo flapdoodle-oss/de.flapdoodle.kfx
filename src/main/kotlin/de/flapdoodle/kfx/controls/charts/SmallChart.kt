@@ -27,7 +27,10 @@ import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.types.Direction
+import de.flapdoodle.kfx.types.Id
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
+import javafx.event.EventHandler
 import javafx.geometry.HPos
 import javafx.geometry.Pos
 import javafx.geometry.VPos
@@ -46,7 +49,13 @@ class SmallChart<X : Any, Y : Any>(
   val showScaleAt: Set<Direction> = setOf(Direction.LEFT, Direction.BOTTOM)
 ) : StackLikeRegion() {
 
-  private val lines = series.map { list ->
+  private val filterSet = SimpleObjectProperty<Set<Id<Serie<*,*>>>>(emptySet())
+  private val filtered = ObjectBindings.merge(series, filterSet) { s, f ->
+    s.filter { !f.contains(it.id) }
+  }
+//  private val filtered = series.and().map { it }
+
+  private val lines = filtered.map { list ->
     val allXY = list.flatMap { it.values }
     val allX = allXY.map { it.first }
     val allY = allXY.map { it.second }
@@ -58,13 +67,13 @@ class SmallChart<X : Any, Y : Any>(
     } }
   }
 
-  private val xRange = series.map { list ->
+  private val xRange = filtered.map { list ->
     val allXY = list.flatMap { it.values }
     val allX = allXY.map { it.first }
     xRangeFactory.rangeOf(allX)
   }
 
-  private val yRange = series.map { list ->
+  private val yRange = filtered.map { list ->
     val allXY = list.flatMap { it.values }
     val allY = allXY.map { it.second }
     yRangeFactory.rangeOf(allY)
@@ -98,7 +107,7 @@ class SmallChart<X : Any, Y : Any>(
     alignment = Pos.CENTER
     WeightGridPane.setPosition(this, 0, 1, HPos.CENTER, VPos.CENTER)
 
-    children.syncWith(series) { Legend(it.label, it.color) }
+    children.syncWith(series) { Legend(it.label, it.color, it.id, filterSet) }
   }
 
   private val chartArea = WeightGridPane().apply {
@@ -136,11 +145,20 @@ class SmallChart<X : Any, Y : Any>(
   init {
     bindCss("small-chart")
 
+    series.addListener { observable, oldValue, newValue ->
+      filterSet.value = emptySet()
+    }
+
 //    main.children.addAll(charts, topScale, bottomScale, leftScale, rightScale, labels)
     children.add(main)
   }
 
-  class Legend(name: String, color: Color) : HBox() {
+  class Legend(
+    name: String,
+    color: Color,
+    id: Id<Serie<*, *>>,
+    filterSet: SimpleObjectProperty<Set<Id<Serie<*, *>>>>
+  ) : HBox() {
     init {
       cssClassName("small-chart-legend")
       isFillHeight = false
@@ -152,6 +170,18 @@ class SmallChart<X : Any, Y : Any>(
           style = "-fx-border-color: ${Colors.asCss(color)}"
 
         })
+
+      onMouseClicked = EventHandler {
+        if (filterSet.value.contains(id)) {
+          filterSet.value = filterSet.value - id
+        } else {
+          filterSet.value = filterSet.value + id
+        }
+      }
+
+      filterSet.addListener { observable, oldValue, newValue ->
+        Styles.Hidden.set(this, newValue.contains(id))
+      }
     }
   }
 }

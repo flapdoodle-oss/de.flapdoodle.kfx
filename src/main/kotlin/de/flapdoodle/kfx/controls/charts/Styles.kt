@@ -16,13 +16,10 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
-import de.flapdoodle.kfx.types.Id
-import javafx.scene.paint.Color
+import de.flapdoodle.kfx.extensions.PseudoClassWrapper
+import javafx.css.PseudoClass
+import javafx.scene.Node
 
-data class Serie<X, Y>(
-    val label: String,
-    val color: Color,
-    val values: List<Pair<X, Y>>,
-    val id: Id<Serie<*,*>> = Id.nextId(Serie::class)
-) {
+object Styles {
+  val Hidden = PseudoClassWrapper<Node>(PseudoClass.getPseudoClass("hidden"))
 }

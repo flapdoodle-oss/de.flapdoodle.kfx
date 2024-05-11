@@ -8,11 +8,11 @@ kotlin javafx components
 
 ### Maven
 
-Stable (Maven Central Repository, Released: 07.05.2024 - wait 24hrs for [maven central](http://repo1.maven.org/maven2/de/flapdoodle/kfx/de.flapdoodle.kfx/maven-metadata.xml))
+Stable (Maven Central Repository, Released: 11.05.2024 - wait 24hrs for [maven central](http://repo1.maven.org/maven2/de/flapdoodle/kfx/de.flapdoodle.kfx/maven-metadata.xml))
 
 	<dependency>
 		<groupId>de.flapdoodle.kfx</groupId>
 		<artifactId>de.flapdoodle.kfx</artifactId>
-		<version>1.4.1</version>
+		<version>1.5.0</version>
 	</dependency>
 

@@ -34,8 +34,14 @@ class ResourceBundleWrapper(
 
   fun message(key: String, vararg parameter: Any): String? {
     return if (bundle!=null) {
-      val text = bundle.getString(key)
-      MessageFormat.format(text, *parameter)
+      try {
+        val text = bundle.getString(key)
+        MessageFormat.format(text, *parameter)
+      } catch (ex: MissingResourceException) {
+        IllegalArgumentException("missing key for locale=$locale, bundleName=$bundleName: $key", ex)
+          .printStackTrace()
+        null
+      }
     } else {
       null
     }

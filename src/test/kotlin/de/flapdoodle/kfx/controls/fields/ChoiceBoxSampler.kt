@@ -16,18 +16,16 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
-import de.flapdoodle.kfx.converters.Converters
-import de.flapdoodle.kfx.i18n.I18NTypeStringConverter
+import de.flapdoodle.kfx.types.Direction
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.ChoiceBox
 import javafx.scene.layout.FlowPane
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import org.junit.jupiter.api.Assertions.*
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -35,34 +33,30 @@ class ChoiceBoxSampler {
   class Sample : Application() {
 
     override fun start(stage: Stage) {
-      val classToStringConverter = object : StringConverter<KClass<out Any>>() {
-        override fun toString(value: KClass<out Any>): String {
-          return value.simpleName ?: "???"
-        }
+      val choiceBox = ChoiceBoxes.forTypes(
+        Locale.GERMANY,
+        "testTypes",
+        listOf(Int::class, Double::class, String::class)
+      )
 
-        override fun fromString(string: String?): KClass<out Any> {
-          TODO("Not yet implemented")
-        }
-      }
-
-      val choiceBox = ChoiceBox<KClass<out Any>>().apply {
-        items.addAll(Int::class, Double::class, String::class)
-        value = Int::class
-        converter = I18NTypeStringConverter(Locale.GERMANY,"testTypes")
-      }
+      val directionBox = ChoiceBoxes.forEnums(
+        Locale.GERMANY,
+        "testEnums",
+        Direction::class
+      )
 
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {
-        children.add(choiceBox)
-        children.add(Button("!").apply {
-          onAction = EventHandler {
-//            dateField.error = "what?"
-          }
-        })
-        children.add(Button(":)").apply {
-          onAction = EventHandler {
-//            dateField.error = null
-          }
-        })
+        children.addAll(choiceBox, directionBox)
+//        children.add(Button("!").apply {
+//          onAction = EventHandler {
+////            dateField.error = "what?"
+//          }
+//        })
+//        children.add(Button(":)").apply {
+//          onAction = EventHandler {
+////            dateField.error = null
+//          }
+//        })
       })
       stage.show()
     }

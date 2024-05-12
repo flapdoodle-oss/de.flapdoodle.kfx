@@ -9,10 +9,11 @@ class I18NEnumStringConverter<T : Enum<T>>(
   private val bundleName: String,
   private val enumType: KClass<T>
 ) : StringConverter<T>() {
-  val prefix = requireNotNull(enumType.qualifiedName) { "qualified name is null for: $enumType" }
+  private val resourceBundle = I18N.resourceBundle(locale, bundleName)
+  private val prefix = requireNotNull(enumType.qualifiedName) { "qualified name is null for: $enumType" }
 
   override fun toString(value: T?): String {
-    return I18N.message(locale, bundleName, "${prefix}_${value?.name ?: "NULL"}") ?: "$value"
+    return resourceBundle.message("${prefix}_${value?.name ?: "NULL"}") ?: "$value"
   }
 
   override fun fromString(value: String): T {

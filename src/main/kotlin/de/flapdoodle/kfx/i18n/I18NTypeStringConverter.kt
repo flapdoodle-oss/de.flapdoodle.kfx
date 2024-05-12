@@ -8,8 +8,10 @@ class I18NTypeStringConverter<T : KClass<out Any>>(
   private val locale: Locale,
   private val bundleName: String
 ) : StringConverter<T>() {
+  private val resourceBundle = I18N.resourceBundle(locale, bundleName)
+
   override fun toString(value: T?): String {
-    return I18N.message(locale, bundleName, value?.qualifiedName ?: "NULL") ?: "$value"
+    return resourceBundle.message(value?.qualifiedName ?: "NULL") ?: "$value"
   }
 
   override fun fromString(value: String): T {

@@ -42,8 +42,8 @@ object ChoiceBoxes {
   fun <T : Enum<T>> forEnums(
     resourceBundle: ResourceBundleWrapper,
     enumType: KClass<T>,
-    classes: List<T> = EnumSet.allOf(enumType.java).toList(),
-    default: T? = null
+    default: T? = null,
+    classes: List<T> = EnumSet.allOf(enumType.java).toList()
   ): ChoiceBox<T> {
     require(default == null || classes.contains(default)) { "default value $default is not in selection: $classes" }
 

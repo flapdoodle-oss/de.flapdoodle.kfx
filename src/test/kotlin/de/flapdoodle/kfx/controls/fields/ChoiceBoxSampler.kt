@@ -35,8 +35,9 @@ class ChoiceBoxSampler {
       )
 
       val directionBox = ChoiceBoxes.forEnums(
-        I18N.resourceBundle(Locale.GERMANY, "testEnums"),
-        Direction::class
+        resourceBundle = I18N.resourceBundle(Locale.GERMANY, "testEnums"),
+        enumType = Direction::class,
+        default = Direction.TOP
       )
 
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {

@@ -21,11 +21,9 @@ import java.util.*
 import kotlin.reflect.KClass
 
 class I18NEnumStringConverter<T : Enum<T>>(
-  private val locale: Locale,
-  private val bundleName: String,
+  private val resourceBundle: ResourceBundleWrapper,
   private val enumType: KClass<T>
 ) : StringConverter<T>() {
-  private val resourceBundle = I18N.resourceBundle(locale, bundleName)
   private val prefix = requireNotNull(enumType.qualifiedName) { "qualified name is null for: $enumType" }
 
   override fun toString(value: T?): String {

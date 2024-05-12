@@ -16,32 +16,26 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
+import de.flapdoodle.kfx.i18n.I18N
 import de.flapdoodle.kfx.types.Direction
 import javafx.application.Application
-import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Scene
-import javafx.scene.control.Button
 import javafx.scene.layout.FlowPane
-import javafx.scene.paint.Color
 import javafx.stage.Stage
-import javafx.util.StringConverter
 import java.util.*
-import kotlin.reflect.KClass
 
 class ChoiceBoxSampler {
   class Sample : Application() {
 
     override fun start(stage: Stage) {
       val choiceBox = ChoiceBoxes.forTypes(
-        Locale.GERMANY,
-        "testTypes",
+        I18N.resourceBundle(Locale.GERMANY, "testTypes"),
         listOf(Int::class, Double::class, String::class)
       )
 
       val directionBox = ChoiceBoxes.forEnums(
-        Locale.GERMANY,
-        "testEnums",
+        I18N.resourceBundle(Locale.GERMANY, "testEnums"),
         Direction::class
       )
 

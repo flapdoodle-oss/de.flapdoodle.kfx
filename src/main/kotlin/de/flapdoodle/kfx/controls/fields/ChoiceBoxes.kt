@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
-import de.flapdoodle.kfx.i18n.I18N
 import de.flapdoodle.kfx.i18n.I18NEnumStringConverter
 import de.flapdoodle.kfx.i18n.I18NTypeStringConverter
 import de.flapdoodle.kfx.i18n.ResourceBundleWrapper

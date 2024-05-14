@@ -20,6 +20,7 @@ import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.converters.impl.SomethingLeftException
 import de.flapdoodle.kfx.converters.impl.TemporalAccessorParseException
+import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.DatePicker
 import javafx.scene.input.KeyCode
@@ -31,6 +32,7 @@ import java.time.format.DateTimeParseException
 
 class ValidatingDatePicker(
   converter: ValidatingConverter<LocalDate>,
+  val default: LocalDate? = null,
   val mapException: (Exception) -> String = { it.localizedMessage },
   val onError: (ValidatingDatePicker, String?) -> Unit = { textfield, error ->
     if (error != null) {
@@ -41,7 +43,7 @@ class ValidatingDatePicker(
       textfield.border = null
     }
   }
-) : DatePicker() {
+) : DatePicker(), ValidatingField<LocalDate> {
   private val lastError = SimpleObjectProperty<String>(null)
 
   init {
@@ -50,7 +52,7 @@ class ValidatingDatePicker(
       lastError.value = if (it!=null) mapException(it) else null
       rethrowAsDateEx(it)
     }
-    this.value = value
+    this.value = default
 
     lastError.addListener { _, _, error ->
       onError(this, error)
@@ -71,11 +73,11 @@ class ValidatingDatePicker(
     valueProperty().value = v
   }
 
-  fun get(): LocalDate? {
+  override fun get(): LocalDate? {
     return valueProperty().value
   }
 
-  fun hasError(): Boolean {
+  override fun hasError(): Boolean {
     return lastError.value != null
   }
 
@@ -83,5 +85,9 @@ class ValidatingDatePicker(
     lastError.value = message
   }
 
-  fun errorMessage() = lastError.value
+  override fun errorMessage() = lastError.value
+
+  override fun lastErrorProperty(): ReadOnlyProperty<String> {
+    return lastError
+  }
 }

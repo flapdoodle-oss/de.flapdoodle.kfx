@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.converters.ValidatingConverter
+import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.TextField
@@ -26,6 +27,7 @@ import javafx.scene.paint.Color
 
 class ValidatingTextField<T : Any>(
   val converter: ValidatingConverter<T>,
+  val default: T? = null,
   val mapException: (Exception) -> String = { it.localizedMessage },
   val onError: (TextField, String?) -> Unit = { textfield, error ->
     if (error != null) {
@@ -36,13 +38,13 @@ class ValidatingTextField<T : Any>(
       textfield.border = null
     }
   }
-) : TextField() {
+) : TextField(), ValidatingField<T> {
 
   private val valueProperty = SimpleObjectProperty<T>(null)
   private val lastError = SimpleObjectProperty<String>(null)
 
-  fun valueProperty(): ReadOnlyProperty<T> = valueProperty
-  fun lastErrorProperty(): ReadOnlyProperty<String> = lastError
+  override fun valueProperty(): ObjectProperty<T> = valueProperty
+  override fun lastErrorProperty(): ReadOnlyProperty<String> = lastError
 
   init {
     textProperty().bindBidirectional(valueProperty, ValidatingConverter.asStringConverter(converter, lastExceptionPropertySetter = {
@@ -57,11 +59,11 @@ class ValidatingTextField<T : Any>(
     valueProperty.value = v
   }
 
-  fun get(): T? {
+  override fun get(): T? {
     return valueProperty.value
   }
 
-  fun hasError(): Boolean {
+  override fun hasError(): Boolean {
     return lastError.value != null
   }
 
@@ -69,5 +71,5 @@ class ValidatingTextField<T : Any>(
     lastError.value = message
   }
 
-  fun errorMessage() = lastError.value
+  override fun errorMessage() = lastError.value
 }

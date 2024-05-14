@@ -24,6 +24,7 @@ import java.util.*
 import kotlin.reflect.KClass
 
 object ChoiceBoxes {
+  @Deprecated("use validateChoiceBox")
   fun <T : KClass<out Any>> forTypes(
     resourceBundle: ResourceBundleWrapper,
     classes: List<T>,
@@ -38,6 +39,19 @@ object ChoiceBoxes {
     }
   }
 
+  fun <T : KClass<out Any>> forTypes(
+    resourceBundle: ResourceBundleWrapper,
+    classes: List<T>,
+    default: T? = null,
+    validate: (T?) -> String?
+  ): ValidatingChoiceBox<T> {
+    require(default == null || classes.contains(default)) { "default value $default is not in selection: $classes" }
+
+    return ValidatingChoiceBox(classes, default, I18NTypeStringConverter(resourceBundle), validate)
+  }
+
+
+  @Deprecated("use validateChoiceBox")
   fun <T : Enum<T>> forEnums(
     resourceBundle: ResourceBundleWrapper,
     enumType: KClass<T>,
@@ -51,5 +65,17 @@ object ChoiceBoxes {
       value = default
       converter = I18NEnumStringConverter(resourceBundle, enumType)
     }
+  }
+
+  fun <T : Enum<T>> forEnums(
+    resourceBundle: ResourceBundleWrapper,
+    enumType: KClass<T>,
+    classes: List<T> = EnumSet.allOf(enumType.java).toList(),
+    default: T? = null,
+    validate: (T?) -> String?
+  ): ValidatingChoiceBox<T> {
+    require(default == null || classes.contains(default)) { "default value $default is not in selection: $classes" }
+
+    return ValidatingChoiceBox(classes, default, I18NEnumStringConverter(resourceBundle, enumType), validate)
   }
 }

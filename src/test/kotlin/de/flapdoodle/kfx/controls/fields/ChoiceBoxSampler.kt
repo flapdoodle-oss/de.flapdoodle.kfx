@@ -30,14 +30,16 @@ class ChoiceBoxSampler {
 
     override fun start(stage: Stage) {
       val choiceBox = ChoiceBoxes.forTypes(
-        I18N.resourceBundle(Locale.GERMANY, "testTypes"),
-        listOf(Int::class, Double::class, String::class)
+        resourceBundle = I18N.resourceBundle(Locale.GERMANY, "testTypes"),
+        classes = listOf(Int::class, Double::class, String::class),
+        validate = { if (it==null) "not set" else null }
       )
 
       val directionBox = ChoiceBoxes.forEnums(
         resourceBundle = I18N.resourceBundle(Locale.GERMANY, "testEnums"),
         enumType = Direction::class,
-        default = Direction.TOP
+        default = Direction.TOP,
+        validate = { if (it==null) "not set" else null }
       )
 
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {

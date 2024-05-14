@@ -32,6 +32,10 @@ object ObjectBindings {
   fun <A, B, C, D, T> merge(a: ObservableValue<A>, b: ObservableValue<B>, c: ObservableValue<C>, d: ObservableValue<D>, mapping: (A, B, C, D) -> T) =
     Merge4(a, b, c, d, mapping)
 
+  fun <S, T> mapAll(sources: List<ObservableValue<out S>>, mapping: (List<S?>) -> T): MergeAll<S, T> {
+    return MergeAll(sources, mapping)
+  }
+
 
   class WithSource<S>(private val source: ObservableValue<S>) {
     fun <T> map(mapping: (S) -> T) = map(source, mapping)
@@ -120,6 +124,31 @@ object ObjectBindings {
   ) : Base<T>(a, b, c, d) {
     override fun computeValue(): T {
       return mapping(a.value, b.value, c.value, d.value)
+    }
+  }
+
+  class MergeAll<S, T>(
+    private val sources: List<ObservableValue<out S>>,
+    private val mapping: (List<S?>) -> T
+  ) : ObjectBinding<T>() {
+    private val dependencies = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(sources))
+
+    init {
+      bind(*sources.toTypedArray())
+    }
+
+    override fun dispose() {
+      unbind(*sources.toTypedArray())
+      super.dispose()
+    }
+
+    override fun computeValue(): T {
+      val sourceValues = sources.map { it.value }
+      return mapping(sourceValues)
+    }
+
+    override fun getDependencies(): ObservableList<*> {
+      return dependencies
     }
   }
 

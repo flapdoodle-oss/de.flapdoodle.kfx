@@ -22,6 +22,18 @@ interface ValidatingConverter<T: Any> {
   fun toString(value: T): String
   fun fromString(value: String): ValueOrError<T>
 
+  fun and(check: (ValueOrError<T>) -> ValueOrError<T>): ValidatingConverter<T> {
+    val delegate = this
+    return object : ValidatingConverter<T> {
+      override fun toString(value: T): String {
+        return delegate.toString(value)
+      }
+
+      override fun fromString(value: String): ValueOrError<T> {
+        return check(delegate.fromString(value))
+      }
+    }
+  }
 
   fun asStringConverter(lastExceptionPropertySetter: (Exception?) -> Unit): StringConverter<T> {
     return asStringConverter(this, lastExceptionPropertySetter)

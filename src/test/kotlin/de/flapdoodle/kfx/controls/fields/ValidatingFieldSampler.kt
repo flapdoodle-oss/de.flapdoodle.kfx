@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.ValueOrError
 import de.flapdoodle.kfx.converters.impl.LocalDateConverter
 import de.flapdoodle.kfx.i18n.I18N
 import de.flapdoodle.kfx.types.Direction
@@ -27,7 +28,6 @@ import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.FlowPane
 import javafx.stage.Stage
-import java.time.LocalDate
 import java.util.*
 
 class ValidatingFieldSampler {
@@ -35,33 +35,23 @@ class ValidatingFieldSampler {
 
     override fun start(stage: Stage) {
 
-      val intField = ValidatingTextField(Converters.validatingFor(Int::class, Locale.GERMANY)).apply {
-        valueProperty().addListener { _, _, newValue ->
-          println("--> $newValue")
-        }
-      }
-
-      val doubleField = ValidatingTextField(Converters.validatingFor(Double::class, Locale.GERMANY)).apply {
-        valueProperty().addListener { _, _, newValue ->
-          println("--> $newValue")
-        }
-      }
-
-      val dateField = ValidatingDatePicker(LocalDateConverter(Locale.GERMANY)).apply {
-        valueProperty().addListener { _, _, newValue ->
-          println("--> $newValue")
-        }
-      }
-
+      val stringField = ValidatingTextField(Converters.validatingFor(String::class, Locale.GERMANY).and {
+        // TODO .. funktioniert das?
+        it.flatMap { v -> if (v.isBlank()) ValueOrError.Error(IllegalArgumentException("is empty")) else ValueOrError.Value(v) }
+      })
+      val intField = ValidatingTextField(Converters.validatingFor(Int::class, Locale.GERMANY))
+      val doubleField = ValidatingTextField(Converters.validatingFor(Double::class, Locale.GERMANY))
+      val dateField = ValidatingDatePicker(LocalDateConverter(Locale.GERMANY))
       val choiceBox = ChoiceBoxes.forEnums(
-        resourceBundle = I18N.resourceBundle(Locale.GERMANY,"testEnums"),
-        enumType = Direction::class,
-        validate = { null }
+        resourceBundle = I18N.resourceBundle(Locale.GERMANY, "testEnums"),
+        enumType = Direction::class
       )
 
 
 
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {
+        children.add(Label("String"))
+        children.add(stringField)
         children.add(Label("Int"))
         children.add(intField)
         children.add(Label("Double"))
@@ -71,7 +61,7 @@ class ValidatingFieldSampler {
         children.add(Label("Choice"))
         children.add(choiceBox)
         children.add(Button("OK").apply {
-          disableProperty().bind(ValidatingField.invalidInputs(intField,doubleField,dateField,choiceBox))
+          disableProperty().bind(ValidatingField.invalidInputs(stringField, intField, doubleField, dateField, choiceBox))
         })
       })
       stage.show()

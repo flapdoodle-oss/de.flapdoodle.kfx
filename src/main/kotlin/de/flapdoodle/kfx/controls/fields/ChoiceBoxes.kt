@@ -19,31 +19,15 @@ package de.flapdoodle.kfx.controls.fields
 import de.flapdoodle.kfx.i18n.I18NEnumStringConverter
 import de.flapdoodle.kfx.i18n.I18NTypeStringConverter
 import de.flapdoodle.kfx.i18n.ResourceBundleWrapper
-import javafx.scene.control.ChoiceBox
 import java.util.*
 import kotlin.reflect.KClass
 
 object ChoiceBoxes {
-  @Deprecated("use validateChoiceBox")
-  fun <T : KClass<out Any>> forTypes(
-    resourceBundle: ResourceBundleWrapper,
-    classes: List<T>,
-    default: T? = null
-  ): ChoiceBox<T> {
-    require(default == null || classes.contains(default)) { "default value $default is not in selection: $classes" }
-
-    return ChoiceBox<T>().apply {
-      items.addAll(classes)
-      value = default
-      converter = I18NTypeStringConverter(resourceBundle)
-    }
-  }
-
   fun <T : KClass<out Any>> forTypes(
     resourceBundle: ResourceBundleWrapper,
     classes: List<T>,
     default: T? = null,
-    validate: (T?) -> String?
+    validate: (T?) -> String? = { null }
   ): ValidatingChoiceBox<T> {
     require(default == null || classes.contains(default)) { "default value $default is not in selection: $classes" }
 
@@ -51,28 +35,12 @@ object ChoiceBoxes {
   }
 
 
-  @Deprecated("use validateChoiceBox")
-  fun <T : Enum<T>> forEnums(
-    resourceBundle: ResourceBundleWrapper,
-    enumType: KClass<T>,
-    default: T? = null,
-    classes: List<T> = EnumSet.allOf(enumType.java).toList()
-  ): ChoiceBox<T> {
-    require(default == null || classes.contains(default)) { "default value $default is not in selection: $classes" }
-
-    return ChoiceBox<T>().apply {
-      items.addAll(classes)
-      value = default
-      converter = I18NEnumStringConverter(resourceBundle, enumType)
-    }
-  }
-
   fun <T : Enum<T>> forEnums(
     resourceBundle: ResourceBundleWrapper,
     enumType: KClass<T>,
     classes: List<T> = EnumSet.allOf(enumType.java).toList(),
     default: T? = null,
-    validate: (T?) -> String?
+    validate: (T?) -> String? = { null }
   ): ValidatingChoiceBox<T> {
     require(default == null || classes.contains(default)) { "default value $default is not in selection: $classes" }
 

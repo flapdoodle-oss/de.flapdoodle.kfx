@@ -33,8 +33,8 @@ class FloatConverter(
     return format.format(value)
   }
 
-  override fun fromString(value: String): ValueOrError<Float> {
-    return parse(value).mapValue {
+  override fun fromString(value: String?): ValueOrError<Float> {
+    return parse(value).map {
       it.toFloat()
     }
   }

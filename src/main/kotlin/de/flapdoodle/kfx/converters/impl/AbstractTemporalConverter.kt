@@ -29,7 +29,11 @@ abstract class AbstractTemporalConverter(
   protected val format: DateTimeFormatter
 ) {
 
-  protected fun parse(value: String): ValueOrError<TemporalAccessor> {
+  protected fun parse(value: String?): ValueOrError<TemporalAccessor> {
+    if (value.isNullOrEmpty()) {
+      return ValueOrError.noValue()
+    }
+    
     val pos = ParsePosition(0)
     try {
       val number = format.parse(value, pos)

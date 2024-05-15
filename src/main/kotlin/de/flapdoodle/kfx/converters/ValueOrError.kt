@@ -17,27 +17,33 @@
 package de.flapdoodle.kfx.converters
 
 sealed class ValueOrError<T: Any> {
-  abstract fun <M: Any> mapValue(mapper: (T) -> M): ValueOrError<M>
-  fun <M: Any> flatMap(mapper: (T) -> ValueOrError<M>): ValueOrError<M> {
+  fun <M: Any> map(mapper: (T) -> M?): ValueOrError<M> {
     return when (this) {
-      is Value<T> -> mapper(this.value)
+      is Value<T> -> try {
+        return Value(value?.let{ mapper(it) })
+      } catch (ex: Exception) {
+        return Error(ex)
+      }
       is Error<T> -> Error(exception)
     }
   }
 
-  data class Value<T: Any>(val value: T): ValueOrError<T>() {
-    override fun <M : Any> mapValue(mapper: (T) -> M): ValueOrError<M> {
-      try {
+  fun <M: Any> mapNullable(mapper: (T?) -> M?): ValueOrError<M> {
+    return when (this) {
+      is Value<T> -> try {
         return Value(mapper(value))
       } catch (ex: Exception) {
         return Error(ex)
       }
+      is Error<T> -> Error(exception)
     }
   }
-  
-  data class Error<T: Any>(val exception: Exception): ValueOrError<T>() {
-    override fun <M : Any> mapValue(mapper: (T) -> M): ValueOrError<M> {
-      return Error(exception)
-    }
+
+  data class Value<T: Any>(val value: T?): ValueOrError<T>()
+  data class Error<T: Any>(val exception: Exception): ValueOrError<T>()
+
+  companion object {
+    fun <T: Any> noValue() = Value<T>(null)
+    fun <T: Any> error(exception: Exception) = Error<T>(exception)
   }
 }

@@ -26,7 +26,10 @@ abstract class AbstractNumberConverter(
   protected val format: NumberFormat
 ) {
 
-  protected fun parse(value: String): ValueOrError<Number> {
+  protected fun parse(value: String?): ValueOrError<Number> {
+    if (value.isNullOrEmpty()) {
+      return ValueOrError.noValue()
+    }
     val pos = ParsePosition(0)
     val number = format.parse(value, pos)
       ?: return ValueOrError.Error(NumberParseException(locale, value, 0))

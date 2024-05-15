@@ -24,7 +24,7 @@ class StringConverter : ValidatingConverter<String> {
     return value
   }
 
-  override fun fromString(value: String): ValueOrError<String> {
+  override fun fromString(value: String?): ValueOrError<String> {
     return ValueOrError.Value(value)
   }
 }

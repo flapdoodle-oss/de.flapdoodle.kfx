@@ -30,7 +30,7 @@ class BigIntegerConverter(
     return format.format(value)
   }
 
-  override fun fromString(value: String): ValueOrError<BigInteger> {
-    return parse(value).mapValue { BigInteger.valueOf(it.toLong()) }
+  override fun fromString(value: String?): ValueOrError<BigInteger> {
+    return parse(value).map { BigInteger.valueOf(it.toLong()) }
   }
 }

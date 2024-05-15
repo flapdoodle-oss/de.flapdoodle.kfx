@@ -33,8 +33,8 @@ class DoubleConverter(
     return format.format(value)
   }
 
-  override fun fromString(value: String): ValueOrError<Double> {
-    return parse(value).mapValue {
+  override fun fromString(value: String?): ValueOrError<Double> {
+    return parse(value).map {
       it.toDouble()
     }
   }

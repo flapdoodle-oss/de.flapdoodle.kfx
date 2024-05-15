@@ -18,9 +18,9 @@ package de.flapdoodle.kfx.converters
 
 import javafx.util.StringConverter
 
-interface ValidatingConverter<T: Any> {
+interface ValidatingConverter<T : Any> {
   fun toString(value: T): String
-  fun fromString(value: String): ValueOrError<T>
+  fun fromString(value: String?): ValueOrError<T>
 
   fun and(check: (ValueOrError<T>) -> ValueOrError<T>): ValidatingConverter<T> {
     val delegate = this
@@ -29,7 +29,7 @@ interface ValidatingConverter<T: Any> {
         return delegate.toString(value)
       }
 
-      override fun fromString(value: String): ValueOrError<T> {
+      override fun fromString(value: String?): ValueOrError<T> {
         return check(delegate.fromString(value))
       }
     }
@@ -40,7 +40,7 @@ interface ValidatingConverter<T: Any> {
   }
 
   companion object {
-    fun <T: Any> asStringConverter(
+    fun <T : Any> asStringConverter(
       converter: ValidatingConverter<T>,
       lastExceptionPropertySetter: (Exception?) -> Unit = {}
     ): StringConverter<T> {
@@ -53,19 +53,17 @@ interface ValidatingConverter<T: Any> {
         }
 
         override fun fromString(value: String?): T? {
-          return if (value != null && value.trim().isNotEmpty()) {
-            when (val v = converter.fromString(value)) {
-              is ValueOrError.Value -> {
-                lastExceptionPropertySetter(null)
-                v.value
-              }
-
-              is ValueOrError.Error -> {
-                lastExceptionPropertySetter(v.exception)
-                null
-              }
+          return when (val v = converter.fromString(value)) {
+            is ValueOrError.Value -> {
+              lastExceptionPropertySetter(null)
+              v.value
             }
-          } else null
+
+            is ValueOrError.Error -> {
+              lastExceptionPropertySetter(v.exception)
+              null
+            }
+          }
         }
       }
     }

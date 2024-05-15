@@ -38,7 +38,7 @@ class BigDecimalConverter(
     return format.format(value)
   }
 
-  override fun fromString(value: String): ValueOrError<BigDecimal> {
-    return parse(value).mapValue { it as BigDecimal }
+  override fun fromString(value: String?): ValueOrError<BigDecimal> {
+    return parse(value).map { it as BigDecimal }
   }
 }

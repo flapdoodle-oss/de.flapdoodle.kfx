@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.converters.Converters
-import de.flapdoodle.kfx.converters.ValueOrError
 import de.flapdoodle.kfx.converters.impl.LocalDateConverter
 import de.flapdoodle.kfx.i18n.I18N
 import de.flapdoodle.kfx.types.Direction
@@ -35,11 +34,13 @@ class ValidatingFieldSampler {
 
     override fun start(stage: Stage) {
 
-      val stringField = ValidatingTextField(Converters.validatingFor(String::class, Locale.GERMANY).and {
-        // TODO .. funktioniert das?
-        it.flatMap { v -> if (v.isBlank()) ValueOrError.Error(IllegalArgumentException("is empty")) else ValueOrError.Value(v) }
+      val stringField = ValidatingTextField(Converters.validatingFor(String::class, Locale.GERMANY).and { valueOrError ->
+        valueOrError.map { it.ifBlank { null } }
+          .mapNullable { it ?: throw IllegalArgumentException("is empty") }
       })
-      val intField = ValidatingTextField(Converters.validatingFor(Int::class, Locale.GERMANY))
+      val intField = ValidatingTextField(Converters.validatingFor(Int::class, Locale.GERMANY).and { valueOrError ->
+        valueOrError.map { if (it < 10) throw IllegalArgumentException("to small") else it }
+      })
       val doubleField = ValidatingTextField(Converters.validatingFor(Double::class, Locale.GERMANY))
       val dateField = ValidatingDatePicker(LocalDateConverter(Locale.GERMANY))
       val choiceBox = ChoiceBoxes.forEnums(

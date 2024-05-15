@@ -24,8 +24,17 @@ object I18N {
     return ResourceBundleWrapper(locale, bundleName)
   }
 
+  @Deprecated("use last")
   fun exceptionMessage(locale: Locale, type: KClass<*>, key: String, vararg parameter: Any): String? {
-    return resourceBundle(locale,"exceptions")
-      .message("${type.simpleName}.$key", *parameter)
+    return exceptionMessage(locale, "exceptions", type, key, *parameter)
+  }
+
+  @Deprecated("use last")
+  fun exceptionMessage(locale: Locale, bundleName: String, type: KClass<*>, key: String, vararg parameter: Any): String? {
+    return exceptionMessage(resourceBundle(locale,bundleName),type,key, *parameter)
+  }
+
+  fun exceptionMessage(resourceBundle: ResourceBundleWrapper, type: KClass<*>, key: String, vararg parameter: Any): String? {
+    return resourceBundle.message("${type.simpleName}.$key", *parameter)
   }
 }

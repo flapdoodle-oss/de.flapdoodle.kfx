@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.i18n
 
+import de.flapdoodle.types.Either
 import java.text.MessageFormat
 import java.util.*
 
@@ -33,14 +34,66 @@ class ResourceBundleWrapper(
   }
 
   fun message(key: String, vararg parameter: Any): String? {
+    return property(key)?.let { MessageFormat.format(it, *parameter) }
+  }
+
+  fun message(keys: List<String>, vararg parameter: Any): String? {
+    var keyAndExceptions = emptyList<Pair<String, MissingResourceException>>()
+
+    keys.forEach { key ->
+      val property = propertyOrException(key)
+      if (property != null) {
+        if (property.isLeft) {
+          return MessageFormat.format(property.left(), *parameter)
+        } else {
+          keyAndExceptions = keyAndExceptions + (key to property.right())
+        }
+      }
+    }
+    if (keyAndExceptions.isNotEmpty()) {
+      val keys = keyAndExceptions.map { it.first }.joinToString(separator = ",")
+      val exceptions = keyAndExceptions.map { it.second }
+      IllegalArgumentException("missing key for locale=$locale, bundleName=$bundleName: $keys", exceptions.first())
+        .apply { exceptions.subList(1, exceptions.size).forEach { ex -> addSuppressed(ex)} }
+        .printStackTrace()
+    }
+    return null
+  }
+
+  private fun property(key: String): String? {
+    val result = propertyOrException(key)
+    return if (result!=null) {
+      if (result.isLeft) result.left()
+      else {
+        IllegalArgumentException("missing key for locale=$locale, bundleName=$bundleName: $key", result.right())
+          .printStackTrace()
+        null
+      }
+    } else {
+      null
+    }
+
+//    return if (bundle!=null) {
+//      try {
+//        val text = bundle.getString(key)
+//        return text
+//      } catch (ex: MissingResourceException) {
+//        IllegalArgumentException("missing key for locale=$locale, bundleName=$bundleName: $key", ex)
+//          .printStackTrace()
+//        null
+//      }
+//    } else {
+//      null
+//    }
+  }
+
+  private fun propertyOrException(key: String): Either<String, MissingResourceException>? {
     return if (bundle!=null) {
       try {
         val text = bundle.getString(key)
-        MessageFormat.format(text, *parameter)
+        return Either.left(text)
       } catch (ex: MissingResourceException) {
-        IllegalArgumentException("missing key for locale=$locale, bundleName=$bundleName: $key", ex)
-          .printStackTrace()
-        null
+        return Either.right(ex)
       }
     } else {
       null

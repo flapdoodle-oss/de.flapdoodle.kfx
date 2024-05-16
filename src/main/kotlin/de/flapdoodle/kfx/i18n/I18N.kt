@@ -25,6 +25,9 @@ object I18N {
   }
 
   fun exceptionMessage(resourceBundle: ResourceBundleWrapper, type: KClass<*>, key: String, vararg parameter: Any): String? {
-    return resourceBundle.message("${type.simpleName}.$key", *parameter)
+    return resourceBundle.message(listOf(
+      "${type.simpleName}.$key",
+      "${type.qualifiedName}.$key"
+    ), *parameter)
   }
 }

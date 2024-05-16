@@ -24,7 +24,15 @@ class I18NTypeStringConverter<T : KClass<out Any>>(
 ) : StringConverter<T>() {
 
   override fun toString(value: T?): String {
-    return resourceBundle.message(value?.qualifiedName ?: "NULL") ?: "$value"
+    val keys = if (value!=null)
+      listOfNotNull(
+        value.qualifiedName,
+        value.simpleName,
+        value.toString()
+      )
+    else
+      listOf("NULL")
+    return resourceBundle.message(keys) ?: "$value"
   }
 
   override fun fromString(value: String): T {

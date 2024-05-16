@@ -27,6 +27,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.FlowPane
 import javafx.stage.Stage
+import java.math.BigDecimal
 import java.util.*
 
 class ValidatingFieldSampler {
@@ -47,6 +48,10 @@ class ValidatingFieldSampler {
         resourceBundle = I18N.resourceBundle(Locale.GERMANY, "testEnums"),
         enumType = Direction::class
       )
+      val typesBox = ChoiceBoxes.forTypes(
+        resourceBundle = I18N.resourceBundle(Locale.GERMANY, "testTypes"),
+        classes = listOf(Int::class, Direction::class, BigDecimal::class)
+      )
 
 
 
@@ -61,8 +66,10 @@ class ValidatingFieldSampler {
         children.add(dateField)
         children.add(Label("Choice"))
         children.add(choiceBox)
+        children.add(Label("Types"))
+        children.add(typesBox)
         children.add(Button("OK").apply {
-          disableProperty().bind(ValidatingField.invalidInputs(stringField, intField, doubleField, dateField, choiceBox))
+          disableProperty().bind(ValidatingField.invalidInputs(stringField, intField, doubleField, dateField, choiceBox, typesBox))
         })
       })
       stage.show()

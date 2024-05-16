@@ -17,10 +17,9 @@
 package de.flapdoodle.kfx.converters.impl
 
 import de.flapdoodle.kfx.i18n.I18N
-import java.util.*
+import de.flapdoodle.kfx.i18n.ResourceBundles
 
 class SomethingLeftException(
-  private val locale: Locale,
   private val all: String,
   private val partLeft: String,
   private val errorIndex: Int
@@ -30,7 +29,7 @@ class SomethingLeftException(
 ) {
 
   override fun getLocalizedMessage(): String {
-    return I18N.exceptionMessage(locale, SomethingLeftException::class, "couldNotParse", all, partLeft, errorIndex)
+    return I18N.exceptionMessage(ResourceBundles.exceptions(), SomethingLeftException::class, "couldNotParse", all, partLeft, errorIndex)
       ?: super.getLocalizedMessage()
   }
 

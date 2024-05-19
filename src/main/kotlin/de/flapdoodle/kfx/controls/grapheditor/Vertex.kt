@@ -84,7 +84,7 @@ class Vertex(
     center = contentWrapper.apply {
       Markers.markAsContent(this)
     }
-    top = NodeHeader(name, controls(vertexId)).apply {
+    top = NodeHeader(nameProperty, controls(vertexId)).apply {
       Markers.markAsDragBar(this)
     }
     left = SlotsPane(registry, vertexId, connectors, Position.LEFT)
@@ -116,14 +116,15 @@ class Vertex(
     connectors.removeIf { it.id==slotId }
   }
 
-  class NodeHeader(label: String, controls: List<Node>) : HBox() {
+  class NodeHeader(label: ReadOnlyProperty<String>, controls: List<Node>) : HBox() {
     init {
       cssClassName("vertex-header")
       isMouseTransparent = false
 //      alignment = Pos.BASELINE_CENTER
 //      background = Background(BackgroundFill(Color.GREY, CornerRadii(2.0), Insets(1.0)))
-      children.add(Label(label).apply {
+      children.add(Label().apply {
         cssClassName("title")
+        textProperty().bind(label)
         setHgrow(this, Priority.ALWAYS)
         maxWidth = Double.MAX_VALUE
       })

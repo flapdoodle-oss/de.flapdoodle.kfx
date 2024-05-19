@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.layout.grid
 
+import de.flapdoodle.kfx.extensions.bindCss
 import javafx.application.Application
 import javafx.geometry.HPos
 import javafx.geometry.Insets
@@ -28,10 +29,11 @@ class WeightGridPaneSampler {
 
     override fun start(stage: Stage) {
       stage.scene = Scene(WeightGridPane().apply {
+        bindCss(WeightGridPaneSampler::class,"sampler")
         padding = Insets(60.0)
 
         verticalSpace.set(10.0)
-        horizontalSpace.set(20.0)
+//        horizontalSpace.set(20.0)
 
         add(Button("test").also {
           it.minWidth = 20.0

@@ -17,53 +17,34 @@
 package de.flapdoodle.kfx.layout.grid
 
 import com.sun.javafx.scene.layout.ScaledMath
+import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
+import de.flapdoodle.kfx.controls.charts.parts.Scale
+import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion
+import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion.SCALE_DISTANCE
+import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion.SCALE_LENGTH
+import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion.SCALE_MIN_SPACING
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.AutoArray
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
+import javafx.css.CssMetaData
 import javafx.css.SimpleStyleableDoubleProperty
+import javafx.css.Styleable
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.Node
+import javafx.scene.layout.Pane
 import kotlin.math.max
 
 open class WeightGridPane : javafx.scene.layout.Region() {
 
-  companion object {
-    fun setPosition(
-      node: Node,
-      column: Int,
-      row: Int,
-      horizontalPosition: HPos? = null,
-      verticalPosition: VPos? = null
-    ) {
-      node.constraint[GridMap.Pos::class] = GridMap.Pos(column, row)
-      node.constraint[HPos::class] = horizontalPosition
-      node.constraint[VPos::class] = verticalPosition
-      node.parent?.requestLayout()
-    }
 
-    fun updatePosition(
-      node: Node,
-      change: (GridMap.Pos) -> GridMap.Pos
-    ) {
-      val current = node.constraint[GridMap.Pos::class]
-      require(current != null) { "no position found for $node" }
-      node.constraint[GridMap.Pos::class] = change(current)
-      node.parent?.requestLayout()
-    }
+  internal val horizontalSpace = HORIZONTAL_SPACE.asProperty(5.0) {
+    requestLayout()
   }
 
-  internal val horizontalSpace = object : SimpleStyleableDoubleProperty(WeightGridControlStyle.CSS_HSPACE, this, "hspace") {
-    override fun invalidated() {
-      requestLayout()
-    }
-  }
-
-  internal val verticalSpace = object : SimpleStyleableDoubleProperty(WeightGridControlStyle.CSS_VSPACE, this, "vspace") {
-    override fun invalidated() {
-      requestLayout()
-    }
+  internal val verticalSpace = VERTICAL_SPACE.asProperty(5.0) {
+    requestLayout()
   }
 
   internal var rowWeights = AutoArray.empty<Double>()
@@ -292,5 +273,39 @@ open class WeightGridPane : javafx.scene.layout.Region() {
 
   fun snappedToPixel(value: Double): Double {
     return if (isSnapToPixel) ScaledMath.ceil(value, 1.0) else value
+  }
+
+  override fun getCssMetaData(): List<CssMetaData<out Styleable, *>> {
+    return STYLEABLES
+  }
+
+  companion object {
+    fun setPosition(
+      node: Node,
+      column: Int,
+      row: Int,
+      horizontalPosition: HPos? = null,
+      verticalPosition: VPos? = null
+    ) {
+      node.constraint[GridMap.Pos::class] = GridMap.Pos(column, row)
+      node.constraint[HPos::class] = horizontalPosition
+      node.constraint[VPos::class] = verticalPosition
+      node.parent?.requestLayout()
+    }
+
+    fun updatePosition(
+      node: Node,
+      change: (GridMap.Pos) -> GridMap.Pos
+    ) {
+      val current = node.constraint[GridMap.Pos::class]
+      require(current != null) { "no position found for $node" }
+      node.constraint[GridMap.Pos::class] = change(current)
+      node.parent?.requestLayout()
+    }
+
+    val HORIZONTAL_SPACE: NumberCssMetaData<WeightGridPane> = NumberCssMetaData("horizontal-space", WeightGridPane::horizontalSpace)
+    val VERTICAL_SPACE: NumberCssMetaData<WeightGridPane> = NumberCssMetaData("vertical-space", WeightGridPane::verticalSpace)
+
+    val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + HORIZONTAL_SPACE + VERTICAL_SPACE
   }
 }

@@ -33,7 +33,9 @@ import javafx.css.Styleable
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.Node
+import javafx.scene.control.Control
 import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
 import kotlin.math.max
 
 open class WeightGridPane : javafx.scene.layout.Region() {
@@ -306,6 +308,6 @@ open class WeightGridPane : javafx.scene.layout.Region() {
     val HORIZONTAL_SPACE: NumberCssMetaData<WeightGridPane> = NumberCssMetaData("horizontal-space", WeightGridPane::horizontalSpace)
     val VERTICAL_SPACE: NumberCssMetaData<WeightGridPane> = NumberCssMetaData("vertical-space", WeightGridPane::verticalSpace)
 
-    val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + HORIZONTAL_SPACE + VERTICAL_SPACE
+    val STYLEABLES = emptyList<CssMetaData<out Styleable, *>>() + Region.getClassCssMetaData() + HORIZONTAL_SPACE + VERTICAL_SPACE
   }
 }

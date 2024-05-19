@@ -17,10 +17,7 @@
 package de.flapdoodle.kfx.layout.grid
 
 import com.sun.javafx.scene.layout.ScaledMath
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.constraint
-import de.flapdoodle.kfx.extensions.heightLimits
-import de.flapdoodle.kfx.extensions.widthLimits
+import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.types.AutoArray
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -30,7 +27,7 @@ import javafx.geometry.VPos
 import javafx.scene.Node
 import kotlin.math.max
 
-class WeightGridPane : javafx.scene.layout.Region() {
+open class WeightGridPane : javafx.scene.layout.Region() {
 
   companion object {
     fun setPosition(
@@ -73,15 +70,10 @@ class WeightGridPane : javafx.scene.layout.Region() {
   internal var columnWeights = AutoArray.empty<Double>()
 
   init {
-    bindCss("weight-grid-pane")
-//    styleClass.addAll("weight-grid-pane")
-//    stylesheets += javaClass.getResource("WeightGridPane.css").toExternalForm();
+    cssClassName("weight-grid-pane")
   }
 
-//  private val skin = WeightGridPaneSkin(this)
-//  override fun createDefaultSkin() = skin
-
-  fun setRowWeight(row: Int, weight: Double) {
+  fun rowWeight(row: Int, weight: Double) {
     require(row >= 0) { "invalid row: $row" }
     require(weight >= 0.0) { "invalid weight: $weight" }
 
@@ -90,7 +82,16 @@ class WeightGridPane : javafx.scene.layout.Region() {
     requestLayout()
   }
 
-  fun setColumnWeight(column: Int, weight: Double) {
+  fun rowWeights(vararg weights: Double) {
+    weights.forEachIndexed(::rowWeight)
+  }
+
+  @Deprecated(message = "api change", replaceWith = ReplaceWith("rowWeight(a, b)"))
+  fun setRowWeight(row: Int, weight: Double) {
+    rowWeight(row, weight)
+  }
+
+  fun columnWeight(column: Int, weight: Double) {
     require(column >= 0) { "invalid column: $column" }
     require(weight >= 0.0) { "invalid weight: $weight" }
 
@@ -99,22 +100,32 @@ class WeightGridPane : javafx.scene.layout.Region() {
     requestLayout()
   }
 
+  fun columnWeights(vararg weights: Double) {
+    weights.forEachIndexed(::columnWeight)
+  }
+
+  @Deprecated(message = "api change", replaceWith = ReplaceWith("columnWeight(a, b)"))
+  fun setColumnWeight(column: Int, weight: Double) {
+    columnWeight(column, weight)
+  }
+
   fun horizontalSpaceProperty() = horizontalSpace
   fun verticalSpaceProperty() = verticalSpace
-
-//  override fun getUserAgentStylesheet(): String {
-//    //return Style().base64URL.toExternalForm()
-//    return stylesheets.joinToString(separator = ";") + Style().base64URL.toExternalForm()
-//  }
 
   public override fun getChildren(): ObservableList<Node> {
     return super.getChildren()
   }
 
-//  override fun getControlCssMetaData(): List<CssMetaData<out Styleable, *>> {
-//    return WeightGridControlStyle.CONTROL_CSS_META_DATA
-//  }
-
+  public fun add(
+    node: Node,
+    column: Int,
+    row: Int,
+    horizontalPosition: HPos? = null,
+    verticalPosition: VPos? = null
+  ): Boolean {
+    setPosition(node, column, row, horizontalPosition, verticalPosition)
+    return children.add(node)
+  }
 
   private var gridMap: GridMap<Node> = GridMap()
 

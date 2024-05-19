@@ -16,18 +16,11 @@
  */
 package de.flapdoodle.kfx.layout.grid
 
-import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.geometry.HPos
 import javafx.geometry.Insets
-import javafx.geometry.VPos
-import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.Border
-import javafx.scene.layout.Region
-import javafx.scene.paint.Color
 import javafx.stage.Stage
 
 class WeightGridPaneSampler {
@@ -40,14 +33,14 @@ class WeightGridPaneSampler {
         verticalSpace.set(10.0)
         horizontalSpace.set(20.0)
 
-        children.add(elementAt("test", 0, 0).also {
+        add(Button("test").also {
           it.minWidth = 20.0
           it.maxWidth = 100.0
-        })
-        children.add(elementAt("test-1", 1, 0, horizontalPosition = HPos.RIGHT))
-        children.add(elementAt("test-11", 1, 1).also {
+        }, 0, 0)
+        add(Button("test-1"), 1, 0, horizontalPosition = HPos.RIGHT)
+        add(Button("test-11").also {
           it.maxHeight = 100.0
-        })
+        }, 1, 1)
         children.add(WeightGridPane().apply {
           WeightGridPane.setPosition(this, 0, 1)
           val that = this
@@ -55,35 +48,23 @@ class WeightGridPaneSampler {
           verticalSpace.set(10.0)
           horizontalSpace.set(20.0)
 
-          that.children.add(elementAt("(i) test", 0, 0).also {
+          that.add(Button("(i) test").also {
             it.minWidth = 20.0
             it.maxWidth = 100.0
-          })
-          that.children.add(elementAt("(i) test-1", 1, 0, horizontalPosition = HPos.RIGHT))
-          that.children.add(elementAt("(i) test-11", 1, 1).also {
+          }, 0, 0)
+          that.add(Button("(i) test-1"), 1, 0, horizontalPosition = HPos.RIGHT)
+          that.add(Button("(i) test-11").also {
             it.maxHeight = 100.0
-          })
+          }, 1, 1)
         })
 
-        setColumnWeight(0, 1.0)
-        setColumnWeight(1, 2.0)
-        setRowWeight(0, 4.0)
-        setRowWeight(1, 1.0)
+        columnWeight(0, 1.0)
+        columnWeight(1, 2.0)
+//        rowWeight(0, 4.0)
+//        rowWeight(1, 1.0)
+        rowWeights(4.0, 1.0)
       })
       stage.show()
-    }
-    
-    private fun elementAt(
-      label: String,
-      column: Int,
-      row: Int,
-      horizontalPosition: HPos? = null,
-      verticalPosition: VPos? = null
-    ): Region {
-//      val pane = AnchorPane(Button(label).withAnchors(all = 0.0))
-      val button = Button(label)
-      WeightGridPane.setPosition(button, column, row, horizontalPosition, verticalPosition)
-      return button
     }
   }
 

@@ -33,6 +33,7 @@ class EventListenerMapper<T>(
       )
       is Event.ConnectTo -> delegate.onEvent(ModelEvent.ConnectTo(vertexIdMapper(event.start.vertexId), event.start.slotId, vertexIdMapper(event.end.vertexId), event.end.slotId))
       is Event.VertexMoved -> delegate.onEvent(ModelEvent.VertexMoved(vertexIdMapper(event.vertexId), event.layoutPosition))
+      is Event.VertexResized -> delegate.onEvent(ModelEvent.VertexResized(vertexIdMapper(event.vertexId), event.layoutPosition, event.size))
       else -> {
         throw IllegalArgumentException("this can not happen: $event")
       }

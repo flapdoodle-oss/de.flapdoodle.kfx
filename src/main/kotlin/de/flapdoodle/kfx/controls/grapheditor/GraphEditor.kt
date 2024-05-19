@@ -30,6 +30,7 @@ import de.flapdoodle.kfx.types.LayoutBounds
 import de.flapdoodle.kfx.types.Point2DMath
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventTarget
+import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.input.MouseEvent
@@ -192,6 +193,9 @@ class GraphEditor(
         } else {
           if (action is VertexAction.Move) {
             eventListener.onEvent(this, Event.VertexMoved(lock.owner.vertexId, lock.owner.layoutPosition))
+          }
+          if (action is VertexAction.Resize) {
+            eventListener.onEvent(this, Event.VertexResized(lock.owner.vertexId, lock.owner.layoutPosition, Dimension2D(lock.owner.prefWidth, lock.owner.prefHeight)))
           }
         }
       }

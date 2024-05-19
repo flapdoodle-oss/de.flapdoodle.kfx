@@ -54,6 +54,9 @@ class Main() : BorderPane() {
       is ModelEvent.VertexMoved -> {
         println("vertex ${event.vertex} moved to ${event.layoutPosition}")
       }
+      is ModelEvent.VertexResized -> {
+        println("vertex ${event.vertex} resized to ${event.layoutPosition}(${event.size})")
+      }
       else -> {
 
       }

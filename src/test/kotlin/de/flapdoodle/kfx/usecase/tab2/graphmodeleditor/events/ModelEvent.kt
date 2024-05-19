@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.events
 
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
+import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 
 sealed class ModelEvent<T> {
@@ -25,4 +26,5 @@ sealed class ModelEvent<T> {
   data class TryToConnectTo<T>(val startVertex: VertexId<T>, val startSlot: SlotId, val endVertex: VertexId<T>, val endSlot: SlotId): ModelEvent<T>()
   data class ConnectTo<T>(val startVertex: VertexId<T>, val startSlot: SlotId, val endVertex: VertexId<T>, val endSlot: SlotId): ModelEvent<T>()
   data class VertexMoved<T>(val vertex: VertexId<T>, val layoutPosition: Point2D): ModelEvent<T>()
+  data class VertexResized<T>(val vertex: VertexId<T>, val layoutPosition: Point2D, val size: Dimension2D): ModelEvent<T>()
 }

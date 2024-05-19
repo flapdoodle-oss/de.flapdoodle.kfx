@@ -17,44 +17,37 @@
 package de.flapdoodle.kfx.controls.grapheditor
 
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
-import de.flapdoodle.kfx.bindings.ObjectBindings
-import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.controls.grapheditor.slots.SlotsPane
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
-import de.flapdoodle.kfx.extensions.PseudoClassWrapper
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.layout.StackLikeRegion
-import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
-import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.css.PseudoClass
-import javafx.geometry.Insets
-import javafx.geometry.Point2D
+import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.layout.*
-import javafx.scene.layout.Background
-import javafx.scene.paint.Color
 
 class Vertex(
-  private val name: String
+  name: String,
+  controls: (VertexId) -> List<Node> = { emptyList() }
 ) : BorderPane(), IsSelectable {
   val vertexId=VertexId()
   val registry = SimpleObjectProperty<Registry>()
 
   companion object {
-    fun onlyNodes(node: javafx.scene.Node): List<Vertex> {
+    fun onlyNodes(node: Node): List<Vertex> {
       return if (node is Parent) {
         node.childrenUnmodifiable.filterIsInstance<Vertex>()
       } else {
@@ -63,13 +56,15 @@ class Vertex(
     }
   }
 
-  private val contentWrapper=StackLikeRegion.PaneLike()
-  private val _content=NodeContainerProperty.of<javafx.scene.Node>("content", contentWrapper::getChildren)
+  private val contentWrapper=StackLikeRegion.PaneLike().apply {
+    cssClassName("content")
+  }
+  private val _content=NodeContainerProperty.of<Node>("content", contentWrapper::getChildren)
   private val connectors = FXCollections.observableArrayList<Slot>()
   private val selected = SimpleBooleanProperty(false)
   private val nameProperty = SimpleStringProperty(name)
 
-  var content: javafx.scene.Node
+  var content: Node
     get() = _content.get()
     set(value) { _content.set(value)}
 
@@ -84,12 +79,12 @@ class Vertex(
 //    cssClassName("vertex")
 //    stylesheets += javaClass.getResource("Vertex.css").toExternalForm()
 
-    setMargin(contentWrapper, Insets(10.0))
+//    setMargin(contentWrapper, Insets(10.0))
 
     center = contentWrapper.apply {
       Markers.markAsContent(this)
     }
-    top = NodeHeader(name).apply {
+    top = NodeHeader(name, controls(vertexId)).apply {
       Markers.markAsDragBar(this)
     }
     left = SlotsPane(registry, vertexId, connectors, Position.LEFT)
@@ -121,14 +116,21 @@ class Vertex(
     connectors.removeIf { it.id==slotId }
   }
 
-  class NodeHeader(label: String) : HBox() {
+  class NodeHeader(label: String, controls: List<Node>) : HBox() {
     init {
-      styleClass.addAll("vertex-header")
+      cssClassName("vertex-header")
       isMouseTransparent = false
+//      alignment = Pos.BASELINE_CENTER
 //      background = Background(BackgroundFill(Color.GREY, CornerRadii(2.0), Insets(1.0)))
       children.add(Label(label).apply {
+        cssClassName("title")
         setHgrow(this, Priority.ALWAYS)
+        maxWidth = Double.MAX_VALUE
       })
+      controls.forEach { button ->
+        children.add(button)
+        Markers.markAsExcluded(button)
+      }
     }
   }
 

@@ -36,10 +36,20 @@
     -fx-border-width: 0 0 1 0;
     -fx-border-color: -fx-vertex-border-color;
     -fx-background-radius: 6px 6px 0px 0px;
+    -fx-alignment: baseline-left;
+}
+
+.vertex .vertex-header .title {
+    -fx-font-weight: bold;
+    -fx-padding: 0px 5px;
 }
 
 .vertex:focus .vertex-header {
    -fx-background-color: rgba(205,205,205,1.0);
+}
+
+.vertex .content {
+    -fx-padding: 4px;
 }
 
 .vertex:focus {

@@ -73,7 +73,7 @@ class GraphEditorSampler {
         addConnector(slotAgg2)
         addConnector(slotAgg3)
       }
-      val vertex3 = Vertex("3").apply {
+      val vertex3 = Vertex("3", { listOf(Button("X")) }).apply {
         val node = this
         layoutPosition = Point2D(200.0, 0.0)
         content = Button("Noop").apply {

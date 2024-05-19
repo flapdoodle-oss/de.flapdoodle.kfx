@@ -22,9 +22,10 @@ import de.flapdoodle.kfx.extensions.constraint
 import javafx.scene.Node
 
 object Markers {
-  private val IsDragBar = Key.ofType(Boolean::class)
+  private val IsDragBar = Key.ofNamedType("dragbar",Boolean::class)
   private val nodeSlot = Key.ofType(VertexSlotId::class)
-  private val IsContent = Key.ofNamedType("isContent", Boolean::class)
+  private val IsContent = Key.ofNamedType("content", Boolean::class)
+  private val IsExcluded = Key.ofNamedType("excluded", Boolean::class)
 
   fun isDragBar(node: Node): Boolean {
     return node.constraint[IsDragBar] ?: false
@@ -48,6 +49,18 @@ object Markers {
 
   fun unmarkAsContent(node: Node) {
     node.constraint[IsContent] = null
+  }
+
+  fun isExcluded(node: Node): Boolean {
+    return node.constraint[IsExcluded] ?: false
+  }
+
+  fun markAsExcluded(node: Node) {
+    node.constraint[IsExcluded] = true
+  }
+
+  fun unmarkAsExcluded(node: Node) {
+    node.constraint[IsExcluded] = null
   }
 
   fun nodeSlot(node: Node): VertexSlotId? {

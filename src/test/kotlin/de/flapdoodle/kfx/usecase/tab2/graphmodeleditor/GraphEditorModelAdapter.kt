@@ -34,6 +34,8 @@ import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.*
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.event.EventHandler
+import javafx.scene.control.Button
 import javafx.scene.layout.AnchorPane
 import javafx.util.Subscription
 
@@ -90,7 +92,13 @@ class GraphEditorModelAdapter<V>(
 //      println("action -> $action")
       when (action) {
         is Action.AddVertex -> {
-          graphEditor.addVertex(Vertex(action.vertex.name).also { vertex ->
+          graphEditor.addVertex(Vertex(action.vertex.name, { vertexId -> listOf(
+            Button("X").apply {
+              onAction = EventHandler {
+                println("clicked: $vertexId")
+              }
+            }
+          ) }).also { vertex ->
             val vertexContent = vertexFactory.vertexContent(action.vertex.data)
             vertex.layoutPosition = action.vertex.position
             vertex.content = vertexContent.node

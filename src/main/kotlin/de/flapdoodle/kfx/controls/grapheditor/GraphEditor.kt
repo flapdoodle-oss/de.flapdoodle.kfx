@@ -310,16 +310,16 @@ class GraphEditor(
     val allPicks = pickScreen(screenPosition).toList()
     val nodesAndMarkers = allPicks
       .filter {
-        it is Vertex || it is Edge || Markers.isDragBar(it) || Markers.nodeSlot(it) != null
+        it is Vertex || it is Edge || Markers.isDragBar(it) || Markers.isExcluded(it) || Markers.nodeSlot(it) != null
       }
 
     val matchingVertex = nodesAndMarkers.filterIsInstance<Vertex>().firstOrNull()
     val matchingContent = allPicks.filter { Markers.isContent(it) }.firstOrNull()
-//    val firstPickIsSomethingDifferent = if (firstNode != null) !nodesAndMarkers.contains(firstNode) else false
+    val firstIsExcluded = nodesAndMarkers.firstOrNull()?.let { Markers.isExcluded(it) } ?: false
 
-//    println("firstNode: $matchingContent")
-//    println("matchingVertex: $matchingVertex")
-//    println("--> something different: $firstPickIsSomethingDifferent")
+    if (firstIsExcluded) {
+      return null
+    }
 
     if (matchingVertex!=null && matchingContent==null) {
       val bestSizeMode = nodesAndMarkers.map {

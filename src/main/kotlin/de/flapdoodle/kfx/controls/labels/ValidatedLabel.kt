@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.controls.fields
+package de.flapdoodle.kfx.controls.labels
 
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import javafx.beans.property.ObjectProperty

@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.extensions
 
 import javafx.scene.Parent
+import java.net.URL
 import kotlin.reflect.KClass
 
 object Parents {
@@ -24,8 +25,9 @@ object Parents {
     parent.cssClassName(name)
     val clazz = parent.javaClass
 
-    val resource = clazz.getResource("${clazz.simpleName}.css")
-    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
+    val resource = firstResource(clazz)
+//    val resource = clazz.getResource("${clazz.simpleName}.css")
+//    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
 
     parent.stylesheets += resource.toExternalForm()
   }
@@ -34,9 +36,31 @@ object Parents {
     parent.cssClassName(name)
     val clazz = context.java
 
-    val resource = clazz.getResource("${clazz.simpleName}.css")
-    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
+    val resource = firstResource(clazz)
+//    val resource = clazz.getResource("${clazz.simpleName}.css")
+//    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
 
     parent.stylesheets += resource.toExternalForm()
+  }
+
+  private fun firstResource(clazz: Class<out Any>): URL {
+    var classesWithoutResource = emptyList<Class<out Any>>()
+
+    var resource: URL? = null
+    var nextClass: Class<out Any>? = clazz
+
+    do {
+      if (nextClass!=null) {
+        resource = clazz.getResource("${nextClass.simpleName}.css")
+        if (resource == null) {
+          classesWithoutResource = classesWithoutResource + nextClass
+          nextClass = nextClass.superclass
+        }
+      }
+    } while (resource==null && nextClass !=null)
+
+    requireNotNull(resource) { "could not find css for $classesWithoutResource"}
+
+    return resource
   }
 }

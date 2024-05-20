@@ -18,14 +18,14 @@ package de.flapdoodle.kfx.controls.charts.parts
 
 import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.syncWith
-import de.flapdoodle.kfx.types.ranges.Range
-import de.flapdoodle.kfx.controls.fields.ValidatedLabel
+import de.flapdoodle.kfx.controls.labels.ValidatedLabel
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.minus
 import de.flapdoodle.kfx.types.BoundingBoxes
 import de.flapdoodle.kfx.types.CardinalDirection
 import de.flapdoodle.kfx.types.Direction
+import de.flapdoodle.kfx.types.ranges.Range
 import javafx.beans.value.ObservableValue
 import javafx.css.Styleable
 import javafx.geometry.*

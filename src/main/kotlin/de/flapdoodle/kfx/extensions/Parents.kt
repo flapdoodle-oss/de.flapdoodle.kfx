@@ -25,9 +25,8 @@ object Parents {
     parent.cssClassName(name)
     val clazz = parent.javaClass
 
-    val resource = firstResource(clazz)
-//    val resource = clazz.getResource("${clazz.simpleName}.css")
-//    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
+    val resource = clazz.getResource("${clazz.simpleName}.css")
+    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
 
     parent.stylesheets += resource.toExternalForm()
   }
@@ -36,9 +35,8 @@ object Parents {
     parent.cssClassName(name)
     val clazz = context.java
 
-    val resource = firstResource(clazz)
-//    val resource = clazz.getResource("${clazz.simpleName}.css")
-//    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
+    val resource = clazz.getResource("${clazz.simpleName}.css")
+    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
 
     parent.stylesheets += resource.toExternalForm()
   }

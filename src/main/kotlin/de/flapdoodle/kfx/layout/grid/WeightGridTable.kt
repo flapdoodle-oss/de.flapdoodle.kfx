@@ -71,9 +71,7 @@ class WeightGridTable<T : Any, I : Any>(
 
     val newRows = new.filter { addedIds.contains(indexOf(it)) }.map {
       Row(indexOf(it), columns.map { c ->
-        require(c.nodeFactory==null || c.cellFactory==null) {"nodeFactory AND cellFactory set: $c"}
         c.cellFactory?.let { f -> f.cellOf(it) }
-          ?: c.nodeFactory?.let { f -> asCell(NodeAndChangeListener(f.nodeOf(it))) }
       })
     }
 
@@ -134,43 +132,20 @@ class WeightGridTable<T : Any, I : Any>(
   fun interface HeaderFooterNodeFactory<T : Any> {
     fun nodesOf(values: List<T>, columns: List<Column<T>>): Map<Column<T>, Node>
   }
-
-  fun interface ChangeListener<T : Any> {
-    fun update(value: T)
-  }
-
-  @Deprecated("use CellFactory")
-  fun interface NodeFactory<T : Any> {
-    fun nodeOf(value: T): Pair<Node, ChangeListener<T>>
-  }
-
+  
   fun interface CellFactory<T: Any, N: Node> {
     fun cellOf(value: T): TableCell<T, out N>
   }
 
   data class Column<T : Any>(
     val weight: Double = 1.0,
-    val nodeFactory: NodeFactory<T>? = null,
     val cellFactory: CellFactory<T, out Node>? = null,
     val horizontalPosition: HPos? = null,
     val verticalPosition: VPos? = null
   )
 
-  private data class NodeAndChangeListener<T : Any>(
-    val node: Node,
-    val changeListener: ChangeListener<T>
-  ) {
-    constructor(pair: Pair<Node, ChangeListener<T>>) : this(pair.first, pair.second)
-  }
-
   private data class Row<T : Any, I : Any>(
     val index: I,
     val nodes: List<TableCell<T, out Node>?>
   )
-
-  companion object {
-    private fun <T: Any> asCell(src: NodeAndChangeListener<T>): TableCell<T, out Node> {
-      return TableCell(src.node) { n, v -> src.changeListener.update(v) }
-    }
-  }
 }

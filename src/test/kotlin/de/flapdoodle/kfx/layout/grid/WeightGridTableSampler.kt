@@ -45,7 +45,7 @@ class WeightGridTableSampler {
         println("changed: $newValue")
       }
 
-      val nameColumn = WeightGridTable.Column<Person>(nodeFactory = { Label(it.name) to WeightGridTable.ChangeListener { } })
+      val nameColumn = WeightGridTable.Column<Person>(cellFactory = { TableCell(Label(it.name)) })
       val ageColumn = WeightGridTable.Column<Person>(weight = 2.0, cellFactory = {
         val textField = TypedTextField(Int::class).apply {
           set(it.age)

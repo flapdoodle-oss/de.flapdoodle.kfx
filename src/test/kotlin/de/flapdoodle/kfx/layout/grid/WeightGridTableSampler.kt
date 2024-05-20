@@ -21,6 +21,7 @@ import de.flapdoodle.kfx.types.Id
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
+import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -44,17 +45,17 @@ class WeightGridTableSampler {
         println("changed: $newValue")
       }
 
-      val nameColumn = WeightGridTable.Column<Person>(nodeFactory = { Label(it.name) to WeightGridTable.ChangeListener { } })
-      val ageColumn = WeightGridTable.Column<Person>(weight = 2.0, cellFactory = {
+      val nameColumn = WeightGridTable.Column<Person, Label>(nodeFactory = { Label(it.name) to WeightGridTable.ChangeListener { } })
+      val ageColumn = WeightGridTable.Column<Person, TypedTextField<Int>>(weight = 2.0, cellFactory = {
         val textField = TypedTextField(Int::class).apply {
           set(it.age)
           valueProperty().addListener { observable, oldValue, newValue ->
             model.value = model.value.map { p -> if (p.id == it.id) it.copy(age = get()) else p }
           }
         }
-        TableCell(textField) { v -> textField.set(v.age) }
+        TableCell.with(textField, Person::age, TypedTextField<Int>::set)
       })
-      val actionColumn = WeightGridTable.Column<Person>(weight = 1.0, cellFactory = { t ->
+      val actionColumn = WeightGridTable.Column<Person, Button>(weight = 1.0, cellFactory = { t ->
         val button = Button("-").apply {
           onAction = EventHandler {
             model.value = model.value.filter { p -> p.id != t.id }

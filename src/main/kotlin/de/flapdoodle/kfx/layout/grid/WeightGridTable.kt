@@ -27,7 +27,7 @@ import javafx.scene.layout.AnchorPane
 class WeightGridTable<T : Any, I : Any>(
   model: ReadOnlyObjectProperty<List<T>>,
   private val indexOf: (T) -> I,
-  private val columns: List<Column<T>>,
+  private val columns: List<Column<T, out Node>>,
   private val headerFactory: HeaderFooterNodeFactory<T>? = null,
   private val footerFactory: HeaderFooterNodeFactory<T>? = null,
 ) : AnchorPane() {
@@ -37,9 +37,9 @@ class WeightGridTable<T : Any, I : Any>(
 
   private val grid = WeightGridPane()
 
-  private var headerNodes: Map<Column<T>, Node>? = null
+  private var headerNodes: Map<Column<T, out Node>, Node>? = null
   private var rows = emptyList<Row<T, I>>()
-  private var footerNodes: Map<Column<T>, Node>? = null
+  private var footerNodes: Map<Column<T, out Node>, Node>? = null
 
   fun verticalSpace() = grid.verticalSpace
   fun horizontalSpace() = grid.horizontalSpace
@@ -107,7 +107,9 @@ class WeightGridTable<T : Any, I : Any>(
     rowsWithoutRemoved.forEach { row ->
       val changedValue = modified[row.index]
       if (changedValue != null) {
-        row.nodes.forEach { it?.update?.invoke(changedValue) }
+        row.nodes.forEach { it: TableCell<T, out Node>? ->
+          it?.updateCell(changedValue)
+        }
       }
     }
     newRows.forEach { row -> row.nodes.forEach { if (it != null) grid.children.add(it.node) } }
@@ -130,7 +132,7 @@ class WeightGridTable<T : Any, I : Any>(
   }
 
   fun interface HeaderFooterNodeFactory<T : Any> {
-    fun nodesOf(values: List<T>, columns: List<Column<T>>): Map<Column<T>, Node>
+    fun nodesOf(values: List<T>, columns: List<Column<T, out Node>>): Map<Column<T, out Node>, Node>
   }
 
   fun interface ChangeListener<T : Any> {
@@ -146,10 +148,10 @@ class WeightGridTable<T : Any, I : Any>(
     fun cellOf(value: T): TableCell<T, N>
   }
 
-  data class Column<T : Any>(
+  data class Column<T : Any, N: Node>(
     val weight: Double = 1.0,
     val nodeFactory: NodeFactory<T>? = null,
-    val cellFactory: CellFactory<T, out Node>? = null,
+    val cellFactory: CellFactory<T, N>? = null,
     val horizontalPosition: HPos? = null,
     val verticalPosition: VPos? = null
   )
@@ -168,7 +170,7 @@ class WeightGridTable<T : Any, I : Any>(
 
   companion object {
     private fun <T: Any> asCell(src: NodeAndChangeListener<T>): TableCell<T, out Node> {
-      return TableCell(src.node, src.changeListener::update)
+      return TableCell(src.node) { n, v -> src.changeListener.update(v) }
     }
   }
 }

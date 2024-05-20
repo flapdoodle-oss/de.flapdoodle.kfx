@@ -70,7 +70,11 @@ class WeightGridTable<T : Any, I : Any>(
     val (nodesToRemove, rowsWithoutRemoved) = rows.partition { removedIds.contains(it.index) }
 
     val newRows = new.filter { addedIds.contains(indexOf(it)) }.map {
-      Row(indexOf(it), columns.map { c -> c.nodeFactory?.let { f -> NodeAndChangeListener(f.nodeOf(it)) } })
+      Row(indexOf(it), columns.map { c ->
+        require(c.nodeFactory==null || c.cellFactory==null) {"nodeFactory AND cellFactory set: $c"}
+        c.cellFactory?.let { f -> f.cellOf(it) }
+          ?: c.nodeFactory?.let { f -> asCell(NodeAndChangeListener(f.nodeOf(it))) }
+      })
     }
 
     val allRows = rowsWithoutRemoved + newRows
@@ -103,7 +107,7 @@ class WeightGridTable<T : Any, I : Any>(
     rowsWithoutRemoved.forEach { row ->
       val changedValue = modified[row.index]
       if (changedValue != null) {
-        row.nodes.forEach { it?.changeListener?.update(changedValue) }
+        row.nodes.forEach { it?.update?.invoke(changedValue) }
       }
     }
     newRows.forEach { row -> row.nodes.forEach { if (it != null) grid.children.add(it.node) } }
@@ -133,26 +137,38 @@ class WeightGridTable<T : Any, I : Any>(
     fun update(value: T)
   }
 
+  @Deprecated("use CellFactory")
   fun interface NodeFactory<T : Any> {
     fun nodeOf(value: T): Pair<Node, ChangeListener<T>>
   }
 
-  data class NodeAndChangeListener<T : Any>(
+  fun interface CellFactory<T: Any, N: Node> {
+    fun cellOf(value: T): TableCell<T, N>
+  }
+
+  data class Column<T : Any>(
+    val weight: Double = 1.0,
+    val nodeFactory: NodeFactory<T>? = null,
+    val cellFactory: CellFactory<T, out Node>? = null,
+    val horizontalPosition: HPos? = null,
+    val verticalPosition: VPos? = null
+  )
+
+  private data class NodeAndChangeListener<T : Any>(
     val node: Node,
     val changeListener: ChangeListener<T>
   ) {
     constructor(pair: Pair<Node, ChangeListener<T>>) : this(pair.first, pair.second)
   }
 
-  data class Row<T : Any, I : Any>(
+  private data class Row<T : Any, I : Any>(
     val index: I,
-    val nodes: List<NodeAndChangeListener<T>?>
+    val nodes: List<TableCell<T, out Node>?>
   )
 
-  data class Column<T : Any>(
-    val weight: Double = 1.0,
-    val nodeFactory: NodeFactory<T>? = null,
-    val horizontalPosition: HPos? = null,
-    val verticalPosition: VPos? = null
-  )
+  companion object {
+    private fun <T: Any> asCell(src: NodeAndChangeListener<T>): TableCell<T, out Node> {
+      return TableCell(src.node, src.changeListener::update)
+    }
+  }
 }

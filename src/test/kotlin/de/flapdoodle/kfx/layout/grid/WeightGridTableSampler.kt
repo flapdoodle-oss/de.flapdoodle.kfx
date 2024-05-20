@@ -40,26 +40,27 @@ class WeightGridTableSampler {
         )                             
       )
 
+      model.addListener { observable, oldValue, newValue ->
+        println("changed: $newValue")
+      }
+
       val nameColumn = WeightGridTable.Column<Person>(nodeFactory = { Label(it.name) to WeightGridTable.ChangeListener { } })
-      val ageColumn = WeightGridTable.Column<Person>(weight = 2.0, nodeFactory = {
+      val ageColumn = WeightGridTable.Column<Person>(weight = 2.0, cellFactory = {
         val textField = TypedTextField(Int::class).apply {
           set(it.age)
           valueProperty().addListener { observable, oldValue, newValue ->
             model.value = model.value.map { p -> if (p.id == it.id) it.copy(age = get()) else p }
           }
         }
-
-        textField to WeightGridTable.ChangeListener { textField.set(it.age) }
+        TableCell(textField) { v -> textField.set(v.age) }
       })
-      val actionColumn = WeightGridTable.Column<Person>(weight = 1.0, nodeFactory = { t ->
+      val actionColumn = WeightGridTable.Column<Person>(weight = 1.0, cellFactory = { t ->
         val button = Button("-").apply {
           onAction = EventHandler {
             model.value = model.value.filter { p -> p.id != t.id }
           }
         }
-        button to WeightGridTable.ChangeListener {
-
-        }
+        TableCell(button)
       })
 
       val columns = listOf(

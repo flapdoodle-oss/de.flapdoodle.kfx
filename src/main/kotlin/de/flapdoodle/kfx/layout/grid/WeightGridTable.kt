@@ -81,7 +81,8 @@ class WeightGridTable<T : Any, I : Any>(
     allRows.forEachIndexed { rowIndex, row ->
       row.nodes.forEachIndexed { columnIndex, nodeAndUpdate ->
         if (nodeAndUpdate != null) {
-          WeightGridPane.setPosition(nodeAndUpdate.node, columnIndex, rowIndex + offset)
+          val column = columns[columnIndex]
+          WeightGridPane.setPosition(nodeAndUpdate.node, columnIndex, rowIndex + offset, column.horizontalPosition, column.verticalPosition)
         }
       }
     }
@@ -94,7 +95,7 @@ class WeightGridTable<T : Any, I : Any>(
       columns.forEachIndexed { index, column ->
         val header = newHeaderNodes[column]
         if (header != null) {
-          WeightGridPane.setPosition(header, index, 0)
+          WeightGridPane.setPosition(header, index, 0, column.horizontalPosition, column.verticalPosition)
           grid.children.add(header)
         }
       }
@@ -121,7 +122,7 @@ class WeightGridTable<T : Any, I : Any>(
       columns.forEachIndexed { index, column ->
         val footer = newFooterNodes[column]
         if (footer != null) {
-          WeightGridPane.setPosition(footer, index, allRows.size + offset)
+          WeightGridPane.setPosition(footer, index, allRows.size + offset, column.horizontalPosition, column.verticalPosition)
           grid.children.add(footer)
         }
       }

@@ -21,6 +21,7 @@ import de.flapdoodle.kfx.types.Id
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
+import javafx.geometry.HPos
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
@@ -45,7 +46,7 @@ class WeightGridTableSampler {
         println("changed: $newValue")
       }
 
-      val nameColumn = WeightGridTable.Column<Person>(cellFactory = { TableCell(Label(it.name)) })
+      val nameColumn = WeightGridTable.Column<Person>(cellFactory = { TableCell(Label(it.name)) }, horizontalPosition = HPos.LEFT)
       val ageColumn = WeightGridTable.Column<Person>(weight = 2.0, cellFactory = {
         val textField = TypedTextField(Int::class).apply {
           set(it.age)

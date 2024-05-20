@@ -27,7 +27,7 @@ import javafx.scene.layout.AnchorPane
 class WeightGridTable<T : Any, I : Any>(
   model: ReadOnlyObjectProperty<List<T>>,
   private val indexOf: (T) -> I,
-  private val columns: List<Column<T, out Node>>,
+  private val columns: List<Column<T>>,
   private val headerFactory: HeaderFooterNodeFactory<T>? = null,
   private val footerFactory: HeaderFooterNodeFactory<T>? = null,
 ) : AnchorPane() {
@@ -37,9 +37,9 @@ class WeightGridTable<T : Any, I : Any>(
 
   private val grid = WeightGridPane()
 
-  private var headerNodes: Map<Column<T, out Node>, Node>? = null
+  private var headerNodes: Map<Column<T>, Node>? = null
   private var rows = emptyList<Row<T, I>>()
-  private var footerNodes: Map<Column<T, out Node>, Node>? = null
+  private var footerNodes: Map<Column<T>, Node>? = null
 
   fun verticalSpace() = grid.verticalSpace
   fun horizontalSpace() = grid.horizontalSpace
@@ -132,7 +132,7 @@ class WeightGridTable<T : Any, I : Any>(
   }
 
   fun interface HeaderFooterNodeFactory<T : Any> {
-    fun nodesOf(values: List<T>, columns: List<Column<T, out Node>>): Map<Column<T, out Node>, Node>
+    fun nodesOf(values: List<T>, columns: List<Column<T>>): Map<Column<T>, Node>
   }
 
   fun interface ChangeListener<T : Any> {
@@ -145,13 +145,13 @@ class WeightGridTable<T : Any, I : Any>(
   }
 
   fun interface CellFactory<T: Any, N: Node> {
-    fun cellOf(value: T): TableCell<T, N>
+    fun cellOf(value: T): TableCell<T, out N>
   }
 
-  data class Column<T : Any, N: Node>(
+  data class Column<T : Any>(
     val weight: Double = 1.0,
     val nodeFactory: NodeFactory<T>? = null,
-    val cellFactory: CellFactory<T, N>? = null,
+    val cellFactory: CellFactory<T, out Node>? = null,
     val horizontalPosition: HPos? = null,
     val verticalPosition: VPos? = null
   )

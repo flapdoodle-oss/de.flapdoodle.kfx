@@ -17,10 +17,12 @@
 package de.flapdoodle.kfx.controls.labels
 
 import javafx.application.Application
+import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.layout.FlowPane
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 
 class ColoredLabelSampler {
@@ -28,8 +30,16 @@ class ColoredLabelSampler {
 
     override fun start(stage: Stage) {
 
+      val text = SimpleObjectProperty("This is a sample text.")
+      val parts = SimpleObjectProperty(listOf(
+        ColoredLabel.Part(5, 16, Color.RED),
+        ColoredLabel.Part(10, 14, Color.GREEN),
+        ColoredLabel.Part(2, 4, Color.BLUE),
+        ColoredLabel.Part(18, 32, Color.DARKGREEN),
+      ))
+
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {
-        children.add(Label("Foo"))
+        children.add(ColoredLabel(text, parts))
       })
       stage.show()
     }

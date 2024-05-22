@@ -6,6 +6,21 @@ import org.junit.jupiter.api.Test
 
 class ColoredLabelTest {
   @Test
+  fun single() {
+    val text = "123456"
+    val parts = listOf(
+      ColoredLabel.Part(2, 4, Color.RED)
+    )
+
+    assertThat(ColoredLabel.coloredText(text, parts))
+      .containsExactly(
+        "12" to null,
+        "34" to Color.RED,
+        "56" to null,
+      )
+  }
+
+  @Test
   fun sample() {
     val text = "This is a sample text."
     val parts = listOf(

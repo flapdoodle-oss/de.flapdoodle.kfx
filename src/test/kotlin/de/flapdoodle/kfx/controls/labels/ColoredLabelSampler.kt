@@ -30,7 +30,7 @@ class ColoredLabelSampler {
 
     override fun start(stage: Stage) {
 
-      val text = SimpleObjectProperty("This is a sample text.")
+      val text = SimpleObjectProperty("This is \nsample text.")
       val parts = SimpleObjectProperty(listOf(
         ColoredLabel.Part(5, 16, Color.RED),
         ColoredLabel.Part(10, 14, Color.GREEN),

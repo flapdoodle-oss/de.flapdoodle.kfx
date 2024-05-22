@@ -18,27 +18,30 @@ package de.flapdoodle.kfx.controls.labels
 
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.syncWith
+import de.flapdoodle.kfx.extensions.Colors
+import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
-import javafx.scene.layout.Background
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
 
 class ColoredLabel(
-  private val text: ObservableValue<String>,
+  private val text: ObservableValue<String?>,
   private val colors: ObservableValue<List<Part>>
 ) : StackLikeRegion() {
   private val textFlow = TextFlow().apply {
-
+    cssClassName("text-flow")
   }
   private val textWithColors = ObjectBindings.merge(text, colors, ::coloredText)
 
   init {
     textFlow.children.syncWith(textWithColors) {
       Text(it.first).apply {
-        if (it.second!=null) {
-          fill = it.second
+        val color = it.second
+        if (color!=null) {
+          fill = color
+          style = "-fx-fill: ${Colors.asCss(color)}"
         }
       }
     }
@@ -48,8 +51,9 @@ class ColoredLabel(
   data class Part(val start: Int, val end: Int, val color: Color)
 
   companion object {
-    fun coloredText(text: String, parts: List<Part>): List<Pair<String, Color?>> {
+    fun coloredText(nullableText: String?, parts: List<Part>): List<Pair<String, Color?>> {
       val sorted = parts.sortedWith(Comparator.comparing(Part::start).thenComparing(Comparator.comparing(Part::end).reversed()))
+      val text = nullableText ?: ""
       val markers = (sorted
         .flatMap { listOf(it.start, it.end) }
         .filter { it < text.length }

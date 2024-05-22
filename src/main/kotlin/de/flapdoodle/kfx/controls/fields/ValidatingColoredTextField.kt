@@ -6,16 +6,11 @@ import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.withAnchors
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.geometry.Pos
 import javafx.scene.control.TextField
 import javafx.scene.control.Tooltip
-import javafx.scene.input.MouseEvent
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Border
-import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 
@@ -34,13 +29,13 @@ class ValidatingColoredTextField<T: Any>(
     }
   }
 ): StackPane(), ValidatingField<T> {
-  
+
   private val delegate = ValidatingTextField(converter, default, mapException, onError)
 
   private val colors = SimpleObjectProperty<List<ColoredLabel.Part>>(emptyList())
   private val coloredLabel = ColoredLabel(delegate.textProperty(), colors).apply {
     cssClassName("colored-label")
-    borderProperty().bind(delegate.borderProperty())
+//    borderProperty().bind(delegate.borderProperty())
   }
 
   var tooltip: Tooltip?
@@ -50,33 +45,36 @@ class ValidatingColoredTextField<T: Any>(
   init {
     bindCss("colored-text-field")
 
-    colors.bind(ObjectBindings.map(valueProperty()) { v ->
-      val colors = mapColors(v, v?.let(converter::toString) ?: "")
-      println("colors: $colors")
-      colors
+    colors.bind(ObjectBindings.merge(valueProperty(), delegate.textProperty()) { v, t ->
+      mapColors(v, t ?: "")
     })
 
-    children.addAll(coloredLabel, delegate)
+    setAlignment(delegate, Pos.TOP_LEFT)
+    setAlignment(coloredLabel, Pos.CENTER)
+    
+    children.addAll(delegate, coloredLabel)
 
-    delegate.focusedProperty().addListener { observable, oldValue, newValue ->
-      if (!newValue) {
-        delegate.opacity = 0.0
-        coloredLabel.opacity = 1.0
-      } else {
-        delegate.opacity = 1.0
-        coloredLabel.opacity = 0.0
-      }
-    }
+//    delegate.focusedProperty().addListener { observable, oldValue, newValue ->
+//      if (!newValue) {
+//        delegate.opacity = 0.0
+//        coloredLabel.opacity = 1.0
+//      } else {
+//        delegate.opacity = 1.0
+//        coloredLabel.opacity = 0.0
+//      }
+//    }
 
-    coloredLabel.isFocusTraversable = true
-    coloredLabel.focusedProperty().addListener { observable, oldValue, newValue ->
-      if (newValue) {
-        delegate.requestFocus()
-      }
-    }
-    coloredLabel.addEventFilter(MouseEvent.MOUSE_CLICKED) { event ->
-      delegate.requestFocus()
-    }
+    coloredLabel.isFocusTraversable = false
+    coloredLabel.isMouseTransparent = true
+    coloredLabel.opacity = 0.9
+//    coloredLabel.focusedProperty().addListener { observable, oldValue, newValue ->
+//      if (newValue) {
+//        delegate.requestFocus()
+//      }
+//    }
+//    coloredLabel.addEventFilter(MouseEvent.MOUSE_CLICKED) { event ->
+//      delegate.requestFocus()
+//    }
   }
 
   override fun get() = delegate.get()

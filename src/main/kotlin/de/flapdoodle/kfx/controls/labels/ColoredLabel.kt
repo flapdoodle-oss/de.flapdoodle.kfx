@@ -22,6 +22,7 @@ import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
+import javafx.collections.ListChangeListener
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
@@ -37,23 +38,34 @@ class ColoredLabel(
 
   init {
     textFlow.children.syncWith(textWithColors) {
-      Text(it.first).apply {
-        val color = it.second
+      Text(it.text).apply {
+        val color = it.color
         if (color!=null) {
           fill = color
           style = "-fx-fill: ${Colors.asCss(color)}"
         }
       }
     }
+//    textFlow.children.addListener(ListChangeListener { change ->
+//      println("textFlow: ${textFlow.children}")
+//    })
     children.add(textFlow)
   }
 
   data class Part(val start: Int, val end: Int, val color: Color)
+  data class ColoredText(val index: Int, val text: String, val color: Color? = null)
 
   companion object {
-    fun coloredText(nullableText: String?, parts: List<Part>): List<Pair<String, Color?>> {
+    fun coloredText(text: String?, parts: List<Part>): List<ColoredText> {
+      if (text==null) {
+        return emptyList()
+      }
+
+      if (parts.isEmpty()) {
+        return listOf(ColoredText(0, text))
+      }
+      
       val sorted = parts.sortedWith(Comparator.comparing(Part::start).thenComparing(Comparator.comparing(Part::end).reversed()))
-      val text = nullableText ?: ""
       val markers = (sorted
         .flatMap { listOf(it.start, it.end) }
         .filter { it < text.length }
@@ -61,9 +73,10 @@ class ColoredLabel(
         .toSortedSet()
 
 
-      var pairs = emptyList<Pair<String, Color?>>()
+      var pairs = emptyList<ColoredText>()
 
       var lastEnd = 0
+      var index = 0
       markers.forEach { pos ->
         if (pos > lastEnd) {
           val textPart = text.substring(lastEnd, pos)
@@ -72,11 +85,13 @@ class ColoredLabel(
 //          println("($lastEnd,$pos) -> $textPart: $colors")
           val color = mixOrNull(colors)
 
-          pairs = pairs + (textPart to color)
+          pairs = pairs + ColoredText(index, textPart, color)
+          index++
         }
         lastEnd = pos
       }
 
+//      println("$text, $parts --> $pairs")
       return pairs
     }
 

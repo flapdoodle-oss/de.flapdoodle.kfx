@@ -1,12 +1,9 @@
-.colored-text-field .colored-label {
-    -fx-text-fill: -fx-text-inner-color;
-    -fx-highlight-fill: derive(-fx-control-inner-background, -20%);
-    -fx-highlight-text-fill: -fx-text-inner-color;
-    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
-    -fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border), linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
-    -fx-background-insets: 0, 1;
-    -fx-background-radius: 3, 2;
-    -fx-padding: 0.35em 0.6em;
+.colored-text-field .colored-label .text-flow {
+    -fx-padding: 4.3px 7.6px;
+}
+
+.colored-text-field .text-field .text {
+    -fx-opacity: 0.0;
 }
 
 .colored-text-field .colored-label .text-flow * {

@@ -7,16 +7,34 @@ import org.junit.jupiter.api.Test
 class ColoredLabelTest {
   @Test
   fun single() {
-    val text = "123456"
     val parts = listOf(
       ColoredLabel.Part(2, 4, Color.RED)
     )
 
-    assertThat(ColoredLabel.coloredText(text, parts))
+    assertThat(ColoredLabel.coloredText("123", parts))
       .containsExactly(
-        "12" to null,
-        "34" to Color.RED,
-        "56" to null,
+        ColoredLabel.ColoredText(0,"12"),
+        ColoredLabel.ColoredText(1, "3", Color.RED),
+      )
+
+    assertThat(ColoredLabel.coloredText("1234", parts))
+      .containsExactly(
+        ColoredLabel.ColoredText(0, "12"),
+        ColoredLabel.ColoredText(1, "34", Color.RED),
+      )
+
+    assertThat(ColoredLabel.coloredText("12345", parts))
+      .containsExactly(
+        ColoredLabel.ColoredText(0, "12"),
+        ColoredLabel.ColoredText(1,"34",Color.RED),
+        ColoredLabel.ColoredText(2, "5"),
+      )
+
+    assertThat(ColoredLabel.coloredText("123456", parts))
+      .containsExactly(
+        ColoredLabel.ColoredText(0, "12"),
+        ColoredLabel.ColoredText(1,"34",Color.RED),
+        ColoredLabel.ColoredText(2, "56"),
       )
   }
 
@@ -32,12 +50,12 @@ class ColoredLabelTest {
 
     assertThat(ColoredLabel.coloredText(text, parts))
       .containsExactly(
-        "This" to Color.BLUE,
-        " " to null,
-        "is a " to Color.RED,
-        "sample" to Color.RED.interpolate(Color.GREEN, 0.5),
-        " t" to null,
-        "ext." to Color.YELLOW
+        ColoredLabel.ColoredText(0,"This" , Color.BLUE),
+        ColoredLabel.ColoredText(1," "),
+        ColoredLabel.ColoredText(2,"is a " , Color.RED),
+        ColoredLabel.ColoredText(3,"sample",Color.RED.interpolate(Color.GREEN, 0.5)),
+        ColoredLabel.ColoredText(4," t"),
+        ColoredLabel.ColoredText(5,"ext." , Color.YELLOW)
       )
   }
 }

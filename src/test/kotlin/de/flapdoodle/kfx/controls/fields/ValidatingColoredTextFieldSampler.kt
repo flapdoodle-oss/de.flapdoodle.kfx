@@ -24,11 +24,11 @@ class ValidatingColoredTextFieldSampler {
           if ((s?.length ?: 0) > 3) {
             listOf(ColoredLabel.Part(2,4, Color.RED))
           } else
-          emptyList()
+            emptyList()
         }
       ).apply {
         valueProperty().addListener { _, _, newValue ->
-          println("--> $newValue")
+          println("1: --> $newValue")
         }
       }
 

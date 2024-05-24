@@ -1,12 +1,17 @@
 package de.flapdoodle.kfx.controls.fields
 
 import de.flapdoodle.kfx.bindings.ObjectBindings
+import de.flapdoodle.kfx.bindings.map
 import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.extensions.sceneToLocal
+import de.flapdoodle.kfx.layout.decoration.*
+import de.flapdoodle.kfx.layout.decoration.NodeTreeMatcher.Companion.and
 import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ObservableValue
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.geometry.Pos
@@ -15,6 +20,7 @@ import javafx.scene.Parent
 import javafx.scene.control.TextField
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.Border
+import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
@@ -36,6 +42,10 @@ class ValidatingColoredTextField<T: Any>(
 ): StackPane(), ValidatingField<T> {
 
   private val delegate = ValidatingTextField(converter, default, mapException, onError)
+  private val match = NodeTreeMatcher.match(NodeFilter.isInstance(Pane::class))
+    .and(NodeFilter.isInstance(Text::class))
+  
+  private val treeNode = NodeTreeProperty(delegate, match)
 
   private val colors = SimpleObjectProperty<List<ColoredLabel.Part>>(emptyList())
   private val coloredLabel = ColoredLabel(delegate.textProperty(), colors).apply {
@@ -64,13 +74,22 @@ class ValidatingColoredTextField<T: Any>(
     coloredLabel.isMouseTransparent = true
     coloredLabel.opacity = 0.9
 
+//    treeNode.addListener { observable, oldValue, newValue ->
+//      println("tree match: $newValue")
+//    }
+
+    val layoutBounds = treeNode.map { t -> t.localToScene(t.layoutBounds) }
+    val relocated = layoutBounds.map { b -> coloredLabel.sceneToLocal(b) }
+    
+    relocated.addListener { observable, oldValue, newValue ->
+      println("box2: $newValue")
+    }
 
     // HACK
     delegate.skinProperty().addListener { _, _, s ->
       val f: Node? = delegate.childrenUnmodifiable.firstOrNull()
       if (f!=null && f is Parent) {
         val t = f.childrenUnmodifiable.find { it is Text } as Text?
-        println("--> $t")
         if (t != null) {
 //          coloredLabel.layoutYProperty().bind(t.layoutYProperty())
 //          coloredLabel.translateXProperty().bind(t.layoutXProperty())
@@ -78,6 +97,7 @@ class ValidatingColoredTextField<T: Any>(
             BoundingBox(tb.minX + pb.minX, tb.minY + pb.minY, tb.width, tb.height)
           }
           bbox.addListener { _, _, n ->
+            println("box: $n")
             coloredLabel.resizeRelocate(n.minX, n.minY, n.width, n.height)
           }
 //          t.boundsInParentProperty().addListener { _, _, n ->

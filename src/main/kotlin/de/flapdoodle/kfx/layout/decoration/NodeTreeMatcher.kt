@@ -3,7 +3,7 @@ package de.flapdoodle.kfx.layout.decoration
 import javafx.scene.Node
 import javafx.scene.Parent
 
-sealed class NodeTreeMatcher<C: Node> {
+sealed class NodeTreeMatcher<C> {
   data class SingleMatcher<C: Node>(
     val filter: NodeFilter<C>
   ): NodeTreeMatcher<C>()

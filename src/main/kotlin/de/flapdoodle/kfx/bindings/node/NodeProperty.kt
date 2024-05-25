@@ -25,6 +25,7 @@ class NodeProperty<C : Node, T : Any>(
       }
     }
     propertyListener.onAttach(node.value?.let { property(it).value })
+    node.value?.let { property(it).addListener(propertyListener) }
   }
 
   override fun addListener(listener: ChangeListener<in T?>) = propertyListener.valueProperty.addListener(listener)

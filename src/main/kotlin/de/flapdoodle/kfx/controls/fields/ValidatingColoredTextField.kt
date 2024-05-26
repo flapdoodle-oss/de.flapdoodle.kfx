@@ -9,6 +9,7 @@ import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.bindings.node.ChildNodeFilter
 import de.flapdoodle.kfx.bindings.node.ChildNodeProperty
 import de.flapdoodle.kfx.bindings.node.ChildNodeProperty.Companion.andThen
+import de.flapdoodle.kfx.bindings.node.NodeProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.BoundingBox
 import javafx.geometry.Pos
@@ -46,21 +47,27 @@ class ValidatingColoredTextField<T: Any>(
 //  private val treeNode = NodeTreeProperty(delegate, match)
 
   private val paneProperty = ChildNodeProperty(delegate, ChildNodeFilter.isInstance(Pane::class))
-  // TODO ist eigentlich ne Node statt Property
-  private val textClipProperty = paneProperty.properties { ObjectBindings.map(it.clipProperty()) { rect ->
-    //Rectangle(rect.layoutX, rect.layoutY, rect)
-    println("clip: $rect")
-    Rectangle(0.0, 0.0, 30.0, 20.0)
-  } }
+  private val panePosition = paneProperty.property(Pane::boundsInParentProperty)
+
+  private val textClipNodeProperty = paneProperty.property(Pane::clipProperty)
+  private val textClipProperty = NodeProperty(textClipNodeProperty, Node::boundsInParentProperty)
 
   private val textProperty = paneProperty.andThen(ChildNodeFilter.isInstance(Text::class))
-  private val textBounds = textProperty.properties { ObjectBindings.merge(it.layoutBoundsProperty(), it.localToSceneTransformProperty()) {
+  private val textBounds = textProperty.property(Text::boundsInParentProperty)
+
+  private val textBoundsX = textProperty.properties { ObjectBindings.merge(it.layoutBoundsProperty(), it.localToSceneTransformProperty()) {
       l, t -> t.transform(l)
   } }
 
+  private val coloredLabelClip = Rectangle()
   private val colors = SimpleObjectProperty<List<ColoredLabel.Part>>(emptyList())
   private val coloredLabel = ColoredLabel(delegate.textProperty(), colors).apply {
     cssClassName("colored-label")
+    isManaged = false
+  }
+  private val coloredLabelPane = Pane().apply {
+    children += coloredLabel
+    clip = coloredLabelClip
     isManaged = false
   }
 
@@ -76,24 +83,41 @@ class ValidatingColoredTextField<T: Any>(
     })
 
     setAlignment(delegate, Pos.TOP_LEFT)
-    setAlignment(coloredLabel, Pos.CENTER)
+    setAlignment(coloredLabel, Pos.TOP_LEFT)
 
-    children.addAll(delegate, coloredLabel)
+    children.addAll(delegate, coloredLabelPane)
 
     coloredLabel.isFocusTraversable = false
     coloredLabel.isMouseTransparent = true
-    coloredLabel.opacity = 0.9
+    coloredLabel.opacity = 1.0
 
+    panePosition.addListener { _,_,pos ->
+      if (pos!=null) {
+        coloredLabelPane.resizeRelocate(pos.minX, pos.minY, pos.width, pos.height)
+      }
+    }
     textBounds.addListener { observable, oldValue, newValue ->
       if (newValue!=null) {
-        val n = sceneToLocal(newValue)
+//        val n = sceneToLocal(newValue)
+        val n = newValue
         coloredLabel.resizeRelocate(n.minX, n.minY, n.width, n.height)
       }
     }
 
+//    textClipNodeProperty.addListener { _, _, clipNode ->
+//      if (clipNode!=null) {
+//        println(clipNode)
+//      }
+//    }
     textClipProperty.addListener { observable, oldValue, newValue ->
       if (newValue!=null) {
-        coloredLabel.clip = newValue
+        println("clip: $newValue")
+        // what?
+        coloredLabelClip.isSmooth = true
+        coloredLabelClip.x = 0.0
+        coloredLabelClip.width = newValue.width
+        coloredLabelClip.height = newValue.height
+//        coloredLabel.clip = newValue
       }
     }
 

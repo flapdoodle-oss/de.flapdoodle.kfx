@@ -1,6 +1,7 @@
 package de.flapdoodle.kfx.bindings.node
 
 import javafx.beans.InvalidationListener
+import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
@@ -43,6 +44,10 @@ class ChildNodeProperty<P: Parent, C: Node>(
 
   fun <T: Any> property(property: (C) -> ObservableValue<T?>): NodeProperty<C, T> {
     return NodeProperty(this, property)
+  }
+
+  fun <T: Any> properties(binding: (C) -> ObjectBinding<T?>): NodeProperties<C, T> {
+    return NodeProperties(this, binding)
   }
 
   class ChildNodeListener<C: Node>(

@@ -29,9 +29,11 @@ class NodeProperty<C : Node, T : Any>(
   }
 
   override fun addListener(listener: ChangeListener<in T?>) = propertyListener.valueProperty.addListener(listener)
-  override fun removeListener(listener: ChangeListener<in T?>) = propertyListener.valueProperty.addListener(listener)
+  override fun removeListener(listener: ChangeListener<in T?>) = propertyListener.valueProperty.removeListener(listener)
+
   override fun addListener(listener: InvalidationListener?) = propertyListener.valueProperty.addListener(listener)
-  override fun removeListener(listener: InvalidationListener?) = propertyListener.valueProperty.addListener(listener)
+  override fun removeListener(listener: InvalidationListener?) = propertyListener.valueProperty.removeListener(listener)
+  
   override fun getValue(): T? = propertyListener.valueProperty.value
 
   class PropertyListener<T: Any>: ChangeListener<T?> {

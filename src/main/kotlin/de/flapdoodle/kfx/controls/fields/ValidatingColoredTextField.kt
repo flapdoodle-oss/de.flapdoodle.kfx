@@ -27,6 +27,8 @@ import de.flapdoodle.kfx.bindings.node.ChildNodeProperty
 import de.flapdoodle.kfx.bindings.node.ChildNodeProperty.Companion.andThen
 import de.flapdoodle.kfx.bindings.node.NodeProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.TextField
@@ -123,8 +125,13 @@ class ValidatingColoredTextField<T: Any>(
   }
 
   override fun get() = delegate.get()
+  override fun set(value: T?) = delegate.set(value)
   override fun hasError() = delegate.hasError()
   override fun errorMessage() = delegate.errorMessage()
   override fun lastErrorProperty() = delegate.lastErrorProperty()
   override fun valueProperty() = delegate.valueProperty()
+
+  var onAction: EventHandler<ActionEvent>?
+    get() = delegate.onAction
+    set(value) { delegate.onAction = value }
 }

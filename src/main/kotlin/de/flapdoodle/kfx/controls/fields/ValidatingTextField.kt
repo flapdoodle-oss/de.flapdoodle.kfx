@@ -61,7 +61,7 @@ class ValidatingTextField<T : Any>(
     }
   }
 
-  fun set(v: T?) {
+  override fun set(v: T?) {
     valueProperty.value = v
   }
 

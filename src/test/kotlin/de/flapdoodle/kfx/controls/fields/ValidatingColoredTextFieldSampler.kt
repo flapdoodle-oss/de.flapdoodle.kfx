@@ -20,6 +20,7 @@ import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.controls.labels.ValidatedLabel
 import de.flapdoodle.kfx.converters.Converters
 import javafx.application.Application
+import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.control.Button
@@ -46,6 +47,9 @@ class ValidatingColoredTextFieldSampler {
         valueProperty().addListener { _, _, newValue ->
           println("1: --> $newValue")
         }
+        onAction = EventHandler {
+          println("Action!!")
+        }
       }
 
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {
@@ -53,7 +57,11 @@ class ValidatingColoredTextFieldSampler {
         children.add(ValidatedLabel(converter).apply {
           valueProperty().bind(intField.valueProperty())
         })
-        children.add(Button("OK"))
+        children.add(Button("OK").apply {
+          onAction = EventHandler {
+            intField.set(123565)
+          }
+        })
       })
       stage.show()
     }

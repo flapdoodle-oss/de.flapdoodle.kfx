@@ -69,7 +69,7 @@ class ValidatingDatePicker(
     }
   }
 
-  fun set(v: LocalDate?) {
+  override fun set(v: LocalDate?) {
     valueProperty().value = v
   }
 

@@ -21,15 +21,21 @@ import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.value.ObservableValue
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
 
 interface ValidatingField<T> {
   fun get(): T?
+  fun set(value: T?)
   fun hasError(): Boolean
   fun errorMessage(): String?
 
   fun lastErrorProperty(): ReadOnlyProperty<String>
   fun valueProperty(): ObjectProperty<T>
 
+//  fun setOnAction(value: EventHandler<ActionEvent>?)
+//  fun getOnAction(): EventHandler<ActionEvent>?
+  
   companion object {
     fun invalidInputs(vararg fields: ValidatingField<out Any>): ObservableValue<Boolean> {
       return validInputs(*fields).map { !it }

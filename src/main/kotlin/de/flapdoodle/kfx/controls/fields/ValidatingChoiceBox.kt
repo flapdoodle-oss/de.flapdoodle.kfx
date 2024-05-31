@@ -48,6 +48,10 @@ class ValidatingChoiceBox<T : Any>(
     return value
   }
 
+  override fun set(value: T?) {
+    this.value = value
+  }
+
   override fun hasError(): Boolean {
     return lastError.value != null
   }

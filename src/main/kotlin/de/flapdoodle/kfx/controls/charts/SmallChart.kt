@@ -111,6 +111,7 @@ class SmallChart<X : Any, Y : Any>(
   }
 
   private val chartArea = WeightGridPane().apply {
+    cssClassName("small-chart-charts")
     setRowWeight(0, 0.0)
     setRowWeight(1, 1.0)
     setRowWeight(2, 0.0)

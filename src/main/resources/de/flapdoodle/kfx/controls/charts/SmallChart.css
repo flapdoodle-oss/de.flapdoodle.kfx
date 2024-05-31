@@ -18,6 +18,11 @@
     -fx-padding: 10px;
 }
 
+.small-chart .small-chart-charts {
+    horizontal-space: 0px;
+    vertical-space: 0px;
+}
+
 .small-chart .small-chart-line-box {
     /*-fx-padding: 10px;*/
     -fx-border-width: 1px;

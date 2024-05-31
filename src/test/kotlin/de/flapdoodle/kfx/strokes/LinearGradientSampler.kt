@@ -55,7 +55,7 @@ class LinearGradientSampler {
       val a = Curves.cubicCurve(start, end)
       a.fill = Color.TRANSPARENT
       a.stroke = Color.RED
-      a.strokeWidth = 3.0
+      a.strokeWidth = 5.0
       a.stroke = acolor
 
       val bcolor = LinearGradient(
@@ -73,7 +73,7 @@ class LinearGradientSampler {
       val b = Curves.cubicCurve(start, end)
       b.fill = Color.TRANSPARENT
       b.stroke = Color.BLUE
-      b.strokeWidth = 3.0
+      b.strokeWidth = 5.0
       b.stroke = bcolor
 
       val startColor = SimpleObjectProperty(Color.rgb(255, 0, 0, 1.0))
@@ -84,7 +84,7 @@ class LinearGradientSampler {
 
       val c = Curves.cubicCurve(startC, endC)
       c.fill = Color.TRANSPARENT
-      c.strokeWidth = 3.0
+      c.strokeWidth = 5.0
       c.strokeProperty().bind(LinearGradients.cardinal(startC.map(AngleAtPoint2D::point2D), endC.map(AngleAtPoint2D::point2D), startColor, endColor))
 
       val startD = start.map { it.copy(point2D = Point2D(it.point2D.x - 100.0, it.point2D.y + 100.0)) }
@@ -92,7 +92,7 @@ class LinearGradientSampler {
 
       val d = Curves.cubicCurve(startD, endD)
       d.fill = Color.TRANSPARENT
-      d.strokeWidth = 3.0
+      d.strokeWidth = 5.0
       d.strokeProperty().bind(LinearGradients.exact(startD.map(AngleAtPoint2D::point2D), endD.map(AngleAtPoint2D::point2D), startColor, endColor))
 
       val lock = SharedLock<Pane>()

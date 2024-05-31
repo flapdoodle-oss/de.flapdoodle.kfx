@@ -11,10 +11,8 @@ import de.flapdoodle.kfx.bindings.node.ChildNodeProperty
 import de.flapdoodle.kfx.bindings.node.ChildNodeProperty.Companion.andThen
 import de.flapdoodle.kfx.bindings.node.NodeProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.geometry.BoundingBox
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.Parent
 import javafx.scene.control.TextField
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.Border
@@ -27,9 +25,9 @@ import javafx.scene.text.Text
 class ValidatingColoredTextField<T: Any>(
   val converter: ValidatingConverter<T>,
   val default: T? = null,
-  val mapException: (Exception) -> String = { it.localizedMessage },
-  val mapColors: (T?, String?) -> List<ColoredLabel.Part> = { value, converted -> emptyList() },
-  val onError: (TextField, String?) -> Unit = { textfield, error ->
+  mapException: (Exception) -> String = { it.localizedMessage },
+  val mapColors: (T?, String?) -> List<ColoredLabel.Part> = { _, _ -> emptyList() },
+  onError: (TextField, String?) -> Unit = { textfield, error ->
     if (error != null) {
       textfield.tooltip = Tooltips.tooltip(error)
       textfield.border = Border.stroke(Color.RED)
@@ -41,10 +39,6 @@ class ValidatingColoredTextField<T: Any>(
 ): StackPane(), ValidatingField<T> {
 
   private val delegate = ValidatingTextField(converter, default, mapException, onError)
-//  private val match = NodeTreeMatcher.match(NodeFilter.isInstance(Pane::class))
-//    .and(NodeFilter.isInstance(Text::class))
-//
-//  private val treeNode = NodeTreeProperty(delegate, match)
 
   private val paneProperty = ChildNodeProperty(delegate, ChildNodeFilter.isInstance(Pane::class))
   private val panePosition = paneProperty.property(Pane::boundsInParentProperty)
@@ -54,10 +48,6 @@ class ValidatingColoredTextField<T: Any>(
 
   private val textProperty = paneProperty.andThen(ChildNodeFilter.isInstance(Text::class))
   private val textBounds = textProperty.property(Text::boundsInParentProperty)
-
-  private val textBoundsX = textProperty.properties { ObjectBindings.merge(it.layoutBoundsProperty(), it.localToSceneTransformProperty()) {
-      l, t -> t.transform(l)
-  } }
 
   private val coloredLabelClip = Rectangle()
   private val colors = SimpleObjectProperty<List<ColoredLabel.Part>>(emptyList())
@@ -89,7 +79,7 @@ class ValidatingColoredTextField<T: Any>(
 
     coloredLabel.isFocusTraversable = false
     coloredLabel.isMouseTransparent = true
-    coloredLabel.opacity = 1.0
+//    coloredLabel.opacity = 1.0
 
     panePosition.addListener { _,_,pos ->
       if (pos!=null) {
@@ -104,50 +94,14 @@ class ValidatingColoredTextField<T: Any>(
       }
     }
 
-//    textClipNodeProperty.addListener { _, _, clipNode ->
-//      if (clipNode!=null) {
-//        println(clipNode)
-//      }
-//    }
     textClipProperty.addListener { observable, oldValue, newValue ->
       if (newValue!=null) {
-        println("clip: $newValue")
+//        println("clip: $newValue")
         // what?
         coloredLabelClip.isSmooth = true
         coloredLabelClip.x = 0.0
         coloredLabelClip.width = newValue.width
         coloredLabelClip.height = newValue.height
-//        coloredLabel.clip = newValue
-      }
-    }
-
-    // HACK
-    if (false) {
-      delegate.skinProperty().addListener { _, _, s ->
-        val f: Node? = delegate.childrenUnmodifiable.firstOrNull()
-        if (f != null && f is Parent) {
-          val t = f.childrenUnmodifiable.find { it is Text } as Text?
-          if (t != null) {
-//          coloredLabel.layoutYProperty().bind(t.layoutYProperty())
-//          coloredLabel.translateXProperty().bind(t.layoutXProperty())
-            val bbox = ObjectBindings.merge(f.boundsInParentProperty(), t.boundsInParentProperty()) { pb, tb ->
-              BoundingBox(tb.minX + pb.minX, tb.minY + pb.minY, tb.width, tb.height)
-            }
-            bbox.addListener { _, _, n ->
-              println("box: $n")
-              coloredLabel.resizeRelocate(n.minX, n.minY, n.width, n.height)
-            }
-//          t.boundsInParentProperty().addListener { _, _, n ->
-//            coloredLabel.resizeRelocate(n.minX, n.minY, n.width, n.height)
-//          }
-//          t.layoutBoundsProperty().addListener { observable, oldValue, newValue ->
-//
-////            coloredLabel.resizeRelocate(newValue.minX, newValue.minY, newValue.width, newValue.height)
-//            coloredLabel.resize(newValue.width, newValue.height)
-//          }
-//          coloredLabel.layoutYProperty().bind(t.layoutYProperty())
-          }
-        }
       }
     }
   }

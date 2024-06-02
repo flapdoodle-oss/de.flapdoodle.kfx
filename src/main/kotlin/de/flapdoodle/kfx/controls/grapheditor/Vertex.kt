@@ -116,6 +116,10 @@ class Vertex(
     connectors.removeIf { it.id==slotId }
   }
 
+  fun replaceConnector(slotId: SlotId, connector: Slot) {
+    connectors.replaceAll { if (it.id==slotId) connector.copy(id = slotId) else it }
+  }
+
   class NodeHeader(label: ReadOnlyProperty<String>, controls: List<Node>) : HBox() {
     init {
       cssClassName("vertex-header")

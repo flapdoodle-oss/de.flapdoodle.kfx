@@ -16,10 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor
 
-import de.flapdoodle.kfx.bindings.NestedValueBinding
-import de.flapdoodle.kfx.bindings.ObjectBindings
-import de.flapdoodle.kfx.bindings.Values
-import de.flapdoodle.kfx.bindings.defaultIfNull
+import de.flapdoodle.kfx.bindings.*
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
@@ -44,7 +41,7 @@ class Registry {
   }
 
   fun registerConnection(edge: Edge) {
-    edge.init(this::scenePosition)
+    edge.init(this::scenePositionProperty)
   }
 
   fun unregisterConnection(edge: Edge) {
@@ -55,9 +52,9 @@ class Registry {
     return nodesProperty.map { it[id] }
   }
 
-  private fun scenePosition(vertexSlotId: VertexSlotId): ObjectBindings.DefaultIfNull<ColoredAngleAtPoint2D> {
-    return NestedValueBinding.of(nodeSlotsProperty.map { it[vertexSlotId] }) { it }
-      .defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
+  private fun scenePositionProperty(vertexSlotId: VertexSlotId): ObservableValue<ColoredAngleAtPoint2D> {
+     return NestedProperty(nodeSlotsProperty.map { it[vertexSlotId] }, { it })
+       .defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
   }
 
   fun registerSlot(vertexSlotId: VertexSlotId, positionInScene: ObservableValue<ColoredAngleAtPoint2D>) {
@@ -69,6 +66,6 @@ class Registry {
   }
 
   fun scenePositionOf(source: VertexSlotId): ColoredAngleAtPoint2D? {
-    return scenePosition(source).value
+    return nodeSlots[source]?.value
   }
 }

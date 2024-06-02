@@ -59,4 +59,11 @@ class Mapping<K, R, V> {
     map = map - key
     onValue(value)
   }
+
+  fun replace(key: K, value: V, onOldValue: (V) -> Unit = {}) {
+    requireNotNull(keyMap[key]) { "could not find reverse key" }
+    val oldValue = requireNotNull(get(key)) { "could not get value for $key" }
+    map = map - key + (key to value)
+    onOldValue(oldValue)
+  }
 }

@@ -16,16 +16,16 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
+import de.flapdoodle.kfx.bindings.NestedProperty
 import de.flapdoodle.kfx.bindings.ObjectBindings
+import de.flapdoodle.kfx.bindings.node.ChildNodeFilter
+import de.flapdoodle.kfx.bindings.node.ChildNodeProperty
+import de.flapdoodle.kfx.bindings.node.ChildNodeProperty.Companion.andThen
 import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.bindings.node.ChildNodeFilter
-import de.flapdoodle.kfx.bindings.node.ChildNodeProperty
-import de.flapdoodle.kfx.bindings.node.ChildNodeProperty.Companion.andThen
-import de.flapdoodle.kfx.bindings.node.NodeProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -62,7 +62,7 @@ class ValidatingColoredTextField<T: Any>(
   private val panePosition = paneProperty.property(Pane::boundsInParentProperty)
 
   private val textClipNodeProperty = paneProperty.property(Pane::clipProperty)
-  private val textClipProperty = NodeProperty(textClipNodeProperty, Node::boundsInParentProperty)
+  private val textClipProperty = NestedProperty(textClipNodeProperty, Node::boundsInParentProperty)
 
   private val textProperty = paneProperty.andThen(ChildNodeFilter.isInstance(Text::class))
   private val textBounds = textProperty.property(Text::boundsInParentProperty)

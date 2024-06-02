@@ -1,6 +1,21 @@
-package de.flapdoodle.kfx.bindings.node
+/*
+ * Copyright (C) 2022
+ *   Michael Mosmann <michael@mosmann.de>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.flapdoodle.kfx.bindings
 
-import de.flapdoodle.kfx.bindings.ObjectBindings
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
@@ -12,13 +27,13 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.framework.junit5.ApplicationExtension
 
 @ExtendWith(ApplicationExtension::class)
-class NodePropertiesTest {
+class NestedPropertiesTest {
   @Test
   fun updatePropertyWhenNodeWrapperIsSet() {
     val button = Button()
     val nodeWrapper = SimpleObjectProperty(button)
 
-    val testee = NodeProperties(nodeWrapper) { ObjectBindings.merge(it.blendModeProperty(), it.widthProperty()) { b, w -> "b: $b, w: $w" } }
+    val testee = NestedProperties(nodeWrapper) { ObjectBindings.merge(it.blendModeProperty(), it.widthProperty()) { b, w -> "b: $b, w: $w" } }
     var changes = emptyList<String?>()
     testee.addListener { _, _, change ->
       changes = changes + change
@@ -51,7 +66,7 @@ class NodePropertiesTest {
     val button = Button()
     val nodeWrapper = SimpleObjectProperty<Button>(null)
 
-    val testee = NodeProperties(nodeWrapper) { ObjectBindings.merge(it.blendModeProperty(), it.widthProperty()) { b, w -> "b: $b, w: $w" } }
+    val testee = NestedProperties(nodeWrapper) { ObjectBindings.merge(it.blendModeProperty(), it.widthProperty()) { b, w -> "b: $b, w: $w" } }
     var changes = emptyList<String?>()
     testee.addListener { _, _, change ->
       changes = changes + change
@@ -87,7 +102,7 @@ class NodePropertiesTest {
       blendMode = BlendMode.BLUE
     })
 
-    val testee = NodeProperties(nodeWrapper) { ObjectBindings.merge(it.blendModeProperty(), it.widthProperty()) { b, w -> "b: $b, w: $w" } }
+    val testee = NestedProperties(nodeWrapper) { ObjectBindings.merge(it.blendModeProperty(), it.widthProperty()) { b, w -> "b: $b, w: $w" } }
 
     var changes = emptyList<String?>()
     var invalidateCalled = false

@@ -41,11 +41,11 @@ import kotlin.math.max
 open class WeightGridPane : javafx.scene.layout.Region() {
 
 
-  internal val horizontalSpace = HORIZONTAL_SPACE.asProperty(5.0) {
+  internal val horizontalSpace = HORIZONTAL_SPACE.asProperty(0.0) {
     requestLayout()
   }
 
-  internal val verticalSpace = VERTICAL_SPACE.asProperty(5.0) {
+  internal val verticalSpace = VERTICAL_SPACE.asProperty(0.0) {
     requestLayout()
   }
 

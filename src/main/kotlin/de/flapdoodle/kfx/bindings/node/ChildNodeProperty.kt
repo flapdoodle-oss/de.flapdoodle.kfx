@@ -1,5 +1,7 @@
 package de.flapdoodle.kfx.bindings.node
 
+import de.flapdoodle.kfx.bindings.NestedProperties
+import de.flapdoodle.kfx.bindings.NestedProperty
 import javafx.beans.InvalidationListener
 import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.SimpleObjectProperty
@@ -42,12 +44,12 @@ class ChildNodeProperty<P: Parent, C: Node>(
   override fun removeListener(listener: ChangeListener<in C>) = child.removeListener(listener)
   override fun getValue(): C? = child.value
 
-  fun <T: Any> property(property: (C) -> ObservableValue<T?>): NodeProperty<C, T> {
-    return NodeProperty(this, property)
+  fun <T: Any> property(property: (C) -> ObservableValue<T>): NestedProperty<C, T> {
+    return NestedProperty(this, property)
   }
 
-  fun <T: Any> properties(binding: (C) -> ObjectBinding<T?>): NodeProperties<C, T> {
-    return NodeProperties(this, binding)
+  fun <T: Any> properties(binding: (C) -> ObjectBinding<T?>): NestedProperties<C, T> {
+    return NestedProperties(this, binding)
   }
 
   class ChildNodeListener<C: Node>(

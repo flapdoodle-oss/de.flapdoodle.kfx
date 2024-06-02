@@ -30,6 +30,7 @@ import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ObservableValue
 import javafx.css.PseudoClass
 import javafx.geometry.Bounds
 import javafx.scene.Parent
@@ -121,7 +122,7 @@ class Edge(
     }
   }
 
-  fun init(resolver: (VertexSlotId) -> ObjectBinding<ColoredAngleAtPoint2D>) {
+  fun init(resolver: (VertexSlotId) -> ObservableValue<ColoredAngleAtPoint2D>) {
     startConnector.bind(resolver(start).map { ColoredAngleAtPoint2D(sceneToLocal(it.point2D), it.angle, it.color) })
     endConnector.bind(resolver(end).map { ColoredAngleAtPoint2D(sceneToLocal(it.point2D), it.angle, it.color) })
   }

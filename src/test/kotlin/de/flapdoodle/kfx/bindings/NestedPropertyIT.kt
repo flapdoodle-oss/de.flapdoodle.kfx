@@ -1,11 +1,25 @@
-package de.flapdoodle.kfx.bindings.node
+/*
+ * Copyright (C) 2022
+ *   Michael Mosmann <michael@mosmann.de>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.flapdoodle.kfx.bindings
 
-import de.flapdoodle.kfx.controls.fields.TypedTextField
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Bounds
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.TextField
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +31,7 @@ import org.testfx.framework.junit5.Start
 import java.util.function.Predicate
 
 @ExtendWith(ApplicationExtension::class)
-class NodePropertyIT {
+class NestedPropertyIT {
     @Start
     private fun createElement(stage: Stage) {
         val testee = Button().apply {
@@ -36,7 +50,7 @@ class NodePropertyIT {
         val pane = robot.lookup(Predicate { it.id=="pane" }).queryAs(Pane::class.java)
         val testee = robot.lookup(Predicate { it.id=="testee" }).queryAs(Button::class.java)
 
-        val testeeLayoutBounds = NodeProperty(SimpleObjectProperty(testee)) { it.layoutBoundsProperty() }
+        val testeeLayoutBounds = NestedProperty(SimpleObjectProperty(testee)) { it.layoutBoundsProperty() }
         var testeeLayouts = emptyList<Bounds>()
         testeeLayoutBounds.addListener { _, _, layout ->
             testeeLayouts = if (layout!=null) testeeLayouts + layout else testeeLayouts

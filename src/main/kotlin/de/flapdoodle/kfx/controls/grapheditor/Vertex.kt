@@ -117,7 +117,8 @@ class Vertex(
   }
 
   fun replaceConnector(slotId: SlotId, connector: Slot) {
-    connectors.replaceAll { if (it.id==slotId) connector.copy(id = slotId) else it }
+    require(slotId == connector.id) {"slotId != connector.id ($slotId != ${connector.id})"}
+    connectors.replaceAll { if (it.id==slotId) connector else it }
   }
 
   class NodeHeader(label: ReadOnlyProperty<String>, controls: List<Node>) : HBox() {

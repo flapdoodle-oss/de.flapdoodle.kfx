@@ -17,17 +17,17 @@
 package de.flapdoodle.kfx.bindings.list
 
 import de.flapdoodle.kfx.collections.IndexedDiff
+import de.flapdoodle.kfx.collections.IndexedDiff.between
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.beans.value.WritableValue
-import javafx.collections.ObservableList
 
 class List2ListChangeListener<S, T>(
   private val destination: WritableValue<List<T>>,
   private val transformation: (S) -> T
 ) : ChangeListener<List<S>> {
   override fun changed(observable: ObservableValue<out List<S>>, oldValue: List<S>, newValue: List<S>) {
-    val changes = IndexedDiff.changes(oldValue, newValue)
+    val changes = between(oldValue, newValue)
 
     val removeItems = changes.filterIsInstance<IndexedDiff.Change.Remove<S>>()
     val addItems = changes.filterIsInstance<IndexedDiff.Change.Add<S>>()

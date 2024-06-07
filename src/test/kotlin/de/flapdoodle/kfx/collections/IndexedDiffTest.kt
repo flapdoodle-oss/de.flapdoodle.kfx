@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.collections
 
+import de.flapdoodle.kfx.collections.IndexedDiff.between
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -23,7 +24,7 @@ class IndexedDiffTest {
 
   @Test
   fun addToList() {
-    val changes = IndexedDiff.changes(listOf(), listOf("1", "b"))
+    val changes = between(listOf(), listOf("1", "b"))
 
     assertThat(changes)
       .containsExactly(
@@ -34,19 +35,19 @@ class IndexedDiffTest {
 
   @Test
   fun removeFromList() {
-    val changes = IndexedDiff.changes(listOf("A", "b", "A"), listOf("b"))
+    val changes = between(listOf("A", "b", "A"), listOf("b"))
 
     assertThat(changes)
       .containsExactly(
         IndexedDiff.Change.Remove(0),
         IndexedDiff.Change.Remove(2),
-        IndexedDiff.Change.Move(0,0)
+        IndexedDiff.Change.Move(0, 0)
       )
   }
 
   @Test
   fun removeAndAdd() {
-    val changes = IndexedDiff.changes(listOf("A", "b", "A"), listOf("B", "b", "C"))
+    val changes = between(listOf("A", "b", "A"), listOf("B", "b", "C"))
 
     assertThat(changes)
       .containsExactly(
@@ -61,7 +62,7 @@ class IndexedDiffTest {
 
   @Test
   fun moveAndMultiply() {
-    val changes = IndexedDiff.changes(listOf("A", "b", "c", "A"), listOf("b", "A", "c", "A", "A"))
+    val changes = between(listOf("A", "b", "c", "A"), listOf("b", "A", "c", "A", "A"))
 
     assertThat(changes)
       .containsExactly(
@@ -75,7 +76,7 @@ class IndexedDiffTest {
 
   @Test
   fun moveAndRemove() {
-    val changes = IndexedDiff.changes(listOf("A", "b", "c", "A", "A"), listOf("b", "A", "c", "A"))
+    val changes = between(listOf("A", "b", "c", "A", "A"), listOf("b", "A", "c", "A"))
 
     assertThat(changes)
       .containsExactly(
@@ -89,7 +90,7 @@ class IndexedDiffTest {
 
   @Test
   fun sample() {
-    val changes = IndexedDiff.changes(
+    val changes = between(
       listOf("1", "2", "3", "a", "a", "4", "5"),
       listOf("1", "a", "2", "4", "2", "b")
     )

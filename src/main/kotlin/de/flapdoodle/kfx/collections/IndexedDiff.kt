@@ -17,7 +17,15 @@
 package de.flapdoodle.kfx.collections
 
 object IndexedDiff {
+  @Deprecated("use between")
   fun <T> changes(old: List<T>, new: List<T>): List<Change<T>> {
+    return between(old, new)
+  }
+
+  /**
+   * first removed, then move and add
+   */
+  fun <T> between(old: List<T>, new: List<T>): List<Change<T>> {
     var changes = emptyList<Change<T>>()
 
     val oldAsSet = old.toSet()

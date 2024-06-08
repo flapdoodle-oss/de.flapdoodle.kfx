@@ -16,22 +16,27 @@
  */
 package de.flapdoodle.kfx.bindings
 
+import de.flapdoodle.kfx.logging.Logging
 import javafx.beans.InvalidationListener
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.collections.MapChangeListener
 import javafx.collections.ObservableMap
 
+@Deprecated("use ObjectBinding for cleanup")
 class MapProperty<K : Any, T>(
   node: ObservableMap<K, ObservableValue<T>>,
   key: K
 ): ObservableValue<T?> {
 
+  private val logger = Logging.logger(MapProperty::class)
   private val propertyListener = PropertyListener<T>()
 
   init {
     node.addListener( MapChangeListener { change ->
       if (change.key == key) {
+        logger.debug { "change: $change, property: ${propertyListener.valueProperty.value}" }
+
         if (change.wasAdded() && change.wasRemoved()) {
           val removed = requireNotNull(change.valueRemoved) { "was removed, but is null: $change"}
           removed.removeListener(propertyListener)

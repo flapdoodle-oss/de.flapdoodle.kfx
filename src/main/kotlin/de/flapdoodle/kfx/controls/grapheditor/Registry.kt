@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.controls.grapheditor
 
 import de.flapdoodle.kfx.bindings.MapProperty
+import de.flapdoodle.kfx.bindings.ObservableMaps
 import de.flapdoodle.kfx.bindings.Values
 import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
@@ -55,7 +56,7 @@ class Registry {
   }
 
   private fun scenePositionProperty(vertexSlotId: VertexSlotId): ObservableValue<ColoredAngleAtPoint2D> {
-    return MapProperty(nodeSlots, vertexSlotId).defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
+    return ObservableMaps.valueOf(nodeSlots, vertexSlotId).defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
 //     return NestedProperty(nodeSlotsProperty.map { it[vertexSlotId] }, { it })
 //       .defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
   }

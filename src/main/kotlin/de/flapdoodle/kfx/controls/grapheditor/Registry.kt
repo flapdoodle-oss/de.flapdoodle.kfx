@@ -53,8 +53,9 @@ class Registry {
   }
 
   private fun scenePositionProperty(vertexSlotId: VertexSlotId): ObservableValue<ColoredAngleAtPoint2D> {
-     return NestedProperty(nodeSlotsProperty.map { it[vertexSlotId] }, { it })
-       .defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
+    return MapProperty(nodeSlots, vertexSlotId).defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
+//     return NestedProperty(nodeSlotsProperty.map { it[vertexSlotId] }, { it })
+//       .defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
   }
 
   fun registerSlot(vertexSlotId: VertexSlotId, positionInScene: ObservableValue<ColoredAngleAtPoint2D>) {

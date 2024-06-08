@@ -19,27 +19,43 @@ package de.flapdoodle.kfx.bindings
 import javafx.beans.InvalidationListener
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.collections.MapChangeListener
+import javafx.collections.ObservableMap
 
-class NestedProperty<C : Any, T>(
-  node: ObservableValue<out C?>,
-  property: (C) -> ObservableValue<T>
+class MapProperty<K : Any, T>(
+  node: ObservableMap<K, ObservableValue<T>>,
+  key: K
 ): ObservableValue<T?> {
 
   private val propertyListener = PropertyListener<T>()
 
   init {
-    node.addListener { _, old, new ->
-      if (old != null) {
-        propertyListener.onDetach()
-        property(old).removeListener(propertyListener)
+    node.addListener( MapChangeListener { change ->
+      if (change.key == key) {
+        if (change.wasAdded() && change.wasRemoved()) {
+          val removed = requireNotNull(change.valueRemoved) { "was removed, but is null: $change"}
+          removed.removeListener(propertyListener)
+
+          val added = requireNotNull(change.valueAdded) { "was added, but is null: $change" }
+          added.addListener(propertyListener)
+
+          propertyListener.changed(added, change.valueRemoved?.value, added.value)
+        } else {
+          if (change.wasRemoved()) {
+            val removed = requireNotNull(change.valueRemoved) { "was removed, but is null: $change"}
+            propertyListener.onDetach()
+            removed.removeListener(propertyListener)
+          }
+          if (change.wasAdded()) {
+            val added = requireNotNull(change.valueAdded) { "was added, but is null: $change" }
+            added.addListener(propertyListener)
+            propertyListener.onAttach(added.value)
+          }
+        }
       }
-      if (new !=null) {
-        property(new).addListener(propertyListener)
-        propertyListener.onAttach(property(new).value)
-      }
-    }
-    propertyListener.onAttach(node.value?.let { property(it).value })
-    node.value?.let { property(it).addListener(propertyListener) }
+    })
+    propertyListener.onAttach(node[key]?.value)
+    node[key]?.addListener(propertyListener)
   }
 
   override fun addListener(listener: ChangeListener<in T?>) = propertyListener.valueProperty.addListener(listener)

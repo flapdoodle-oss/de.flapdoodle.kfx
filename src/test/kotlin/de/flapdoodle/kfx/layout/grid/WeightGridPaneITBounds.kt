@@ -39,8 +39,8 @@ internal class WeightGridPaneITBounds {
     fun justShow(robot: FxRobot) {
         assertThat(robot.lookup(".root").queryAs(WeightGridPane::class.java))
             .satisfies(ThrowingConsumer {
-                assertThat(it.verticalSpace.value).isEqualTo(5.0)
-                assertThat(it.horizontalSpace.value).isEqualTo(5.0)
+                assertThat(it.verticalSpace.value).isEqualTo(0.0)
+                assertThat(it.horizontalSpace.value).isEqualTo(0.0)
             })
 
     }

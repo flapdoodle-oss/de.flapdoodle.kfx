@@ -23,4 +23,8 @@ object Logging {
   fun logger(clazz: KClass<out Any>): KLogger {
     return KLogger(LogManager.getLogger(clazz.java))
   }
+
+  fun logger(clazz: Class<out Any>): KLogger {
+    return KLogger(LogManager.getLogger(clazz))
+  }
 }

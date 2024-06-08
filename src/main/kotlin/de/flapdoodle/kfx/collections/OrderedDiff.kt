@@ -67,7 +67,11 @@ object OrderedDiff {
 
   sealed class Change<T> {
     data class Remove<T>(val index: Int) : Change<T>()
-    data class Move<T>(val source: Int, val destination: Int) : Change<T>()
+    data class Move<T>(val source: Int, val destination: Int) : Change<T>() {
+      init {
+        require(source!=destination) {"source == destination"}
+      }
+    }
     data class Modify<T>(val source: Int, val destination: Int, val value: T) : Change<T>()
     data class Add<T>(val index: Int, val value: T) : Change<T>()
   }

@@ -27,7 +27,6 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
-import javafx.scene.shape.FillRule
 
 class NodeConnectionHint(): Region() {
   private val noopPoint = ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)

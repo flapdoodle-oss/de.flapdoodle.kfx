@@ -16,10 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.bettertable.events
 
-import de.flapdoodle.kfx.controls.bettertable.CellChangeListener
 import de.flapdoodle.kfx.controls.bettertable.Column
 import de.flapdoodle.kfx.controls.bettertable.TableChangeListener
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 
 data class EventContext<T : Any>(

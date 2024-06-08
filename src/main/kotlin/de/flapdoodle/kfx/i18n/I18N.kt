@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.i18n
 
-import java.util.Locale
+import java.util.*
 import kotlin.reflect.KClass
 
 object I18N {

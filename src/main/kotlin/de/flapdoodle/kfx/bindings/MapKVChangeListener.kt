@@ -19,7 +19,6 @@ package de.flapdoodle.kfx.bindings
 import de.flapdoodle.kfx.collections.Diff
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableMap
 
 class MapKVChangeListener<S, K, V>(

@@ -19,7 +19,7 @@ package de.flapdoodle.kfx.converters.impl
 import de.flapdoodle.kfx.converters.ValueOrError
 import java.text.NumberFormat
 import java.text.ParsePosition
-import java.util.Locale
+import java.util.*
 
 abstract class AbstractNumberConverter(
   protected val locale: Locale,

@@ -16,8 +16,6 @@
  */
 package de.flapdoodle.kfx.types.numbers
 
-import java.math.BigInteger
-
 object LongType : NumberType<Long> {
   override fun min(values: List<Long>): Long? {
     return values.minOrNull()

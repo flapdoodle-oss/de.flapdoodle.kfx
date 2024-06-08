@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.bindings
 
 import javafx.beans.InvalidationListener
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 

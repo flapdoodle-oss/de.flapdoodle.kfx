@@ -16,8 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
-import de.flapdoodle.kfx.types.ranges.RangeFactories
 import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.types.ranges.RangeFactories
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler

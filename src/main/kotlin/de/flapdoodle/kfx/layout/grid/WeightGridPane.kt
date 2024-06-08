@@ -18,28 +18,25 @@ package de.flapdoodle.kfx.layout.grid
 
 import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
-import de.flapdoodle.kfx.controls.charts.parts.Scale
-import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion
-import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion.SCALE_DISTANCE
-import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion.SCALE_LENGTH
-import de.flapdoodle.kfx.controls.charts.parts.Scale.Companion.SCALE_MIN_SPACING
-import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.extensions.constraint
+import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.extensions.heightLimits
+import de.flapdoodle.kfx.extensions.widthLimits
+import de.flapdoodle.kfx.logging.Logging
 import de.flapdoodle.kfx.types.AutoArray
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.css.CssMetaData
-import javafx.css.SimpleStyleableDoubleProperty
 import javafx.css.Styleable
 import javafx.geometry.HPos
 import javafx.geometry.VPos
 import javafx.scene.Node
-import javafx.scene.control.Control
-import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import kotlin.math.max
 
-open class WeightGridPane : javafx.scene.layout.Region() {
+open class WeightGridPane : Region() {
 
+  private val logger = Logging.logger(WeightGridPane::class)
 
   internal val horizontalSpace = HORIZONTAL_SPACE.asProperty(0.0) {
     requestLayout()
@@ -153,14 +150,6 @@ open class WeightGridPane : javafx.scene.layout.Region() {
     return sumOf(selector) + size * space
   }
 
-  private var debug = false
-  private var debugMinPref = false
-
-  @Deprecated("use with care")
-  fun enableDebug() {
-    debug = true
-  }
-
   private fun columnSizes() = gridMap.mapColumns { index, list ->
     val limits = list.map { it.widthLimits() }
     val min = limits.map { it.first }.maxOrNull() ?: 0.0
@@ -182,13 +171,13 @@ open class WeightGridPane : javafx.scene.layout.Region() {
 
   override fun computeMinWidth(height: Double): Double {
     val ret = columnSizes().sumWithSpaceBetween(horizontalSpace()) { it.min }
-    if (debugMinPref) println("computeMinWidth: $ret + insets..")
+    logger.debug { "computeMinWidth: $ret + insets.." }
     return ret + insets.left + insets.right
   }
 
   override fun computeMinHeight(width: Double): Double {
     val ret = rowSizes().sumWithSpaceBetween(verticalSpace()) { it.min }
-    if (debugMinPref) println("computeMinHeight: $ret + insets..")
+    logger.debug { "computeMinHeight: $ret + insets.." }
     return ret + insets.top + insets.bottom
   }
 
@@ -196,7 +185,7 @@ open class WeightGridPane : javafx.scene.layout.Region() {
     val ret = gridMap.mapColumns { _, list ->
       list.map {
         val w = max(it.prefWidth(-1.0), it.minWidth(-1.0))
-        if (debugMinPref) println("computePrefWidth: $it = $w")
+        logger.debug { "computePrefWidth: $it = $w" }
         w
       }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(horizontalSpace()) { it }
@@ -207,7 +196,7 @@ open class WeightGridPane : javafx.scene.layout.Region() {
     val ret = gridMap.mapRows { _, list ->
       list.map {
         val h = max(it.prefHeight(-1.0), it.minHeight(-1.0))
-        if (debugMinPref) println("computePrefHeight: $it = $h")
+        logger.debug { "computePrefHeight: $it = $h" }
         h
       }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(verticalSpace()) { it }
@@ -231,9 +220,6 @@ open class WeightGridPane : javafx.scene.layout.Region() {
 
     contentX = left
     contentY = top
-    if (debug) println("grid: $contentX, $contentY -> $contentWidth,$contentHeight")
-    if (debug) println("-------------------------")
-
 //      println("hspace: ${horizontalSpace.value}")
     val columnSizes = columnSizes()
     val rowSizes = rowSizes()
@@ -241,17 +227,18 @@ open class WeightGridPane : javafx.scene.layout.Region() {
     val hSpaces = if (columnSizes.isEmpty()) 0.0 else (columnSizes.size - 1) * horizontalSpace()
     val vSpaces = if (rowSizes.isEmpty()) 0.0 else (rowSizes.size - 1) * verticalSpace()
 
-    if (debug) println("columns")
-    if (debug) columnSizes.forEach { println(it) }
-    if (debug) println("rows")
-    if (debug) rowSizes.forEach { println(it) }
-
     val colWidths = WeightedSize.distribute(contentWidth - hSpaces, columnSizes)
     val rowHeights = WeightedSize.distribute(contentHeight - vSpaces, rowSizes)
 
-    if (debug) println("widths: $colWidths")
-    if (debug) println("heights: $rowHeights")
-    if (debug) println("-------------------------")
+    logger.debug {
+      "grid: $contentX, $contentY -> $contentWidth,$contentHeight\n" +
+          "-------------------------\n" +
+          "columns: $columnSizes\n" +
+          "rows: $rowSizes\n" +
+          "widths: $colWidths\n" +
+          "heights: $rowHeights\n" +
+          "-------------------------"
+    }
 
     gridMap.rows().forEachIndexed { r_idx, r ->
       gridMap.columns().forEachIndexed { c_idx, c ->
@@ -266,7 +253,7 @@ open class WeightGridPane : javafx.scene.layout.Region() {
           val hPos = node.constraint[HPos::class] ?: HPos.CENTER
           val vPos = node.constraint[VPos::class] ?: VPos.CENTER
 
-          if (debug) println("layoutInArea $node: $areaX, $areaY, $areaW, $areaH")
+          logger.debug { "layoutInArea $node: $areaX, $areaY, $areaW, $areaH" }
           layoutInArea(node, snappedToPixel(areaX), snappedToPixel(areaY), snappedToPixel(areaW), snappedToPixel(areaH), -1.0, hPos, vPos)
         }
       }

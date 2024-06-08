@@ -17,7 +17,7 @@
 package de.flapdoodle.kfx.bindings
 
 import javafx.util.Subscription
-import java.util.WeakHashMap
+import java.util.*
 
 class Subscriptions {
   private val subscriptionMap = WeakHashMap<Any, Subscription>()

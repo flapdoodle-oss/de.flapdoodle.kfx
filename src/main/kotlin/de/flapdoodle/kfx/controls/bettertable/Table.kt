@@ -19,7 +19,9 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.bettertable.events.*
-import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.extensions.onBindToScene
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.ReadOnlyObjectProperty

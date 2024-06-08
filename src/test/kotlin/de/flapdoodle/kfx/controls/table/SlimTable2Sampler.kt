@@ -18,29 +18,22 @@ package de.flapdoodle.kfx.controls.table
 
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
-import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
-import javafx.geometry.Bounds
 import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.Scene
-import javafx.scene.control.*
-import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.control.Button
+import javafx.scene.control.Label
+import javafx.scene.control.SplitPane
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import javafx.util.Callback
 import javafx.util.converter.DefaultStringConverter
 import javafx.util.converter.IntegerStringConverter
-import org.controlsfx.control.spreadsheet.SpreadsheetView
-import org.controlsfx.control.tableview2.TableColumn2
-import org.controlsfx.control.tableview2.TableView2
-import org.controlsfx.control.tableview2.cell.TextField2TableCell
 
 class SlimTable2Sampler {
   class Sample : Application() {

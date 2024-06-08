@@ -18,7 +18,6 @@ package de.flapdoodle.kfx.types.numbers
 
 import java.math.BigDecimal
 import java.math.MathContext
-import java.math.RoundingMode
 
 object BigDecimalType : NumberType<BigDecimal> {
   override fun min(values: List<BigDecimal>): BigDecimal? {

@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.types.numbers
 
-import java.math.BigDecimal
 import java.math.BigInteger
 
 object BigIntType : NumberType<BigInteger> {

@@ -17,12 +17,9 @@
 package de.flapdoodle.kfx.controls.charts
 
 import de.flapdoodle.kfx.bindings.toObservable
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.scene.Scene
-import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Button

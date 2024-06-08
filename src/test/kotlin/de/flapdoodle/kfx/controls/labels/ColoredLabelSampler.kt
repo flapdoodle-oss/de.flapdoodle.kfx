@@ -20,7 +20,6 @@ import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Orientation
 import javafx.scene.Scene
-import javafx.scene.control.Label
 import javafx.scene.layout.FlowPane
 import javafx.scene.paint.Color
 import javafx.stage.Stage

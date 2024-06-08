@@ -21,15 +21,9 @@ import de.flapdoodle.kfx.converters.ValidatingConverter
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.value.ChangeListener
-import javafx.collections.ListChangeListener
-import javafx.scene.Node
-import javafx.scene.Parent
 import javafx.scene.control.TextField
-import javafx.scene.control.skin.TextFieldSkin
 import javafx.scene.layout.Border
 import javafx.scene.paint.Color
-import javafx.scene.text.Text
 
 class ValidatingTextField<T : Any>(
   val converter: ValidatingConverter<T>,

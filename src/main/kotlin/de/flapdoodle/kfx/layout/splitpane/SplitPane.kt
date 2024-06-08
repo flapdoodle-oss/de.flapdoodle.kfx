@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.layout.splitpane
 
-import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.scenePosition
@@ -33,7 +32,6 @@ import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
-import javafx.scene.transform.Scale
 import kotlin.math.max
 
 class SplitPane<T : Node>(

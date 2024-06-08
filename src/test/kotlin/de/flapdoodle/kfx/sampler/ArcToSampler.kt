@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.sampler
 
-import de.flapdoodle.kfx.strokes.LinearGradientSampler
 import javafx.application.Application
 import javafx.scene.Group
 import javafx.scene.Scene

@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.types.numbers
 
-import de.flapdoodle.kfx.types.numbers.IntType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ThreadLocalRandom

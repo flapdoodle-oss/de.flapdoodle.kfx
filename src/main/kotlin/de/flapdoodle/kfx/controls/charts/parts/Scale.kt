@@ -18,12 +18,12 @@ package de.flapdoodle.kfx.controls.charts.parts
 
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
-import de.flapdoodle.kfx.types.ranges.Range
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.types.Direction
+import de.flapdoodle.kfx.types.ranges.Range
 import javafx.beans.value.ObservableValue
 import javafx.css.CssMetaData
 import javafx.css.Styleable
@@ -114,12 +114,6 @@ class Scale<T: Any>(
 
     all.children.addAll(ticksPane, labelsPane)
     children.addAll(all)
-  }
-
-  @Deprecated("use with care")
-  fun enableDebug(): Scale<T> {
-    all.enableDebug()
-    return this
   }
 
   override fun getCssMetaData(): List<CssMetaData<out Styleable, *>> {

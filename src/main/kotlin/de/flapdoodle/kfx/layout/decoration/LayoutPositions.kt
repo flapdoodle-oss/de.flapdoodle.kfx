@@ -18,7 +18,6 @@ package de.flapdoodle.kfx.layout.decoration
 
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.extensions.minus
-import de.flapdoodle.kfx.types.AngleAtPoint2D
 import de.flapdoodle.kfx.types.BoundingBoxes
 import de.flapdoodle.kfx.types.CardinalDirection
 import javafx.geometry.Bounds

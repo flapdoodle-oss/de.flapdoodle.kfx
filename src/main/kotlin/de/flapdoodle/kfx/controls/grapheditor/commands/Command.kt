@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor.commands
 
-import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import javafx.geometry.Point2D
 
 sealed class Command {

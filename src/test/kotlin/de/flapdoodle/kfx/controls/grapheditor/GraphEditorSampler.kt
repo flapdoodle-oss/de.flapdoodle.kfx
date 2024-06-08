@@ -16,8 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor
 
-import de.flapdoodle.kfx.controls.bettertable.TableFactory
 import de.flapdoodle.kfx.colors.HashedColors
+import de.flapdoodle.kfx.controls.bettertable.TableFactory
 import de.flapdoodle.kfx.controls.grapheditor.events.Event
 import de.flapdoodle.kfx.controls.grapheditor.events.EventListener
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position

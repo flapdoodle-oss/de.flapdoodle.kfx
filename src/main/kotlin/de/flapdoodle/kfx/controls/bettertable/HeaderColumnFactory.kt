@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import javafx.scene.control.Label
-import javafx.scene.text.TextAlignment
 
 fun interface HeaderColumnFactory<T : Any> {
   fun headerColumn(column: Column<T, out Any>): HeaderColumn<T>

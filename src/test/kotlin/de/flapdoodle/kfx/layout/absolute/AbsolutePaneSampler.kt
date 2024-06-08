@@ -18,23 +18,16 @@ package de.flapdoodle.kfx.layout.absolute
 
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
-import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
-import de.flapdoodle.kfx.layout.splitpane.SplitPane
 import javafx.application.Application
-import javafx.beans.property.SimpleObjectProperty
-import javafx.event.EventHandler
 import javafx.geometry.HPos
 import javafx.geometry.Insets
 import javafx.geometry.VPos
 import javafx.scene.Group
-import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
-import javafx.scene.control.ScrollPane
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Background
-import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
@@ -42,7 +35,6 @@ import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo
 import javafx.scene.shape.Path
 import javafx.stage.Stage
-import org.junit.jupiter.api.Assertions.*
 
 class AbsolutePaneSampler {
   class Sample : Application() {

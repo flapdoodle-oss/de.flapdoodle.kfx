@@ -22,7 +22,6 @@ import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
-import javafx.collections.ListChangeListener
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow

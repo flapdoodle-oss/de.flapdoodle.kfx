@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import javafx.scene.text.TextAlignment
-import javafx.util.StringConverter
 
 open class Column<T: Any, C: Any>(
   open val label: String,

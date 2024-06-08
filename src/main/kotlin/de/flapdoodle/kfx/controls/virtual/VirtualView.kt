@@ -20,7 +20,10 @@ import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.events.SharedLock
-import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.extensions.layoutPosition
+import de.flapdoodle.kfx.extensions.minus
+import de.flapdoodle.kfx.extensions.plus
+import de.flapdoodle.kfx.extensions.screenPosition
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.virtual.ScrollBounds
 import de.flapdoodle.kfx.layout.virtual.bind

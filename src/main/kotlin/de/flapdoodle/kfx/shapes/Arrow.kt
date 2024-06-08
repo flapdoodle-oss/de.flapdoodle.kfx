@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.shapes
 
 import de.flapdoodle.kfx.types.AngleAndPoint2D
-import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.value.ObservableValue
 import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo

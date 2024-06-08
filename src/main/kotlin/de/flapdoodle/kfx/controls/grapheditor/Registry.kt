@@ -16,7 +16,9 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor
 
-import de.flapdoodle.kfx.bindings.*
+import de.flapdoodle.kfx.bindings.MapProperty
+import de.flapdoodle.kfx.bindings.Values
+import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D

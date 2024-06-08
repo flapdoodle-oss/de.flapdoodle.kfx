@@ -20,8 +20,8 @@ import de.flapdoodle.kfx.collections.Change
 import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
-import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
 import de.flapdoodle.kfx.types.Id
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
 import javafx.geometry.Point2D
 
 data class Vertex<T>(

@@ -16,14 +16,17 @@
  */
 package de.flapdoodle.kfx.controls.virtual
 
-import de.flapdoodle.kfx.types.BoundingBoxes
 import de.flapdoodle.kfx.extensions.mapNullable
 import de.flapdoodle.kfx.extensions.withAnchors
+import de.flapdoodle.kfx.types.BoundingBoxes
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.layout.*
+import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo

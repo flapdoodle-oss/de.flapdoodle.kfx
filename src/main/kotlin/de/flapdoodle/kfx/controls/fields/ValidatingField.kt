@@ -21,8 +21,6 @@ import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.value.ObservableValue
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
 
 interface ValidatingField<T> {
   fun get(): T?

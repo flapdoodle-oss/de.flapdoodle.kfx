@@ -20,7 +20,6 @@ import de.flapdoodle.kfx.bindings.list.IndexedMappingListChangeListener
 import de.flapdoodle.kfx.bindings.list.List2ListChangeListener
 import de.flapdoodle.kfx.bindings.list.List2ObservableListChangeListener
 import de.flapdoodle.kfx.bindings.list.MappingListChangeListener
-import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.value.ObservableValue
 import javafx.beans.value.WritableValue
 import javafx.collections.ObservableList

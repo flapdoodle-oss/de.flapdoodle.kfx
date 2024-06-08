@@ -16,14 +16,12 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor.slots
 
-import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.controls.grapheditor.Markers
 import de.flapdoodle.kfx.controls.grapheditor.Registry
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.extensions.cssClassName
-import de.flapdoodle.kfx.extensions.onAttach
 import de.flapdoodle.kfx.extensions.onBindToScene
 import de.flapdoodle.kfx.extensions.plus
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
@@ -32,13 +30,7 @@ import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.*
-import javafx.scene.paint.Color
-import javafx.scene.shape.ArcTo
-import javafx.scene.shape.Circle
-import javafx.scene.shape.LineTo
-import javafx.scene.shape.MoveTo
-import javafx.scene.shape.Path
-import javafx.util.Duration
+import javafx.scene.shape.*
 import javafx.util.Subscription
 
 class SlotPane(

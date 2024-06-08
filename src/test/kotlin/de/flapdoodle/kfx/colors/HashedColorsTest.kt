@@ -16,11 +16,8 @@
  */
 package de.flapdoodle.kfx.colors
 
-import de.flapdoodle.kfx.colors.HashedColors
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 class HashedColorsTest {

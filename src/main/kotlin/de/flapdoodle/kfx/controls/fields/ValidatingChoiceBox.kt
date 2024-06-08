@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.controls.fields
 
 import javafx.beans.property.ObjectProperty
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.ChoiceBox

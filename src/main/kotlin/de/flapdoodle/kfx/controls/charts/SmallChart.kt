@@ -16,10 +16,10 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
-import de.flapdoodle.kfx.bindings.*
+import de.flapdoodle.kfx.bindings.ObjectBindings
+import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.controls.charts.parts.ChartLine
 import de.flapdoodle.kfx.controls.charts.parts.Scale
-import de.flapdoodle.kfx.types.ranges.RangeFactory
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.Colors
 import de.flapdoodle.kfx.extensions.bindCss
@@ -28,6 +28,7 @@ import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.types.Direction
 import de.flapdoodle.kfx.types.Id
+import de.flapdoodle.kfx.types.ranges.RangeFactory
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler

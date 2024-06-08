@@ -16,13 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.bettertable
 
-import javafx.event.EventHandler
 import javafx.geometry.Pos
-import javafx.scene.control.TextField
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.scene.text.TextAlignment
-import javafx.util.StringConverter
 
 object Cells {
 

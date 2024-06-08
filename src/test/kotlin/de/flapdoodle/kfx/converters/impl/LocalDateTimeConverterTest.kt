@@ -19,9 +19,7 @@ package de.flapdoodle.kfx.converters.impl
 import de.flapdoodle.kfx.converters.ValueOrError
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.InstanceOfAssertFactories
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.util.*

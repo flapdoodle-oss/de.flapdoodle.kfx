@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.types.ranges
 
-import de.flapdoodle.kfx.types.ranges.LocalDateRangeFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

@@ -19,7 +19,6 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.scene.layout.HBox
 

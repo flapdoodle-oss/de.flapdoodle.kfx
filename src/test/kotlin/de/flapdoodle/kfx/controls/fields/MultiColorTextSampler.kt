@@ -19,9 +19,7 @@ package de.flapdoodle.kfx.controls.fields
 import javafx.application.Application
 import javafx.geometry.Orientation
 import javafx.scene.Scene
-import javafx.scene.layout.Border
 import javafx.scene.layout.FlowPane
-import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
 import javafx.stage.Stage

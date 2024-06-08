@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.controls.table
 
 import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.collections.ObservableList
 import javafx.scene.control.Control
@@ -25,7 +24,6 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.SkinBase
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
-import javafx.scene.shape.Rectangle
 
 class SlimTable<T: Any>(
   internal val rows: ObservableList<T>,

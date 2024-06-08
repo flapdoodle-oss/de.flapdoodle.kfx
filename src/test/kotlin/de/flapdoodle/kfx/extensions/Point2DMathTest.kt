@@ -16,8 +16,8 @@
  */
 package de.flapdoodle.kfx.extensions
 
-import de.flapdoodle.kfx.types.Point2DMath.angle
 import de.flapdoodle.kfx.types.Point2DMath
+import de.flapdoodle.kfx.types.Point2DMath.angle
 import javafx.geometry.Point2D
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage

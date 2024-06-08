@@ -17,9 +17,7 @@
 package de.flapdoodle.kfx.types
 
 import de.flapdoodle.kfx.types.CardinalDirections.cardinalDirection
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class CardinalDirectionsTest {

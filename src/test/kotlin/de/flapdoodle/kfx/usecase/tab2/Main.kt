@@ -17,19 +17,19 @@
 package de.flapdoodle.kfx.usecase.tab2
 
 import de.flapdoodle.kfx.colors.HashedColors
-import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.GraphEditorModelAdapter
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
-import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.commands.Command
-import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.events.ModelEvent
-import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.events.ModelEventListener
-import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.usecase.tab2.defaults.DummyVertexContentFactory
 import de.flapdoodle.kfx.usecase.tab2.defaults.Models
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.GraphEditorModelAdapter
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.commands.Command
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.events.ModelEvent
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.events.ModelEventListener
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Edge
 import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.model.Vertex
+import de.flapdoodle.kfx.usecase.tab2.graphmodeleditor.types.VertexId
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.scene.control.Button

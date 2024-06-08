@@ -17,9 +17,9 @@
 package de.flapdoodle.kfx.controls.grapheditor
 
 import de.flapdoodle.kfx.bindings.NodeContainerProperty
-import de.flapdoodle.kfx.controls.grapheditor.slots.SlotsPane
 import de.flapdoodle.kfx.controls.grapheditor.slots.Position
 import de.flapdoodle.kfx.controls.grapheditor.slots.Slot
+import de.flapdoodle.kfx.controls.grapheditor.slots.SlotsPane
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
@@ -33,11 +33,12 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Label
-import javafx.scene.layout.*
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 
 class Vertex(
   name: String,

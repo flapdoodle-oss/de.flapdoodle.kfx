@@ -19,7 +19,6 @@ package de.flapdoodle.kfx.controls.fields
 import de.flapdoodle.kfx.converters.Converters
 import de.flapdoodle.kfx.converters.impl.LocalDateConverter
 import javafx.application.Application
-import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.layout.FlowPane

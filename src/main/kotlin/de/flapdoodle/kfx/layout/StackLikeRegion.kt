@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.layout
 
+import de.flapdoodle.kfx.logging.Logging
 import javafx.collections.ObservableList
 import javafx.geometry.HPos
 import javafx.geometry.VPos
@@ -24,29 +25,29 @@ import javafx.scene.layout.Region
 import kotlin.math.max
 
 open class StackLikeRegion : Region() {
-  private val debug = false
-  
+  private val logger = Logging.logger(StackLikeRegion::class)
+
   final override fun computeMinHeight(width: Double): Double {
     val height = children.map { it.minHeight(width) }.fold(0.0) { l, r -> max(l, r) }
-    if (debug) println("computeMinHeight: ${insets.top} + $height + ${insets.bottom}")
+    logger.debug { "computeMinHeight: ${insets.top} + $height + ${insets.bottom}" }
     return insets.top + height + insets.bottom
   }
 
   final override fun computeMinWidth(height: Double): Double {
     val width = children.map { it.minWidth(height) }.fold(0.0) { l, r -> max(l, r) }
-    if (debug) println("computeMinWidth: ${insets.left} + $width + ${insets.right}")
+    logger.debug { "computeMinWidth: ${insets.left} + $width + ${insets.right}" }
     return insets.left + width + insets.right
   }
 
   final override fun computePrefHeight(width: Double): Double {
     val height = children.map { it.prefHeight(width) }.fold(0.0) { l, r -> max(l, r) }
-    if (debug) println("computePrefHeight: ${insets.top} + $height + ${insets.bottom}")
+    logger.debug { "computePrefHeight: ${insets.top} + $height + ${insets.bottom}" }
     return insets.top + height + insets.bottom
   }
 
   final override fun computePrefWidth(height: Double): Double {
     val width = children.map { it.prefWidth(height) }.fold(0.0) { l, r -> max(l, r) }
-    if (debug) println("computePrefWidth: ${insets.left} + $width + ${insets.right}")
+    logger.debug { "computePrefWidth: ${insets.left} + $width + ${insets.right}" }
     return insets.left + width + insets.right
   }
 

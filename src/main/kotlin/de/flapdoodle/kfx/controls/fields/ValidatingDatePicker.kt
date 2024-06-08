@@ -23,8 +23,6 @@ import de.flapdoodle.kfx.converters.impl.TemporalAccessorParseException
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.DatePicker
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Border
 import javafx.scene.paint.Color
 import java.time.LocalDate

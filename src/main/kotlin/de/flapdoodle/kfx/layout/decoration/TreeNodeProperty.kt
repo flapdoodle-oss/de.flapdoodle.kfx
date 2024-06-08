@@ -19,7 +19,6 @@ package de.flapdoodle.kfx.layout.decoration
 import javafx.collections.ListChangeListener
 import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.layout.Pane
 
 class TreeNodeProperty<P: Parent, C: Node>(
   val node: P,

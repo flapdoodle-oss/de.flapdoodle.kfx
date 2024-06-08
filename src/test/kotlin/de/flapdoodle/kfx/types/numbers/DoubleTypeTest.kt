@@ -16,7 +16,6 @@
  */
 package de.flapdoodle.kfx.types.numbers
 
-import de.flapdoodle.kfx.types.numbers.DoubleType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.junit.jupiter.api.Test

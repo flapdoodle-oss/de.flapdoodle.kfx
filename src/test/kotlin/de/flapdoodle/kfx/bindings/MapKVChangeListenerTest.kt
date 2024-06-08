@@ -19,7 +19,6 @@ package de.flapdoodle.kfx.bindings
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 

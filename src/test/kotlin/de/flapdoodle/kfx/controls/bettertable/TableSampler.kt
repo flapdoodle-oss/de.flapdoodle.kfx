@@ -17,17 +17,15 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.ReadOnlyState
-import de.flapdoodle.kfx.converters.Converters
 import de.flapdoodle.kfx.extensions.withAnchors
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
-import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.SplitPane
-import javafx.scene.layout.*
-import javafx.scene.paint.Color
+import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import java.time.LocalDate
 

@@ -17,15 +17,11 @@
 package de.flapdoodle.kfx.converters.impl
 
 import de.flapdoodle.kfx.converters.ValueOrError
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactories
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.text.ParseException
 import java.time.LocalDate
 import java.time.Month
-import java.time.format.DateTimeParseException
 import java.util.*
 
 class LocalDateConverterTest {

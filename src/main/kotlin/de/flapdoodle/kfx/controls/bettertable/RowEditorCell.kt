@@ -20,7 +20,8 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
 import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
-import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode

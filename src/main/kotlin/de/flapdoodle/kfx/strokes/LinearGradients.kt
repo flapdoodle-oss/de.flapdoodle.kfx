@@ -17,9 +17,9 @@
 package de.flapdoodle.kfx.strokes
 
 import de.flapdoodle.kfx.bindings.ObjectBindings
-import de.flapdoodle.kfx.types.Point2DMath.angle
 import de.flapdoodle.kfx.types.CardinalDirection
 import de.flapdoodle.kfx.types.CardinalDirections
+import de.flapdoodle.kfx.types.Point2DMath.angle
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import javafx.scene.paint.*

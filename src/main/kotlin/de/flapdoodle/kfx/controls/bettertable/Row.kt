@@ -21,6 +21,7 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
+import de.flapdoodle.kfx.logging.Logging
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
@@ -37,6 +38,8 @@ class Row<T : Any>(
 //  internal val index: Int,
   internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
 ) : StackLikeRegion() {
+
+  private val logger = Logging.logger(Row::class)
 
   private val insertRowOnTopContainer = HBox()
   private val rowOnTopContainer = HBox()
@@ -170,9 +173,9 @@ class Row<T : Any>(
           is TableEvent.StopInsertRow<T> -> {
             rowEditor?.let {
               if (it.value!=event.row) {
-                println("row editor does not match: ${it.value} != ${event.row}")
+                logger.warning { "row editor does not match: ${it.value} != ${event.row}" }
               } else {
-                println("row editor match: ${it.value} == ${event.row}")
+                logger.warning { "row editor match: ${it.value} == ${event.row}" }
               }
               it.onTableEvent(event)
               rowOnTopContainer.children.clear()

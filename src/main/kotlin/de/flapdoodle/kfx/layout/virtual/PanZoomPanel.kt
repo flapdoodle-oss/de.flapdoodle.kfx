@@ -84,11 +84,10 @@ class PanZoomPanel(
 
         scrollX.setBounds(
             ScrollBounds.of(
-                windowSize = width,
-                itemSize = wrapper.containerlessBoundsInParent().width,
-                itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minX,
-                currentItemOffset = wrapper.layoutX,
-                false
+              windowSize = width,
+              itemSize = wrapper.containerlessBoundsInParent().width,
+              itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minX,
+              currentItemOffset = wrapper.layoutX
             )
         )
 
@@ -102,10 +101,10 @@ class PanZoomPanel(
 
         scrollY.setBounds(
             ScrollBounds.of(
-                windowSize = height,
-                itemSize =  wrapper.containerlessBoundsInParent().height,
-                itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minY,
-                currentItemOffset = wrapper.layoutY
+              windowSize = height,
+              itemSize =  wrapper.containerlessBoundsInParent().height,
+              itemOffset = zoom.get() * wrapper.containerlessBoundsInLocal().minY,
+              currentItemOffset = wrapper.layoutY
             )
         )
 

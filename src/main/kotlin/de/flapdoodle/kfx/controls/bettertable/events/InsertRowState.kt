@@ -16,6 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.bettertable.events
 
+import de.flapdoodle.kfx.logging.Logging
+
 class InsertRowState<T : Any>(
   private val defaultState: State<T>,
   private val context: EventContext<T>,
@@ -23,6 +25,8 @@ class InsertRowState<T : Any>(
   private val row: T,
   private val insertIndex: Int
 ) : StateWithContext<T>(context) {
+  private val logger = Logging.logger(InsertRowState::class)
+
   private var currentRow: T = row
   private var lastFocusEvent: TableEvent.Focus<T, out Any>? = null
 
@@ -101,7 +105,7 @@ class InsertRowState<T : Any>(
       else -> {
 //        println("$this: unknown $event")
 //        return defaultState.onEvent(event)
-        println("$this: ignore $event")
+        logger.info { "$this: ignore $event" }
       }
     }
     return State.NextState(this)

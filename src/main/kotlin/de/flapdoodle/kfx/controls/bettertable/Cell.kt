@@ -23,6 +23,7 @@ import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.StackLikeRegion
+import de.flapdoodle.kfx.logging.Logging
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -36,6 +37,8 @@ class Cell<T : Any, C : Any>(
   val eventListener: TableRequestEventListener<T>,
   fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup()
 ) : StackLikeRegion() {
+
+  private val logger = Logging.logger(Cell::class)
 
   private val label = Label().apply {
     isWrapText = false
@@ -93,7 +96,6 @@ class Cell<T : Any, C : Any>(
     }
 
     addEventHandler(MouseEvent.ANY) {
-//      println("event: $it")
       if (it.eventType==MouseEvent.MOUSE_PRESSED && it.clickCount == 1) {
         it.consume()
         eventListener.fireEvent(TableEvent.RequestFocus(row, column))
@@ -216,7 +218,7 @@ class Cell<T : Any, C : Any>(
       }
 
       else -> {
-        println("$this: ignore: $event")
+        logger.info { "$this: ignore: $event" }
       }
     }
   }

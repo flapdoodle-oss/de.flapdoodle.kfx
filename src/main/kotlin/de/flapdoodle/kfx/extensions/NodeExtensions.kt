@@ -88,7 +88,6 @@ fun Node.parentPath(child: Node): List<Node> {
 
 
 fun <T : Node> Node.parentOfType(type: KClass<T>): T? {
-  println("parent of $this -> $parent (search $type)")
   if (parent == null) return null
   type.safeCast(parent)?.also { return it }
   return parent?.parentOfType(type)

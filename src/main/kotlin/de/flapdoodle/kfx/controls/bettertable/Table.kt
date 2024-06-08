@@ -24,6 +24,7 @@ import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.onBindToScene
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
+import de.flapdoodle.kfx.logging.Logging
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
@@ -41,8 +42,8 @@ class Table<T: Any>(
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : StackLikeRegion() {
 
-  private val debug = false
-  
+  private val logger = Logging.logger(Table::class)
+
   private val _rows: SimpleObjectProperty<List<T>> = SimpleObjectProperty(emptyList())
   private val _columns: SimpleObjectProperty<List<Column<T, out Any>>> = SimpleObjectProperty(emptyList())
 
@@ -141,7 +142,7 @@ class Table<T: Any>(
   }
 
   internal fun onTableEvent(event: TableEvent.ResponseEvent<T>) {
-    if (debug) println("table event: $event")
+    logger.debug { "table event: $event" }
     when (event) {
       is TableEvent.ResizeColumn<T, out Any> -> {
         val columnSize = __rows.columnSize(event.column)

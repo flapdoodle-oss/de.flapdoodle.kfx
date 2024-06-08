@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.layout.virtual
 
 import de.flapdoodle.kfx.bindings.mapToDouble
+import de.flapdoodle.kfx.logging.Logging
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Bounds
 import javafx.scene.control.ScrollBar
@@ -40,13 +41,14 @@ data class ScrollBounds(
     ) {
 
     companion object {
+        private val logger = Logging.logger(ScrollBounds::class)
+
         private fun of(windowSize: Number, itemSize: Double, itemOffset: Double, currentItemOffset: Number): ScrollBounds {
             return of(
                 windowSize = windowSize.toDouble(),
                 itemSize = itemSize,
                 itemOffset = itemOffset,
-                currentItemOffset = currentItemOffset.toDouble(),
-                false
+                currentItemOffset = currentItemOffset.toDouble()
             )
         }
 
@@ -96,8 +98,7 @@ data class ScrollBounds(
             windowSize: Double, // >0
             itemSize: Double, // >=0
             itemOffset: Double, // +-
-            currentItemOffset: Double,
-            debug: Boolean = false
+            currentItemOffset: Double
         ): ScrollBounds {
             val fact = itemSize / windowSize // it < 1 if item is smaller
 
@@ -112,21 +113,18 @@ data class ScrollBounds(
 
                 val visibleAmount = diff * fact
 
-                if (debug) {
-                    println("--------------------------")
-                    println("windowSize: $windowSize")
-                    println("itemSize: $itemSize")
-                    println("itemOffset: $itemOffset")
-                    println("currentItemOffset: $currentItemOffset")
-                    println("--------------------------")
-                    println("diff: $diff")
-                    println("max: $max")
-                    println("min: $min")
-                    println("fixedMax: $fixedMax")
-                    println("fixedMin: $fixedMin")
-                    println("visibleAmount: $visibleAmount")
-                    println()
-                    println()
+                logger.debug { "--------------------------\n"+
+                    "windowSize: $windowSize\n"+
+                    "itemSize: $itemSize\n"+
+                    "itemOffset: $itemOffset\n"+
+                    "currentItemOffset: $currentItemOffset\n"+
+                    "--------------------------\n"+
+                    "diff: $diff\n"+
+                    "max: $max\n"+
+                    "min: $min\n"+
+                    "fixedMax: $fixedMax\n"+
+                    "fixedMin: $fixedMin\n"+
+                    "visibleAmount: $visibleAmount\n"
                 }
 
                 return ScrollBounds(fixedMin, fixedMax, visibleAmount)

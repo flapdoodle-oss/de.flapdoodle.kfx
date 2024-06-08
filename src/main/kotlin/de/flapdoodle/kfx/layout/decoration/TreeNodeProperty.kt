@@ -48,7 +48,6 @@ class TreeNodeProperty<P: Parent, C: Node>(
         }
         _filtered = value
         _filtered?.let {
-          println("found --> $it")
           child.onAttach(it.childrenUnmodifiable)
           it.childrenUnmodifiable.addListener(child)
         }

@@ -50,11 +50,6 @@ class NodeTreeProperty<P: Parent, C: Node>(
 
     data class SingleMatcherAdapter<C: Node>(val filter: NodeFilter<C>): MatcherAdapter<C>() {
       private val valueProperty = SimpleObjectProperty<C>(null)
-      init {
-        if (debug) valueProperty.addListener { observable, oldValue, newValue ->
-          println("$filter: $newValue")
-        }
-      }
 
       override fun valueProperty(): ObservableValue<C> = valueProperty
 
@@ -74,11 +69,6 @@ class NodeTreeProperty<P: Parent, C: Node>(
       val child: MatcherAdapter<C>
     ): MatcherAdapter<C>() {
       private val parentProperty = SimpleObjectProperty<P>(null)
-      init {
-        if (debug) parentProperty.addListener { observable, oldValue, newValue ->
-          println("$filter: $newValue")
-        }
-      }
 
       override fun valueProperty(): ObservableValue<C> = child.valueProperty()
 
@@ -115,8 +105,6 @@ class NodeTreeProperty<P: Parent, C: Node>(
   }
 
   companion object {
-    private val debug = false
-
     private fun <T: Node> adapterOf(matcher: NodeTreeMatcher<T>): MatcherAdapter<T> {
       return when (matcher) {
         is NodeTreeMatcher.SingleMatcher -> MatcherAdapter.SingleMatcherAdapter(matcher.filter)

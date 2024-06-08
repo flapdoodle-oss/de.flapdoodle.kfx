@@ -23,6 +23,7 @@ import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.StackLikeRegion
+import de.flapdoodle.kfx.logging.Logging
 import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -36,6 +37,7 @@ class RowEditorCell<T : Any, C : Any>(
   fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup()
 ) : StackLikeRegion() {
 
+  private val logger = Logging.logger(Cell::class)
 //  private lateinit var eventListener: TableRequestEventListener<T>
 
   private val label = Label().apply {
@@ -196,7 +198,7 @@ class RowEditorCell<T : Any, C : Any>(
 //      }
 
       else -> {
-        println("ignore: $event")
+        logger.info { "ignore: $event" }
       }
     }
   }

@@ -25,6 +25,7 @@ import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
 import de.flapdoodle.kfx.controls.virtual.VirtualView
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
+import de.flapdoodle.kfx.logging.Logging
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import de.flapdoodle.kfx.types.LayoutBounds
 import de.flapdoodle.kfx.types.Point2DMath
@@ -45,6 +46,8 @@ class GraphEditor(
     true
   }
 ) : AnchorPane() {
+  private val logger = Logging.logger(GraphEditor::class)
+
   private val sharedLock = SharedLock<javafx.scene.Node>()
   private val registry = Registry()
   private val nodeConnectionHint = NodeConnectionHint().apply {
@@ -262,7 +265,7 @@ class GraphEditor(
       event.consume()
       when (lock.value) {
         is EdgeAction.Select -> {
-          println("do not select ${lock.owner}")
+          logger.info { "do not select ${lock.owner}" }
           lock.releaseLock()
         }
       }

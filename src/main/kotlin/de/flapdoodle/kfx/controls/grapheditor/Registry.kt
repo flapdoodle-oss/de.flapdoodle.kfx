@@ -65,10 +65,12 @@ class Registry {
   }
 
   fun registerSlot(vertexSlotId: VertexSlotId, positionInScene: ObservableValue<ColoredAngleAtPoint2D>) {
+    logger.debug { "register $vertexSlotId" }
     nodeSlots[vertexSlotId] = positionInScene
   }
 
   fun unregisterSlot(vertexSlotId: VertexSlotId) {
+    logger.debug { "unregister $vertexSlotId" }
     nodeSlots.remove(vertexSlotId)
   }
 

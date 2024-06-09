@@ -116,11 +116,13 @@ class RegistryIT {
       graphEditor.addEdge(edgeCzBc)
     }
 
+//    Thread.sleep(500)
+    
     robot.interact {
-      graphEditor.removeEdge(edgeAyBb)
+      vertexB.removeConnector(slotInA.id)
       vertexB.removeConnector(slotInB.id)
       vertexB.addConnector(slotInB)
-      graphEditor.addEdge(edgeAyBb)
+      vertexB.addConnector(slotInA)
     }
 
 //    Thread.sleep(10000)

@@ -114,7 +114,7 @@ object OrderedDiff {
           }
         } else {
           // different position
-          removed = removed + oldValue
+//          removed = removed + oldValue
           added = added + (t to oldValue)
         }
 

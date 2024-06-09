@@ -29,7 +29,7 @@ class OrderedDiffTest {
     val change = between(old, new, Pair<Int, String>::first)
 
     assertThat(change.removed)
-      .containsExactlyInAnyOrder(3 to "C", 5 to "D")
+      .containsExactlyInAnyOrder(3 to "C")
     assertThat(change.notChanged)
       .containsExactlyInAnyOrder(1 to "A", 6 to "Foo")
     assertThat(change.modified)

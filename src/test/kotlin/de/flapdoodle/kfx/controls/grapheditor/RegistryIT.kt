@@ -123,6 +123,6 @@ class RegistryIT {
       graphEditor.addEdge(edgeAyBb)
     }
 
-    Thread.sleep(10000)
+//    Thread.sleep(10000)
   }
 }

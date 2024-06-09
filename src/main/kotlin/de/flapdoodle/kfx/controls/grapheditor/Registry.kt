@@ -60,6 +60,7 @@ class Registry {
   }
 
   private fun scenePositionProperty(vertexSlotId: VertexSlotId): ObservableValue<ColoredAngleAtPoint2D> {
+    require(nodeSlots.containsKey(vertexSlotId)) { "" }
     return ObservableMaps.valueOf(nodeSlots, vertexSlotId).defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
   }
 

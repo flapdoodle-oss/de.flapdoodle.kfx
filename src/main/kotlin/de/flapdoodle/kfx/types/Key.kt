@@ -25,7 +25,7 @@ interface Key<K: Any> {
 
   data class ClassKey<K: Any>(val clazz: KClass<K>) : Key<K> {
     override fun toString(): String {
-      return "Key(${clazz.qualifiedName})"
+      return "Key(${clazz.simpleName})"
     }
 
     override fun type(): KClass<K> = clazz

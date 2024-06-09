@@ -151,4 +151,8 @@ class Edge(
     Styles.Focused.disable(this)
   }
 
+
+  override fun toString(): String {
+    return "Edge(start=$start, end=$end)"
+  }
 }

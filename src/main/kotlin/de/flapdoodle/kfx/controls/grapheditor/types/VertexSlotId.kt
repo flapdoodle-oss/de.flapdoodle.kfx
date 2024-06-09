@@ -16,4 +16,8 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor.types
 
-data class VertexSlotId(val vertexId: VertexId, val slotId: SlotId)
+data class VertexSlotId(val vertexId: VertexId, val slotId: SlotId) {
+  override fun toString(): String {
+    return "$vertexId:$slotId"
+  }
+}

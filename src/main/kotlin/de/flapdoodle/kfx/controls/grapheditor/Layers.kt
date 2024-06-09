@@ -129,7 +129,7 @@ class Layers(private val registry: Registry) : Region() {
     }
 
     internal fun remove(vararg nodes: T) {
-      children.removeAll(nodes)
+      require(children.removeAll(nodes)) { "could not remove all: $nodes"}
     }
 
     fun boundingBoxProperty(): ReadOnlyObjectProperty<Bounds> {

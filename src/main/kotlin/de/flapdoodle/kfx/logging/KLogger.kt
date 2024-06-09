@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.logging
 
-import org.apache.logging.log4j.Logger
+import org.slf4j.Logger
 
 class KLogger(
   val wrapped: Logger
@@ -60,13 +60,4 @@ class KLogger(
   inline fun error(message: String, throwable: Throwable) {
     wrapped.error(message, throwable)
   }
-
-  inline fun fatal(message: () -> String) {
-    if (wrapped.isFatalEnabled) wrapped.fatal(message())
-  }
-
-  inline fun fatal(message: String, throwable: Throwable) {
-    wrapped.fatal(message, throwable)
-  }
-
 }

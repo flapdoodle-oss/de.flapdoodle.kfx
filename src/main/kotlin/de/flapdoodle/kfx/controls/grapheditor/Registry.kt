@@ -16,12 +16,12 @@
  */
 package de.flapdoodle.kfx.controls.grapheditor
 
-import de.flapdoodle.kfx.bindings.MapProperty
 import de.flapdoodle.kfx.bindings.ObservableMaps
 import de.flapdoodle.kfx.bindings.Values
 import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
+import de.flapdoodle.kfx.logging.Logging
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D
 import javafx.beans.property.ReadOnlyMapWrapper
 import javafx.beans.value.ObservableValue
@@ -35,6 +35,8 @@ class Registry {
   private val nodeSlots: ObservableMap<VertexSlotId, ObservableValue<ColoredAngleAtPoint2D>> = FXCollections.observableHashMap()
   private val nodeSlotsProperty = ReadOnlyMapWrapper(nodeSlots)
 
+  private val logger = Logging.logger(Registry::class)
+
   fun registerNode(vertex: Vertex) {
     nodes[vertex.vertexId] = vertex
   }
@@ -44,10 +46,12 @@ class Registry {
   }
 
   fun registerConnection(edge: Edge) {
+    logger.debug { "register $edge" }
     edge.init(this::scenePositionProperty)
   }
 
   fun unregisterConnection(edge: Edge) {
+    logger.debug { "unregister $edge" }
     edge.dispose()
   }
 
@@ -57,8 +61,6 @@ class Registry {
 
   private fun scenePositionProperty(vertexSlotId: VertexSlotId): ObservableValue<ColoredAngleAtPoint2D> {
     return ObservableMaps.valueOf(nodeSlots, vertexSlotId).defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
-//     return NestedProperty(nodeSlotsProperty.map { it[vertexSlotId] }, { it })
-//       .defaultIfNull(Values.constantObject(ColoredAngleAtPoint2D(0.0, 0.0, 0.0, Color.BLACK)))
   }
 
   fun registerSlot(vertexSlotId: VertexSlotId, positionInScene: ObservableValue<ColoredAngleAtPoint2D>) {

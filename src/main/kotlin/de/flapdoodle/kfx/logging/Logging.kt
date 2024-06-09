@@ -16,15 +16,15 @@
  */
 package de.flapdoodle.kfx.logging
 
-import org.apache.logging.log4j.LogManager
+import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
 
 object Logging {
   fun logger(clazz: KClass<out Any>): KLogger {
-    return KLogger(LogManager.getLogger(clazz.java))
+    return KLogger(LoggerFactory.getLogger(clazz.java))
   }
 
   fun logger(clazz: Class<out Any>): KLogger {
-    return KLogger(LogManager.getLogger(clazz))
+    return KLogger(LoggerFactory.getLogger(clazz))
   }
 }

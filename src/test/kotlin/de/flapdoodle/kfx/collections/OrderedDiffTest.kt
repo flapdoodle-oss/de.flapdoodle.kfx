@@ -23,50 +23,65 @@ import org.junit.jupiter.api.Test
 class OrderedDiffTest {
 
   @Test
-  fun addToList() {
-    val changes = between(listOf(), listOf("1", "b")) { it }
+  fun orderedChanges() {
+    val old = listOf(1 to "A", 2 to "B", 3 to "C", 5 to "D", 6 to "Foo")
+    val new = listOf(1 to "A", 2 to "b", 4 to "X", 6 to "Foo", 5 to "D")
+    val change = between(old, new, Pair<Int, String>::first)
 
-    assertThat(changes)
-      .containsExactly(
-        OrderedDiff.Change.Add(0, "1"),
-        OrderedDiff.Change.Add(1, "b")
-      )
+    assertThat(change.removed)
+      .containsExactlyInAnyOrder(3 to "C", 5 to "D")
+    assertThat(change.notChanged)
+      .containsExactlyInAnyOrder(1 to "A", 6 to "Foo")
+    assertThat(change.modified)
+      .containsExactlyInAnyOrder((2 to "B") to (2 to "b"))
+    assertThat(change.added)
+      .containsExactlyInAnyOrder((4 to "X") to null, (5 to "D") to (5 to "D"))
   }
-
-  @Test
-  fun removeFromList() {
-    val changes = between(listOf("A", "b"), listOf("b")) { it }
-
-    assertThat(changes)
-      .containsExactly(
-        OrderedDiff.Change.Remove(0)
-      )
-  }
-
-
-  @Test
-  fun removeAndAdd() {
-    val changes = between(listOf("A", "b"), listOf("B", "C", "b")) { it }
-
-    assertThat(changes)
-      .containsExactly(
-        OrderedDiff.Change.Remove(0),
-        OrderedDiff.Change.Add(0, "B"),
-        OrderedDiff.Change.Add(1, "C"),
-        OrderedDiff.Change.Move(0, 2)
-      )
-  }
-
-  @Test
-  fun moveAndModify() {
-    val changes = between(listOf("Aaa", "bee","Cee"), listOf("B", "Ccc", "bee")) { it.first() }
-
-    assertThat(changes)
-      .containsExactly(
-        OrderedDiff.Change.Remove(0),
-        OrderedDiff.Change.Add(0, "B"),
-        OrderedDiff.Change.Modify(1, 1, "Ccc"),
-        OrderedDiff.Change.Move(0, 2),
-      )
-  }
+//  @Test
+//  fun addToList() {
+//    val changes = between(listOf(), listOf("1", "b")) { it }
+//
+//    assertThat(changes)
+//      .containsExactly(
+//        OrderedDiff.Change.Add(0, "1"),
+//        OrderedDiff.Change.Add(1, "b")
+//      )
+//  }
+//
+//  @Test
+//  fun removeFromList() {
+//    val changes = between(listOf("A", "b"), listOf("b")) { it }
+//
+//    assertThat(changes)
+//      .containsExactly(
+//        OrderedDiff.Change.Remove(0)
+//      )
+//  }
+//
+//
+//  @Test
+//  fun removeAndAdd() {
+//    val changes = between(listOf("A", "b"), listOf("B", "C", "b")) { it }
+//
+//    assertThat(changes)
+//      .containsExactly(
+//        OrderedDiff.Change.Remove(0),
+//        OrderedDiff.Change.Add(0, "B"),
+//        OrderedDiff.Change.Add(1, "C"),
+//        OrderedDiff.Change.Move(0, 2)
+//      )
+//  }
+//
+//  @Test
+//  fun moveAndModify() {
+//    val changes = between(listOf("Aaa", "bee","Cee"), listOf("B", "Ccc", "bee")) { it.first() }
+//
+//    assertThat(changes)
+//      .containsExactly(
+//        OrderedDiff.Change.Remove(0),
+//        OrderedDiff.Change.Add(0, "B"),
+//        OrderedDiff.Change.Modify(1, 1, "Ccc"),
+//        OrderedDiff.Change.Move(0, 2),
+//      )
+//  }
 }

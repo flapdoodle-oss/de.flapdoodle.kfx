@@ -18,10 +18,16 @@
     /*-fx-padding: 4.3px 7.6px;*/
 }
 
-.colored-text-field .text-field .text {
-    -fx-opacity: 0.0;
+.colored-text-field .text-field {
+    /*-fx-opacity: 0.1;*/
+    /*-fx-text-fill: white;*/
+}
+
+.colored-text-field .text-field > Pane > .text {
+    visibility: false
 }
 
 .colored-text-field .colored-label .text-flow * {
     -fx-fill: -fx-text-inner-color;
+    /*-fx-opacity: 0.3;*/
 }

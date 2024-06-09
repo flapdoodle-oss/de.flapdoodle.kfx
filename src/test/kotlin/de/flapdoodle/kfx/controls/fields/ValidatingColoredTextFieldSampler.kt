@@ -16,14 +16,17 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
+import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.controls.labels.ValidatedLabel
 import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.extensions.bindCss
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.control.Button
+import javafx.scene.control.TextField
 import javafx.scene.layout.FlowPane
 import javafx.scene.paint.Color
 import javafx.stage.Stage
@@ -53,9 +56,14 @@ class ValidatingColoredTextFieldSampler {
       }
 
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {
+        visibleProperty()
+        bindCss(ValidatingColoredTextFieldSampler::class,"sampler")
         children.add(intField)
         children.add(ValidatedLabel(converter).apply {
           valueProperty().bind(intField.valueProperty())
+        })
+        children.add(TextField("Foo").apply {
+          tooltip = Tooltips.tooltip("FooBar")
         })
         children.add(Button("OK").apply {
           onAction = EventHandler {

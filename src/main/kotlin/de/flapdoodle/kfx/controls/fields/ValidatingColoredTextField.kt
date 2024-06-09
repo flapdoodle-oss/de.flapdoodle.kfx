@@ -72,11 +72,13 @@ class ValidatingColoredTextField<T: Any>(
   private val coloredLabel = ColoredLabel(delegate.textProperty(), colors).apply {
     cssClassName("colored-label")
     isManaged = false
+    isMouseTransparent = true
   }
   private val coloredLabelPane = Pane().apply {
     children += coloredLabel
     clip = coloredLabelClip
     isManaged = false
+    isMouseTransparent = true
   }
 
   var tooltip: Tooltip?

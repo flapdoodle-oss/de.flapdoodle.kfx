@@ -24,7 +24,7 @@ object Tooltips {
   fun tooltip(message: String): Tooltip {
     return Tooltip(message).apply {
       showDelay = Duration.millis(50.0)
-      hideDelay = Duration.millis(5.0)
+      hideDelay = Duration.millis(5000.0)
     }
   }
 }

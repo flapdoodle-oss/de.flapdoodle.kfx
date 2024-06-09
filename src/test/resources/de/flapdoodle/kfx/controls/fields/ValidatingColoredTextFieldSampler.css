@@ -1,0 +1,10 @@
+.text-field {
+    /*-fx-text-fill: yellow;*/
+}
+.text-field .text {
+    /*-fx-opacity: 0.4;*/
+    /*-fx-fill: #f50ebe;*/
+    /*-fx-fill: blue;*/
+    /*-fx-fill: white;*/
+    /*-fx-font-weight: bold;*/
+}

@@ -74,10 +74,10 @@ class WeightGridTableSampler {
         model = model,
         indexOf = Person::id,
         columns = columns,
-        headerFactory = { values, columns ->
+        headerFactory = { values, _ ->
           mapOf(nameColumn to Label("Name"), ageColumn to Label("Age"))
         },
-        footerFactory = { values, columns ->
+        footerFactory = { values, _ ->
           val name = TextField("")
           val age = TypedTextField(Int::class)
           val add = Button("+").apply {

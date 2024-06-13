@@ -18,9 +18,9 @@ package de.flapdoodle.kfx.layout.grid
 
 import javafx.scene.Node
 
-data class TableCell<T: Any, N: Node>(
+data class TableCell<T, N: Node>(
   val node: N,
-  val update: (N, T?) -> Unit = { _, _ -> }
+  val update: (N, T) -> Unit = { _, _ -> }
 ) {
   fun updateCell(value: T) {
     update(node, value)
@@ -33,25 +33,25 @@ data class TableCell<T: Any, N: Node>(
 
   companion object {
     @Deprecated("too complicated")
-    fun <T: Any, N: Node, V: Any> with(node: N, mapper: (T) -> V?, update: (N, V?) -> Unit): TableCell<T, N> {
+    fun <T, N: Node, V> with(node: N, mapper: (T) -> V?, update: (N, V?) -> Unit): TableCell<T, N> {
       return with(node).map(mapper).updateWith(update)
     }
 
     fun <N: Node> with(node: N) = WithNode(node)
 
     class WithNode<N: Node>(private val node: N) {
-      fun <T: Any> updateWith(update: (N, T?) -> Unit): TableCell<T, N> {
+      fun <T> updateWith(update: (N, T?) -> Unit): TableCell<T, N> {
         return TableCell(node, update)
       }
 
-      fun <T: Any, M: Any> map(mapper: (T) -> M?): WithMapper<T, N, M> {
+      fun <T, M> map(mapper: (T) -> M): WithMapper<T, N, M> {
         return WithMapper(node, mapper)
       }
     }
 
-    class WithMapper<T: Any, N: Node, V: Any>(private val node: N, private val mapper: (T) -> V?) {
+    class WithMapper<T, N: Node, V>(private val node: N, private val mapper: (T) -> V) {
       fun  updateWith(update: (N, V?) -> Unit): TableCell<T, N> {
-        return TableCell(node) { n, v -> update(n, v?.let(mapper)) }
+        return TableCell(node) { n, t -> update(n, t?.let(mapper)) }
       }
     }
   }

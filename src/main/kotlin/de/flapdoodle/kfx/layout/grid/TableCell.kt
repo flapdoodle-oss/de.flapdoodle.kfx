@@ -37,6 +37,7 @@ data class TableCell<T, N: Node>(
       return with(node).map(mapper).updateWith(update)
     }
 
+
     fun <N: Node> with(node: N) = WithNode(node)
 
     class WithNode<N: Node>(private val node: N) {
@@ -54,5 +55,33 @@ data class TableCell<T, N: Node>(
         return TableCell(node) { n, t -> update(n, t?.let(mapper)) }
       }
     }
+
+
+    fun <T> initializedWith(value: T): InitializedWith<T> {
+      return InitializedWith(value)
+    }
+
+    class InitializedWith<T>(private val value: T) {
+      fun <N: Node> node(node: N): NodeInitializedWith<N, T> {
+        return NodeInitializedWith(node, value)
+      }
+    }
+
+    class NodeInitializedWith<N: Node, T>(private val node: N, private val value: T) {
+      fun updateWith(update: (N, T?) -> Unit): TableCell<T, N> {
+        return TableCell<T, N>(node, update).initializedWith(value)
+      }
+
+      fun <M> map(mapper: (T) -> M): MapperInitializedWith<T, N, M> {
+        return MapperInitializedWith(node, mapper, value)
+      }
+    }
+
+    class MapperInitializedWith<T, N: Node, V>(private val node: N, private val mapper: (T) -> V, private val value: T) {
+      fun  updateWith(update: (N, V?) -> Unit): TableCell<T, N> {
+        return TableCell<T, N>(node) { n, t -> update(n, t?.let(mapper)) }.initializedWith(value)
+      }
+    }
+
   }
 }

@@ -51,9 +51,14 @@ class WeightGridTableSampler {
         val textField = TypedTextField(Int::class).apply {
           set(it.age)
           valueProperty().addListener { observable, oldValue, newValue ->
+            println("value changed: ${it.id} -> ${get()}")
             model.value = model.value.map { p -> if (p.id == it.id) it.copy(age = get()) else p }
           }
         }
+        TableCell.initializedWith(it)
+          .node(textField)
+          .map(Person::age)
+          .updateWith(TypedTextField<Int>::set)
         with(textField).map(Person::age).updateWith(TypedTextField<Int>::set)
       })
       val actionColumn = WeightGridTable.Column<Person>(weight = 1.0, cellFactory = { t ->

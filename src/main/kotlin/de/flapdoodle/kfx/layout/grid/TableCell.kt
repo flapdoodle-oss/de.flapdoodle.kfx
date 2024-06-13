@@ -20,15 +20,39 @@ import javafx.scene.Node
 
 data class TableCell<T: Any, N: Node>(
   val node: N,
-  val update: (N, T) -> Unit = { node, value -> }
+  val update: (N, T?) -> Unit = { _, _ -> }
 ) {
   fun updateCell(value: T) {
     update(node, value)
   }
 
+  fun initializedWith(value: T): TableCell<T, N> {
+    updateCell(value)
+    return this
+  }
+
   companion object {
+    @Deprecated("too complicated")
     fun <T: Any, N: Node, V: Any> with(node: N, mapper: (T) -> V?, update: (N, V?) -> Unit): TableCell<T, N> {
-      return TableCell(node) { n, v -> update(n, mapper(v)) }
+      return with(node).map(mapper).updateWith(update)
+    }
+
+    fun <N: Node> with(node: N) = WithNode(node)
+
+    class WithNode<N: Node>(private val node: N) {
+      fun <T: Any> updateWith(update: (N, T?) -> Unit): TableCell<T, N> {
+        return TableCell(node, update)
+      }
+
+      fun <T: Any, M: Any> map(mapper: (T) -> M?): WithMapper<T, N, M> {
+        return WithMapper(node, mapper)
+      }
+    }
+
+    class WithMapper<T: Any, N: Node, V: Any>(private val node: N, private val mapper: (T) -> V?) {
+      fun  updateWith(update: (N, V?) -> Unit): TableCell<T, N> {
+        return TableCell(node) { n, v -> update(n, v?.let(mapper)) }
+      }
     }
   }
 }

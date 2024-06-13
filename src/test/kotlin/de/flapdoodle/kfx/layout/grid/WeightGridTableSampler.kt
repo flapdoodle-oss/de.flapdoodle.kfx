@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.layout.grid
 
 import de.flapdoodle.kfx.controls.fields.TypedTextField
+import de.flapdoodle.kfx.layout.grid.TableCell.Companion.with
 import de.flapdoodle.kfx.types.Id
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
@@ -53,7 +54,7 @@ class WeightGridTableSampler {
             model.value = model.value.map { p -> if (p.id == it.id) it.copy(age = get()) else p }
           }
         }
-        TableCell.with(textField, Person::age, TypedTextField<Int>::set)
+        with(textField).map(Person::age).updateWith(TypedTextField<Int>::set)
       })
       val actionColumn = WeightGridTable.Column<Person>(weight = 1.0, cellFactory = { t ->
         val button = Button("-").apply {

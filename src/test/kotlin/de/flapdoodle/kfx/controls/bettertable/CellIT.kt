@@ -30,6 +30,7 @@ import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
 import java.time.LocalDate
+import java.util.*
 
 @ExtendWith(ApplicationExtension::class)
 class CellIT {
@@ -37,7 +38,7 @@ class CellIT {
   private val row = TableFactory.Row(12, null, null)
   private val column: Column<TableFactory.Row, Int> = Column(
     label = "label",
-    property = ColumnProperty(Int::class, TableFactory.Row::age, Converters.converterFor(Int::class)),
+    property = ColumnProperty(Int::class, TableFactory.Row::age, Converters.validatingFor(Int::class, Locale.getDefault())),
     editable = true
   )
   private var events = emptyList<TableEvent.RequestEvent<TableFactory.Row>>()
@@ -139,7 +140,7 @@ class CellIT {
 
     val localDateColumn = Column(
       label = "X",
-      property = ColumnProperty(LocalDate::class, TableFactory.Row::birthDay, Converters.converterFor(LocalDate::class)),
+      property = ColumnProperty(LocalDate::class, TableFactory.Row::birthDay, Converters.validatingFor(LocalDate::class, Locale.getDefault())),
       editable = true
     )
 

@@ -20,6 +20,7 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
 import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
+import de.flapdoodle.kfx.controls.labels.ValidatedLabel
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.StackLikeRegion
@@ -40,12 +41,17 @@ class Cell<T : Any, C : Any>(
 
   private val logger = Logging.logger(Cell::class)
 
-  private val label = Label().apply {
+  private val label = ValidatedLabel(column.property.converter).apply {
     isWrapText = false
-//      prefWidth = Double.MAX_VALUE
     alignment = Cells.asPosition(column.textAlignment)
-    text = column.property.converter.toString(value)
+    set(value)
   }
+//  private val label = Label().apply {
+//    isWrapText = false
+////      prefWidth = Double.MAX_VALUE
+//    alignment = Cells.asPosition(column.textAlignment)
+//    text = column.property.converter.toString(value)
+//  }
 
   private val field = fieldFactoryLookup.fieldFactory(column.property.type)
     .inputFor(value = value,

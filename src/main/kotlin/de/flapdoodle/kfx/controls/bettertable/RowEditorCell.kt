@@ -20,6 +20,7 @@ import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
 import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
+import de.flapdoodle.kfx.controls.labels.ValidatedLabel
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.StackLikeRegion
@@ -40,14 +41,15 @@ class RowEditorCell<T : Any, C : Any>(
   private val logger = Logging.logger(Cell::class)
 //  private lateinit var eventListener: TableRequestEventListener<T>
 
-  private val label = Label().apply {
+  private val label = ValidatedLabel(column.property.converter).apply {
     isFocusTraversable = true
 
     isWrapText = false
 //      prefWidth = Double.MAX_VALUE
     alignment = Cells.asPosition(column.textAlignment)
-    text = column.property.converter.toString(value)
+//    text = column.property.converter.toString(value)
     isVisible = !column.editable
+    set(value)
   }
 
   private val field = fieldFactoryLookup.fieldFactory(column.property.type).inputFor(value = value,
@@ -165,7 +167,8 @@ class RowEditorCell<T : Any, C : Any>(
       is TableEvent.UpdateInsertRow<T> -> {
         row = event.row
         value = column.property.getter(row)
-        label.text = column.property.converter.toString(value)
+//        label.text = column.property.converter.toString(value)
+        label.set(value)
         field.value = value
       }
 

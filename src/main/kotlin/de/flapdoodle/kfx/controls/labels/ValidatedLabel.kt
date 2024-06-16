@@ -20,19 +20,22 @@ import de.flapdoodle.kfx.converters.ValidatingConverter
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Label
+import javafx.util.StringConverter
 
 open class ValidatedLabel<T: Any>(
-  val converter: ValidatingConverter<T>,
+  val converter: StringConverter<T>
 ) : Label() {
 
-  private val valueProperty = SimpleObjectProperty<T>(null)
+  private val valueProperty: SimpleObjectProperty<T>
+
+  constructor(converter: ValidatingConverter<T>): this(ValidatingConverter.asStringConverter(converter))
 
   init {
-    textProperty().bindBidirectional(valueProperty, ValidatingConverter.asStringConverter(converter))
+    this.valueProperty = SimpleObjectProperty<T>(null)
+    textProperty().bindBidirectional(valueProperty, converter)
   }
 
   fun valueProperty(): ObjectProperty<T> = valueProperty
-
   fun set(v: T?) {
     valueProperty.value = v
   }

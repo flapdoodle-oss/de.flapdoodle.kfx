@@ -63,10 +63,11 @@ class Cell<T : Any, C : Any>(
       }
     ).apply {
       isVisible = false
-      isManaged = column.editable
+//      isManaged = column.editable
+
 //      isEditable = true
       control.focusedProperty().addListener { _, old, focused ->
-        if (isVisible) {
+        if (isVisible && column.editable) {
           if (!focused) {
             eventListener.fireEvent(TableEvent.LostFocus(row, column))
           }

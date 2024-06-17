@@ -38,5 +38,5 @@ object HashedColors {
         val index = (if (hash > 0) hash else -hash) % colors.size
         return colors[index]
     }
-
+    fun colors() = colors
 }

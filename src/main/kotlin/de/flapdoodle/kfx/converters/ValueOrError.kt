@@ -44,6 +44,7 @@ sealed class ValueOrError<T: Any> {
 
   companion object {
     fun <T: Any> noValue() = Value<T>(null)
+    fun <T: Any> value(value: T?) = Value(value)
     fun <T: Any> error(exception: Exception) = Error<T>(exception)
   }
 }

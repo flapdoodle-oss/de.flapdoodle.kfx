@@ -32,9 +32,4 @@ interface CellFactory<T: Any> {
     }
   }
 
-  class Default<T: Any> : CellFactory<T> {
-    override fun <C : Any> cell(column: Column<T, C>, row: T, eventListener: TableRequestEventListener<T>): Cell<T, C> {
-      return Cell(column, row, column.property.getter(row), eventListener)
-    }
-  }
 }

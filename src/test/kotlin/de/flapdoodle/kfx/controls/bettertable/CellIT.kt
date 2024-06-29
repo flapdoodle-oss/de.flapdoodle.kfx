@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
+import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
 import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import javafx.scene.Node
 import javafx.scene.Scene
@@ -62,7 +63,7 @@ class CellIT {
     val pane = robot.lookup<Node> { it.id == "pane" }.queryAs(Pane::class.java)
     val testee = Cell(column, row, 12, { event ->
       events = events + event
-    })
+    }, DefaultFieldFactoryLookup())
     robot.interact {
       pane.children.add(testee)
     }
@@ -90,7 +91,7 @@ class CellIT {
     val pane = robot.lookup<Node> { it.id == "pane" }.queryAs(Pane::class.java)
     val testee = Cell(column, row, 12, { event ->
       events = events + event
-    })
+    }, DefaultFieldFactoryLookup())
     robot.interact {
       pane.children.add(testee)
     }
@@ -155,7 +156,7 @@ class CellIT {
     robot.interact {
       val testee = Cell(localDateColumn, row, null, { event ->
         events = events + event
-      })
+      }, DefaultFieldFactoryLookup())
       pane.children.add(testee)
       val columnSizeWithoutValue = testee.columnSize()
 
@@ -163,7 +164,7 @@ class CellIT {
 
       val testeeWithValue = Cell(localDateColumn, row, LocalDate.now(), { event ->
         events = events + event
-      })
+      }, DefaultFieldFactoryLookup())
       pane.children.add(testeeWithValue)
       val columnSizeWithValue = testeeWithValue.columnSize()
 

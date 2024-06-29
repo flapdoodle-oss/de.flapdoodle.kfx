@@ -37,7 +37,7 @@ class Table<T: Any>(
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val changeListener: TableChangeListener<T>,
   headerColumnFactory: HeaderColumnFactory<T> = HeaderColumnFactory.Default(),
-  cellFactory: CellFactory<T> = CellFactory.Default(),
+  cellFactory: CellFactory<T> = DefaultCellFactory(),
   footerColumnFactory: FooterColumnFactory<T>? = FooterColumnFactory.Default(),
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : StackLikeRegion() {

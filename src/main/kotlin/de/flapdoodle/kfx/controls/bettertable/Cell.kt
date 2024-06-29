@@ -36,7 +36,7 @@ class Cell<T : Any, C : Any>(
   val row: T,
   val value: C?,
   val eventListener: TableRequestEventListener<T>,
-  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup()
+  fieldFactoryLookup: FieldFactoryLookup
 ) : StackLikeRegion() {
 
   private val logger = Logging.logger(Cell::class)
@@ -46,12 +46,6 @@ class Cell<T : Any, C : Any>(
     alignment = Cells.asPosition(column.textAlignment)
     set(value)
   }
-//  private val label = Label().apply {
-//    isWrapText = false
-////      prefWidth = Double.MAX_VALUE
-//    alignment = Cells.asPosition(column.textAlignment)
-//    text = column.property.converter.toString(value)
-//  }
 
   private val field = fieldFactoryLookup.fieldFactory(column.property.type)
     .inputFor(value = value,

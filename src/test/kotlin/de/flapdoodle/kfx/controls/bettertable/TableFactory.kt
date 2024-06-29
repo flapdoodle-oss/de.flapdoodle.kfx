@@ -204,7 +204,7 @@ object TableFactory {
         headerColumn.backgroundProperty().bind(backGroundToggled)
       }
     }
-    val cellFactory = CellFactory.Default<Row>().andThen { column, cell ->
+    val cellFactory = DefaultCellFactory<Row>().andThen { column, cell ->
       if (column.label.contains("*")) {
         cell.backgroundProperty().bind(backGroundToggled)
       }

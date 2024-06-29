@@ -59,25 +59,6 @@ object Converters {
     LocalDateTime::class to LocalDateTimeConverter(locale),
   ).associate { TypeInfo.of(it.first.javaObjectType) to it.second }
 
-  private val validatingConverterFactories = listOf(
-    factory(Int::class, ::IntConverter),
-//    factory(Integer::class, ::IntConverter),
-    factory(Double::class, ::DoubleConverter),
-    factory(Float::class, ::FloatConverter),
-    factory(Long::class, ::LongConverter),
-//    factory(Number::class, ::BigDecimalConverter),
-    factory(BigDecimal::class, ::BigDecimalConverter),
-    factory(BigInteger::class, ::BigIntegerConverter),
-    factory(String::class) { _ -> de.flapdoodle.kfx.converters.impl.StringConverter() },
-    factory(LocalDate::class, ::LocalDateConverter),
-    factory(LocalDateTime::class, ::LocalDateTimeConverter),
-  )
-
-  private fun <T: Any> factory(clazz: KClass<T>, factory: (Locale) -> ValidatingConverter<T>): TypedValidatingConverterFactory<out Any> {
-    return TypedValidatingConverterFactory(TypeInfo.of(clazz.javaObjectType), factory)
-  }
-
-
   fun <S : Any> converterFor(s: KClass<out S>): StringConverter<S> {
     return converterFor(TypeInfo.of(s.javaObjectType))
   }

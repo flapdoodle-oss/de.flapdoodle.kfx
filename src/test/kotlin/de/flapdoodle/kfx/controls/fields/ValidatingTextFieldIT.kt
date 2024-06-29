@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import javafx.scene.Scene
 import javafx.stage.Stage
 import org.assertj.core.api.Assertions.assertThat
@@ -32,7 +32,7 @@ import java.util.function.Predicate
 class ValidatingTextFieldIT {
   @Start
   private fun createElement(stage: Stage) {
-    stage.scene = Scene(ValidatingTextField(Converters.validatingFor(Int::class, Locale.GERMANY)).apply {
+    stage.scene = Scene(ValidatingTextField(DefaultValidatingConverterFactory.converter(Int::class, Locale.GERMANY)).apply {
       id = "testee"
     },200.0,200.0)
     stage.show()

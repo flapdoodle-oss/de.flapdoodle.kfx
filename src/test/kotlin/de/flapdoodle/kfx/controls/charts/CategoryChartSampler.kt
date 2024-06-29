@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.types.ranges.RangeFactories
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
@@ -47,8 +47,8 @@ class CategoryChartSampler {
                 series,
                 RangeFactories.category(),
                 RangeFactories.number(Double::class),
-                Converters.validatingFor(String::class, Locale.GERMANY),
-                Converters.validatingFor(Double::class, Locale.GERMANY)
+                DefaultValidatingConverterFactory.converter(String::class, Locale.GERMANY),
+                DefaultValidatingConverterFactory.converter(Double::class, Locale.GERMANY)
             )
 //      val content = ColorableLineChart<Number, Number>(x, y, series) {
 //        it -> colorMap[it.name] ?: Color.BLACK

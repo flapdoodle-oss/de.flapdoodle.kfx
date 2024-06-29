@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.converters.impl.LocalDateConverter
 import javafx.application.Application
 import javafx.geometry.Orientation
@@ -31,7 +31,7 @@ class ValidatingTextFieldSampler {
 
     override fun start(stage: Stage) {
 
-      val intField = ValidatingTextField(Converters.validatingFor(Int::class, Locale.GERMANY)).apply {
+      val intField = ValidatingTextField(DefaultValidatingConverterFactory.converter(Int::class, Locale.GERMANY)).apply {
         valueProperty().addListener { _, _, newValue ->
           println("--> $newValue")
         }
@@ -49,7 +49,7 @@ class ValidatingTextFieldSampler {
 //        }
       }
 
-      val doubleField = ValidatingTextField(Converters.validatingFor(Double::class, Locale.GERMANY)).apply {
+      val doubleField = ValidatingTextField(DefaultValidatingConverterFactory.converter(Double::class, Locale.GERMANY)).apply {
         valueProperty().addListener { _, _, newValue ->
           println("--> $newValue")
         }

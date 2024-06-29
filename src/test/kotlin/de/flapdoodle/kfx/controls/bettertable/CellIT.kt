@@ -17,7 +17,7 @@
 package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.input.MouseButton
@@ -38,7 +38,11 @@ class CellIT {
   private val row = TableFactory.Row(12, null, null)
   private val column: Column<TableFactory.Row, Int> = Column(
     label = "label",
-    property = ColumnProperty(Int::class, TableFactory.Row::age, Converters.validatingFor(Int::class, Locale.getDefault())),
+    property = ColumnProperty(
+      Int::class,
+      TableFactory.Row::age,
+      DefaultValidatingConverterFactory.converter(Int::class, Locale.getDefault())
+    ),
     editable = true
   )
   private var events = emptyList<TableEvent.RequestEvent<TableFactory.Row>>()
@@ -140,7 +144,11 @@ class CellIT {
 
     val localDateColumn = Column(
       label = "X",
-      property = ColumnProperty(LocalDate::class, TableFactory.Row::birthDay, Converters.validatingFor(LocalDate::class, Locale.getDefault())),
+      property = ColumnProperty(
+        LocalDate::class,
+        TableFactory.Row::birthDay,
+        DefaultValidatingConverterFactory.converter(LocalDate::class, Locale.getDefault())
+      ),
       editable = true
     )
 

@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.charts.parts
 
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.types.Direction
 import de.flapdoodle.kfx.types.ranges.RangeFactories
 import javafx.application.Application
@@ -30,10 +30,11 @@ import java.util.*
 class SingleScaleSampler {
   class Sample : Application() {
     override fun start(stage: Stage) {
-      val range = SimpleObjectProperty(RangeFactories.number(BigDecimal::class)
-        .rangeOf(listOf(BigDecimal.ZERO, BigDecimal.valueOf(630.0)))
+      val range = SimpleObjectProperty(
+        RangeFactories.number(BigDecimal::class)
+          .rangeOf(listOf(BigDecimal.ZERO, BigDecimal.valueOf(630.0)))
       )
-      val converter = Converters.validatingFor(BigDecimal::class, Locale.GERMANY)
+      val converter = DefaultValidatingConverterFactory.converter(BigDecimal::class, Locale.GERMANY)
 
       val all = BorderPane().apply {
         top = Scale(converter, range, Direction.TOP)

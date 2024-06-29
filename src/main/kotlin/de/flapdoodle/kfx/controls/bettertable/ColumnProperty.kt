@@ -16,22 +16,21 @@
  */
 package de.flapdoodle.kfx.controls.bettertable
 
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.reflection.TypeInfo
-import javafx.util.StringConverter
 import java.util.*
 import kotlin.reflect.KClass
 
 data class ColumnProperty<T: Any, C: Any>(
   val type: TypeInfo<C>,
   val getter: (T) -> C?,
-  val converter: ValidatingConverter<C> = Converters.validatingFor(type, Locale.getDefault())
+  val converter: ValidatingConverter<C> = DefaultValidatingConverterFactory.converter(type, Locale.getDefault())
 ) {
   @Deprecated("use typeinfo")
   constructor(
     type: KClass<C>,
     getter: (T) -> C?,
-    converter: ValidatingConverter<C> = Converters.validatingFor(type, Locale.getDefault())
+    converter: ValidatingConverter<C> = DefaultValidatingConverterFactory.converter(type, Locale.getDefault())
   ) : this(TypeInfo.of(type.javaObjectType), getter, converter)
 }

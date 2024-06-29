@@ -19,7 +19,7 @@ package de.flapdoodle.kfx.controls.fields
 import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.controls.labels.ValidatedLabel
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.extensions.bindCss
 import javafx.application.Application
 import javafx.event.EventHandler
@@ -36,13 +36,13 @@ class ValidatingColoredTextFieldSampler {
   class Sample : Application() {
 
     override fun start(stage: Stage) {
-      val converter = Converters.validatingFor(Int::class, Locale.GERMANY)
+      val converter = DefaultValidatingConverterFactory.converter(Int::class, Locale.GERMANY)
 
       val intField = ValidatingColoredTextField(
         converter = converter,
         mapColors = { i, s ->
           if ((s?.length ?: 0) > 3) {
-            listOf(ColoredLabel.Part(2,4, Color.RED))
+            listOf(ColoredLabel.Part(2, 4, Color.RED))
           } else
             emptyList()
         }
@@ -57,7 +57,7 @@ class ValidatingColoredTextFieldSampler {
 
       stage.scene = Scene(FlowPane(Orientation.VERTICAL).apply {
         visibleProperty()
-        bindCss(ValidatingColoredTextFieldSampler::class,"sampler")
+        bindCss(ValidatingColoredTextFieldSampler::class, "sampler")
         children.add(intField)
         children.add(ValidatedLabel(converter).apply {
           valueProperty().bind(intField.valueProperty())

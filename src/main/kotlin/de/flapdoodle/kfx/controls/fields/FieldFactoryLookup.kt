@@ -19,5 +19,24 @@ package de.flapdoodle.kfx.controls.fields
 import de.flapdoodle.reflection.TypeInfo
 
 interface FieldFactoryLookup {
-  fun <T: Any> fieldFactory(type: TypeInfo<T>): FieldFactory<T>
+  fun <T: Any> findFieldFactory(type: TypeInfo<T>): FieldFactory<T>?
+
+  fun <T: Any> fieldFactory(type: TypeInfo<T>): FieldFactory<T> {
+    return findFieldFactory(type) ?: throw IllegalArgumentException("no factory for $type")
+  }
+
+  fun or(fallback: FieldFactoryLookup): FieldFactoryLookup {
+    return Fallback(this, fallback)
+  }
+
+  data class Fallback(
+    val primary: FieldFactoryLookup,
+    val fallback: FieldFactoryLookup
+  ) : FieldFactoryLookup {
+
+    override fun <T : Any> findFieldFactory(type: TypeInfo<T>): FieldFactory<T>? {
+      return primary.findFieldFactory(type) ?: fallback.findFieldFactory(type)
+    }
+
+  }
 }

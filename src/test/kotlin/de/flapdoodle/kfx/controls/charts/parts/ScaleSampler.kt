@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.charts.parts
 
-import de.flapdoodle.kfx.converters.Converters
+import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.types.Direction
 import de.flapdoodle.kfx.types.ranges.RangeFactories
 import javafx.application.Application
@@ -37,7 +37,7 @@ class ScaleSampler {
 //      }
 
       val range = SimpleObjectProperty(RangeFactories.number(Double::class).rangeOf(listOf(0.0, 3.0)))
-      val converter =Converters.validatingFor(Double::class, Locale.GERMANY)
+      val converter = DefaultValidatingConverterFactory.converter(Double::class, Locale.GERMANY)
 
       val all = BorderPane().apply {
         left = Scale(converter, range, Direction.LEFT)

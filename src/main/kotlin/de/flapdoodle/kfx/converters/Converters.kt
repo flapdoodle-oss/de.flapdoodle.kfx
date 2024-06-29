@@ -17,7 +17,6 @@
 package de.flapdoodle.kfx.converters
 
 import de.flapdoodle.kfx.converters.impl.*
-import de.flapdoodle.kfx.types.AutoArray
 import de.flapdoodle.reflection.TypeInfo
 import javafx.util.StringConverter
 import javafx.util.converter.*
@@ -91,16 +90,13 @@ object Converters {
     return converter as StringConverter<S>
   }
 
+  @Deprecated("dont use")
   fun <S : Any> validatingFor(s: KClass<out S>, locale: Locale): ValidatingConverter<S> {
-    return validatingFor(TypeInfo.of(s.javaObjectType), locale)
+    return DefaultValidatingConverterFactory.converter(s, locale)
   }
 
+  @Deprecated("dont use")
   fun <S : Any> validatingFor(s: TypeInfo<out S>, locale: Locale): ValidatingConverter<S> {
-    val factory = validatingConverterFactories.firstOrNull { it.typeInfo == s }?.factory
-    val converter = factory?.invoke(locale) //validatingConverters(locale)[s]
-      ?: throw RuntimeException("not implemented for type:" + s)
-
-    @Suppress("UNCHECKED_CAST")
-    return converter as ValidatingConverter<S>
+    return DefaultValidatingConverterFactory.converter(s, locale)
   }
 }

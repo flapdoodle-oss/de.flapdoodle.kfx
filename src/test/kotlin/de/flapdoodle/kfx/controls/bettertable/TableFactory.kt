@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.controls.bettertable.events.DefaultState
 import de.flapdoodle.kfx.controls.bettertable.events.EventContext
 import de.flapdoodle.kfx.controls.bettertable.events.State
+import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Insets
@@ -204,7 +205,8 @@ object TableFactory {
         headerColumn.backgroundProperty().bind(backGroundToggled)
       }
     }
-    val cellFactory = DefaultCellFactory<Row>().andThen { column, cell ->
+    val fieldFactoryLookup = DefaultFieldFactoryLookup()
+    val cellFactory = DefaultCellFactory<Row>(fieldFactoryLookup).andThen { column, cell ->
       if (column.label.contains("*")) {
         cell.backgroundProperty().bind(backGroundToggled)
       }
@@ -215,7 +217,7 @@ object TableFactory {
       }
     }
 
-    return Table(rows, columns, changeListener, headerColumnFactory, cellFactory, footerColumnFactoryWithBackground, stateFactory = stateFactory)
+    return Table(rows, columns, changeListener, headerColumnFactory, fieldFactoryLookup, cellFactory, footerColumnFactoryWithBackground, stateFactory = stateFactory)
   }
 
   data class Row(

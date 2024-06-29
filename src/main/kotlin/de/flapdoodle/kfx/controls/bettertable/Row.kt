@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
+import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.logging.Logging
@@ -36,7 +37,8 @@ class Row<T : Any>(
   private val cellFactory: CellFactory<T>,
   internal val value: T,
 //  internal val index: Int,
-  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
+  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
+  internal val fieldFactoryLookup: FieldFactoryLookup
 ) : StackLikeRegion() {
 
   private val logger = Logging.logger(Row::class)
@@ -155,7 +157,7 @@ class Row<T : Any>(
           }
           is TableEvent.InsertRow<T> -> {
             if (event.row == value) {
-              val newEditor = RowEditor(eventListener,columns,event.emptyRow,columnWidthProperties)
+              val newEditor = RowEditor(eventListener,columns,event.emptyRow,columnWidthProperties,fieldFactoryLookup)
               when (event.position) {
                 TableEvent.InsertPosition.ABOVE -> {
                   rowOnTopContainer.children.add(newEditor)

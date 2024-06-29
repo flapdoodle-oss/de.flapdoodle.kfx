@@ -35,7 +35,7 @@ class RowEditorCell<T : Any, C : Any>(
   var row: T,
   var value: C?,
   val eventListener: TableRequestEventListener<T>,
-  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup()
+  fieldFactoryLookup: FieldFactoryLookup
 ) : StackLikeRegion() {
 
   private val logger = Logging.logger(Cell::class)

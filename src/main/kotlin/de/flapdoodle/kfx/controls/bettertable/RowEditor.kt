@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
+import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
@@ -28,7 +29,8 @@ class RowEditor<T : Any>(
   internal val eventListener: TableRequestEventListener<T>,
   internal val columns: ObservableValue<List<Column<T, out Any>>>,
   internal var value: T,
-  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
+  internal val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
+  internal val fieldFactoryLookup: FieldFactoryLookup
 ) : StackLikeRegion() {
 
   private var stopped = false
@@ -71,7 +73,7 @@ class RowEditor<T : Any>(
   }
 
   private fun <C : Any> editor(column: Column<T, C>, row: T, width: ObservableValue<Number>): RowEditorCell<T, C> {
-    val textField = RowEditorCell(column,row,column.property.getter(row), rowCellEventListenerDelegate)
+    val textField = RowEditorCell(column,row,column.property.getter(row), rowCellEventListenerDelegate, fieldFactoryLookup)
     textField.prefWidthProperty().bind(width)
     return textField
   }

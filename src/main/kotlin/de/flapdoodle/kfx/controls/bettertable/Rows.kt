@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
+import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
@@ -32,7 +33,8 @@ class Rows<T : Any>(
   private val columns: ObservableValue<List<Column<T, out Any>>>,
   private val cellFactory: CellFactory<T>,
   private val eventListener: TableRequestEventListener<T>,
-  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>
+  private val columnWidthProperties: (Column<T, out Any>) -> ObservableValue<Number>,
+  private val fieldFactoryLookup: FieldFactoryLookup
 ) : StackLikeRegion() {
 
   private var rowEditor: RowEditor<T>? = null
@@ -51,7 +53,7 @@ class Rows<T : Any>(
     isFocusTraversable = false
 
     rowPane.children.syncWith(rows) {
-      Row(eventListener, columns, cellFactory, it, columnWidthProperties)
+      Row(eventListener, columns, cellFactory, it, columnWidthProperties, fieldFactoryLookup)
     }
 
     rowPane.children.addListener(ListChangeListener {
@@ -73,7 +75,7 @@ class Rows<T : Any>(
     when (event) {
       is TableEvent.InsertFirstRow<T> -> {
         require(rowEditor == null) { "rowEditor already set: $rowEditor" }
-        val newEditor = RowEditor(eventListener, columns, event.row, columnWidthProperties)
+        val newEditor = RowEditor(eventListener, columns, event.row, columnWidthProperties, fieldFactoryLookup)
         rowEditor = newEditor
         insertRowPane.children.add(newEditor)
       }

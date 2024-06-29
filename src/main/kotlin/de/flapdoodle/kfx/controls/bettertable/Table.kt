@@ -19,6 +19,8 @@ package de.flapdoodle.kfx.controls.bettertable
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.bettertable.events.*
+import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
+import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.extensions.bindCss
 import de.flapdoodle.kfx.extensions.cssClassName
 import de.flapdoodle.kfx.extensions.onBindToScene
@@ -37,7 +39,8 @@ class Table<T: Any>(
   internal val columns: ReadOnlyObjectProperty<List<Column<T, out Any>>>,
   internal val changeListener: TableChangeListener<T>,
   headerColumnFactory: HeaderColumnFactory<T> = HeaderColumnFactory.Default(),
-  cellFactory: CellFactory<T> = DefaultCellFactory(),
+  fieldFactoryLookup: FieldFactoryLookup = DefaultFieldFactoryLookup(),
+  cellFactory: CellFactory<T> = DefaultCellFactory(fieldFactoryLookup),
   footerColumnFactory: FooterColumnFactory<T>? = FooterColumnFactory.Default(),
   stateFactory: (EventContext<T>) -> State<T> = { DefaultState(it) }
 ) : StackLikeRegion() {
@@ -53,7 +56,7 @@ class Table<T: Any>(
   private val eventListener = StateEventListener(stateFactory(eventContext))
 
   private val header = Header(_columns, eventListener, headerColumnFactory)
-  private val __rows = Rows(_rows, _columns, cellFactory, eventListener, header::columnWidthProperty)
+  private val __rows = Rows(_rows, _columns, cellFactory, eventListener, header::columnWidthProperty, fieldFactoryLookup)
   private val footer = Footer(_columns, header::columnWidthProperty, footerColumnFactory)
 
   private val scroll = ScrollPane().apply {

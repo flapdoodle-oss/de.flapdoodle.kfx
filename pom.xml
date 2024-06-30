@@ -321,6 +321,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skip>${dokka.skip}</skip>
                     <sourceDirectories>
                         <dir>${project.basedir}/src/main/kotlin</dir>
                     </sourceDirectories>
@@ -417,6 +418,15 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>dokka-skip</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <dokka.skip>true</dokka.skip>
+            </properties>
+        </profile>
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -545,6 +555,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <dokka.skip>false</dokka.skip>
     </properties>
 
     <dependencies>

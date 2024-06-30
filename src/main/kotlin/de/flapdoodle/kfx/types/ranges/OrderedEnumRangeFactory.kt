@@ -32,13 +32,13 @@ class OrderedEnumRangeFactory<T: Enum<T>>(
     val sorted = values.toSortedSet()
     val minOrdinal = sorted.first().ordinal
     val maxOrdinal = sorted.last().ordinal
-    val dist = maxOrdinal - minOrdinal
+    val dist = maxOrdinal - minOrdinal + 2
 
     val ticks = Ticks(list = all.subList(minOrdinal, maxOrdinal + 1))
 
     return object : Range<T> {
       override fun offset(value: T, scale: Double): Double {
-        return (scale * (value.ordinal - minOrdinal)) / dist;
+        return (scale * (value.ordinal - minOrdinal + 1)) / dist;
       }
 
       override fun ticks(maxTicks: Int): List<Ticks<T>> {

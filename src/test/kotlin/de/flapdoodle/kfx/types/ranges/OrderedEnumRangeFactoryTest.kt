@@ -17,6 +17,7 @@
 package de.flapdoodle.kfx.types.ranges
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Percentage
 import org.junit.jupiter.api.Test
 import java.time.Month
 
@@ -54,4 +55,16 @@ class OrderedEnumRangeFactoryTest {
             .containsExactly(Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY)
     }
 
+    @Test
+    fun spaceAroundFirstAndLast() {
+        val range = OrderedEnumRangeFactory(Month::class)
+            .rangeOf(listOf(Month.JANUARY, Month.MARCH))
+
+        assertThat(range.offset(Month.JANUARY, 1.0))
+            .isCloseTo(0.25, Percentage.withPercentage(1.0))
+        assertThat(range.offset(Month.FEBRUARY, 1.0))
+            .isCloseTo(0.5, Percentage.withPercentage(1.0))
+        assertThat(range.offset(Month.MARCH, 1.0))
+            .isCloseTo(0.75, Percentage.withPercentage(1.0))
+    }
 }

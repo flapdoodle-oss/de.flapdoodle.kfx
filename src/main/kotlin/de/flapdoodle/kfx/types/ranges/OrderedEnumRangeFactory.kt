@@ -16,19 +16,29 @@
  */
 package de.flapdoodle.kfx.types.ranges
 
-class SortedCategoryRangeFactory<T: Comparable<T>> : RangeFactory<T> {
+import java.util.EnumSet
+import kotlin.reflect.KClass
+
+class OrderedEnumRangeFactory<T: Enum<T>>(
+  val enumType: KClass<T>
+) : RangeFactory<T> {
+
+  private val all = EnumSet.allOf(enumType.java).sorted()
+
   override fun rangeOf(values: List<T>): Range<T> {
     if (values.isEmpty()) return Range.empty()
     if (values.size == 1) return Range.single(values[0])
 
     val sorted = values.toSortedSet()
-    val parts = sorted.size + 1
-    val ticks = Ticks(list = sorted.toList())
+    val minOrdinal = sorted.first().ordinal
+    val maxOrdinal = sorted.last().ordinal
+    val dist = maxOrdinal - minOrdinal
+
+    val ticks = Ticks(list = all.subList(minOrdinal, maxOrdinal + 1))
 
     return object : Range<T> {
       override fun offset(value: T, scale: Double): Double {
-        val index = sorted.indexOf(value)
-        return (scale * (index + 1)) / parts;
+        return (scale * (value.ordinal - minOrdinal)) / dist;
       }
 
       override fun ticks(maxTicks: Int): List<Ticks<T>> {

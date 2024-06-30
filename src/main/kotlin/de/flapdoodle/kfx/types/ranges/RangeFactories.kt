@@ -29,5 +29,9 @@ object RangeFactories {
     return NumberRangeFactory(type)
   }
 
+  fun <T: Enum<T>> enum(type: KClass<T>): RangeFactory<T> {
+    return OrderedEnumRangeFactory(type)
+  }
+
   fun <T: Comparable<T>> category() = SortedCategoryRangeFactory<T>()
 }

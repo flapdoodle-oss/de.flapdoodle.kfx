@@ -73,6 +73,16 @@ open class GridPane : Region() {
 
   fun add(
     node: Node,
+    column: Int,
+    row: Int,
+    horizontalPosition: HPos? = null,
+    verticalPosition: VPos? = null
+  ): Boolean {
+    return add(node, Pos(column, row), horizontalPosition, verticalPosition)
+  }
+
+  fun add(
+    node: Node,
     pos: Pos,
     horizontalPosition: HPos? = null,
     verticalPosition: VPos? = null
@@ -81,30 +91,17 @@ open class GridPane : Region() {
     return children.add(node)
   }
 
-  private var gridMap: GridMap<Node> = GridMap()
   private var positionMap = PositionMap<Node>(emptyMap())
 
   init {
     children.addListener(ListChangeListener {
-      gridMap = gridMap()
       positionMap = positionMap()
       updateState()
     })
 
     needsLayoutProperty().addListener { observable, oldValue, newValue ->
-      gridMap = gridMap()
       positionMap = positionMap()
     }
-  }
-
-  private fun gridMap(): GridMap<Node> {
-    return GridMap(children
-      .filter { it.isManaged }
-      .map { it: Node ->
-        (it.constraint[GridMap.Pos::class]
-          ?: GridMap.Pos(0, 0)) to it
-      }.toMap()
-    )
   }
 
   private fun positionMap(): PositionMap<Node> {
@@ -136,23 +133,26 @@ open class GridPane : Region() {
     return sumOf(selector) + size * space
   }
 
-  private fun columnSizes() = gridMap.mapColumns { index, list ->
-    val limits = list.map { it.widthLimits() }
-    val min = limits.map { it.first }.maxOrNull() ?: 0.0
-    val max = Math.max(min, limits.map { it.second }.maxOrNull() ?: Double.MAX_VALUE)
+  private fun columnSizes() = positionMap.mapColumns { index, list ->
+    val limits = list.map {
+      val limits = it.key.widthLimits()
+      limits.first / it.value.columnSpan to limits.second / it.value.columnSpan
+    }
+    val min = limits.maxOfOrNull { it.first } ?: 0.0
+    val max = min.coerceAtLeast(limits.maxOfOrNull { it.second } ?: Double.MAX_VALUE)
 
-//      require(max >= min) { "invalid min/max for $list -> $min ? $max" }
-    WeightedSize(columnWeights.get(index) ?: 1.0, min, max)
+    WeightedSize(columnWeights[index] ?: 1.0, min, max)
   }
 
+  private fun rowSizes() = positionMap.mapRows { index, list ->
+    val limits = list.map {
+      val limits = it.key.heightLimits()
+      limits.first / it.value.columnSpan to limits.second / it.value.columnSpan
+    }
+    val min = limits.maxOfOrNull { it.first } ?: 0.0
+    val max = min.coerceAtLeast(limits.maxOfOrNull { it.second } ?: Double.MAX_VALUE)
 
-  private fun rowSizes() = gridMap.mapRows { index, list ->
-    val limits = list.map { it.heightLimits() }
-    val min = limits.map { it.first }.maxOrNull() ?: 0.0
-    val max = Math.max(min, limits.map { it.second }.maxOrNull() ?: Double.MAX_VALUE)
-
-//      require(max >= min) { "invalid min/max for $list -> $min ? $max" }
-    WeightedSize(rowWeights.get(index) ?: 1.0, min, max)
+    WeightedSize(rowWeights[index] ?: 1.0, min, max)
   }
 
   override fun computeMinWidth(height: Double): Double {
@@ -168,22 +168,22 @@ open class GridPane : Region() {
   }
 
   override fun computePrefWidth(height: Double): Double {
-    val ret = gridMap.mapColumns { _, list ->
+    val ret = positionMap.mapColumns { _, list ->
       list.map {
-        val w = max(it.prefWidth(-1.0), it.minWidth(-1.0))
+        val w = max(it.key.prefWidth(-1.0), it.key.minWidth(-1.0))
         logger.debug { "computePrefWidth: $it = $w" }
-        w
+        w / it.value.columnSpan
       }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(horizontalSpace()) { it }
     return ret + insets.left + insets.right
   }
 
   override fun computePrefHeight(width: Double): Double {
-    val ret = gridMap.mapRows { _, list ->
+    val ret = positionMap.mapRows { _, list ->
       list.map {
-        val h = max(it.prefHeight(-1.0), it.minHeight(-1.0))
+        val h = max(it.key.prefHeight(-1.0), it.key.minHeight(-1.0))
         logger.debug { "computePrefHeight: $it = $h" }
-        h
+        h / it.value.rowSpan
       }.maxOrNull() ?: 0.0
     }.sumWithSpaceBetween(verticalSpace()) { it }
     return ret + insets.top + insets.bottom
@@ -226,23 +226,27 @@ open class GridPane : Region() {
           "-------------------------"
     }
 
-    gridMap.rows().forEachIndexed { r_idx, r ->
-      gridMap.columns().forEachIndexed { c_idx, c ->
-        val node = gridMap[GridMap.Pos(c, r)]
-        if (node != null && node.isManaged) {
-          val areaX = contentX + colWidths.subList(0, c_idx).sumWithSpaceAfter(horizontalSpace()) { it }
-          val areaY = contentY + rowHeights.subList(0, r_idx).sumWithSpaceAfter(verticalSpace()) { it }
+    positionMap.values().forEach { node ->
+      val nodePosition = positionMap.get(node) ?: Pos(0,0)
+      val c_idx = nodePosition.column
+      val c_width = nodePosition.columnSpan
+      val r_idx = nodePosition.row
+      val r_width = nodePosition.rowSpan
 
-          val areaW = colWidths[c_idx]
-          val areaH = rowHeights[r_idx]
+      val areaX = contentX + colWidths.subList(0, c_idx).sumWithSpaceAfter(horizontalSpace()) { it }
+      val areaY = contentY + rowHeights.subList(0, r_idx).sumWithSpaceAfter(verticalSpace()) { it }
 
-          val hPos = node.constraint[HPos::class] ?: HPos.CENTER
-          val vPos = node.constraint[VPos::class] ?: VPos.CENTER
+      val areaXend = contentX + colWidths.subList(0, c_idx + c_width).sumWithSpaceAfter(horizontalSpace()) { it }
+      val areaYend = contentY + rowHeights.subList(0, r_idx + r_width).sumWithSpaceAfter(verticalSpace()) { it }
 
-          logger.debug { "layoutInArea $node: $areaX, $areaY, $areaW, $areaH" }
-          layoutInArea(node, snappedToPixel(areaX), snappedToPixel(areaY), snappedToPixel(areaW), snappedToPixel(areaH), -1.0, hPos, vPos)
-        }
-      }
+      val areaW = areaXend - areaX
+      val areaH = areaYend - areaY
+
+      val hPos = node.constraint[HPos::class] ?: HPos.CENTER
+      val vPos = node.constraint[VPos::class] ?: VPos.CENTER
+
+      logger.debug { "layoutInArea $node: $areaX, $areaY, $areaW, $areaH" }
+      layoutInArea(node, snappedToPixel(areaX), snappedToPixel(areaY), snappedToPixel(areaW), snappedToPixel(areaH), -1.0, hPos, vPos)
     }
   }
 
@@ -255,6 +259,16 @@ open class GridPane : Region() {
   }
 
   companion object {
+    fun setPosition(
+      node: Node,
+      column: Int,
+      row: Int,
+      horizontalPosition: HPos? = null,
+      verticalPosition: VPos? = null
+    ) {
+      setPosition(node, Pos(column, row), horizontalPosition, verticalPosition)
+    }
+
     fun setPosition(
       node: Node,
       pos: Pos,

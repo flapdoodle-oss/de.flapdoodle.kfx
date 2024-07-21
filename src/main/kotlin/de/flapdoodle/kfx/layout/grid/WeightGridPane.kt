@@ -124,8 +124,8 @@ open class WeightGridPane : Region() {
     return GridMap(children
       .filter { it.isManaged }
       .map { it: Node ->
-        (it.constraint[GridMap.Pos::class]
-          ?: GridMap.Pos(0, 0)) to it
+        (it.constraint[Pos::class]
+          ?: Pos(0, 0)) to it
       }.toMap()
     )
   }
@@ -242,7 +242,7 @@ open class WeightGridPane : Region() {
 
     gridMap.rows().forEachIndexed { r_idx, r ->
       gridMap.columns().forEachIndexed { c_idx, c ->
-        val node = gridMap[GridMap.Pos(c, r)]
+        val node = gridMap[Pos(c, r)]
         if (node != null && node.isManaged) {
           val areaX = contentX + colWidths.subList(0, c_idx).sumWithSpaceAfter(horizontalSpace()) { it }
           val areaY = contentY + rowHeights.subList(0, r_idx).sumWithSpaceAfter(verticalSpace()) { it }
@@ -276,7 +276,7 @@ open class WeightGridPane : Region() {
       horizontalPosition: HPos? = null,
       verticalPosition: VPos? = null
     ) {
-      node.constraint[GridMap.Pos::class] = GridMap.Pos(column, row)
+      node.constraint[Pos::class] = Pos(column, row)
       node.constraint[HPos::class] = horizontalPosition
       node.constraint[VPos::class] = verticalPosition
       node.parent?.requestLayout()
@@ -284,11 +284,11 @@ open class WeightGridPane : Region() {
 
     fun updatePosition(
       node: Node,
-      change: (GridMap.Pos) -> GridMap.Pos
+      change: (Pos) -> Pos
     ) {
-      val current = node.constraint[GridMap.Pos::class]
+      val current = node.constraint[Pos::class]
       require(current != null) { "no position found for $node" }
-      node.constraint[GridMap.Pos::class] = change(current)
+      node.constraint[Pos::class] = change(current)
       node.parent?.requestLayout()
     }
 

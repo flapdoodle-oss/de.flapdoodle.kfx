@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.layout.grid2
+package de.flapdoodle.kfx.layout.grid
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

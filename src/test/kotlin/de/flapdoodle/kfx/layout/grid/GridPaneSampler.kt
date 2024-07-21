@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.layout.grid2
+package de.flapdoodle.kfx.layout.grid
 
 import de.flapdoodle.kfx.css.bindCss
 import javafx.application.Application
@@ -64,7 +64,11 @@ class GridPaneSampler {
         columnWeight(1, 2.0)
 //        rowWeight(0, 4.0)
 //        rowWeight(1, 1.0)
-        rowWeights(4.0, 1.0)
+        rowWeights(4.0, 1.0, 1.0)
+
+        add(Button("(0..1,2)").also {
+          it.maxWidth = 300.0
+        }, Pos(0,2,2,1))
       })
       stage.show()
     }

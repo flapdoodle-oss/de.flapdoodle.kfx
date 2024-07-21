@@ -1,4 +1,4 @@
-package de.flapdoodle.kfx.layout.grid2
+package de.flapdoodle.kfx.layout.grid
 
 data class PositionMap<T: Any>(
   private val map: Map<T, Pos>

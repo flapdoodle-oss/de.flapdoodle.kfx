@@ -194,6 +194,9 @@ open class GridPane : Region() {
   }
 
   private fun layoutChildren(_contentX: Double, _contentY: Double, _contentWidth: Double, _contentHeight: Double) {
+    logger.debug {
+      "\n${this} ---layout---\n"
+    }
     val top = insets.top
     val right = insets.right
     val left = insets.left
@@ -217,13 +220,13 @@ open class GridPane : Region() {
     val rowHeights = WeightedSize.distribute(contentHeight - vSpaces, rowSizes)
 
     logger.debug {
+      "\n-------------------------\n" +
       "grid: $contentX, $contentY -> $contentWidth,$contentHeight\n" +
-          "-------------------------\n" +
-          "columns: $columnSizes\n" +
-          "rows: $rowSizes\n" +
-          "widths: $colWidths\n" +
-          "heights: $rowHeights\n" +
-          "-------------------------"
+      "columns: $columnSizes\n" +
+      "rows: $rowSizes\n" +
+      "widths: $colWidths\n" +
+      "heights: $rowHeights\n" +
+      "-------------------------"
     }
 
     positionMap.values().forEach { node ->
@@ -236,8 +239,8 @@ open class GridPane : Region() {
       val areaX = contentX + colWidths.subList(0, c_idx).sumWithSpaceAfter(horizontalSpace()) { it }
       val areaY = contentY + rowHeights.subList(0, r_idx).sumWithSpaceAfter(verticalSpace()) { it }
 
-      val areaXend = contentX + colWidths.subList(0, c_idx + c_width).sumWithSpaceAfter(horizontalSpace()) { it }
-      val areaYend = contentY + rowHeights.subList(0, r_idx + r_width).sumWithSpaceAfter(verticalSpace()) { it }
+      val areaXend = contentX + colWidths.subList(0, c_idx + c_width).sumWithSpaceAfter(horizontalSpace()) { it } - horizontalSpace()
+      val areaYend = contentY + rowHeights.subList(0, r_idx + r_width).sumWithSpaceAfter(verticalSpace()) { it } - verticalSpace()
 
       val areaW = areaXend - areaX
       val areaH = areaYend - areaY
@@ -245,8 +248,11 @@ open class GridPane : Region() {
       val hPos = node.constraint[HPos::class] ?: HPos.CENTER
       val vPos = node.constraint[VPos::class] ?: VPos.CENTER
 
-      logger.debug { "layoutInArea $node: $areaX, $areaY, $areaW, $areaH" }
+      logger.debug { "layoutInArea $node: $areaX..${areaX+areaW}, $areaY..${areaY+areaH} (width: $areaW, height: $areaH)" }
       layoutInArea(node, snappedToPixel(areaX), snappedToPixel(areaY), snappedToPixel(areaW), snappedToPixel(areaH), -1.0, hPos, vPos)
+    }
+    logger.debug {
+      "\n${this} ---layout DONE---\n"
     }
   }
 

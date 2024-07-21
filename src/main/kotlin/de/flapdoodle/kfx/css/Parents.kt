@@ -22,21 +22,15 @@ import kotlin.reflect.KClass
 
 object Parents {
   fun bindCss(parent: Parent, name: String) {
-    parent.cssClassName(name)
-    val clazz = parent.javaClass
-
-    val resource = clazz.getResource("${clazz.simpleName}.css")
-    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
-
-    parent.stylesheets += resource.toExternalForm()
+    bindCss(parent, parent::class, name)
   }
 
   fun bindCss(parent: Parent, context: KClass<out Any>, name: String) {
-    parent.cssClassName(name)
+    parent.styleClass.addAll(name)
     val clazz = context.java
 
     val resource = clazz.getResource("${clazz.simpleName}.css")
-    require(resource!=null) { "could not bind css to ${clazz.simpleName}.css" }
+    require(resource != null) { "could not bind css to ${clazz.simpleName}.css" }
 
     parent.stylesheets += resource.toExternalForm()
   }
@@ -48,16 +42,16 @@ object Parents {
     var nextClass: Class<out Any>? = clazz
 
     do {
-      if (nextClass!=null) {
+      if (nextClass != null) {
         resource = clazz.getResource("${nextClass.simpleName}.css")
         if (resource == null) {
           classesWithoutResource = classesWithoutResource + nextClass
           nextClass = nextClass.superclass
         }
       }
-    } while (resource==null && nextClass !=null)
+    } while (resource == null && nextClass != null)
 
-    requireNotNull(resource) { "could not find css for $classesWithoutResource"}
+    requireNotNull(resource) { "could not find css for $classesWithoutResource" }
 
     return resource
   }

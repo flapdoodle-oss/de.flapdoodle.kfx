@@ -38,15 +38,15 @@ data class GridMap<T : Any>(
 
     fun <D : Any> mapColumns(allColumnRows: (Int, Collection<T>) -> D): List<D> {
         return columnSet.map { column ->
-            val matchingColumns = map.filter { it.key.column == column }.values
-            allColumnRows(column, matchingColumns)
+            val matchingRows = map.filter { it.key.column == column }.values
+            allColumnRows(column, matchingRows)
         }
     }
 
     fun <D : Any> mapRows(allRowColumns: (Int, Collection<T>) -> D): List<D> {
         return rowSet.map { row ->
-            val matchingRows = map.filter { it.key.row == row }.values
-            allRowColumns(row, matchingRows)
+            val matchingColumns = map.filter { it.key.row == row }.values
+            allRowColumns(row, matchingColumns)
         }
     }
 

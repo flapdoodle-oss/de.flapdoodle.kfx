@@ -19,7 +19,7 @@ package de.flapdoodle.kfx.layout.grid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class GridBoundsMapTest {
+internal class GridMapTest {
 
     @Test
     fun `map columns must give matching entries`() {

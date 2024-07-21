@@ -147,7 +147,7 @@ open class GridPane : Region() {
   private fun rowSizes() = positionMap.mapRows { index, list ->
     val limits = list.map {
       val limits = it.key.heightLimits()
-      limits.first / it.value.columnSpan to limits.second / it.value.columnSpan
+      limits.first / it.value.rowSpan to limits.second / it.value.rowSpan
     }
     val min = limits.maxOfOrNull { it.first } ?: 0.0
     val max = min.coerceAtLeast(limits.maxOfOrNull { it.second } ?: Double.MAX_VALUE)

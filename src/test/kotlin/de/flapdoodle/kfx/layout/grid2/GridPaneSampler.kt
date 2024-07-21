@@ -35,12 +35,12 @@ class GridPaneSampler {
         verticalSpace.set(10.0)
 //        horizontalSpace.set(20.0)
 
-        add(Button("test").also {
+        add(Button("(0,0)").also {
           it.minWidth = 20.0
           it.maxWidth = 100.0
         }, Pos(0, 0))
-        add(Button("test-1"), Pos(1, 0), horizontalPosition = HPos.RIGHT)
-        add(Button("test-11").also {
+        add(Button("-(1,0)"), Pos(1, 0), horizontalPosition = HPos.RIGHT)
+        add(Button("(1,1)").also {
           it.maxHeight = 100.0
         }, Pos(1, 1))
         children.add(GridPane().apply {
@@ -50,12 +50,12 @@ class GridPaneSampler {
           verticalSpace.set(10.0)
           horizontalSpace.set(20.0)
 
-          that.add(Button("(i) test").also {
+          that.add(Button("(0,1)(0,0)").also {
             it.minWidth = 20.0
             it.maxWidth = 100.0
           }, 0, 0)
-          that.add(Button("(i) test-1"), 1, 0, horizontalPosition = HPos.RIGHT)
-          that.add(Button("(i) test-11").also {
+          that.add(Button("(0,1)-(1,0)"), 1, 0, horizontalPosition = HPos.RIGHT)
+          that.add(Button("(0,1)(1,1)").also {
             it.maxHeight = 100.0
           }, 1, 1)
         })

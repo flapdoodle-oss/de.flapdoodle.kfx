@@ -6,8 +6,8 @@ data class Pos(
   val columnSpan: Int = 1,
   val rowSpan: Int = 1
 ) {
-  private val lastColumn = column + columnSpan
-  private val lastRow = row + rowSpan
+  private val lastColumn = column + columnSpan - 1
+  private val lastRow = row + rowSpan - 1
 
   init {
     require(column >= 0) { "column must be non-negative but was $column" }

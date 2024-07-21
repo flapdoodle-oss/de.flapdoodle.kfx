@@ -20,7 +20,7 @@ import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.controls.labels.ValidatedLabel
 import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
-import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.css.bindCss
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Orientation

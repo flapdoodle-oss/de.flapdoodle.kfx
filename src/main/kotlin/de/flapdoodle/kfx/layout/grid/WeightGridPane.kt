@@ -19,7 +19,7 @@ package de.flapdoodle.kfx.layout.grid
 import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.css.NumberCssMetaData
 import de.flapdoodle.kfx.extensions.constraint
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.heightLimits
 import de.flapdoodle.kfx.extensions.widthLimits
 import de.flapdoodle.kfx.logging.Logging

@@ -20,7 +20,7 @@ import de.flapdoodle.kfx.bindings.Values
 import de.flapdoodle.kfx.bindings.defaultIfNull
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.bindings.valueOf
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.layout.splitpane.BetterSplitPane
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.value.ObservableValue

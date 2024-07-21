@@ -19,7 +19,7 @@ package de.flapdoodle.kfx.controls.grapheditor
 import de.flapdoodle.kfx.controls.grapheditor.types.EdgeId
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
-import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.css.bindCss
 import de.flapdoodle.kfx.shapes.Arrow
 import de.flapdoodle.kfx.shapes.Curves
 import de.flapdoodle.kfx.strokes.LinearGradients

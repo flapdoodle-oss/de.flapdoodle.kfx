@@ -19,7 +19,7 @@ package de.flapdoodle.kfx.controls.charts.parts
 import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.syncWith
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.layout.backgrounds.Bounds
 import de.flapdoodle.kfx.types.Direction
 import de.flapdoodle.kfx.types.ranges.Range

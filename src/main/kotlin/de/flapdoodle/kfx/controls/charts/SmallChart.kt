@@ -22,8 +22,8 @@ import de.flapdoodle.kfx.controls.charts.parts.ChartLine
 import de.flapdoodle.kfx.controls.charts.parts.Scale
 import de.flapdoodle.kfx.converters.ValidatingConverter
 import de.flapdoodle.kfx.extensions.Colors
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.bindCss
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import de.flapdoodle.kfx.types.Direction

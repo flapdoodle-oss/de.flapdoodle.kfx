@@ -21,8 +21,8 @@ import de.flapdoodle.kfx.collections.Diff
 import de.flapdoodle.kfx.controls.bettertable.events.*
 import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
 import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.bindCss
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.onBindToScene
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.layout.grid.WeightGridPane

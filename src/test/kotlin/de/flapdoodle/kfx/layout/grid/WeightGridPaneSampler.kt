@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.layout.grid
 
-import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.css.bindCss
 import javafx.application.Application
 import javafx.geometry.HPos
 import javafx.geometry.Insets

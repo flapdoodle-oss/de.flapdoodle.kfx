@@ -23,8 +23,8 @@ import de.flapdoodle.kfx.controls.grapheditor.slots.SlotsPane
 import de.flapdoodle.kfx.controls.grapheditor.types.IsSelectable
 import de.flapdoodle.kfx.controls.grapheditor.types.SlotId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.bindCss
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.layoutPosition
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.types.LayoutBounds

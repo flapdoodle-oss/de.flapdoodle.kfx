@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
-import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.css.bindCss
 import javafx.beans.NamedArg
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList

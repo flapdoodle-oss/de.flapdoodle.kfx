@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.bettertable
 
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.HPos

@@ -19,6 +19,7 @@ package de.flapdoodle.kfx.controls.grapheditor
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.bindings.mapToDouble
 import de.flapdoodle.kfx.controls.grapheditor.hints.NodeConnectionHint
+import de.flapdoodle.kfx.css.bindCss
 import de.flapdoodle.kfx.events.SharedLock
 import de.flapdoodle.kfx.extensions.*
 import de.flapdoodle.kfx.layout.backgrounds.Bounds

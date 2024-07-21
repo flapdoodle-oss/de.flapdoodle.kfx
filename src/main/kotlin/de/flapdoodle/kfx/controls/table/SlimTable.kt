@@ -16,7 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.table
 
-import de.flapdoodle.kfx.extensions.bindCss
+import de.flapdoodle.kfx.css.bindCss
 import de.flapdoodle.kfx.layout.grid.WeightGridPane
 import javafx.collections.ObservableList
 import javafx.scene.control.Control

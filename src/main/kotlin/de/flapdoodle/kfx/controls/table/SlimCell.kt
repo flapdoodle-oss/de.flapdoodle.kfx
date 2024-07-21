@@ -20,7 +20,7 @@ import com.sun.javafx.scene.NodeHelper
 import com.sun.javafx.scene.traversal.Direction
 import com.sun.javafx.scene.traversal.TraversalMethod
 import de.flapdoodle.kfx.events.handleEvent
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.hide
 import de.flapdoodle.kfx.extensions.show
 import javafx.event.EventHandler

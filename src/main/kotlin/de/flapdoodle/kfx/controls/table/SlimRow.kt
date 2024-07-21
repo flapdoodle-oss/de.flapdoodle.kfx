@@ -18,7 +18,7 @@ package de.flapdoodle.kfx.controls.table
 
 import de.flapdoodle.kfx.bindings.ObservableLists
 import de.flapdoodle.kfx.extensions.PseudoClassWrapper
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.property
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList

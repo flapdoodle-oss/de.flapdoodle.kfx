@@ -17,8 +17,8 @@
 package de.flapdoodle.kfx.layout.splitpane
 
 import de.flapdoodle.kfx.bindings.syncWith
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.bindCss
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.minus
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener

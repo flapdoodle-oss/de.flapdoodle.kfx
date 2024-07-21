@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.kfx.extensions
+package de.flapdoodle.kfx.css
 
 import javafx.scene.Node
 import javafx.scene.Parent

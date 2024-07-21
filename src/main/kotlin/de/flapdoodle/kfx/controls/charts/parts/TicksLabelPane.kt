@@ -20,7 +20,7 @@ import com.sun.javafx.scene.layout.ScaledMath
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.controls.labels.ValidatedLabel
 import de.flapdoodle.kfx.converters.ValidatingConverter
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.minus
 import de.flapdoodle.kfx.types.BoundingBoxes
 import de.flapdoodle.kfx.types.CardinalDirection

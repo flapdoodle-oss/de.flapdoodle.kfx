@@ -24,8 +24,8 @@ import de.flapdoodle.kfx.bindings.node.ChildNodeProperty.Companion.andThen
 import de.flapdoodle.kfx.controls.Tooltips
 import de.flapdoodle.kfx.controls.labels.ColoredLabel
 import de.flapdoodle.kfx.converters.ValidatingConverter
-import de.flapdoodle.kfx.extensions.bindCss
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.bindCss
+import de.flapdoodle.kfx.css.cssClassName
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.event.EventHandler

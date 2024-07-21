@@ -20,7 +20,7 @@ import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
 import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
 import javafx.collections.ListChangeListener

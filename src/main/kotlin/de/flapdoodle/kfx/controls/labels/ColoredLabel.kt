@@ -19,7 +19,7 @@ package de.flapdoodle.kfx.controls.labels
 import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.syncWith
 import de.flapdoodle.kfx.extensions.Colors
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import javafx.beans.value.ObservableValue
 import javafx.scene.paint.Color

@@ -21,7 +21,7 @@ import de.flapdoodle.kfx.controls.grapheditor.Markers
 import de.flapdoodle.kfx.controls.grapheditor.Registry
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexId
 import de.flapdoodle.kfx.controls.grapheditor.types.VertexSlotId
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.onBindToScene
 import de.flapdoodle.kfx.extensions.plus
 import de.flapdoodle.kfx.types.ColoredAngleAtPoint2D

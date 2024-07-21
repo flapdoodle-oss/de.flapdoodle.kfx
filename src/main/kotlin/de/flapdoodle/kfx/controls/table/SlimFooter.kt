@@ -17,7 +17,7 @@
 package de.flapdoodle.kfx.controls.table
 
 import de.flapdoodle.kfx.bindings.ObservableLists
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.scene.control.Control

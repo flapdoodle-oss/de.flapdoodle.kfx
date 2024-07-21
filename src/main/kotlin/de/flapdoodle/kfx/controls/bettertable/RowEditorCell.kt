@@ -18,14 +18,12 @@ package de.flapdoodle.kfx.controls.bettertable
 
 import de.flapdoodle.kfx.controls.bettertable.events.TableEvent
 import de.flapdoodle.kfx.controls.bettertable.events.TableRequestEventListener
-import de.flapdoodle.kfx.controls.fields.DefaultFieldFactoryLookup
 import de.flapdoodle.kfx.controls.fields.FieldFactoryLookup
 import de.flapdoodle.kfx.controls.labels.ValidatedLabel
-import de.flapdoodle.kfx.extensions.cssClassName
+import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.extensions.withAnchors
 import de.flapdoodle.kfx.layout.StackLikeRegion
 import de.flapdoodle.kfx.logging.Logging
-import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.AnchorPane

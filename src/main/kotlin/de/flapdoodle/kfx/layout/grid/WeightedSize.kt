@@ -47,24 +47,96 @@ data class WeightedSize(
             }
 
 //            val sumOfWeights = items.sumOf { it.weight }
-            val sizedItems = items.map(Companion::SizedItems)
 
 //            distribute(space, sumOfWeights, sizedItems)
 
-            if (true) {
+            if (false) {
+                val sizedItems = items.map(Companion::SizedItems)
                 distribute(space, sizedItems)
+                return sizedItems.map { it.size() }
             } else {
+                val sizedItems = items.map(Companion::SizedItems)
+                distributeFinal(space, sizedItems)
+                return sizedItems.map { it.size() }
 //            distribute2(space, sizedItems)
 //            distribute3(space, sizedItems)
-                distribute4(space, sizedItems)
+//                return distributeX(space, items)
             }
 
-            return sizedItems.map { it.size() }
         }
 
-        enum class Step { Start, Grow, Done }
+//        private class ItemWrapper(
+//            val src: WeightedSize,
+//        ) {
+//            var size: Double = 0.0
+//
+//            fun setSize(newSize: Double) {
+//                size = newSize
+//            }
+//        }
+//
+//        private fun distributeX(space: Double, items: List<WeightedSize>): List<Double> {
+//            val wrapped = items.map { ItemWrapper(it) }
+//            dist(space,wrapped)
+//            return wrapped.map { it.size }
+//        }
+//
+//        private fun dist(space: Double, items: List<ItemWrapper>) {
+//            // TODO
+//        }
 
+        private fun distributeFinal(space: Double, items: List<SizedItems>) {
+            var repeat = true
+            var spaceLeft = space
+            var spaceUsed = 0.0
 
+            // filter all items where max < size
+            while (repeat) {
+                repeat=false
+
+                val filtered = items.filter { !it.upperLimitReached() }
+                val sumOfWeight = filtered.sumOf { it.src.weight }
+                filtered.forEach {
+                    val size = spaceLeft * it.src.weight / sumOfWeight
+                    if (size >= it.src.max) {
+                        it.setSize(it.src.max).onUpperLimit()
+                        spaceUsed = spaceUsed + it.size()
+                        repeat = true
+                    }
+                }
+                spaceLeft = spaceLeft - spaceUsed
+                spaceUsed = 0.0
+            }
+
+            // filter all items where min > size
+            val itemsWithoutUpperLimits = items.filter { !it.upperLimitReached() }
+            repeat = true
+            while (repeat) {
+                repeat=false
+
+                val filtered = itemsWithoutUpperLimits.filter { !it.lowerLimitReached() }
+                val sumOfWeight = filtered.sumOf { it.src.weight }
+                filtered.forEach {
+                    val size = spaceLeft * it.src.weight / sumOfWeight
+                    if (size <= it.src.min) {
+                        it.setSize(it.src.min).onLowerLimit()
+                        spaceUsed = spaceUsed + it.size()
+                        repeat = true
+                    }
+                }
+                spaceLeft = spaceLeft - spaceUsed
+                spaceUsed = 0.0
+            }
+
+            // everything what's left should not have any limit problems
+            val itemsWithoutLowerLimits = itemsWithoutUpperLimits.filter { !it.lowerLimitReached() }
+
+            val finalSumOfWeights = itemsWithoutLowerLimits.sumOf { it.src.weight }
+            itemsWithoutLowerLimits.forEach {
+                val size = spaceLeft * it.src.weight / finalSumOfWeights
+                it.setSize(size)
+            }
+        }
 
         private fun distribute4(space: Double, items: List<SizedItems>) {
             val sorted = items.sortedByDescending { it.src.weight }

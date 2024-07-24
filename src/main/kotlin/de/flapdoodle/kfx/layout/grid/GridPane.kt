@@ -219,12 +219,15 @@ open class GridPane : Region() {
 
     logger.debug {
       "\n-------------------------\n" +
-      "grid: $contentX, $contentY -> $contentWidth,$contentHeight\n" +
-      "columns: $columnSizes\n" +
-      "rows: $rowSizes\n" +
-      "widths: $colWidths\n" +
-      "heights: $rowHeights\n" +
-      "-------------------------"
+          "$this\n" +
+          "grid: $contentX, $contentY -> $contentWidth,$contentHeight\n" +
+          "hSpaces: $hSpaces\n" +
+          "vSpaces: $vSpaces\n" +
+          "columns: $columnSizes\n" +
+          "rows: $rowSizes\n" +
+          "widths: $colWidths\n" +
+          "heights: $rowHeights\n" +
+          "-------------------------"
     }
 
     positionMap.values().forEach { node ->

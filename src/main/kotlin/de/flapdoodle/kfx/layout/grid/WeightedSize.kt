@@ -36,8 +36,8 @@ data class WeightedSize(
         }
 
         private fun distributeNonEmpty(space: Double, items: List<WeightedSize>): List<Double> {
-            val minWidth = items.sumByDouble { it.min }
-            val maxWidth = doubleMaxIfInfinite(items.sumByDouble { it.max })
+            val minWidth = items.sumOf { it.min }
+            val maxWidth = doubleMaxIfInfinite(items.sumOf { it.max })
 
             if (minWidth >= space) {
                 return items.map { it.min }
@@ -46,13 +46,74 @@ data class WeightedSize(
                 return items.map { it.max }
             }
 
-            val sumOfWeights = items.sumByDouble { it.weight }
+//            val sumOfWeights = items.sumOf { it.weight }
             val sizedItems = items.map(Companion::SizedItems)
 
 //            distribute(space, sumOfWeights, sizedItems)
-            distribute(space, sizedItems)
+
+            if (true) {
+                distribute(space, sizedItems)
+            } else {
+//            distribute2(space, sizedItems)
+//            distribute3(space, sizedItems)
+                distribute4(space, sizedItems)
+            }
 
             return sizedItems.map { it.size() }
+        }
+
+        enum class Step { Start, Grow, Done }
+
+
+
+        private fun distribute4(space: Double, items: List<SizedItems>) {
+            val sorted = items.sortedByDescending { it.src.weight }
+
+            var sizeCalculated = setOf<SizedItems>()
+
+            // 24:24(4), 58:*(1), 24:24(1)
+            // was ohne limits size > max hat, kann nicht weiter wachsen
+            val initSumOfWeights = sorted.sumOf { it.src.weight }
+            sorted.forEach {
+//                val size = space * it.src.weight / initSumOfWeights
+//                if (size >= it.src.max) {
+//                    it.setSize(it.src.max)
+//                    sizeCalculated = sizeCalculated + it
+//                }
+//                if (size <= it.src.min) {
+//                    it.setSize(it.src.min)
+//                    sizeCalculated = sizeCalculated + it
+//                }
+            }
+
+            var repeat = true
+            while (repeat) {
+                repeat = false
+                val filtered = sorted.filter { !sizeCalculated.contains(it) }
+                val spaceLeft = space - sorted.filter { sizeCalculated.contains(it) }.sumOf { it.size() }
+
+                val sumOfWeights = filtered.sumOf { it.src.weight }
+                for (it in filtered) {
+                    val size = spaceLeft * it.src.weight / sumOfWeights
+                    when {
+                        size <= it.src.min -> {
+                            it.setSize(it.src.min).clearAnyLimit().onLowerLimit()
+                            repeat = true
+//                            sizeCalculated = sizeCalculated + it
+//                            break
+                        }
+                        size >= it.src.max -> {
+                            it.setSize(it.src.max).clearAnyLimit().onUpperLimit()
+                            repeat = true
+                            sizeCalculated = sizeCalculated + it
+                            break
+                        }
+                        else -> {
+                            it.setSize(size)
+                        }
+                    }
+                }
+            }
         }
 
         private fun distribute(space: Double, items: List<SizedItems>) {
@@ -167,6 +228,7 @@ data class WeightedSize(
             private var lowerLimitReached: Boolean = false
             private var upperLimitReached: Boolean = false
 
+            fun allLimitsReached() = lowerLimitReached && upperLimitReached
             fun anyLimitReached() = lowerLimitReached || upperLimitReached
             fun lowerLimitReached() = lowerLimitReached
             fun upperLimitReached() = upperLimitReached
@@ -183,6 +245,12 @@ data class WeightedSize(
 
             fun onUpperLimit() {
                 upperLimitReached=true
+            }
+
+            fun clearAnyLimit(): SizedItems {
+                lowerLimitReached = false
+                upperLimitReached = false
+                return this
             }
 
             override fun toString(): String {

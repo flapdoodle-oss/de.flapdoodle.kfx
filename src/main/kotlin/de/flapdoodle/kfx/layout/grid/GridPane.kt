@@ -131,6 +131,7 @@ open class GridPane : Region() {
     return sumOf(selector) + size * space
   }
 
+  // TODO distribute min/max not equal but using columnWeights/rowWeights
   private fun columnSizes() = positionMap.mapColumns { index, list ->
     val limits = list.map {
       val limits = it.key.widthLimits()

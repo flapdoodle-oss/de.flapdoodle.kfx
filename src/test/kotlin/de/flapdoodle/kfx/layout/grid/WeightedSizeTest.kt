@@ -58,24 +58,22 @@ internal class WeightedSizeTest {
     }
 
     @Test
-    fun `sample`() {
+    fun sample() {
         val src = listOf(
             WeightedSize(weight = 1.0, min = 20.0, max = 30.0),
             WeightedSize(weight = 4.0, min = 10.0, max = Double.MAX_VALUE),
             WeightedSize(weight = 1.0, min = 10.0, max = 60.0)
         )
 
-//    assertThat(WeightedSize.distribute(400.0, src)).containsExactly(30.0, 310.0, 60.0)
         assertThat(WeightedSize.distribute(330.0, src)).containsExactly(30.0, 240.0, 60.0)
 
         (300..400).forEach {
             val space = it * 1.0
             val sizes = WeightedSize.distribute(space, src)
-            assertThat(sizes.sumByDouble { it })
+            assertThat(sizes.sumOf { it })
                 .describedAs("space = $space")
                 .isEqualTo(space)
         }
-//    assertThat(WeightedSize.distribute(300.0, src)).containsExactly(30.0, 310.0, 60.0)
     }
 
     @Test
@@ -87,8 +85,6 @@ internal class WeightedSizeTest {
 
         assertThat(WeightedSize.distribute(100.0, src)).containsExactly(24.0, 100.0-24.0)
         assertThat(WeightedSize.distribute(400.0, src)).containsExactly(24.0, 100.0)
-
-        // 87x148
     }
 
     @Test
@@ -100,8 +96,6 @@ internal class WeightedSizeTest {
 
         assertThat(WeightedSize.distribute(87.0, src)).containsExactly(43.0, 44.0)
         assertThat(WeightedSize.distribute(88.0, src)).containsExactly(43.0, 45.0)
-
-        // 87x148
     }
 
     @Test
@@ -112,9 +106,7 @@ internal class WeightedSizeTest {
             WeightedSize(weight = 1.0, min = 24.0, max = 24.0)
         )
 
-//        assertThat(WeightedSize.distribute(161.0 - 20.0, src)).containsExactly(24.0, (161 - 20 - 2 * 24.0), 24.0)
-
+        assertThat(WeightedSize.distribute(161.0 - 20.0, src)).containsExactly(24.0, (161 - 20 - 2 * 24.0), 24.0)
         assertThat(WeightedSize.distribute(159.0 - 20.0, src)).containsExactly(24.0, (159 - 20 - 2 * 24.0), 24.0)
     }
-
 }

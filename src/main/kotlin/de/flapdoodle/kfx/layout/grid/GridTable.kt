@@ -28,18 +28,19 @@ class GridTable<T : Any, I : Any>(
   model: ReadOnlyObjectProperty<List<T>>,
   private val indexOf: (T) -> I,
   private val columns: List<Column<T>>,
-  private val headerFactory: HeaderFooterNodeFactory<T>? = null,
-  private val footerFactory: HeaderFooterNodeFactory<T>? = null,
+  private val headerFactories: List<HeaderFooterFactory<T>> = emptyList(),
+  private val footerFactories: List<HeaderFooterFactory<T>> = emptyList(),
 ) : AnchorPane() {
   init {
     require(columns.toSet().size == columns.size) { "some columns are added more than once: $columns" }
   }
 
   private val grid = GridPane()
+  private val columnIndex = columns.mapIndexed { index, column -> column to index }.toMap()
 
-  private var headerNodes: Map<Column<T>, Node>? = null
+  private var headerNodes: List<Map<Node, Span>> = emptyList()
   private var rows = emptyList<Row<T, I>>()
-  private var footerNodes: Map<Column<T>, Node>? = null
+  private var footerNodes: List<Map<Node, Span>> = emptyList()
 
   fun verticalSpace() = grid.verticalSpace
   fun horizontalSpace() = grid.horizontalSpace
@@ -55,8 +56,8 @@ class GridTable<T : Any, I : Any>(
   }
 
   private fun update(old: List<T>, new: List<T>) {
-    val newHeaderNodes = headerFactory?.nodesOf(new, columns)
-    val newFooterNodes = footerFactory?.nodesOf(new, columns)
+    val newHeaderNodes = headerFactories.map { it.nodesOf(new, columns) }
+    val newFooterNodes = footerFactories.map { it.nodesOf(new, columns) }
 
 //    require(newHeaderNodes==null || newHeaderNodes.size == columns.size) {"headerNodes size does not match column size"}
 //    require(newFooterNodes==null || newFooterNodes.size == columns.size) {"footerNodes size does not match column size"}
@@ -76,7 +77,7 @@ class GridTable<T : Any, I : Any>(
     }
 
     val allRows = rowsWithoutRemoved + newRows
-    val offset = if (newHeaderNodes != null) 1 else 0
+    val offset = newHeaderNodes.size
 
     allRows.forEachIndexed { rowIndex, row ->
       row.nodes.forEachIndexed { columnIndex, nodeAndUpdate ->
@@ -87,17 +88,14 @@ class GridTable<T : Any, I : Any>(
       }
     }
 
-    columns.forEachIndexed { index, column ->
-      val header = headerNodes?.get(column)
-      if (header != null) grid.children.removeAll(header)
-    }
-    if (newHeaderNodes != null) {
-      columns.forEachIndexed { index, column ->
-        val header = newHeaderNodes[column]
-        if (header != null) {
-          GridPane.setPosition(header, index, 0, column.horizontalPosition, column.verticalPosition)
-          grid.children.add(header)
-        }
+    headerNodes.forEach { grid.children.removeAll(it.keys) }
+    newHeaderNodes.forEachIndexed { index, map ->
+      map.forEach { (header, span) ->
+        val start = columnIndex[span.start]!!
+        val end = columnIndex[span.end]!!
+        val pos = Pos(column = start, columnSpan = end - start + 1, row = index)
+        GridPane.setPosition(header, pos, span.horizontalPosition, span.verticalPosition)
+        grid.children.add(header)
       }
     }
     headerNodes = newHeaderNodes
@@ -114,24 +112,21 @@ class GridTable<T : Any, I : Any>(
     newRows.forEach { row -> row.nodes.forEach { if (it != null) grid.children.add(it.node) } }
     rows = allRows
 
-    columns.forEachIndexed { index, column ->
-      val header = footerNodes?.get(column)
-      if (header != null) grid.children.removeAll(header)
-    }
-    if (newFooterNodes != null) {
-      columns.forEachIndexed { index, column ->
-        val footer = newFooterNodes[column]
-        if (footer != null) {
-          GridPane.setPosition(footer, index, allRows.size + offset, column.horizontalPosition, column.verticalPosition)
-          grid.children.add(footer)
-        }
+    footerNodes.forEach { grid.children.removeAll(it.keys) }
+    newFooterNodes.forEachIndexed { index, map ->
+      map.forEach { (footer, span) ->
+        val start = columnIndex[span.start]!!
+        val end = columnIndex[span.end]!!
+        val pos = Pos(column = start, columnSpan = end - start + 1, row = allRows.size + offset + index)
+        GridPane.setPosition(footer, pos, span.horizontalPosition, span.verticalPosition)
+        grid.children.add(footer)
       }
     }
     footerNodes = newFooterNodes
   }
 
-  fun interface HeaderFooterNodeFactory<T : Any> {
-    fun nodesOf(values: List<T>, columns: List<Column<T>>): Map<Column<T>, Node>
+  fun interface HeaderFooterFactory<T: Any> {
+    fun nodesOf(values: List<T>, columns: List<Column<T>>): Map<Node, Span>
   }
   
   fun interface CellFactory<T: Any, N: Node> {
@@ -141,6 +136,13 @@ class GridTable<T : Any, I : Any>(
   data class Column<T : Any>(
     val weight: Double = 1.0,
     val cellFactory: CellFactory<T, out Node>? = null,
+    val horizontalPosition: HPos? = null,
+    val verticalPosition: VPos? = null
+  )
+
+  data class Span(
+    val start: Column<out Any>,
+    val end: Column<out Any> = start,
     val horizontalPosition: HPos? = null,
     val verticalPosition: VPos? = null
   )

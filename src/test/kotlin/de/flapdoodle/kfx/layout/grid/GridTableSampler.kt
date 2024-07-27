@@ -28,6 +28,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.stage.Stage
+import org.controlsfx.control.spreadsheet.Grid
 
 class GridTableSampler {
   class Sample : Application() {
@@ -79,21 +80,31 @@ class GridTableSampler {
         model = model,
         indexOf = Person::id,
         columns = columns,
-        headerFactory = { values, _ ->
-          mapOf(nameColumn to Label("Name"), ageColumn to Label("Age"))
-        },
-        footerFactory = { values, _ ->
-          val name = TextField("")
-          val age = TypedTextField(Int::class)
-          val add = Button("+").apply {
-            onAction = EventHandler {
-              if (name.text != null && name.text.isNotBlank()) {
-                model.value = model.value + Person(name.text, age.get())
+        headerFactories = listOf(
+          GridTable.HeaderFooterFactory { values, _ ->
+            mapOf(Label("--- all columns ---") to GridTable.Span(start = nameColumn, end = actionColumn))
+          },
+          GridTable.HeaderFooterFactory { values, _ -> mapOf(
+            Label("Name") to GridTable.Span(nameColumn),
+            Label("Age") to GridTable.Span(ageColumn)
+          )
+        }),
+        footerFactories = listOf(
+          GridTable.HeaderFooterFactory { values, _ ->
+            val name = TextField("")
+            val age = TypedTextField(Int::class)
+            val add = Button("+").apply {
+              onAction = EventHandler {
+                if (name.text != null && name.text.isNotBlank()) {
+                  model.value = model.value + Person(name.text, age.get())
+                }
               }
             }
-          }
-          mapOf(nameColumn to name, ageColumn to age, actionColumn to add)
-        }
+            mapOf(name to GridTable.Span(nameColumn), age to GridTable.Span(ageColumn), add to GridTable.Span(actionColumn))
+          },
+          GridTable.HeaderFooterFactory { values, _ ->
+            mapOf(Label("--- all columns ---") to GridTable.Span(start = nameColumn, end = actionColumn))
+          })
       ).apply {
         verticalSpace().set(5.0)
         horizontalSpace().set(10.0)

@@ -279,6 +279,18 @@ open class GridPane : Region() {
 
     fun setPosition(
       node: Node,
+      column: Int,
+      columnSpan: Int,
+      row: Int,
+      rowSpan: Int,
+      horizontalPosition: HPos? = null,
+      verticalPosition: VPos? = null
+    ) {
+      setPosition(node, Pos(column, row, columnSpan, rowSpan), horizontalPosition, verticalPosition)
+    }
+
+    fun setPosition(
+      node: Node,
       pos: Pos,
       horizontalPosition: HPos? = null,
       verticalPosition: VPos? = null

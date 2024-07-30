@@ -97,6 +97,18 @@ open class GridPane : Region() {
 
   fun add(
     node: Node,
+    column: Int,
+    columnSpan: Int,
+    row: Int,
+    rowSpan: Int,
+    horizontalPosition: HPos? = null,
+    verticalPosition: VPos? = null
+  ): Boolean {
+    return add(node, Pos(column, row, columnSpan, rowSpan), horizontalPosition, verticalPosition)
+  }
+
+  fun add(
+    node: Node,
     pos: Pos,
     horizontalPosition: HPos? = null,
     verticalPosition: VPos? = null

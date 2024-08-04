@@ -28,7 +28,7 @@ interface ValidatingConverterFactory {
     }
 
     fun <S : Any> converter(s: TypeInfo<out S>, locale: Locale): ValidatingConverter<S> {
-        return findConverter(s, locale) ?: throw RuntimeException("not implemented for type:" + s)
+        return findConverter(s, locale) ?: throw RuntimeException("not implemented for type:$s")
     }
 
     fun <S : Any> converter(s: KClass<out S>, locale: Locale): ValidatingConverter<S> {

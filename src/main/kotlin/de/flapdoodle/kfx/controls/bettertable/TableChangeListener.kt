@@ -30,4 +30,32 @@ interface TableChangeListener<T: Any> {
   data class ChangedRow<T: Any>(val row: T, val errors: List<CellError<T, out Any>> = emptyList()) {
     fun hasNoErrors(): Boolean = errors.isEmpty()
   }
+
+  companion object {
+
+    fun <T: Any> readOnly() = ReadOnly<T>()
+    
+    class ReadOnly<T: Any> : TableChangeListener<T> {
+      override fun changeCell(row: T, change: CellChange<T, out Any>): ChangedRow<T> {
+        TODO("Not yet implemented")
+      }
+
+      override fun updateRow(row: T, changed: T, errors: List<CellError<T, out Any>>) {
+        TODO("Not yet implemented")
+      }
+
+      override fun removeRow(row: T) {
+        TODO("Not yet implemented")
+      }
+
+      override fun insertRow(index: Int, row: T): Boolean {
+        TODO("Not yet implemented")
+      }
+
+      override fun emptyRow(index: Int): T {
+        TODO("Not yet implemented")
+      }
+
+    }
+  }
 }

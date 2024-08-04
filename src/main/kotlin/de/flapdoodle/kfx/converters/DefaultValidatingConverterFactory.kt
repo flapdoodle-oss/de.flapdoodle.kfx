@@ -27,7 +27,6 @@ import kotlin.reflect.KClass
 
 object DefaultValidatingConverterFactory : TypedValidatingConverterFactory(listOf(
     factory(Int::class, ::IntConverter),
-//    factory(Integer::class, ::IntConverter),
     factory(Double::class, ::DoubleConverter),
     factory(Float::class, ::FloatConverter),
     factory(Long::class, ::LongConverter),

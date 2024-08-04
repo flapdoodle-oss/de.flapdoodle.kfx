@@ -30,6 +30,7 @@ import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
+import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.stage.Stage
 import java.math.BigDecimal
@@ -90,47 +91,8 @@ class GridPaneFormSampler {
           prefWidth = 200.0
         }, Pos(0, row, columnSpan = 2))
 
-//        row++
-//        add(Button("---").apply {
-//          maxWidth = 200.0
-//        }, Pos(0, row, columnSpan = 2))
-
-//        horizontalSpace.set(20.0)
-
-//        add(Button("(0,0)").also {
-//          it.minWidth = 20.0
-//          it.maxWidth = 100.0
-//        }, Pos(0, 0))
-//        add(Button("-(1,0)"), Pos(1, 0), horizontalPosition = HPos.RIGHT)
-//        add(Button("(1,1)").also {
-//          it.maxHeight = 100.0
-//        }, Pos(1, 1))
-//        children.add(GridPane().apply {
-//          GridPane.setPosition(this, 0, 1)
-//          val that = this
-//
-//          verticalSpace.set(10.0)
-//          horizontalSpace.set(20.0)
-//
-//          that.add(Button("(0,1)(0,0)").also {
-//            it.minWidth = 20.0
-//            it.maxWidth = 100.0
-//          }, 0, 0)
-//          that.add(Button("(0,1)-(1,0)"), 1, 0, horizontalPosition = HPos.RIGHT)
-//          that.add(Button("(0,1)(1,1)").also {
-//            it.maxHeight = 100.0
-//          }, 1, 1)
-//        })
-//
-//        columnWeight(0, 1.0)
-//        columnWeight(1, 2.0)
-////        rowWeight(0, 4.0)
-////        rowWeight(1, 1.0)
-//        rowWeights(4.0, 1.0, 1.0)
-//
-//        add(Button("(0..1,2)").also {
-//          it.maxWidth = 300.0
-//        }, Pos(0,2,2,1))
+        row++
+        add(TextArea("what a world"), Pos(0, row, columnSpan = 2))
       })
       stage.show()
     }

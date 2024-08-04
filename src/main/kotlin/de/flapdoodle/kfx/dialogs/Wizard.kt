@@ -52,6 +52,7 @@ class Wizard<T : Any, C>(
     }
 
     val current = stateList[stateList.size-1].second
+    title = current.title()
     dialogPane.content = current
 
     val okButton = dialogPane.lookupButton(ButtonType.OK)
@@ -83,6 +84,8 @@ class Wizard<T : Any, C>(
         updateNavigation()
       }
     }
+
+    dialogPane.scene.window.sizeToScene()
   }
 
   private fun negate(validProperty: ObservableValue<Boolean>): ObservableValue<Boolean> {

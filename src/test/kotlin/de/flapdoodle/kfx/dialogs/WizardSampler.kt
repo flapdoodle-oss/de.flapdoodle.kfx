@@ -49,6 +49,10 @@ class WizardSampler {
       })
     }
 
+    override fun title(): String {
+      return "Step 01"
+    }
+
     override fun isValidProperty(): ObservableValue<Boolean> {
       return isValid
     }
@@ -71,6 +75,10 @@ class WizardSampler {
           isValid.value = true
         }
       })
+    }
+
+    override fun title(): String {
+      return "Step 02"
     }
 
     override fun isValidProperty(): ObservableValue<Boolean> {

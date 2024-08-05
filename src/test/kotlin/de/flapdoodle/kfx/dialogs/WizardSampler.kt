@@ -31,15 +31,15 @@ class WizardSampler {
     override fun start(stage: Stage) {
 
       val flow = VBox().apply {
-        children.add(Button("A").apply {
+        children.add(Button("Single").apply {
           onAction = EventHandler {
-            val result = Wizard.open("Foo", ::Step01)
+            val result = Dialogs.open("Single", ::Step01)
             println("wizard result: $result")
           }
         })
-        children.add(Button("B").apply {
+        children.add(Button("Multi").apply {
           onAction = EventHandler {
-            val result = Wizard.open("Foo", ::Step01, ::Step02)
+            val result = Wizard.open("Multi", ::Step01, ::Step02, ::Step03)
             println("wizard result: $result")
           }
         })
@@ -53,7 +53,7 @@ class WizardSampler {
 
   class Step01(
     val initial: String?
-  ) : Pane(), WizardContent<String> {
+  ) : Pane(), DialogContent<String> {
 
     private val isValid = SimpleBooleanProperty(false)
 
@@ -69,6 +69,10 @@ class WizardSampler {
       return "Step 01"
     }
 
+    override fun enter() {
+      isValid.set(false)
+    }
+
     override fun isValidProperty(): ObservableValue<Boolean> {
       return isValid
     }
@@ -81,7 +85,7 @@ class WizardSampler {
 
   class Step02(
     val value: String?
-  ) : Pane(), WizardContent<String> {
+  ) : Pane(), DialogContent<String> {
 
     private val isValid = SimpleBooleanProperty(false)
 
@@ -97,12 +101,48 @@ class WizardSampler {
       return "Step 02"
     }
 
+    override fun enter() {
+      isValid.set(false)
+    }
+
     override fun isValidProperty(): ObservableValue<Boolean> {
       return isValid
     }
 
     override fun result(): String {
       return "02"
+    }
+
+  }
+
+  class Step03(
+    val value: String?
+  ) : Pane(), DialogContent<String> {
+
+    private val isValid = SimpleBooleanProperty(false)
+
+    init {
+      children.addAll(Button("click $value").apply {
+        onAction = EventHandler {
+          isValid.value = true
+        }
+      })
+    }
+
+    override fun title(): String {
+      return "Step 03"
+    }
+
+    override fun enter() {
+      isValid.set(false)
+    }
+
+    override fun isValidProperty(): ObservableValue<Boolean> {
+      return isValid
+    }
+
+    override fun result(): String {
+      return "03"
     }
 
   }

@@ -27,10 +27,10 @@ import javafx.stage.Window
 
 class Wizard<T : Any, C>(
   initial: T?,
-  val factories: List<WizardContentFactory<T, C>>
+  private val factories: List<DialogContentFactory<T, C>>
 ) : Dialog<T>()
     where C : Node,
-          C : WizardContent<T> {
+          C : DialogContent<T> {
 
   private var currentStep = 0
   private var stateList = emptyList<Pair<T?, C>>()
@@ -45,7 +45,6 @@ class Wizard<T : Any, C>(
     updateNavigation()
 
     setResultConverter { dialogButton: ButtonType? ->
-      println("pressed: $dialogButton")
       val current = stateList[stateList.size-1]
       if (dialogButton?.buttonData == ButtonData.OK_DONE) {
         current.second.result()
@@ -68,6 +67,7 @@ class Wizard<T : Any, C>(
     }
 
     val current = stateList[stateList.size-1].second
+    current.enter()
     title = current.title()
     dialogPane.content = current
 
@@ -110,16 +110,16 @@ class Wizard<T : Any, C>(
 
   companion object {
 
-    fun <T : Any, C> open(inital: T?, factory: WizardContentFactory<T, C>, vararg factories: WizardContentFactory<T, C>): T?
-        where C : Node, C : WizardContent<T> {
-      val dialog = Wizard(inital, listOf(factory) + listOf(*factories))
+    fun <T : Any, C> open(initial: T?, factory: DialogContentFactory<T, C>, vararg factories: DialogContentFactory<T, C>): T?
+        where C : Node, C : DialogContent<T> {
+      val dialog = Wizard(initial, listOf(factory) + listOf(*factories))
       return dialog.showAndWait()
         .orElse(null)
     }
 
-    fun <T : Any, C> open(window: Window, inital: T?, factory: WizardContentFactory<T, C>, vararg factories: WizardContentFactory<T, C>): T?
-        where C : Node, C : WizardContent<T> {
-      val dialog = Wizard(inital, listOf(factory) + listOf(*factories))
+    fun <T : Any, C> open(window: Window, initial: T?, factory: DialogContentFactory<T, C>, vararg factories: DialogContentFactory<T, C>): T?
+        where C : Node, C : DialogContent<T> {
+      val dialog = Wizard(initial, listOf(factory) + listOf(*factories))
       dialog.initOwner(window)
       return dialog.showAndWait().orElse(null)
     }

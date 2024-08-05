@@ -18,7 +18,7 @@ package de.flapdoodle.kfx.dialogs
 
 import javafx.scene.Node
 
-fun interface WizardContentFactory<T : Any, C>
-    where C : Node, C : WizardContent<T> {
+fun interface DialogContentFactory<T : Any, C>
+    where C : Node, C : DialogContent<T> {
   fun create(value: T?): C
 }

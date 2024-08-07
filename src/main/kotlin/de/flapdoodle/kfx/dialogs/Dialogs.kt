@@ -20,6 +20,18 @@ import javafx.scene.Node
 import javafx.stage.Window
 
 object Dialogs {
+  fun <T : Any, C> open(factory: () -> C): T?
+      where C : Node, C : DialogContent<T> {
+    return open(null, DialogContentFactory<T, C> {
+      factory()
+    })
+  }
+
+  fun <T : Any, C> open(factory: DialogContentFactory<T, C>): T?
+      where C : Node, C : DialogContent<T> {
+    return open(null, factory)
+  }
+
   fun <T : Any, C> open(initial: T?, factory: DialogContentFactory<T, C>): T?
       where C : Node, C : DialogContent<T> {
     return Wizard.open(initial, factory)

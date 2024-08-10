@@ -260,7 +260,7 @@ open class GridPane : Region() {
     }
 
     positionMap.values().forEach { node ->
-      val nodePosition = positionMap.get(node) ?: Pos(0,0)
+      val nodePosition = positionMap[node] ?: Pos(0,0)
       val c_idx = nodePosition.column
       val c_width = nodePosition.columnSpan
       val r_idx = nodePosition.row

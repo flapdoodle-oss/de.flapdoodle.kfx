@@ -16,13 +16,14 @@
  */
 package de.flapdoodle.kfx.i18n
 
+import de.flapdoodle.kfx.converters.ReadOnlyStringConverter
 import javafx.util.StringConverter
 import kotlin.reflect.KClass
 
 class I18NEnumStringConverter<T : Enum<T>>(
   private val resourceBundle: ResourceBundleWrapper,
   private val enumType: KClass<T>
-) : StringConverter<T>() {
+) : ReadOnlyStringConverter<T>() {
   private val prefix = listOf(
     requireNotNull(enumType.qualifiedName) { "qualified name is null for: $enumType" },
     requireNotNull(enumType.simpleName) { "simpleName name is null for: $enumType" }
@@ -30,9 +31,5 @@ class I18NEnumStringConverter<T : Enum<T>>(
 
   override fun toString(value: T?): String {
     return resourceBundle.message(prefix.map { "${it}_${value?.name ?: "NULL"}" }) ?: "$value"
-  }
-
-  override fun fromString(value: String): T {
-    throw IllegalArgumentException("not supported: $value")
   }
 }

@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.fields
 
+import de.flapdoodle.kfx.converters.ReadOnlyStringConverter
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -28,6 +29,11 @@ class ValidatingChoiceBox<T : Any>(
   val initialConverter: StringConverter<T>,
   val validate: (T?) -> String?
 ) : ChoiceBox<T>(), ValidatingField<T> {
+
+  constructor(values: List<T?>,
+              default: T?,
+              initialConverter: (T) -> String,
+              validate: (T?) -> String?) : this(values, default, ReadOnlyStringConverter.with(initialConverter), validate)
 
   private val lastError = SimpleObjectProperty<String>(null)
 

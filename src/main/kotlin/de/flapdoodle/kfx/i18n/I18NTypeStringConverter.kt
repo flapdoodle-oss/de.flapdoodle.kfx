@@ -16,12 +16,13 @@
  */
 package de.flapdoodle.kfx.i18n
 
+import de.flapdoodle.kfx.converters.ReadOnlyStringConverter
 import javafx.util.StringConverter
 import kotlin.reflect.KClass
 
 class I18NTypeStringConverter<T : KClass<out Any>>(
   private val resourceBundle: ResourceBundleWrapper
-) : StringConverter<T>() {
+) : ReadOnlyStringConverter<T>() {
 
   override fun toString(value: T?): String {
     val keys = if (value!=null)
@@ -33,9 +34,5 @@ class I18NTypeStringConverter<T : KClass<out Any>>(
     else
       listOf("NULL")
     return resourceBundle.message(keys) ?: "$value"
-  }
-
-  override fun fromString(value: String): T {
-    throw IllegalArgumentException("not supported: $value")
   }
 }

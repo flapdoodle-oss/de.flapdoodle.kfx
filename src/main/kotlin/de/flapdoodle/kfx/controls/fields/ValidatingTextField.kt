@@ -40,7 +40,7 @@ class ValidatingTextField<T : Any>(
   }
 ) : TextField(), ValidatingField<T> {
 
-  private val valueProperty = SimpleObjectProperty<T>(null)
+  private val valueProperty = SimpleObjectProperty<T>(default)
   private val lastError = SimpleObjectProperty<String>(null)
 
   override fun valueProperty(): ObjectProperty<T> = valueProperty

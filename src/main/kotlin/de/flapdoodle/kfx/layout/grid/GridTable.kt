@@ -31,6 +31,15 @@ class GridTable<T : Any, I : Any>(
   private val headerFactories: List<HeaderFooterFactory<T>> = emptyList(),
   private val footerFactories: List<HeaderFooterFactory<T>> = emptyList(),
 ) : AnchorPane() {
+
+  constructor(
+    model: ReadOnlyObjectProperty<List<T>>,
+    indexOf: (T) -> I,
+    columns: List<Column<T>>,
+    headerFactory: HeaderFooterFactory<T>,
+    footerFactory: HeaderFooterFactory<T>? = null,
+  ) : this(model, indexOf, columns, listOf(headerFactory), if (footerFactory!=null) listOf(footerFactory) else emptyList())
+
   init {
     require(columns.toSet().size == columns.size) { "some columns are added more than once: $columns" }
   }

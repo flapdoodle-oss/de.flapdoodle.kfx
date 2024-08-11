@@ -24,9 +24,9 @@ abstract class ReadOnlyStringConverter<T> : StringConverter<T>() {
   }
 
   companion object {
-    fun <T> with(converter: (T) -> String): ReadOnlyStringConverter<T> {
+    fun <T> with(converter: (T?) -> String): ReadOnlyStringConverter<T> {
       return object : ReadOnlyStringConverter<T>() {
-        override fun toString(value: T): String {
+        override fun toString(value: T?): String {
           return converter(value)
         }
       }

@@ -32,7 +32,7 @@ class ValidatingChoiceBox<T : Any>(
 
   constructor(values: List<T?>,
               default: T?,
-              initialConverter: (T) -> String,
+              initialConverter: (T?) -> String,
               validate: (T?) -> String?) : this(values, default, ReadOnlyStringConverter.with(initialConverter), validate)
 
   private val lastError = SimpleObjectProperty<String>(null)

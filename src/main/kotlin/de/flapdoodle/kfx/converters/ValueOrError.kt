@@ -39,6 +39,13 @@ sealed class ValueOrError<T: Any> {
     }
   }
 
+  fun valueOrNull(): T? {
+    return when (this) {
+      is Value<T> -> value
+      is Error<T> -> null
+    }
+  }
+
   data class Value<T: Any>(val value: T?): ValueOrError<T>()
   data class Error<T: Any>(val exception: Exception): ValueOrError<T>()
 

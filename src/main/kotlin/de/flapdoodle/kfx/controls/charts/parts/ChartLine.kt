@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.charts.parts
 
+import de.flapdoodle.kfx.bindings.ObjectBindings
 import de.flapdoodle.kfx.bindings.and
 import de.flapdoodle.kfx.controls.charts.Serie
 import de.flapdoodle.kfx.extensions.Colors
@@ -23,11 +24,13 @@ import de.flapdoodle.kfx.css.cssClassName
 import de.flapdoodle.kfx.types.ranges.Range
 import javafx.beans.property.SimpleObjectProperty
 import javafx.css.Styleable
+import javafx.geometry.Bounds
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo
 import javafx.scene.shape.Path
+import javafx.scene.shape.PathElement
 
 class ChartLine<X : Any, Y : Any>(
   val serie: Serie<X, Y>,
@@ -50,17 +53,43 @@ class ChartLine<X : Any, Y : Any>(
 //    minHeightProperty().bind(spacing.multiply(4))
   }
 
-  private val coords = serie.values.map {
+  private val coords = serie.points.map {
     SimpleObjectProperty(it).and(layoutBoundsProperty())/*.and(spacing.mapNullable { v -> v?.toDouble() ?: 0.0 })*/.map { pair, _ ->
       val usableWidht = width - insets.left - insets.right //- spacing * 2.0
       val usableHeight = height - insets.top - insets.bottom //- spacing * 2.0
-      val x = xrange.offset(pair.first, usableWidht) + insets.left //+ spacing
-      val y = usableHeight - yrange.offset(pair.second, usableHeight) + insets.top //+ spacing
+      val x = xrange.offset(pair.x, usableWidht) + insets.left //+ spacing
+      val y = usableHeight - yrange.offset(pair.y, usableHeight) + insets.top //+ spacing
       x to y
     }
   }
 
-  private val lineSegments = coords.mapIndexed { index, coords ->
+  private val lineSegments = serie.lines.flatMap {
+    val linePoints = it.points.map { point ->
+      SimpleObjectProperty(point).and(layoutBoundsProperty())/*.and(spacing.mapNullable { v -> v?.toDouble() ?: 0.0 })*/.map { pair, _ ->
+        val usableWidht = width - insets.left - insets.right //- spacing * 2.0
+        val usableHeight = height - insets.top - insets.bottom //- spacing * 2.0
+        val x = xrange.offset(pair.x, usableWidht) + insets.left //+ spacing
+        val y = usableHeight - yrange.offset(pair.y, usableHeight) + insets.top //+ spacing
+        x to y
+      }
+    }
+
+    linePoints.mapIndexed { index, coords ->
+      if (index == 0) {
+        MoveTo().apply {
+          xProperty().bind(coords.map { it.first })
+          yProperty().bind(coords.map { it.second })
+        }
+      } else {
+        LineTo().apply {
+          xProperty().bind(coords.map { it.first })
+          yProperty().bind(coords.map { it.second })
+        }
+      }
+    }
+  }
+
+  private val lineSegmentsX = coords.mapIndexed { index, coords ->
     if (index == 0) {
       MoveTo().apply {
         xProperty().bind(coords.map { it.first })

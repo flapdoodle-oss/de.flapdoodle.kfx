@@ -57,9 +57,9 @@ class SmallChart<X : Any, Y : Any>(
 //  private val filtered = series.and().map { it }
 
   private val lines = filtered.map { list ->
-    val allXY = list.flatMap { it.values }
-    val allX = allXY.map { it.first }
-    val allY = allXY.map { it.second }
+    val allXY = list.flatMap { it.points } + list.flatMap { it.lines.flatMap { it.points } }
+    val allX = allXY.map { it.x }
+    val allY = allXY.map { it.y }
     val xrange = xRangeFactory.rangeOf(allX)
     val yrange = yRangeFactory.rangeOf(allY)
     list.map { ChartLine(it, xrange, yrange).apply {
@@ -69,14 +69,14 @@ class SmallChart<X : Any, Y : Any>(
   }
 
   private val xRange = filtered.map { list ->
-    val allXY = list.flatMap { it.values }
-    val allX = allXY.map { it.first }
+    val allXY = list.flatMap { it.points } + list.flatMap { it.lines.flatMap { it.points } }
+    val allX = allXY.map { it.x }
     xRangeFactory.rangeOf(allX)
   }
 
   private val yRange = filtered.map { list ->
-    val allXY = list.flatMap { it.values }
-    val allY = allXY.map { it.second }
+    val allXY = list.flatMap { it.points } + list.flatMap { it.lines.flatMap { it.points } }
+    val allY = allXY.map { it.y }
     yRangeFactory.rangeOf(allY)
   }
 
@@ -113,13 +113,13 @@ class SmallChart<X : Any, Y : Any>(
 
   private val chartArea = WeightGridPane().apply {
     cssClassName("small-chart-charts")
-    setRowWeight(0, 0.0)
-    setRowWeight(1, 1.0)
-    setRowWeight(2, 0.0)
+    rowWeight(0, 0.0)
+    rowWeight(1, 1.0)
+    rowWeight(2, 0.0)
 
-    setColumnWeight(0, 0.0)
-    setColumnWeight(1, 1.0)
-    setColumnWeight(2, 0.0)
+    columnWeight(0, 0.0)
+    columnWeight(1, 1.0)
+    columnWeight(2, 0.0)
 
     children.addAll(charts)
     if (showScaleAt.contains(Direction.LEFT)) children.add(leftScale)
@@ -129,17 +129,9 @@ class SmallChart<X : Any, Y : Any>(
   }
 
   private val main = WeightGridPane().apply {
-    setRowWeight(0, 1.0)
-    setRowWeight(1, 0.0)
+    rowWeight(0, 1.0)
+    rowWeight(1, 0.0)
 
-//    setRowWeight(0, 0.0)
-//    setRowWeight(1, 1.0)
-//    setRowWeight(2, 0.0)
-//    setRowWeight(3, 0.0)
-//
-//    setColumnWeight(0, 0.0)
-//    setColumnWeight(1, 1.0)
-//    setColumnWeight(2, 0.0)
     children.addAll(chartArea, labels)
   }
 
@@ -151,7 +143,6 @@ class SmallChart<X : Any, Y : Any>(
       filterSet.value = emptySet()
     }
 
-//    main.children.addAll(charts, topScale, bottomScale, leftScale, rightScale, labels)
     children.add(main)
   }
 

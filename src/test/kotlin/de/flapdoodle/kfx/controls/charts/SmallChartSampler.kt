@@ -38,9 +38,9 @@ class SmallChartSampler {
             val series = SimpleObjectProperty(emptyList<Serie<LocalDate, Double>>())
             series.value = listOf(
                 Serie(
-                    "0", Color.ORANGE, listOf(
+                    "0", Color.ORANGE, pointsOf(
                         now.plusDays(7) to 95.0,
-                    )
+                    ), emptyList()
                 )
             )
             val content = SmallChart(
@@ -60,7 +60,7 @@ class SmallChartSampler {
                     children.add(Button("+a").apply {
                         onAction = EventHandler {
                             series.value = series.value + Serie(
-                                "a", Color.RED, listOf(
+                                "a", Color.RED, pointsOf(
                                     now to 100.0,
                                     now.plusDays(1) to 110.0,
                                     now.plusDays(32) to 70.0,
@@ -68,7 +68,15 @@ class SmallChartSampler {
                                     now.plusDays(75) to 600.0,
                                     now.plusDays(235) to -10.0,
                                     now.plusDays(310) to 20.0,
-                                )
+                                ), listOf(Serie.Line(pointsOf(
+                                    now to 100.0,
+                                    now.plusDays(1) to 110.0,
+                                    now.plusDays(32) to 70.0,
+                                    now.plusDays(35) to 200.0,
+                                    now.plusDays(75) to 600.0,
+                                    now.plusDays(235) to -10.0,
+                                    now.plusDays(310) to 20.0,
+                                )))
                             )
 
                         }
@@ -76,11 +84,24 @@ class SmallChartSampler {
                     children.add(Button("+b").apply {
                         onAction = EventHandler {
                             series.value = series.value + Serie(
-                                "b", Color.BLUE, listOf(
+                                "b", Color.BLUE, pointsOf(
                                     now.minusDays(5) to 80.0,
                                     now.plusDays(5) to 60.0,
                                     now.plusDays(20) to 70.0,
                                     now.plusDays(22) to 80.0,
+                                ), listOf(
+                                    Serie.Line(pointsOf(
+                                        now.minusDays(5) to 80.0,
+                                        now.plusDays(5) to 80.0,
+                                    )),
+                                    Serie.Line(pointsOf(
+                                        now.plusDays(5) to 60.0,
+                                        now.plusDays(20) to 60.0,
+                                    )),
+                                    Serie.Line(pointsOf(
+                                        now.plusDays(20) to 70.0,
+                                        now.plusDays(22) to 70.0,
+                                    )),
                                 )
                             )
 
@@ -97,6 +118,10 @@ class SmallChartSampler {
 
 
     companion object {
+        private fun <X, Y> pointsOf(vararg list: Pair<X, Y>): List<Serie.Point<X, Y>> {
+            return list.map { Serie.Point(it.first, it.second) }
+        }
+
         @JvmStatic
         fun main(args: Array<String>) {
             Application.launch(Sample::class.java, *args)

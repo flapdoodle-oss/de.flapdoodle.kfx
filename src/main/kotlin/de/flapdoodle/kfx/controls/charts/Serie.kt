@@ -22,7 +22,10 @@ import javafx.scene.paint.Color
 data class Serie<X, Y>(
     val label: String,
     val color: Color,
-    val values: List<Pair<X, Y>>,
+    val points: List<Point<X, Y>>,
+    val lines: List<Line<X, Y>>,
     val id: Id<Serie<*,*>> = Id.nextId(Serie::class)
 ) {
+    data class Point<X, Y>(val x: X, val y: Y)
+    data class Line<X, Y>(val points: List<Point<X, Y>>)
 }

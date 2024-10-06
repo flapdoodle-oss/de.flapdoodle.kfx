@@ -16,6 +16,7 @@
  */
 package de.flapdoodle.kfx.controls.charts
 
+import de.flapdoodle.kfx.controls.charts.SmallChartSampler.Companion
 import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.types.ranges.RangeFactories
 import javafx.application.Application
@@ -38,9 +39,9 @@ class CategoryChartSampler {
             val series = SimpleObjectProperty(emptyList<Serie<String, Double>>())
             series.value = listOf(
                 Serie(
-                    "0", Color.ORANGE, listOf(
+                    "0", Color.ORANGE, pointsOf(
                         "007" to 95.0,
-                    )
+                    ), emptyList()
                 )
             )
             val content = SmallChart(
@@ -60,7 +61,7 @@ class CategoryChartSampler {
                     children.add(Button("+a").apply {
                         onAction = EventHandler {
                             series.value = series.value + Serie(
-                                "a", Color.RED, listOf(
+                                "a", Color.RED, pointsOf(
                                     "000" to 100.0,
                                     "001" to 110.0,
                                     "032" to 70.0,
@@ -68,20 +69,26 @@ class CategoryChartSampler {
                                     "075" to 600.0,
                                     "235" to -10.0,
                                     "310" to 20.0,
-                                )
-                            )
-
+                                ), listOf(Serie.Line(pointsOf(
+                                    "000" to 100.0,
+                                    "001" to 110.0,
+                                    "032" to 70.0,
+                                    "035" to 200.0,
+                                    "075" to 600.0,
+                                    "235" to -10.0,
+                                    "310" to 20.0,
+                                ))))
                         }
                     })
                     children.add(Button("+b").apply {
                         onAction = EventHandler {
                             series.value = series.value + Serie(
-                                "b", Color.BLUE, listOf(
+                                "b", Color.BLUE, pointsOf(
                                     "-05" to 80.0,
                                     "005" to 60.0,
                                     "020" to 70.0,
                                     "022" to 80.0,
-                                )
+                                ), emptyList()
                             )
 
                         }
@@ -92,14 +99,17 @@ class CategoryChartSampler {
             stage.scene = Scene(all, 800.0, 600.0)
             stage.show()
         }
-
     }
 
-
     companion object {
+        private fun pointsOf(vararg list: Pair<String, Double>): List<Serie.Point<String, Double>> {
+            return list.map { Serie.Point(it.first, it.second) }
+        }
+
         @JvmStatic
         fun main(args: Array<String>) {
             Application.launch(Sample::class.java, *args)
         }
     }
 }
+

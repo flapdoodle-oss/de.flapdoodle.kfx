@@ -50,11 +50,13 @@ object LongType : NumberType<Long> {
     ).filter { it.unit != 0L }
   }
 
-  private fun biggestOneTick(dist: Long): Long {
-    return if (dist > 1L) {
-      unitUntilDistIsSmaller(dist, 1L)
+  private fun biggestOneTick(dist: Long, start: Long = 1L): Long {
+    if (dist == 0L) return 0L
+
+    return if (dist > start) {
+      unitUntilDistIsSmaller(dist, start)
     } else {
-      unitUntilDistIsBigger(dist, 1L)
+      unitUntilDistIsBigger(dist, start)
     }
   }
 

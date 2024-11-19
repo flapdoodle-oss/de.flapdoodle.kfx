@@ -50,6 +50,9 @@ class BigDecimalTypeTest {
   fun units() {
     val testee = BigDecimalType
 
+    assertThat(testee.units(bd(0.0), bd(0.0)))
+      .isEmpty()
+
     assertThat(testee.units(bd(0.0), bd(10.0)))
       .containsExactly(
         BigDecimalType.Unit(bd(10)),
@@ -112,6 +115,21 @@ class BigDecimalTypeTest {
     assertThat(testee.unitsBetween(bd(-0.00001), bd(10.00001))).isEqualTo(2)
     assertThat(testee.unitsBetween(bd(0.02), bd(10.01))).isEqualTo(1)
     assertThat(testee.unitsBetween(bd(0.011), bd(9.99))).isEqualTo(0)
+  }
+
+
+  @Test
+  fun unitShouldStartWithMinIfItMatchesUnit() {
+    val testee = IntType.Unit(1)
+    assertThat(testee.firstUnit(0)).isEqualTo(0L)
+  }
+
+
+  @Test
+  fun bug() {
+    val testee = BigDecimalType.units(BigDecimal.ONE, BigDecimal.ONE)
+
+    assertThat(testee).isEmpty()
   }
 
   private fun bd(value: Double): BigDecimal {

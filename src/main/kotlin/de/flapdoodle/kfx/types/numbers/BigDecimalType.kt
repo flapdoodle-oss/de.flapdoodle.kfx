@@ -29,6 +29,8 @@ object BigDecimalType : NumberType<BigDecimal> {
   }
 
   override fun offset(min: BigDecimal, max: BigDecimal, scale: Double, value: BigDecimal): Double {
+    require(min <= max) { "$min > $max" }
+
     val valueDist = value - min
     val dist = max - min
     return if (dist != BigDecimal.ZERO)
@@ -48,11 +50,13 @@ object BigDecimalType : NumberType<BigDecimal> {
       Unit(oneTickUnit.divide(BigDecimal.TEN)),
       Unit(oneTickUnit.divide(BigDecimal.TEN).divide(BigDecimal.valueOf(5L))),
       Unit(oneTickUnit.divide(BigDecimal.TEN).divide(BigDecimal.TEN))
-    )
+    ).filter { it.unit != BigDecimal.ZERO }
   }
 
   private fun biggestOneTick(dist: BigDecimal, start: BigDecimal = BigDecimal.ONE): BigDecimal {
-    return if (dist>start) {
+    if (dist.compareTo(BigDecimal.ZERO)==0) return BigDecimal.ZERO
+
+    return if (dist > start) {
       unitUntilDistIsSmaller(dist, start)
     } else {
       unitUntilDistIsBigger(dist, start)
@@ -91,6 +95,5 @@ object BigDecimalType : NumberType<BigDecimal> {
     override fun next(value: BigDecimal, offset: Int): BigDecimal {
       return value + (BigDecimal.valueOf(offset.toLong()).multiply(unit))
     }
-
   }
 }

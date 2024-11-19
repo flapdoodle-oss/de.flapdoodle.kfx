@@ -16,6 +16,8 @@
  */
 package de.flapdoodle.kfx.types.numbers
 
+import java.math.BigInteger
+
 object DoubleType : NumberType<Double> {
   override fun min(values: List<Double>): Double? {
     return values.minOrNull()
@@ -50,8 +52,9 @@ object DoubleType : NumberType<Double> {
     )
   }
 
-  private fun biggestOneTick(dist: Double): Double {
-    val start = 1.0
+  private fun biggestOneTick(dist: Double, start: Double = 1.0): Double {
+    if (dist == 0.0) return 0.0
+    
     return if (dist>start) {
       unitUntilDistIsSmaller(dist, start)
     } else {

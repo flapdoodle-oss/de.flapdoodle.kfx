@@ -51,6 +51,8 @@ object BigIntType : NumberType<BigInteger> {
   }
 
   private fun biggestOneTick(dist: BigInteger, start: BigInteger = BigInteger.ONE): BigInteger {
+    if (dist== BigInteger.ZERO) return BigInteger.ZERO
+
     return if (dist > start) {
       unitUntilDistIsSmaller(dist, start)
     } else {

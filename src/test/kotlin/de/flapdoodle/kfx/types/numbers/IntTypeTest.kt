@@ -18,6 +18,7 @@ package de.flapdoodle.kfx.types.numbers
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.util.concurrent.ThreadLocalRandom
 
 class IntTypeTest {
@@ -79,5 +80,12 @@ class IntTypeTest {
     fun unitShouldStartWithMinIfItMatchesUnit() {
         val testee = IntType.Unit(1)
         assertThat(testee.firstUnit(0)).isEqualTo(0L)
+    }
+
+    @Test
+    fun bug() {
+        val testee = IntType.units(1, 1)
+
+        assertThat(testee).isEmpty()
     }
 }

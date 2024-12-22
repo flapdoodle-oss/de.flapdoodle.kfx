@@ -19,7 +19,9 @@ package de.flapdoodle.kfx.controls.charts
 import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.types.ranges.RangeFactories
 import javafx.application.Application
+import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
+import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.control.Button
@@ -57,6 +59,11 @@ class SmallChartSampler {
             val all = BorderPane().apply {
                 center = content
                 bottom = VBox().apply {
+                    children.add(Button("clear").apply {
+                        onAction = EventHandler {
+                            series.value = emptyList()
+                        }
+                    })
                     children.add(Button("+a").apply {
                         onAction = EventHandler {
                             series.value = series.value + Serie(
@@ -68,15 +75,19 @@ class SmallChartSampler {
                                     now.plusDays(75) to 600.0,
                                     now.plusDays(235) to -10.0,
                                     now.plusDays(310) to 20.0,
-                                ), listOf(Serie.Line(pointsOf(
-                                    now to 100.0,
-                                    now.plusDays(1) to 110.0,
-                                    now.plusDays(32) to 70.0,
-                                    now.plusDays(35) to 200.0,
-                                    now.plusDays(75) to 600.0,
-                                    now.plusDays(235) to -10.0,
-                                    now.plusDays(310) to 20.0,
-                                )))
+                                ), listOf(
+                                    Serie.Line(
+                                        pointsOf(
+                                            now to 100.0,
+                                            now.plusDays(1) to 110.0,
+                                            now.plusDays(32) to 70.0,
+                                            now.plusDays(35) to 200.0,
+                                            now.plusDays(75) to 600.0,
+                                            now.plusDays(235) to -10.0,
+                                            now.plusDays(310) to 20.0,
+                                        )
+                                    )
+                                )
                             )
 
                         }
@@ -90,18 +101,24 @@ class SmallChartSampler {
                                     now.plusDays(20) to 70.0,
                                     now.plusDays(22) to 80.0,
                                 ), listOf(
-                                    Serie.Line(pointsOf(
-                                        now.minusDays(5) to 80.0,
-                                        now.plusDays(5) to 80.0,
-                                    )),
-                                    Serie.Line(pointsOf(
-                                        now.plusDays(5) to 60.0,
-                                        now.plusDays(20) to 60.0,
-                                    )),
-                                    Serie.Line(pointsOf(
-                                        now.plusDays(20) to 70.0,
-                                        now.plusDays(22) to 70.0,
-                                    )),
+                                    Serie.Line(
+                                        pointsOf(
+                                            now.minusDays(5) to 80.0,
+                                            now.plusDays(5) to 80.0,
+                                        )
+                                    ),
+                                    Serie.Line(
+                                        pointsOf(
+                                            now.plusDays(5) to 60.0,
+                                            now.plusDays(20) to 60.0,
+                                        )
+                                    ),
+                                    Serie.Line(
+                                        pointsOf(
+                                            now.plusDays(20) to 70.0,
+                                            now.plusDays(22) to 70.0,
+                                        )
+                                    ),
                                 )
                             )
 
@@ -109,6 +126,76 @@ class SmallChartSampler {
                     })
                 }
             }
+
+            //val looper = Task<>
+            val looper = object : Task<Void>() {
+                override fun running() {
+                    do {
+                        println("woohooo")
+                        Thread.sleep(100)
+
+//                        series.value = series.value + Serie(
+//                            "a", Color.RED, pointsOf(
+//                                now to 100.0,
+//                                now.plusDays(1) to 110.0,
+//                                now.plusDays(32) to 70.0,
+//                                now.plusDays(35) to 200.0,
+//                                now.plusDays(75) to 600.0,
+//                                now.plusDays(235) to -10.0,
+//                                now.plusDays(310) to 20.0,
+//                            ), listOf(
+//                                Serie.Line(
+//                                    pointsOf(
+//                                        now to 100.0,
+//                                        now.plusDays(1) to 110.0,
+//                                        now.plusDays(32) to 70.0,
+//                                        now.plusDays(35) to 200.0,
+//                                        now.plusDays(75) to 600.0,
+//                                        now.plusDays(235) to -10.0,
+//                                        now.plusDays(310) to 20.0,
+//                                    )
+//                                )
+//                            )
+//                        )
+//                        Thread.sleep(100)
+//                        series.value = series.value + Serie(
+//                            "b", Color.BLUE, pointsOf(
+//                                now.minusDays(5) to 80.0,
+//                                now.plusDays(5) to 60.0,
+//                                now.plusDays(20) to 70.0,
+//                                now.plusDays(22) to 80.0,
+//                            ), listOf(
+//                                Serie.Line(
+//                                    pointsOf(
+//                                        now.minusDays(5) to 80.0,
+//                                        now.plusDays(5) to 80.0,
+//                                    )
+//                                ),
+//                                Serie.Line(
+//                                    pointsOf(
+//                                        now.plusDays(5) to 60.0,
+//                                        now.plusDays(20) to 60.0,
+//                                    )
+//                                ),
+//                                Serie.Line(
+//                                    pointsOf(
+//                                        now.plusDays(20) to 70.0,
+//                                        now.plusDays(22) to 70.0,
+//                                    )
+//                                ),
+//                            )
+//                        )
+//                        Thread.sleep(100)
+//                        series.value = emptyList()
+                    } while (stage.isShowing && false)
+                }
+                
+                override fun call(): Void? {
+                    return null
+                }
+            }
+
+            Thread(looper).start()
 
             stage.scene = Scene(all, 800.0, 600.0)
             stage.show()

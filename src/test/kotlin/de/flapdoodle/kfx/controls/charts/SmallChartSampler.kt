@@ -17,10 +17,12 @@
 package de.flapdoodle.kfx.controls.charts
 
 import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
+import de.flapdoodle.kfx.tasks.PlatformTasks
+import de.flapdoodle.kfx.tasks.TaskFactory
 import de.flapdoodle.kfx.types.ranges.RangeFactories
 import javafx.application.Application
-import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
+import javafx.concurrent.ScheduledService
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.Scene
@@ -29,6 +31,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
+import javafx.util.Duration
 import java.time.LocalDate
 import java.util.*
 
@@ -129,76 +132,144 @@ class SmallChartSampler {
 
             //val looper = Task<>
             val looper = object : Task<Void>() {
-                override fun running() {
-                    do {
-                        println("woohooo")
-                        Thread.sleep(100)
-
-//                        series.value = series.value + Serie(
-//                            "a", Color.RED, pointsOf(
-//                                now to 100.0,
-//                                now.plusDays(1) to 110.0,
-//                                now.plusDays(32) to 70.0,
-//                                now.plusDays(35) to 200.0,
-//                                now.plusDays(75) to 600.0,
-//                                now.plusDays(235) to -10.0,
-//                                now.plusDays(310) to 20.0,
-//                            ), listOf(
-//                                Serie.Line(
-//                                    pointsOf(
-//                                        now to 100.0,
-//                                        now.plusDays(1) to 110.0,
-//                                        now.plusDays(32) to 70.0,
-//                                        now.plusDays(35) to 200.0,
-//                                        now.plusDays(75) to 600.0,
-//                                        now.plusDays(235) to -10.0,
-//                                        now.plusDays(310) to 20.0,
-//                                    )
-//                                )
-//                            )
-//                        )
+//                override fun running() {
+//                    do {
+//                        println("woohooo")
 //                        Thread.sleep(100)
-//                        series.value = series.value + Serie(
-//                            "b", Color.BLUE, pointsOf(
-//                                now.minusDays(5) to 80.0,
-//                                now.plusDays(5) to 60.0,
-//                                now.plusDays(20) to 70.0,
-//                                now.plusDays(22) to 80.0,
-//                            ), listOf(
-//                                Serie.Line(
-//                                    pointsOf(
-//                                        now.minusDays(5) to 80.0,
-//                                        now.plusDays(5) to 80.0,
-//                                    )
-//                                ),
-//                                Serie.Line(
-//                                    pointsOf(
-//                                        now.plusDays(5) to 60.0,
-//                                        now.plusDays(20) to 60.0,
-//                                    )
-//                                ),
-//                                Serie.Line(
-//                                    pointsOf(
-//                                        now.plusDays(20) to 70.0,
-//                                        now.plusDays(22) to 70.0,
-//                                    )
-//                                ),
-//                            )
-//                        )
-//                        Thread.sleep(100)
-//                        series.value = emptyList()
-                    } while (stage.isShowing && false)
-                }
+//
+////                        series.value = series.value + Serie(
+////                            "a", Color.RED, pointsOf(
+////                                now to 100.0,
+////                                now.plusDays(1) to 110.0,
+////                                now.plusDays(32) to 70.0,
+////                                now.plusDays(35) to 200.0,
+////                                now.plusDays(75) to 600.0,
+////                                now.plusDays(235) to -10.0,
+////                                now.plusDays(310) to 20.0,
+////                            ), listOf(
+////                                Serie.Line(
+////                                    pointsOf(
+////                                        now to 100.0,
+////                                        now.plusDays(1) to 110.0,
+////                                        now.plusDays(32) to 70.0,
+////                                        now.plusDays(35) to 200.0,
+////                                        now.plusDays(75) to 600.0,
+////                                        now.plusDays(235) to -10.0,
+////                                        now.plusDays(310) to 20.0,
+////                                    )
+////                                )
+////                            )
+////                        )
+////                        Thread.sleep(100)
+////                        series.value = series.value + Serie(
+////                            "b", Color.BLUE, pointsOf(
+////                                now.minusDays(5) to 80.0,
+////                                now.plusDays(5) to 60.0,
+////                                now.plusDays(20) to 70.0,
+////                                now.plusDays(22) to 80.0,
+////                            ), listOf(
+////                                Serie.Line(
+////                                    pointsOf(
+////                                        now.minusDays(5) to 80.0,
+////                                        now.plusDays(5) to 80.0,
+////                                    )
+////                                ),
+////                                Serie.Line(
+////                                    pointsOf(
+////                                        now.plusDays(5) to 60.0,
+////                                        now.plusDays(20) to 60.0,
+////                                    )
+////                                ),
+////                                Serie.Line(
+////                                    pointsOf(
+////                                        now.plusDays(20) to 70.0,
+////                                        now.plusDays(22) to 70.0,
+////                                    )
+////                                ),
+////                            )
+////                        )
+////                        Thread.sleep(100)
+////                        series.value = emptyList()
+//                    } while (stage.isShowing)
+//                }
                 
                 override fun call(): Void? {
+                    println("task called")
                     return null
                 }
             }
 
-            Thread(looper).start()
+            val addTaskFactory = TaskFactory.factory { PlatformTasks.runLater {
+                series.value = series.value + Serie(
+                    "a", Color.RED, pointsOf(
+                        now to 100.0,
+                        now.plusDays(1) to 110.0,
+                        now.plusDays(32) to 70.0,
+                        now.plusDays(35) to 200.0,
+                        now.plusDays(75) to 600.0,
+                        now.plusDays(235) to -10.0,
+                        now.plusDays(310) to 20.0,
+                    ), listOf(
+                        Serie.Line(
+                            pointsOf(
+                                now to 100.0,
+                                now.plusDays(1) to 110.0,
+                                now.plusDays(32) to 70.0,
+                                now.plusDays(35) to 200.0,
+                                now.plusDays(75) to 600.0,
+                                now.plusDays(235) to -10.0,
+                                now.plusDays(310) to 20.0,
+                            )
+                        )
+                    )
+                )
+            } }
+
+            val noopTaskFactory = TaskFactory.factory {
+                object : Task<Void>() {
+                    override fun call(): Void? {
+                        println("noop")
+                        return null
+                    }
+                }
+            }
+
+
+            val service = object: ScheduledService<Void>() {
+                var counter=0
+
+                override fun createTask(): Task<Void> {
+                    val task = when (counter) {
+                        0 -> addTaskFactory()
+                        1 -> noopTaskFactory()
+                        else -> object : Task<Void>() {
+                            override fun call(): Void? {
+                                println("cancel")
+                                cancel()
+                                return null
+                            }
+                        }
+                    }
+                    counter++
+                    println("counter: $counter --> $task")
+                    return task
+                }
+            }
 
             stage.scene = Scene(all, 800.0, 600.0)
+
+            if (true) {
+                println("--- looper ---")
+                service.delay = Duration.millis(1500.0)
+                service.period = Duration.millis(500.0)
+                service.start()
+                println("--- looper done ---")
+            }
+
             stage.show()
+
+//            Thread.sleep(10000)
+
         }
 
     }

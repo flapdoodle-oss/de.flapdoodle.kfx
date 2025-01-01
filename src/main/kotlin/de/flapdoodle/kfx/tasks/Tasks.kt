@@ -36,7 +36,6 @@ object Tasks {
         private var index = 0
 
         override fun createTask(): Task<T> {
-          println("--> $index")
           var taskFactory = taskFactories[index]
           index++
 

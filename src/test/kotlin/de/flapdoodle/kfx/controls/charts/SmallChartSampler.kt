@@ -20,12 +20,18 @@ import de.flapdoodle.kfx.converters.DefaultValidatingConverterFactory
 import de.flapdoodle.kfx.tasks.PlatformTasks
 import de.flapdoodle.kfx.tasks.TaskFactory
 import de.flapdoodle.kfx.tasks.Tasks
+import de.flapdoodle.kfx.tasks.Timelines
 import de.flapdoodle.kfx.types.ranges.RangeFactories
+import javafx.animation.Animation
+import javafx.animation.KeyFrame
+import javafx.animation.KeyValue
+import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.beans.property.SimpleObjectProperty
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.Scene
+import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
@@ -130,7 +136,7 @@ class SmallChartSampler {
                 }
             }
 
-            val addAFactory = TaskFactory<Void> { PlatformTasks.runLater {
+            val addA = Runnable {
                 series.value = series.value + Serie(
                     "a", Color.RED, pointsOf(
                         now to 100.0,
@@ -154,56 +160,64 @@ class SmallChartSampler {
                         )
                     )
                 )
-            } }
-
-            val addBFactory = TaskFactory<Void> { PlatformTasks.runLater {
-                        series.value = series.value + Serie(
-                            "b", Color.BLUE, pointsOf(
-                                now.minusDays(5) to 80.0,
-                                now.plusDays(5) to 60.0,
-                                now.plusDays(20) to 70.0,
-                                now.plusDays(22) to 80.0,
-                            ), listOf(
-                                Serie.Line(
-                                    pointsOf(
-                                        now.minusDays(5) to 80.0,
-                                        now.plusDays(5) to 80.0,
-                                    )
-                                ),
-                                Serie.Line(
-                                    pointsOf(
-                                        now.plusDays(5) to 60.0,
-                                        now.plusDays(20) to 60.0,
-                                    )
-                                ),
-                                Serie.Line(
-                                    pointsOf(
-                                        now.plusDays(20) to 70.0,
-                                        now.plusDays(22) to 70.0,
-                                    )
-                                ),
-                            )
-                        )
-            }}
-
-            val clearAllFactory = TaskFactory<Void> { PlatformTasks.runLater {
-                series.value = emptyList()
-            }}
-
-            val noopTaskFactory = TaskFactory<Void> {
-                object : Task<Void>() {
-                    override fun call(): Void? {
-                        println("noop")
-                        return null
-                    }
-                }
             }
+
+            val addB = Runnable {
+                series.value = series.value + Serie(
+                    "b", Color.BLUE, pointsOf(
+                        now.minusDays(5) to 80.0,
+                        now.plusDays(5) to 60.0,
+                        now.plusDays(20) to 70.0,
+                        now.plusDays(22) to 80.0,
+                    ), listOf(
+                        Serie.Line(
+                            pointsOf(
+                                now.minusDays(5) to 80.0,
+                                now.plusDays(5) to 80.0,
+                            )
+                        ),
+                        Serie.Line(
+                            pointsOf(
+                                now.plusDays(5) to 60.0,
+                                now.plusDays(20) to 60.0,
+                            )
+                        ),
+                        Serie.Line(
+                            pointsOf(
+                                now.plusDays(20) to 70.0,
+                                now.plusDays(22) to 70.0,
+                            )
+                        ),
+                    )
+                )
+            }
+
+            val clearAll = Runnable{
+                series.value = emptyList()
+            }
+
+            val addAFactory = TaskFactory<Void> { PlatformTasks.runLater(addA) }
+            val addBFactory = TaskFactory<Void> { PlatformTasks.runLater(addB) }
+            val clearAllFactory = TaskFactory<Void> { PlatformTasks.runLater(clearAll) }
 
             val service = Tasks.executeAll(addAFactory, addBFactory, clearAllFactory)
                 .waitFor(Duration.millis(1500.0))
-                .nextAfter(Duration.millis(50.0))
+                .nextAfter(Duration.millis(500.0))
                 .repeating()
                 .asScheduledService()
+
+            val timeline = Timelines.executeAll(addA.named("addA"), addB.named("addB"), clearAll.named("clearAll"))
+                .waitFor(Duration.millis(1500.0))
+                .nextAfter(Duration.millis(5.0))
+                .repeating()
+                .asTimeline()
+
+//            val timeline = Timeline(
+//                KeyFrame(Duration.millis(100.0), { event ->
+//                    println("event: $event")
+//                }))
+//            timeline.cycleCount = Animation.INDEFINITE
+
 
             stage.scene = Scene(all, 800.0, 600.0)
 
@@ -211,7 +225,8 @@ class SmallChartSampler {
                 println("--- looper ---")
 //                service.delay = Duration.millis(1500.0)
 //                service.period = Duration.millis(500.0)
-                service.start()
+//                service.start()
+                timeline.play()
                 println("--- looper done ---")
             }
 
@@ -232,6 +247,19 @@ class SmallChartSampler {
         @JvmStatic
         fun main(args: Array<String>) {
             Application.launch(Sample::class.java, *args)
+        }
+    }
+}
+
+private fun Runnable.named(name: String): Runnable {
+    val delegate = this
+    return object : Runnable {
+        override fun run() {
+            delegate.run()
+        }
+
+        override fun toString(): String {
+            return name
         }
     }
 }
